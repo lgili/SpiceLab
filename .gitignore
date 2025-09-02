@@ -1,0 +1,39 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual envs
+.venv/
+.uv/
+
+# VSCode / PyCharm / IDEs
+.vscode/
+.idea/
+*.swp
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Logs / coverage / test output
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.tox/
+.mypy_cache/
+.dmypy.json
+ruff_cache/
+
+# MacOS / Linux junk
+.DS_Store
+Thumbs.db
+*.log
+
+# Local dev files
+.env
+*.sqlite3
