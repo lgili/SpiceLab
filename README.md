@@ -1,6 +1,6 @@
 # PyCircuitKit (CAT) — Circuit Analysis Toolkit
 
-Modern, strongly-typed Python toolkit to **define**, **simulate**, and **analyze** electronic circuits with a clean, Pythonic API. CAT focuses on real engineering workflows: parameter sweeps, Monte-Carlo (later), worst-case (later), and painless result handling in NumPy/Pandas.
+Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN / .AC) and **analyze** electronic circuits with a clean, Pythonic API. CAT targets real engineering workflows: parameter sweeps, **Monte Carlo**, worst‑case (soon), and painless result handling in NumPy/Pandas.
 
 > **Status:** MVP scaffold — strongly-typed Circuit DSL (Style 1: Ports & Nets), NGSpice (CLI) smoke runner for `.op`, utilities for E-series rounding and basic RC design helpers. Roadmap includes AC/DC/TRAN, parsers, Monte-Carlo & Worst-Case, DSL Styles 2 & 3, and LTspice adapter.
 
@@ -15,6 +15,11 @@ Modern, strongly-typed Python toolkit to **define**, **simulate**, and **analyze
 - **Utilities for design:**
   - **E-series** enumerator & rounding (E12/E24/E48/E96).
   - **RC low-pass** design helper by target `f_c`.
+
+### What’s new in this MVP
+- **.TRAN end‑to‑end**: run transient with NGSpice and parse traces into a `TraceSet`.
+- **Monte Carlo (beta)**: vary component values by distributions; stack results into Pandas.
+- **LTspice netlist import (beta)**: parse SPICE netlists exported from LTspice to a `Circuit` and run with NGSpice.
 
 ---
 
@@ -88,63 +93,75 @@ pip install -r dev-requirements.txt
 If ngspice is not on your PATH, CAT’s tests that require it will auto-skip.
 
 
-🚀 Quick Start (User Guide)
+## 🚀 Quick Start (User Guide)
 
-1) Define a circuit (Style 1: Ports & Nets)
+### 1) Define a circuit (Style 1: Ports & Nets) and run **.TRAN**
+```python
 from cat.core.circuit import Circuit
 from cat.core.net import Net, GND
 from cat.core.components import Vdc, Resistor, Capacitor
+from cat.analysis import TRAN
 
-# Create circuit
+# Circuit: RC low‑pass
 c = Circuit("rc_lowpass")
-
-# Nets (names optional; used for debug)
 vin  = Net("vin")
 vout = Net("vout")
 
-# Components (ref/value)
-V1 = Vdc("1", 5.0)       # ports: p (positive), n (negative)
-R1 = Resistor("1", "1k") # ports: a, b
+V1 = Vdc("1", 5.0)
+R1 = Resistor("1", "1k")
 C1 = Capacitor("1", "100n")
 
-# Register components
 c.add(V1, R1, C1)
+c.connect(V1.ports[0], vin)
+c.connect(V1.ports[1], GND)
+c.connect(R1.ports[0], vin)
+c.connect(R1.ports[1], vout)
+c.connect(C1.ports[0], vout)
+c.connect(C1.ports[1], GND)
 
-# Wire ports to nets (no strings!)
-c.connect(V1.ports[0], vin)   # V1.p -> vin
-c.connect(V1.ports[1], GND)   # V1.n -> 0
-c.connect(R1.ports[0], vin)   # R1.a -> vin
-c.connect(R1.ports[1], vout)  # R1.b -> vout
-c.connect(C1.ports[0], vout)  # C1.a -> vout
-c.connect(C1.ports[1], GND)   # C1.b -> 0
+res = TRAN("10us", "5ms").run(c)
+ts = res.traces
+print("traces:", ts.names)
+```
 
-# Build a SPICE netlist
-print(c.build_netlist())
+### 2) **Monte Carlo** on the same circuit
+```python
+from cat.analysis import OP, monte_carlo, NormalPct
 
-If any pin is unconnected, build_netlist() raises a clear error (e.g., Unconnected port: R1.a).
+# Varia apenas R1 com 5% (sigma) — 16 amostras
+mc = monte_carlo(
+    circuit=c,
+    mapping={R1: NormalPct(0.05)},
+    n=16,
+    analysis_factory=lambda: OP(),
+    seed=123,
+)
+# Empilha em DataFrame (se quiser)
+from cat.analysis import stack_runs_to_df
+print(stack_runs_to_df(mc.runs).head())
+```
 
-2) Run a simple .op with NGSpice (CLI)
-import shutil
-from cat.spice import ngspice_cli
+### 3) Importar netlist do **LTspice** e simular
+Export no LTspice: *View → SPICE Netlist* → salve como `.cir`/`.net`.
+```python
+from cat.io.ltspice_parser import from_ltspice_file
+from cat.analysis import TRAN
 
-if shutil.which("ngspice"):
-    net = c.build_netlist()
-    res = ngspice_cli.run_op(net)
-    print("Return code:", res.returncode)
-    print("Log path:", res.artifacts.log_path)
-else:
-    print("NGSpice not found; skipping simulation.")
+c2 = from_ltspice_file("./my_filter.cir")
+res2 = TRAN("1us", "2ms").run(c2)
+print(res2.traces.names)
+```
 
-3) Use utilities (E-series & RC helper)
+### 4) Utilities (E‑series & RC helper)
+```python
 from cat.utils.e_series import round_to_series
 from cat.utils.synth import design_rc_lowpass
 
-print(round_to_series(12700, "E96"))  # nearest commercial value
+print(round_to_series(12700, "E96"))
+print(design_rc_lowpass(fc=159.155, prefer_R=True, series="E24"))
+```
 
-rc = design_rc_lowpass(fc=159.155, prefer_R=True, series="E24")
-print(rc)  # RCDesign(R=?, C=?, fc≈target, tau=R*C)
-
-📦 Project Layout
+## 📦 Project Layout
 src/cat/
   core/          # Nets, Ports, Components, Circuit, NetlistBuilder
   spice/         # Simulator adapters (MVP: ngspice_cli)

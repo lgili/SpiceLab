@@ -1,17 +1,27 @@
 from .core import AC, DC, OP, TRAN, AnalysisResult
-from .metrics import (
-    bandwidth_3db,
+from .metrics_ac import (
+    Bode,
+    ac_gain_phase,
+    crossover_freq_0db,
+    gain_at,
+    gain_margin_db,
+    loop_gain_bode,
+    phase_crossover_freq,
+    phase_margin,
+)
+from .metrics_basic import (
     gain_db_from_traces,
     overshoot_pct,
     peak,
-    settling_time,
 )
-from .metrics_ac import (
-    ac_gain_phase,
-    crossover_freq_0db,
-    gain_margin_db,
-    phase_crossover_freq,
-    phase_margin,
+from .metrics_tran import (
+    OvershootResult,
+    RiseFall,
+    SettlingResult,
+    fall_time,
+    overshoot,
+    rise_time,
+    settling_time,
 )
 from .montecarlo import (
     Dist,
@@ -66,4 +76,15 @@ __all__ = [
     "LogNormalPct",
     "TriangularPct",
     "UniformAbs",
+    # metrics_ac
+    "Bode",
+    "gain_at",
+    "loop_gain_bode",
+    # metrics_tran
+    "OvershootResult",
+    "RiseFall",
+    "SettlingResult",
+    "overshoot",
+    "rise_time",
+    "fall_time",
 ]
