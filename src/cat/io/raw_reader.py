@@ -3,7 +3,7 @@ from __future__ import annotations
 import importlib
 from dataclasses import dataclass
 from math import hypot
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -15,6 +15,27 @@ class Trace:
     name: str
     unit: str | None
     values: np.ndarray
+    _complex: np.ndarray | None = None  # apenas AC: vetor complex
+
+    def magnitude(self) -> np.ndarray:
+        if self._complex is not None:
+            return cast(np.ndarray, np.abs(self._complex))
+        return cast(np.ndarray, np.abs(self.values))
+
+    def real(self) -> np.ndarray:
+        if self._complex is not None:
+            return self._complex.real
+        return self.values
+
+    def imag(self) -> np.ndarray:
+        if self._complex is not None:
+            return self._complex.imag
+        return np.zeros_like(self.values, dtype=float)
+
+    def phase_deg(self) -> np.ndarray:
+        if self._complex is not None:
+            return np.angle(self._complex, deg=True)
+        return np.zeros_like(self.values, dtype=float)
 
 
 class TraceSet:
@@ -133,17 +154,18 @@ def _parse_variables(
     return vars_meta, i
 
 
-def _to_float(tok: str) -> float:
+def _to_val(tok: str) -> tuple[float, complex | None]:
     """
-    Converte token NGSpice em float. Em análises AC (Flags: complex) os valores são "re,im".
-    Para esses, retornamos a **magnitude**: sqrt(re^2 + im^2).
+    Converte token NGSpice em (valor_float, valor_complex|None).
+    - Em análises AC (Flags: complex) os valores vêm como "re,im".
     """
     if "," in tok:
         re_s, im_s = tok.split(",", 1)
         re = float(re_s)
         im = float(im_s)
-        return float(hypot(re, im))
-    return float(tok)
+        return float(hypot(re, im)), complex(re, im)
+    val = float(tok)
+    return val, None
 
 
 def _parse_values(
@@ -151,12 +173,13 @@ def _parse_values(
     start: int,
     nvars: int,
     npoints: int,
-) -> np.ndarray:
+) -> tuple[np.ndarray, list[np.ndarray | None]]:
     """
-    Lê matriz (npoints x nvars) de valores. Cada ponto começa com a linha contendo
-    o índice do ponto, seguida pelos nvars valores (podem quebrar em várias linhas).
+    Lê matriz (npoints x nvars) de valores e retorna também colunas complexas (se houver).
     """
     data = np.empty((npoints, nvars), dtype=float)
+    complex_cols: list[list[complex] | None] = [None] * nvars
+
     i = start
     for row in range(npoints):
         if i >= len(lines):
@@ -164,26 +187,39 @@ def _parse_values(
         head = _strip_prefix(lines[i]).split()
         if not head:
             raise ValueError("Invalid Values entry (empty line)")
-        # token 0 = índice (inteiro)
         try:
-            _ = int(head[0])
+            _ = int(head[0])  # índice do ponto
         except ValueError as exc:
             raise ValueError(f"Invalid point index line: {lines[i]!r}") from exc
-        tokens: list[str] = head[1:]  # valores já na primeira linha (se houver)
+        tokens: list[str] = head[1:]
         i += 1
-        # continuar coletando até termos nvars tokens
         while len(tokens) < nvars:
             if i >= len(lines):
                 raise ValueError("Unexpected EOF while reading value tokens")
-            more = _strip_prefix(lines[i]).split()
-            tokens.extend(more)
+            tokens.extend(_strip_prefix(lines[i]).split())
             i += 1
-        # preencher linha
-        try:
-            data[row, :] = [_to_float(tok) for tok in tokens[:nvars]]
-        except ValueError as exc:  # pragma: no cover
-            raise ValueError(f"Non-numeric token in values: {tokens[:nvars]!r}") from exc
-    return data
+
+        vals_row: list[float] = []
+        for j, tok in enumerate(tokens[:nvars]):
+            val, cval = _to_val(tok)
+            vals_row.append(val)
+            if cval is not None:
+                lst = complex_cols[j]
+                if lst is None:
+                    lst = []
+                    complex_cols[j] = lst
+                lst.append(cval)
+        data[row, :] = vals_row
+
+    # converte listas para np.ndarray
+    complex_arrays: list[np.ndarray | None] = []
+    for col in complex_cols:
+        if col is None:
+            complex_arrays.append(None)
+        else:
+            complex_arrays.append(np.array(col, dtype=complex))
+
+    return data, complex_arrays
 
 
 def parse_ngspice_ascii_raw(path: str) -> TraceSet:
@@ -199,10 +235,16 @@ def parse_ngspice_ascii_raw(path: str) -> TraceSet:
     nvars = int(meta["nvars"])
     npoints = int(meta["npoints"])
     vars_meta, i1 = _parse_variables(lines, i0, nvars)
-    data = _parse_values(lines, i1, nvars, npoints)
+    data, complex_cols = _parse_values(lines, i1, nvars, npoints)
 
-    traces = [
-        Trace(name=vars_meta[j][0], unit=vars_meta[j][1], values=data[:, j].copy())
-        for j in range(len(vars_meta))
-    ]
+    traces: list[Trace] = []
+    for j, (name, unit) in enumerate(vars_meta):
+        traces.append(
+            Trace(
+                name=name,
+                unit=unit,
+                values=data[:, j].copy(),
+                _complex=complex_cols[j],
+            )
+        )
     return TraceSet(traces)
