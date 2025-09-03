@@ -13,6 +13,13 @@ from .metrics_ac import (
     phase_crossover_freq,
     phase_margin,
 )
+from .montecarlo import (
+    Dist,
+    MonteCarloResult,
+    NormalPct,
+    UniformPct,
+    monte_carlo,
+)
 from .post import stack_runs_to_df, stack_step_to_df
 from .step import ParamGrid, StepResult, step_grid, step_param
 from .sweep import SweepResult, sweep_component
@@ -36,10 +43,15 @@ __all__ = [
     "overshoot_pct",
     "gain_db_from_traces",
     "bandwidth_3db",
-    # AC stability
     "ac_gain_phase",
     "crossover_freq_0db",
     "phase_margin",
     "phase_crossover_freq",
     "gain_margin_db",
+    # Monte Carlo
+    "Dist",
+    "NormalPct",
+    "UniformPct",
+    "MonteCarloResult",
+    "monte_carlo",
 ]

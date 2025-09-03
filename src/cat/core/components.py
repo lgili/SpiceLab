@@ -1,99 +1,129 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass, field
 
 from .net import Port, PortRole
-from .typing import HasPorts
+
+# Tipo do callback usado para mapear Port -> nome de nó no netlist
+NetOf = Callable[[Port], str]
 
 
-@dataclass
-class Component(HasPorts):
+# --------------------------------------------------------------------------------------
+# Base Component
+# --------------------------------------------------------------------------------------
+class Component:
+    """Classe base de um componente de 2 terminais (ou fonte) no CAT."""
+
     ref: str
     value: str | float
-    _ports: tuple[Port, ...] = field(init=False, repr=False)
+
+    # As subclasses devem atribuir _ports no __init__
+    _ports: tuple[Port, ...] = ()
+
+    def __init__(self, ref: str, value: str | float = "") -> None:
+        self.ref = ref
+        self.value = value
 
     @property
     def ports(self) -> tuple[Port, ...]:
         return self._ports
 
-    def spice_card(self, net_of: Callable[[Port], str]) -> str:
+    def spice_card(self, net_of: NetOf) -> str:  # pragma: no cover - interface
         raise NotImplementedError
 
+    def __repr__(self) -> str:  # pragma: no cover (depuração)
+        return f"<{type(self).__name__} {self.ref} value={self.value!r}>"
 
-@dataclass
+    def __hash__(self) -> int:
+        # Hash por identidade (robusto para objetos mutáveis)
+        return id(self)
+
+
+# --------------------------------------------------------------------------------------
+# Componentes passivos
+# --------------------------------------------------------------------------------------
 class Resistor(Component):
-    def __post_init__(self) -> None:
-        object.__setattr__(
-            self,
-            "_ports",
-            (Port(self, "a", PortRole.NODE), Port(self, "b", PortRole.NODE)),
-        )
+    """Resistor de 2 terminais; portas: a (positivo), b (negativo)."""
 
-    def spice_card(self, net_of: Callable[[Port], str]) -> str:
+    def __init__(self, ref: str, value: str | float = "") -> None:
+        super().__init__(ref=ref, value=value)
+        self._ports = (Port(self, "a", PortRole.POSITIVE), Port(self, "b", PortRole.NEGATIVE))
+
+    def spice_card(self, net_of: NetOf) -> str:
         a, b = self.ports
         return f"R{self.ref} {net_of(a)} {net_of(b)} {self.value}"
 
 
-@dataclass
 class Capacitor(Component):
-    def __post_init__(self) -> None:
-        object.__setattr__(
-            self,
-            "_ports",
-            (Port(self, "a", PortRole.NODE), Port(self, "b", PortRole.NODE)),
-        )
+    """Capacitor de 2 terminais; portas: a (positivo), b (negativo)."""
 
-    def spice_card(self, net_of: Callable[[Port], str]) -> str:
+    def __init__(self, ref: str, value: str | float = "") -> None:
+        super().__init__(ref=ref, value=value)
+        self._ports = (Port(self, "a", PortRole.POSITIVE), Port(self, "b", PortRole.NEGATIVE))
+
+    def spice_card(self, net_of: NetOf) -> str:
         a, b = self.ports
         return f"C{self.ref} {net_of(a)} {net_of(b)} {self.value}"
 
 
-@dataclass
+# (Opcional) Se quiser adicionar Indutor no futuro:
+# class Inductor(Component):
+#     def __init__(self, ref: str, value: str | float = "") -> None:
+#         super().__init__(ref=ref, value=value)
+#         self._ports = (Port(self, "a", PortRole.POSITIVE), Port(self, "b", PortRole.NEGATIVE))
+#
+#     def spice_card(self, net_of: NetOf) -> str:
+#         a, b = self.ports
+#         return f"L{self.ref} {net_of(a)} {net_of(b)} {self.value}"
+
+
+# --------------------------------------------------------------------------------------
+# Fontes
+# --------------------------------------------------------------------------------------
 class Vdc(Component):
-    """DC voltage source; ports: p (positive), n (negative)."""
+    """Fonte de tensão DC; portas: p (positivo), n (negativo)."""
 
-    def __post_init__(self) -> None:
-        object.__setattr__(
-            self,
-            "_ports",
-            (Port(self, "p", PortRole.POSITIVE), Port(self, "n", PortRole.NEGATIVE)),
-        )
+    def __init__(self, ref: str, value: str | float = "") -> None:
+        super().__init__(ref=ref, value=value)
+        self._ports = (Port(self, "p", PortRole.POSITIVE), Port(self, "n", PortRole.NEGATIVE))
 
-    def spice_card(self, net_of: Callable[[Port], str]) -> str:
+    def spice_card(self, net_of: NetOf) -> str:
         p, n = self.ports
-        return f"V{self.ref} {net_of(p)} {net_of(n)} DC {self.value}"
+        # Para DC, escrevemos o valor diretamente
+        return f"V{self.ref} {net_of(p)} {net_of(n)} {self.value}"
 
 
-@dataclass
 class Vac(Component):
-    """AC small-signal voltage source for .AC analysis; ports: p (positive), n (negative).
+    """Fonte AC (small-signal) para .AC; portas: p (positivo), n (negativo).
 
-    value: pode ser usado como label/descrição (ignoramos no card).
-    ac_mag: magnitude AC (volts RMS ou conforme convenção do simulador).
+    value: opcional, ignorado na carta SPICE (pode servir de rótulo).
+    ac_mag: magnitude AC (tipicamente 1.0 V).
     ac_phase: fase em graus (opcional).
     """
 
-    ac_mag: float = 1.0
-    ac_phase: float = 0.0
+    def __init__(
+        self,
+        ref: str,
+        value: str | float = "",
+        ac_mag: float = 1.0,
+        ac_phase: float = 0.0,
+    ) -> None:
+        super().__init__(ref=ref, value=value)
+        self.ac_mag = ac_mag
+        self.ac_phase = ac_phase
+        self._ports = (Port(self, "p", PortRole.POSITIVE), Port(self, "n", PortRole.NEGATIVE))
 
-    def __post_init__(self) -> None:
-        object.__setattr__(
-            self,
-            "_ports",
-            (Port(self, "p", PortRole.POSITIVE), Port(self, "n", PortRole.NEGATIVE)),
-        )
-
-    def spice_card(self, net_of: Callable[[Port], str]) -> str:
+    def spice_card(self, net_of: NetOf) -> str:
         p, n = self.ports
-        # Para AC, tipicamente não precisamos de termo DC; usamos apenas "AC mag [phase]"
         if self.ac_phase:
             return f"V{self.ref} {net_of(p)} {net_of(n)} AC {self.ac_mag} {self.ac_phase}"
         return f"V{self.ref} {net_of(p)} {net_of(n)} AC {self.ac_mag}"
 
 
-# Helpers auto-ref (amigáveis para notebooks)
-_counter: dict[str, int] = {}
+# --------------------------------------------------------------------------------------
+# Helpers de criação com auto-ref (convenientes para notebooks/tests)
+# --------------------------------------------------------------------------------------
+_counter: dict[str, int] = {"R": 0, "C": 0, "V": 0}
 
 
 def _next(prefix: str) -> str:
@@ -114,5 +144,5 @@ def V(value: str | float) -> Vdc:
 
 
 def VA(ac_mag: float = 1.0, ac_phase: float = 0.0, label: str | float = "") -> Vac:
-    # label é apenas para manter compatibilidade com assinatura parecida; não é usado no card
+    # label é apenas informativo; não aparece no card
     return Vac(ref=_next("V"), value=str(label), ac_mag=ac_mag, ac_phase=ac_phase)
