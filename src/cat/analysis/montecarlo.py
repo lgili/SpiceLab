@@ -1,28 +1,32 @@
 from __future__ import annotations
 
+import copy
+import math
 import random as _random
 from collections.abc import Callable, Mapping
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
+from typing import Protocol
 
 from ..core.circuit import Circuit
 from ..core.components import Component
+from ..utils.units import to_float
 from .core import AnalysisResult
 
-# ---------- Distribuições (percentual sobre um nominal numérico) ----------
+
+class _RunsAnalysis(Protocol):
+    def run(self, circuit: Circuit) -> AnalysisResult: ...
+
+
+# ---------- Distribuições ----------
 
 
 class Dist:
-    """Interface de distribuição. Implementações devem sobrescrever sample(nominal)."""
-
-    def sample(self, nominal: float, rnd: _random.Random) -> float:  # pragma: no cover (interface)
+    def sample(self, nominal: float, rnd: _random.Random) -> float:  # pragma: no cover
         raise NotImplementedError
 
 
 class NormalPct(Dist):
-    """
-    Normal centrada no nominal, com desvio-padrão relativo (ex.: sigma_pct=0.05 -> 5%).
-    """
-
     def __init__(self, sigma_pct: float) -> None:
         if sigma_pct < 0:
             raise ValueError("sigma_pct must be >= 0")
@@ -33,11 +37,22 @@ class NormalPct(Dist):
         return float(rnd.gauss(nominal, sigma))
 
 
-class UniformPct(Dist):
-    """
-    Uniforme no intervalo [nominal*(1-pct), nominal*(1+pct)].
-    """
+class LogNormalPct(Dist):
+    def __init__(self, sigma_pct: float) -> None:
+        if sigma_pct < 0:
+            raise ValueError("sigma_pct must be >= 0")
+        self.sigma_pct = sigma_pct
 
+    def sample(self, nominal: float, rnd: _random.Random) -> float:
+        if nominal <= 0:
+            return nominal
+        sigma = abs(nominal) * self.sigma_pct
+        sigma_ln = sigma / max(abs(nominal), 1e-30)
+        mu_ln = math.log(nominal) - 0.5 * (sigma_ln**2)
+        return float(math.exp(rnd.gauss(mu_ln, sigma_ln)))
+
+
+class UniformPct(Dist):
     def __init__(self, pct: float) -> None:
         if pct < 0:
             raise ValueError("pct must be >= 0")
@@ -49,51 +64,52 @@ class UniformPct(Dist):
         return float(rnd.uniform(lo, hi))
 
 
+class UniformAbs(Dist):
+    def __init__(self, delta: float) -> None:
+        if delta < 0:
+            raise ValueError("delta must be >= 0")
+        self.delta = delta
+
+    def sample(self, nominal: float, rnd: _random.Random) -> float:
+        return float(rnd.uniform(nominal - self.delta, nominal + self.delta))
+
+
+class TriangularPct(Dist):
+    def __init__(self, pct: float) -> None:
+        if pct < 0:
+            raise ValueError("pct must be >= 0")
+        self.pct = pct
+
+    def sample(self, nominal: float, rnd: _random.Random) -> float:
+        lo = nominal * (1.0 - self.pct)
+        hi = nominal * (1.0 + self.pct)
+        return float(rnd.triangular(lo, hi, nominal))
+
+
 # ---------- Execução ----------
 
 
 @dataclass(frozen=True)
 class MonteCarloResult:
-    """Resultados de Monte Carlo: amostras por run e AnalysisResult por run."""
-
-    samples: list[dict[str, float]]  # lista de dicts { comp_key: value_sampled }
-    runs: list[AnalysisResult]  # resultados de simulação
+    samples: list[dict[str, float]]
+    runs: list[AnalysisResult]
 
 
 def _as_float(value: str | float) -> float:
-    """
-    Converte valores simples para float. Aceita float direto ou string numérica "1000", "1e3".
-    (Não converte unidades SPICE '1k', '100n' nesta primeira versão.)
-    """
-    if isinstance(value, float):
-        return value
-    try:
-        return float(value)
-    except Exception as e:
-        raise ValueError(
-            f"Monte Carlo currently needs numeric literals (got {value!r}). "
-            "Future versions will support unit suffixes like '1k', '100n'."
-        ) from e
+    return to_float(value)
 
 
 def monte_carlo(
     circuit: Circuit,
     mapping: Mapping[Component, Dist],
     n: int,
-    analysis_factory: Callable[[], object],
+    analysis_factory: Callable[[], _RunsAnalysis],
     seed: int | None = None,
     label_fn: Callable[[Component], str] | None = None,
+    workers: int = 1,
 ) -> MonteCarloResult:
     """
-    Executa Monte Carlo variando valores de componentes conforme distribuições.
-
-    - `mapping`: { componente: Dist(...) }  (não precisa ser hashável; só iteramos)
-    - `n`: número de execuções
-    - `analysis_factory`: callable que cria a análise (ex.: `lambda: TRAN("100us","1ms")`)
-    - `seed`: opcional, para reprodutibilidade
-    - `label_fn`: como nomear cada componente nos samples (default: Class.ref, ex. "Resistor.1")
-
-    Limitação inicial: os `component.value` precisam ser numéricos simples (float ou "123.0").
+    Executa Monte Carlo variando valores dos componentes conforme distribuições.
     """
     rnd = _random.Random(seed)
 
@@ -102,31 +118,36 @@ def monte_carlo(
             return label_fn(c)
         return f"{type(c).__name__}.{c.ref}"
 
-    # snapshot dos valores originais e pré-cálculo dos nominais
-    # (evita usar dict com Component como chave)
-    originals: list[tuple[Component, str | float]] = [(comp, comp.value) for comp in mapping.keys()]
-    items: list[tuple[Component, Dist, float]] = [
-        (comp, dist, _as_float(comp.value)) for comp, dist in mapping.items()
-    ]
+    comps: list[Component] = list(mapping.keys())
+    nominals: list[float] = [_as_float(c.value) for c in comps]
+    dists: list[Dist] = [mapping[c] for c in comps]
 
     samples: list[dict[str, float]] = []
+    for _ in range(n):
+        s: dict[str, float] = {}
+        for comp, nominal, dist in zip(comps, nominals, dists):
+            s[_label(comp)] = dist.sample(nominal, rnd)
+        samples.append(s)
+
+    def _run_one(sample: dict[str, float]) -> AnalysisResult:
+        c_copy: Circuit = copy.deepcopy(circuit)
+        comp_list = getattr(c_copy, "components", None)
+        if comp_list is None:
+            comp_list = getattr(c_copy, "_components", [])
+        by_label: dict[str, Component] = {_label(c): c for c in comp_list}
+        for k, v in sample.items():
+            by_label[k].value = v
+        analysis = analysis_factory()
+        return analysis.run(c_copy)
+
     runs: list[AnalysisResult] = []
-    try:
-        for _ in range(n):
-            current_sample: dict[str, float] = {}
-            # sampleia e aplica
-            for comp, dist, nominal in items:
-                new_val = dist.sample(nominal, rnd)
-                comp.value = new_val
-                current_sample[_label(comp)] = new_val
-            # roda análise
-            analysis = analysis_factory()
-            res = analysis.run(circuit)  # type: ignore[attr-defined]
-            runs.append(res)
-            samples.append(current_sample)
-    finally:
-        # restaura originais
-        for comp, val in originals:
-            comp.value = val
+    if workers <= 1:
+        for s in samples:
+            runs.append(_run_one(s))
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            futs = [ex.submit(_run_one, s) for s in samples]
+            for f in as_completed(futs):
+                runs.append(f.result())
 
     return MonteCarloResult(samples=samples, runs=runs)

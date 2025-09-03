@@ -15,14 +15,19 @@ from .metrics_ac import (
 )
 from .montecarlo import (
     Dist,
+    LogNormalPct,
     MonteCarloResult,
     NormalPct,
+    TriangularPct,
+    UniformAbs,
     UniformPct,
     monte_carlo,
 )
 from .post import stack_runs_to_df, stack_step_to_df
 from .step import ParamGrid, StepResult, step_grid, step_param
+from .step_native import StepNativeResult, run_step_native
 from .sweep import SweepResult, sweep_component
+from .worstcase import WorstCaseResult, worst_case
 
 __all__ = [
     "OP",
@@ -54,4 +59,11 @@ __all__ = [
     "UniformPct",
     "MonteCarloResult",
     "monte_carlo",
+    "WorstCaseResult",
+    "worst_case",
+    "StepNativeResult",
+    "run_step_native",
+    "LogNormalPct",
+    "TriangularPct",
+    "UniformAbs",
 ]

@@ -1,27 +1,27 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from itertools import product
-from typing import TypeVar
+from typing import TypeVar, cast
 
 from ..core.circuit import Circuit
+from ..io.raw_reader import parse_ngspice_ascii_raw
 from ..spice import ngspice_cli
+from ..spice.base import RunResult as BaseRunResult
 from .core import AnalysisResult
 
-A = TypeVar("A")  # instância concreta de análise (OP/TRAN/AC/DC)
+A = TypeVar("A")  # instância de análise com método _directives()
 
 
 @dataclass(frozen=True)
 class StepResult:
-    """Resultado de uma varredura paramétrica Python-level."""
-
-    params: dict[str, str | float]  # último conjunto varrido (para compat)
-    grid: list[dict[str, str | float]]  # todos os pontos simulados
-    runs: list[AnalysisResult]  # um resultado por ponto
+    params: dict[str, str | float]
+    grid: list[dict[str, str | float]]
+    runs: list[AnalysisResult]
 
 
-# Tipo amigável para grade: {"R": ["1k","2k"], "C": ["100n","220n"]}
 ParamGrid = Mapping[str, Sequence[str | float]]
 
 
@@ -29,32 +29,20 @@ def _directives_with_params(
     base_directives: list[str],
     param_values: Mapping[str, str | float],
 ) -> list[str]:
-    """Prepara diretivas: insere .param no começo, conserva resto."""
-    prefix = [f".param {k}={v}" for k, v in param_values.items()]
-    return [*prefix, *base_directives]
+    return [
+        *(f".param {k}={v}" for k, v in param_values.items()),
+        *base_directives,
+    ]
 
 
-def _run_once_with_params(
-    circuit: Circuit,
-    analysis_factory: Callable[[], A],
-    param_values: Mapping[str, str | float],
-) -> AnalysisResult:
-    """Executa uma análise inserindo .param e reaproveitando o runner genérico."""
-    # Obter diretivas da análise concreta pela mesma rota do _BaseAnalysis.run
-    # sem expor _BaseAnalysis — pedimos que a instância tenha _directives()
-    analysis = analysis_factory()
-    directives: list[str] = analysis._directives()  # type: ignore[attr-defined]
-    directives = _directives_with_params(directives, param_values)
-    net = circuit.build_netlist()
-    res = ngspice_cli.run_directives(net, directives)
+def _run_once_with_params_text(netlist: str, lines_with_params: list[str]) -> AnalysisResult:
+    res = ngspice_cli.run_directives(netlist, lines_with_params)
     if res.returncode != 0:
         raise RuntimeError(f"NGSpice exited with code {res.returncode}")
     if not res.artifacts.raw_path:
         raise RuntimeError("NGSpice produced no RAW path")
-    from ..io.raw_reader import parse_ngspice_ascii_raw
-
     traces = parse_ngspice_ascii_raw(res.artifacts.raw_path)
-    return AnalysisResult(run=res, traces=traces)
+    return AnalysisResult(run=cast(BaseRunResult, res), traces=traces)
 
 
 def step_param(
@@ -62,16 +50,27 @@ def step_param(
     name: str,
     values: Sequence[str | float],
     analysis_factory: Callable[[], A],
+    workers: int = 1,
 ) -> StepResult:
-    """Varre um único parâmetro (`.param name=value`) executando N simulações.
-
-    Use o nome do parâmetro nas *values* de componentes como `"{name}"`.
-    Ex.: R1.value = "{R}" e chamar step_param(..., name="R", values=["1k","2k"])
-    """
     grid_list: list[dict[str, str | float]] = [{name: v} for v in values]
+    net = circuit.build_netlist()
+
     runs: list[AnalysisResult] = []
-    for point in grid_list:
-        runs.append(_run_once_with_params(circuit, analysis_factory, point))
+    if workers <= 1:
+        for point in grid_list:
+            base_dirs_one: list[str] = analysis_factory()._directives()  # type: ignore[attr-defined]
+            lines_with_params = _directives_with_params(base_dirs_one, point)
+            runs.append(_run_once_with_params_text(net, lines_with_params))
+    else:
+        futs = []
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            for point in grid_list:
+                base_dirs_two: list[str] = analysis_factory()._directives()  # type: ignore[attr-defined]
+                lines_with_params2 = _directives_with_params(base_dirs_two, point)
+                futs.append(ex.submit(_run_once_with_params_text, net, lines_with_params2))
+            for f in as_completed(futs):
+                runs.append(f.result())
+
     last = grid_list[-1] if grid_list else {}
     return StepResult(params=last, grid=grid_list, runs=runs)
 
@@ -81,21 +80,31 @@ def step_grid(
     grid: ParamGrid,
     analysis_factory: Callable[[], A],
     order: Sequence[str] | None = None,
+    workers: int = 1,
 ) -> StepResult:
-    """Varre múltiplos parâmetros pelo produto cartesiano das listas.
-
-    `grid` é um mapeamento {"R": [...], "C": [...], ...}.
-    A ordem dos parâmetros no produto pode ser fixada via `order`.
-    """
     keys = list(order) if order else list(grid.keys())
     values_lists: list[Sequence[str | float]] = [grid[k] for k in keys]
 
-    runs: list[AnalysisResult] = []
-    grid_points: list[dict[str, str | float]] = []
-    for combo in product(*values_lists):
-        point = {k: v for k, v in zip(keys, combo)}
-        grid_points.append(point)
-        runs.append(_run_once_with_params(circuit, analysis_factory, point))
+    points: list[dict[str, str | float]] = [
+        {k: v for k, v in zip(keys, combo)} for combo in product(*values_lists)
+    ]
+    net = circuit.build_netlist()
 
-    last = grid_points[-1] if grid_points else {}
-    return StepResult(params=last, grid=grid_points, runs=runs)
+    runs: list[AnalysisResult] = []
+    if workers <= 1:
+        for point in points:
+            base_dirs_one: list[str] = analysis_factory()._directives()  # type: ignore[attr-defined]
+            lines_with_params = _directives_with_params(base_dirs_one, point)
+            runs.append(_run_once_with_params_text(net, lines_with_params))
+    else:
+        futs = []
+        with ThreadPoolExecutor(max_workers=workers) as ex:
+            for point in points:
+                base_dirs_two: list[str] = analysis_factory()._directives()  # type: ignore[attr-defined]
+                lines_with_params2 = _directives_with_params(base_dirs_two, point)
+                futs.append(ex.submit(_run_once_with_params_text, net, lines_with_params2))
+            for f in as_completed(futs):
+                runs.append(f.result())
+
+    last = points[-1] if points else {}
+    return StepResult(params=last, grid=points, runs=runs)

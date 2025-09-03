@@ -248,3 +248,71 @@ def parse_ngspice_ascii_raw(path: str) -> TraceSet:
             )
         )
     return TraceSet(traces)
+
+
+# --- Detect/dispatch RAW (ASCII vs "Binary") ---
+
+
+def parse_ngspice_raw(path: str) -> TraceSet:
+    """
+    Dispatcher: se for ASCII, usa parse_ngspice_ascii_raw; se for 'Binary', tenta
+    fallback convertendo para ASCII não invasivo (a depender da geração do arquivo).
+    Por ora, detecta 'Binary' e dispara erro com mensagem clara.
+    """
+    with open(path, "rb") as f:
+        head = f.read(256)
+    if b"Binary:" in head or b"binary" in head:
+        # Implementação binária completa é extensa; orientar uso de ASCII no runner.
+        raise NotImplementedError(
+            "Binary RAW not supported yet. Configure NGSpice to write ASCII RAW "
+            "(set filetype=ascii)."
+        )
+    # ASCII
+    return parse_ngspice_ascii_raw(path)
+
+
+# --- Multi-plot (ex.: .step nativo em ASCII gera vários blocos) ---
+
+
+def parse_ngspice_ascii_raw_multi(path: str) -> list[TraceSet]:
+    """
+    Lê um arquivo ASCII com múltiplos plots (p.ex. .step nativo) e retorna
+    uma lista de TraceSet (um por bloco).
+    """
+    with open(path, encoding="utf-8", errors="ignore") as f:
+        lines = f.read().splitlines()
+
+    i = 0
+    out: list[TraceSet] = []
+    while i < len(lines):
+        # procurar início de um bloco (Title:/Plotname:/Variables:)
+        # Reutiliza as funções privadas para cada bloco
+        # pular linhas vazias
+        while i < len(lines) and not lines[i].strip():
+            i += 1
+        if i >= len(lines):
+            break
+        # precisa ver se há um cabeçalho válido
+        try:
+            meta, i0 = _parse_header(lines[i:])
+            nvars = int(meta["nvars"])
+            npoints = int(meta["npoints"])
+            vars_meta, i1 = _parse_variables(lines[i:], i0, nvars)
+            data, complex_cols = _parse_values(lines[i:], i1, nvars, npoints)
+        except Exception:
+            # se não conseguiu, avança uma linha e tenta de novo
+            i += 1
+            continue
+
+        traces: list[Trace] = []
+        for j, (name, unit) in enumerate(vars_meta):
+            traces.append(
+                Trace(name=name, unit=unit, values=data[:, j].copy(), _complex=complex_cols[j])
+            )
+        out.append(TraceSet(traces))
+        # avançar: i += i1 + npoints ... mas já usamos slices; então mova i para frente
+        # tenta achar próximo 'Title:' após o bloco atual
+        # heurística simples: move i até encontrar próxima 'Title:' ou EOF
+        k = i + i1 + npoints + 4  # + margem
+        i = max(i + 1, k)
+    return out
