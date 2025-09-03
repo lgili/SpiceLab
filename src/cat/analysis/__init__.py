@@ -6,10 +6,16 @@ from .metrics import (
     peak,
     settling_time,
 )
+from .metrics_ac import (
+    ac_gain_phase,
+    crossover_freq_0db,
+    gain_margin_db,
+    phase_crossover_freq,
+    phase_margin,
+)
 from .post import stack_runs_to_df, stack_step_to_df
 from .step import ParamGrid, StepResult, step_grid, step_param
 from .sweep import SweepResult, sweep_component
-from .viz.plot import plot_sweep_df, plot_traces
 
 __all__ = [
     "OP",
@@ -30,6 +36,10 @@ __all__ = [
     "overshoot_pct",
     "gain_db_from_traces",
     "bandwidth_3db",
-    "plot_traces",
-    "plot_sweep_df",
+    # AC stability
+    "ac_gain_phase",
+    "crossover_freq_0db",
+    "phase_margin",
+    "phase_crossover_freq",
+    "gain_margin_db",
 ]
