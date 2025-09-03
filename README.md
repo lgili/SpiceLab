@@ -1,5 +1,7 @@
 # PyCircuitKit (CAT) — Circuit Analysis Toolkit
 
+[![Build](https://github.com/lgili/PyCircuitKit/actions/workflows/ci.yml/badge.svg)](https://github.com/lgili/PyCircuitKit/actions/workflows/ci.yml)
+
 Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN / .AC) and **analyze** electronic circuits with a clean, Pythonic API. CAT targets real engineering workflows: parameter sweeps, **Monte Carlo**, worst‑case (soon), and painless result handling in NumPy/Pandas.
 
 > **Status:** MVP scaffold — strongly-typed Circuit DSL (Style 1: Ports & Nets), NGSpice (CLI) smoke runner for `.op`, utilities for E-series rounding and basic RC design helpers. Roadmap includes AC/DC/TRAN, parsers, Monte-Carlo & Worst-Case, DSL Styles 2 & 3, and LTspice adapter.
@@ -48,15 +50,17 @@ cd pycircuitkit
 uv sync --all-extras --dev
 ```
 
-
-Alternative without uv:
+### Alternative without uv:
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -U pip
 pip install -e ".[opt]"  # installs project (editable) + optional deps if defined
 pip install -r dev-requirements.txt  # if you keep one (pytest, mypy, ruff, etc.)
+```
 
-Linux (Ubuntu/Debian)
+### Linux (Ubuntu/Debian)
+```bash
 # 1) Install NGSpice
 sudo apt update
 sudo apt install -y ngspice
@@ -68,8 +72,10 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 git clone https://github.com/<your-org>/pycircuitkit.git
 cd pycircuitkit
 uv sync --all-extras --dev
+```
 
-Windows
+### Windows
+```powershell
 # 1) Install NGSpice
 # Download installer from: https://ngspice.sourceforge.io/download.html
 # Add the ngspice bin folder (e.g. C:\Program Files\Spice64\bin) to your PATH.
@@ -82,16 +88,18 @@ irm https://astral.sh/uv/install.ps1 | iex
 git clone https://github.com/<your-org>/pycircuitkit.git
 cd pycircuitkit
 uv sync --all-extras --dev
+```
 
-Alternative without uv:
+### Alternative without uv:
+```powershell
 py -m venv .venv
 .venv\Scripts\activate
 pip install -U pip
 pip install -e ".[opt]"
 pip install -r dev-requirements.txt
+```
 
 If ngspice is not on your PATH, CAT’s tests that require it will auto-skip.
-
 
 ## 🚀 Quick Start (User Guide)
 
@@ -185,14 +193,18 @@ Tooling
 We ship configs for ruff (lint & format), mypy (strict typing), pytest (tests & coverage), and pre-commit.
 
 Install dev tools:
+```bash
 uv sync --all-extras --dev
 pre-commit install
+```
 
 Run checks locally:
+```bash
 uv run ruff check .
 uv run ruff format --check .
 uv run mypy src
 uv run pytest -q
+```
 
 CI (GitHub Actions) runs the same steps. The NGSpice smoke test is skipped if ngspice isn’t installed on the runner.
 
@@ -200,6 +212,7 @@ Adding Components
 
 Create a class in cat/core/components.py:
 
+```python
 from dataclasses import dataclass
 from .net import Port, PortRole
 from .components import Component
@@ -213,6 +226,7 @@ class Inductor(Component):
     def spice_card(self, net_of) -> str:
         a, b = self.ports
         return f"L{self.ref} {net_of(a)} {net_of(b)} {self.value}"
+```
 
 	•	Keep ports strongly-typed (PortRole).
 	•	Implement spice_card(net_of) to render the final card.
@@ -233,7 +247,9 @@ Tests
 
 Run:
 
+```bash
 uv run pytest -q --cov=cat --cov-report=term-missing
+```
 
 ⚙️ Configuration
 
@@ -242,8 +258,10 @@ Environment variables (reserved, to be expanded):
 	•	CAT_LOG_LEVEL — set logger level (INFO, DEBUG, …) for CAT.
 
 Example:
+```bash
 export CAT_SPICE_NGSPICE=/opt/tools/ngspice/bin/ngspice
 export CAT_LOG_LEVEL=DEBUG
+```
 
 🧭 Roadmap (Short)
 	1.	Engines: OP/AC/DC/TRAN with unified result object (TraceSet) and Pandas export.

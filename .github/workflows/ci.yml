@@ -14,7 +14,9 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install uv
-      - run: curl -LsSf https://astral.sh/uv/install.sh | sh
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Add uv to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
       - name: Sync deps
         run: |
           ~/.local/bin/uv sync --all-extras --dev
