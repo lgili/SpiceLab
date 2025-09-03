@@ -1,6 +1,7 @@
 import shutil
 
 import pytest
+
 from cat.analysis import AC, OP, TRAN
 from cat.core.circuit import Circuit
 from cat.core.components import Capacitor, Resistor, Vdc

@@ -31,7 +31,7 @@ def _vals(ts: TraceSet, name: str) -> np.ndarray:
     if tr is None:
         raise ValueError(f"Trace {name!r} not found")
     if hasattr(tr, "values"):  # objeto Trace
-        return np.asarray(getattr(tr, "values"))
+        return np.asarray(tr.values)
     return np.asarray(tr)
 
 
@@ -44,7 +44,7 @@ def _try_trace(ts: TraceSet, name: str) -> np.ndarray | None:
     if tr is None:
         return None
     if hasattr(tr, "values"):
-        return np.asarray(getattr(tr, "values"))
+        return np.asarray(tr.values)
     return np.asarray(tr)
 
 

@@ -1,15 +1,27 @@
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.7
+  - repo: local
     hooks:
-      - id: ruff
-        args: [--fix]
+      - id: ruff-check
+        name: Ruff check
+        entry: uv run ruff check .
+        language: system
+        types: [python]
+        pass_filenames: false
+
       - id: ruff-format
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
-    hooks:
+        name: Ruff format
+        entry: uv run ruff format .
+        language: system
+        types: [python]
+        pass_filenames: false
+
       - id: mypy
-        additional_dependencies: [typing-extensions]
+        name: Mypy type-check
+        entry: uv run mypy src tests
+        language: system
+        types: [python]
+        pass_filenames: false
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:

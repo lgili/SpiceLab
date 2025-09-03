@@ -1,15 +1,27 @@
-name: CI
+name: ci
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v3
-      - run: uv sync --all-extras --dev
-      - run: uv run ruff check .
-      - run: uv run ruff format --check .
-      - run: uv run mypy src
-      - run: uv run pytest
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Add uv to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Sync deps
+        run: ~/.local/bin/uv sync --all-extras --dev
+      - name: Lint
+        run: ~/.local/bin/uv run ruff check .
+      - name: Type-check
+        run: ~/.local/bin/uv run mypy src tests
+      - name: Tests
+        run: ~/.local/bin/uv run pytest -q

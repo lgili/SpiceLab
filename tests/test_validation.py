@@ -1,4 +1,5 @@
 import pytest
+
 from cat.core.circuit import Circuit
 from cat.core.components import Resistor
 

@@ -2,6 +2,7 @@ import os
 import tempfile
 
 import numpy as np
+
 from cat.io.raw_reader import parse_ngspice_ascii_raw
 
 ASCII = """Title:  rc

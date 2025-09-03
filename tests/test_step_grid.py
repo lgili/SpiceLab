@@ -1,6 +1,7 @@
 import shutil
 
 import pytest
+
 from cat.analysis import OP, ParamGrid, step_grid
 from cat.core.circuit import Circuit
 from cat.core.components import Capacitor, Resistor, Vdc

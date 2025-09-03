@@ -1,4 +1,5 @@
 import numpy as np
+
 from cat.analysis import (
     ac_gain_phase,
     crossover_freq_0db,

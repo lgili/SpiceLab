@@ -1,0 +1,43 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    # Proteção extra: só segue se a tag for estável (sem sufixos)
+    if: >
+      startsWith(github.ref_name, 'v') &&
+      !contains(github.ref_name, '-') &&
+      !contains(github.ref_name, 'a') &&
+      !contains(github.ref_name, 'b') &&
+      !contains(github.ref_name, 'dev')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Add uv to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Sync deps
+        run: ~/.local/bin/uv sync
+
+      - name: Build distributions
+        run: ~/.local/bin/uv run python -m build
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}

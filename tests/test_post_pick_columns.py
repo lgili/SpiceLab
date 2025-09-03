@@ -1,6 +1,7 @@
 import shutil
 
 import pytest
+
 from cat.analysis import OP, stack_step_to_df, step_param
 from cat.core.circuit import Circuit
 from cat.core.components import Resistor, Vdc
