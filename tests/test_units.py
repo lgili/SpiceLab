@@ -1,4 +1,5 @@
 import pytest
+
 from cat.utils.units import format_eng, to_float
 
 

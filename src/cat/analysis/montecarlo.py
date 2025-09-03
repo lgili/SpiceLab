@@ -125,7 +125,7 @@ def monte_carlo(
     samples: list[dict[str, float]] = []
     for _ in range(n):
         s: dict[str, float] = {}
-        for comp, nominal, dist in zip(comps, nominals, dists):
+        for comp, nominal, dist in zip(comps, nominals, dists, strict=False):
             s[_label(comp)] = dist.sample(nominal, rnd)
         samples.append(s)
 

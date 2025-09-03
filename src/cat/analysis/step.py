@@ -86,7 +86,7 @@ def step_grid(
     values_lists: list[Sequence[str | float]] = [grid[k] for k in keys]
 
     points: list[dict[str, str | float]] = [
-        {k: v for k, v in zip(keys, combo)} for combo in product(*values_lists)
+        {k: v for k, v in zip(keys, combo, strict=False)} for combo in product(*values_lists)
     ]
     net = circuit.build_netlist()
 

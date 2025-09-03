@@ -11,7 +11,7 @@ def _vals(ts: TraceSet, name: str) -> np.ndarray:
     if tr is None:
         raise ValueError(f"Trace {name!r} not found")
     if hasattr(tr, "values"):
-        return np.asarray(getattr(tr, "values"), dtype=float)
+        return np.asarray(tr.values, dtype=float)
     return np.asarray(tr, dtype=float)
 
 

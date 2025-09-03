@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 from _common import savefig
+
 from cat.analysis import DC
 from cat.core.circuit import Circuit
 from cat.core.components import Resistor, Vdc

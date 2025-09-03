@@ -1,6 +1,7 @@
 import shutil
 
 import pytest
+
 from cat.analysis import AC
 from cat.core.circuit import Circuit
 from cat.core.components import VA, Resistor

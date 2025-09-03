@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from _common import savefig
+
 from cat.analysis import OP, TRAN
 from cat.analysis.viz.plot import plot_traces
 from cat.core.circuit import Circuit

@@ -2,6 +2,7 @@ import shutil
 from typing import Any
 
 import pytest
+
 from cat.analysis import (
     TRAN,
     gain_db_from_traces,
@@ -40,7 +41,7 @@ def _pick_voltage_trace_name(ts: Any) -> str:
     raise AssertionError(f"Nenhum traço de tensão encontrado em {names!r}")
 
 
-@pytest.mark.skipif(not shutil.which("ngspice"), reason="ngspice not installed")  # type: ignore[misc]
+@pytest.mark.skipif(not shutil.which("ngspice"), reason="ngspice not installed")
 def test_basic_metrics_rc() -> None:
     c = _rc_tran(1.0)
     res = TRAN("10us", "5ms").run(c)

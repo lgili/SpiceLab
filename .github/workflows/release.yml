@@ -1,0 +1,39 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Add uv to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Sync deps (dev not needed for build)
+        run: |
+          ~/.local/bin/uv sync
+
+      - name: Build distributions
+        run: |
+          ~/.local/bin/uv run python -m build
+
+      # Publica no PyPI (usa dist/ gerado acima)
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
