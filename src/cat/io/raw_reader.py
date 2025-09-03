@@ -1,12 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import Any
 
 import numpy as np
-
-if TYPE_CHECKING:  # para tipagem estática sem depender de pandas em runtime
-    import pandas as pd
 
 
 @dataclass(frozen=True)
@@ -55,7 +52,7 @@ class TraceSet:
         except KeyError as e:
             raise KeyError(f"Trace '{key}' not found. Available: {self.names}") from e
 
-    def to_dataframe(self) -> pd.DataFrame:
+    def to_dataframe(self) -> Any:
         try:
             import pandas as pd
         except Exception as exc:  # pragma: no cover
