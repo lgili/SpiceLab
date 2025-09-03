@@ -65,6 +65,33 @@ class Vdc(Component):
         return f"V{self.ref} {net_of(p)} {net_of(n)} DC {self.value}"
 
 
+@dataclass
+class Vac(Component):
+    """AC small-signal voltage source for .AC analysis; ports: p (positive), n (negative).
+
+    value: pode ser usado como label/descrição (ignoramos no card).
+    ac_mag: magnitude AC (volts RMS ou conforme convenção do simulador).
+    ac_phase: fase em graus (opcional).
+    """
+
+    ac_mag: float = 1.0
+    ac_phase: float = 0.0
+
+    def __post_init__(self) -> None:
+        object.__setattr__(
+            self,
+            "_ports",
+            (Port(self, "p", PortRole.POSITIVE), Port(self, "n", PortRole.NEGATIVE)),
+        )
+
+    def spice_card(self, net_of: Callable[[Port], str]) -> str:
+        p, n = self.ports
+        # Para AC, tipicamente não precisamos de termo DC; usamos apenas "AC mag [phase]"
+        if self.ac_phase:
+            return f"V{self.ref} {net_of(p)} {net_of(n)} AC {self.ac_mag} {self.ac_phase}"
+        return f"V{self.ref} {net_of(p)} {net_of(n)} AC {self.ac_mag}"
+
+
 # Helpers auto-ref (amigáveis para notebooks)
 _counter: dict[str, int] = {}
 
@@ -84,3 +111,8 @@ def C(value: str | float) -> Capacitor:
 
 def V(value: str | float) -> Vdc:
     return Vdc(ref=_next("V"), value=value)
+
+
+def VA(ac_mag: float = 1.0, ac_phase: float = 0.0, label: str | float = "") -> Vac:
+    # label é apenas para manter compatibilidade com assinatura parecida; não é usado no card
+    return Vac(ref=_next("V"), value=str(label), ac_mag=ac_mag, ac_phase=ac_phase)

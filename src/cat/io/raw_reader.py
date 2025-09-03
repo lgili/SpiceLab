@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import importlib
 from dataclasses import dataclass
+from math import hypot
 from typing import Any
 
 import numpy as np
@@ -53,8 +55,9 @@ class TraceSet:
             raise KeyError(f"Trace '{key}' not found. Available: {self.names}") from e
 
     def to_dataframe(self) -> Any:
+        # Evita depender de stubs do pandas: import dinâmico via importlib, tipado como Any
         try:
-            import pandas as pd
+            pd: Any = importlib.import_module("pandas")
         except Exception as exc:  # pragma: no cover
             raise RuntimeError("pandas is required for to_dataframe()") from exc
         data = {t.name: t.values for t in self._traces}
@@ -130,6 +133,19 @@ def _parse_variables(
     return vars_meta, i
 
 
+def _to_float(tok: str) -> float:
+    """
+    Converte token NGSpice em float. Em análises AC (Flags: complex) os valores são "re,im".
+    Para esses, retornamos a **magnitude**: sqrt(re^2 + im^2).
+    """
+    if "," in tok:
+        re_s, im_s = tok.split(",", 1)
+        re = float(re_s)
+        im = float(im_s)
+        return float(hypot(re, im))
+    return float(tok)
+
+
 def _parse_values(
     lines: list[str],
     start: int,
@@ -164,7 +180,7 @@ def _parse_values(
             i += 1
         # preencher linha
         try:
-            data[row, :] = [float(tok) for tok in tokens[:nvars]]
+            data[row, :] = [_to_float(tok) for tok in tokens[:nvars]]
         except ValueError as exc:  # pragma: no cover
             raise ValueError(f"Non-numeric token in values: {tokens[:nvars]!r}") from exc
     return data
