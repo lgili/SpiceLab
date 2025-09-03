@@ -75,3 +75,24 @@ class AC(_BaseAnalysis):
             ".option filetype=ascii",
             ".save all",
         ]
+
+
+class DC(_BaseAnalysis):
+    """Varredura DC nativa do SPICE (ex.: .dc V1 0 5 0.1).
+
+    `source_ref` é o **ref** da fonte de tensão/corrente (sem a letra),
+    ex.: para Vdc("1", 5.0) use source_ref="1" → gera ".dc V1 ..."
+    """
+
+    def __init__(self, source_ref: str, start: float, stop: float, step: float) -> None:
+        self.source_ref = source_ref
+        self.start = start
+        self.stop = stop
+        self.step = step
+
+    def _directives(self) -> list[str]:
+        return [
+            f".dc V{self.source_ref} {self.start} {self.stop} {self.step}",
+            ".option filetype=ascii",
+            ".save all",
+        ]
