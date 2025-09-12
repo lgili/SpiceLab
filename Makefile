@@ -1,8 +1,11 @@
-.PHONY: help install install-extras preview preview-ci ac-bode step-fig mc-fig opamp-stability examples
+.PHONY: help install install-extras preview preview-ci ac-bode step-fig mc-fig opamp-stability pt1000 examples
 
 VENV=.venv
 PY=$(VENV)/bin/python
 PIP=$(VENV)/bin/pip
+TEMP?=100
+N?=1000
+SIGMA?=0.01
 
 help:
 	@echo "Targets:"
@@ -14,6 +17,7 @@ help:
 	@echo "  make step-fig    # run STEP grid example (requires ngspice + matplotlib)"
 	@echo "  make mc-fig      # run Monte Carlo figures (requires ngspice + matplotlib)"
 	@echo "  make opamp-stability # run op-amp Bode example (requires ngspice + matplotlib)"
+	@echo "  make pt1000      # run PT1000 Monte Carlo (TEMP=$(TEMP) N=$(N) SIGMA=$(SIGMA))"
 	@echo "  make examples    # run all figure examples"
 
 install:
@@ -49,5 +53,8 @@ mc-fig:
 
 opamp-stability:
 	PYTHONPATH=src python3 -m examples.opamp_stability
+
+pt1000:
+	PYTHONPATH=src python3 -m examples.pt1000_mc --temp $(TEMP) --n $(N) --sigma $(SIGMA)
 
 examples: ac-bode step-fig mc-fig opamp-stability
