@@ -1,4 +1,15 @@
-# src/cat/__init__.py
+"""Top-level package exports for CAT (PyCircuitKit).
+
+Exposes frequently used types and helpers, plus package version.
+"""
+
+from importlib.metadata import PackageNotFoundError, version
+
+# Package version
+try:  # pragma: no cover - metadata resolution may vary in editable installs
+    __version__ = version("pycircuitkit")
+except PackageNotFoundError:  # pragma: no cover
+    __version__ = "0.0.0"
 
 # Top-level convenient API imports
 
@@ -91,6 +102,7 @@ from .core.net import GND, Net
 from .utils.topologies import opamp_buffer, opamp_inverting
 
 __all__ = [
+    "__version__",
     # Core
     "Circuit",
     "Net",
@@ -130,8 +142,6 @@ __all__ = [
     "I",
     "IA",
     "IP",
-    "OpAmpIdeal",
-    "OA",
     # Analyses
     "OP",
     "TRAN",

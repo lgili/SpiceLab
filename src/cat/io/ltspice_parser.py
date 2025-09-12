@@ -262,7 +262,6 @@ def from_spice_netlist(text: str, *, title: str | None = None) -> Circuit:
                 # full raw line
                 c.add_directive(raw)
             continue
-            continue
 
         card = t[0]
         prefix = card[0].upper()

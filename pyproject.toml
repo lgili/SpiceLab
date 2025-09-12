@@ -12,12 +12,34 @@ authors = [{ name="Luiz Carlos Gili" }]
 license = { text = "MIT" }
 dependencies = ["numpy>=1.26", "pandas>=2.1", "typing-extensions>=4.9"]
 
+keywords = ["spice", "circuit", "simulation", "ngspice", "electronics"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
+]
+
+[project.urls]
+Homepage = "https://github.com/lgili/PyCircuitKit"
+Repository = "https://github.com/lgili/PyCircuitKit.git"
+Issues = "https://github.com/lgili/PyCircuitKit/issues"
+Documentation = "https://lgili.github.io/PyCircuitKit/"
+
 [project.optional-dependencies]
 opt = ["scipy>=1.12"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["cat*"]
+
+[tool.setuptools.package-data]
+cat = ["py.typed"]
 
 [tool.pytest.ini_options]
 addopts = "-q --maxfail=1 --disable-warnings --cov=cat --cov-report=term-missing"
