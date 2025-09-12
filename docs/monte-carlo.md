@@ -2,6 +2,8 @@
 
 Run Monte Carlo by mapping components to distributions and a per-trial analysis:
 
+![Monte Carlo histogram](assets/examples/mc_hist.png)
+
 ```python
 from cat.core.circuit import Circuit
 from cat.core.components import Vdc, Resistor, Capacitor

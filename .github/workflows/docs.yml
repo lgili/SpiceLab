@@ -45,9 +45,14 @@ jobs:
           pushd examples
           python ac_bode.py
           python opamp_stability.py
+          python monte_carlo_fig.py
+          python step_sweep_fig.py
           popd
           cp -v examples/ac_bode.png docs/assets/examples/ac_bode.png
           cp -v examples/opamp_bode.png docs/assets/examples/opamp_bode.png
+          cp -v examples/mc_hist.png docs/assets/examples/mc_hist.png
+          cp -v examples/mc_traces.png docs/assets/examples/mc_traces.png
+          cp -v examples/step_grid.png docs/assets/examples/step_grid.png
 
       - name: Build site
         env:

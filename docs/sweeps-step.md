@@ -5,6 +5,8 @@ There are two ways to sweep parameters:
 - Python-side sweeps (`step_param`, `step_grid`) — easiest to combine with Pandas.
 - Native SPICE `.step` directives — use `run_step_native` to parse multi-plot RAW.
 
+![STEP grid](assets/examples/step_grid.png)
+
 ## Python sweeps
 
 Single parameter:
