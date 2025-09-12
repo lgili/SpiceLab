@@ -1,6 +1,7 @@
 # PyCircuitKit (CAT) — Circuit Analysis Toolkit
 
 [![Build](https://github.com/lgili/PyCircuitKit/actions/workflows/ci.yml/badge.svg)](https://github.com/lgili/PyCircuitKit/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://lgili.github.io/PyCircuitKit/)
 
 Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN / .AC) and **analyze** electronic circuits with a clean, Pythonic API. CAT targets real engineering workflows: parameter sweeps, **Monte Carlo**, worst‑case (soon), and painless result handling in NumPy/Pandas.
 
