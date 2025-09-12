@@ -33,3 +33,27 @@ print(df.head())
 Tips:
 - Use `workers` for parallel execution: `monte_carlo(..., workers=4)`.
 - Provide a metric function to compute scalar KPIs per trial, or set `y=[...]` and `sample_at` to extract trace values.
+
+### Progress bar / callback
+
+Add a lightweight progress bar to stderr:
+
+```python
+mc = monte_carlo(
+    circuit=c,
+    mapping={R1: NormalPct(0.01)},
+    n=1000,
+    analysis_factory=lambda: OP(),
+    progress=True,   # prints: "MC: 317/1000 (31%)"
+)
+```
+
+Or provide your own callback (`done`, `total`):
+
+```python
+def cb(done: int, total: int) -> None:
+    print(f"{done}/{total}", end="\r")
+
+mc = monte_carlo(c, mapping={R1: NormalPct(0.01)}, n=1000,
+                 analysis_factory=lambda: OP(), progress=cb)
+```

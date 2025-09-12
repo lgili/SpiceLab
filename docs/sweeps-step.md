@@ -12,14 +12,20 @@ There are two ways to sweep parameters:
 Single parameter:
 ```python
 from cat.analysis import step_param, TRAN
-res = step_param(c, name="R", values=["1k","2k","5k"], analysis_factory=lambda: TRAN("50us","5ms"))
+res = step_param(
+    c,
+    name="R",
+    values=["1k","2k","5k"],
+    analysis_factory=lambda: TRAN("50us","5ms"),
+    progress=True,   # prints progress to stderr
+)
 ```
 
 Grid of parameters:
 ```python
 from cat.analysis import ParamGrid, step_grid
 grid: ParamGrid = {"R": ["1k","2k"], "C": ["100n","220n"]}
-step = step_grid(c, grid, analysis_factory=lambda: TRAN("50us","5ms"))
+step = step_grid(c, grid, analysis_factory=lambda: TRAN("50us","5ms"), progress=True)
 ```
 
 Stacking to DataFrame:
@@ -32,6 +38,17 @@ Plotting grouped curves (optional):
 ```python
 from cat.analysis.viz.plot import plot_sweep_df
 fig = plot_sweep_df(df, x="time", y="v(n1)", hue="R")
+
+### Custom progress callback
+
+You can pass a function `callback(done, total)` to receive updates instead of the default bar:
+
+```python
+def cb(done: int, total: int) -> None:
+    print(f"{done}/{total}", end="\r")
+
+step = step_grid(c, grid, analysis_factory=lambda: TRAN("50us","5ms"), progress=cb)
+```
 ```
 
 ## Native .STEP
