@@ -22,7 +22,8 @@ c.connect(V1.ports[1], GND)
 c.connect(C1.ports[1], GND)
 
 res = AC("dec", 50, 10.0, 1e6).run(c)
-f, mag_db, phase_deg = ac_gain_phase(res.traces, "v(out)")
+# In this simple RC, the output node is typically n1 in the RAW
+f, mag_db, phase_deg = ac_gain_phase(res.traces, "v(n1)")
 
 fig = plt.figure()
 ax1 = fig.add_subplot(211)
