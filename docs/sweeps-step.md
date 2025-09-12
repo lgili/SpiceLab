@@ -25,13 +25,13 @@ step = step_grid(c, grid, analysis_factory=lambda: TRAN("50us","5ms"))
 Stacking to DataFrame:
 ```python
 from cat.analysis import stack_step_to_df
-df = stack_step_to_df(step, y=["v(out)"], with_x=True)
+df = stack_step_to_df(step, y=["v(n1)"], with_x=True)
 ```
 
 Plotting grouped curves (optional):
 ```python
 from cat.analysis.viz.plot import plot_sweep_df
-fig = plot_sweep_df(df, x="time", y="v(out)", hue="R")
+fig = plot_sweep_df(df, x="time", y="v(n1)", hue="R")
 ```
 
 ## Native .STEP

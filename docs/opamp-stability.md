@@ -25,9 +25,9 @@ opamp_inverting(c, inp=vin.ports[0], out=vout, ref=GND, Rin="10k", Rf="100k", ga
 c.connect(vin.ports[1], GND)
 
 res = AC("dec", 201, 10.0, 1e6).run(c)
-f, mag_db, ph = ac_gain_phase(res.traces, "v(out)")
-pm = phase_margin(res.traces, "v(out)")
-gm = gain_margin_db(res.traces, "v(out)")
+f, mag_db, ph = ac_gain_phase(res.traces, "v(n1)")
+pm = phase_margin(res.traces, "v(n1)")
+gm = gain_margin_db(res.traces, "v(n1)")
 print(pm, gm)
 ```
 
