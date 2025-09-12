@@ -42,17 +42,18 @@ def build_pt1000_chain(
     c = Circuit("pt1000_chain")
     vin = Net("vin")  # sense node
     vout = Net("vout")
+    vdd = Net("vdd")
 
     VDD = Vdc("dd", p.vdd)
     c.add(VDD)
-    c.connect(VDD.ports[0], Net("vdd"))
+    c.connect(VDD.ports[0], vdd)
     c.connect(VDD.ports[1], GND)
 
     # Pull-up and RTD
     Rpu = Resistor("pu", p.r_pu_nom)
     Rrtd = Resistor("rtd", r_rtd)
     c.add(Rpu, Rrtd)
-    c.connect(Rpu.ports[0], Net("vdd"))
+    c.connect(Rpu.ports[0], vdd)
     c.connect(Rpu.ports[1], vin)
     c.connect(Rrtd.ports[0], vin)
     c.connect(Rrtd.ports[1], GND)
