@@ -4,12 +4,10 @@ import math
 import random
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import cast
 
 from ..core.circuit import Circuit
 from ..io.raw_reader import parse_ngspice_ascii_raw
-from ..spice import ngspice_cli
-from ..spice.base import RunResult as BaseRunResult
+from ..spice.registry import get_run_directives
 from .core import AnalysisResult
 
 
@@ -25,11 +23,12 @@ def _directives_with_params(base: list[str], p: Mapping[str, float | str]) -> li
 
 
 def _run_with_params(net: str, lines_with_params: list[str]) -> AnalysisResult:
-    res = ngspice_cli.run_directives(net, lines_with_params)
+    run_directives = get_run_directives()
+    res = run_directives(net, lines_with_params)
     if res.returncode != 0 or not res.artifacts.raw_path:
         raise RuntimeError("NGSpice failed in worst-case run")
     traces = parse_ngspice_ascii_raw(res.artifacts.raw_path)
-    return AnalysisResult(run=cast(BaseRunResult, res), traces=traces)
+    return AnalysisResult(run=res, traces=traces)
 
 
 def worst_case(

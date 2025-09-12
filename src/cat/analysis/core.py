@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import cast
 
 from ..core.circuit import Circuit
+from ..io.log_reader import read_errors
 from ..io.raw_reader import TraceSet, parse_ngspice_ascii_raw
-from ..spice import ngspice_cli
 from ..spice.base import RunResult as BaseRunResult
+from ..spice.registry import get_run_directives
 
 
 @dataclass(frozen=True)
@@ -21,13 +21,20 @@ class _BaseAnalysis:
 
     def run(self, circuit: Circuit) -> AnalysisResult:
         net = circuit.build_netlist()
-        res = ngspice_cli.run_directives(net, self._directives())
+        run_directives = get_run_directives()
+        res = run_directives(net, self._directives())
         if res.returncode != 0:
-            raise RuntimeError(f"NGSpice exited with code {res.returncode}")
+            try:
+                with open(res.artifacts.log_path, encoding="utf-8", errors="ignore") as f:
+                    errs = read_errors(f.read())
+                msg = f"NGSpice exited with code {res.returncode}. Errors: {errs}"
+            except Exception:
+                msg = f"NGSpice exited with code {res.returncode}. stderr: {res.stderr[:200]}"
+            raise RuntimeError(msg)
         if not res.artifacts.raw_path:
             raise RuntimeError("NGSpice produced no RAW path")
         traces = parse_ngspice_ascii_raw(res.artifacts.raw_path)
-        return AnalysisResult(run=cast(BaseRunResult, res), traces=traces)
+        return AnalysisResult(run=res, traces=traces)
 
 
 class OP(_BaseAnalysis):

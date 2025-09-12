@@ -7,6 +7,7 @@ from cat.analysis import AC, ac_gain_phase
 from cat.core.circuit import Circuit
 from cat.core.components import VA, Capacitor, Resistor
 from cat.core.net import GND
+from cat.spice import ngspice_cli
 
 # RC com fonte AC (1 V)
 c = Circuit("ex_ac_bode")
@@ -38,3 +39,4 @@ ax2.grid(True, which="both")
 fig.suptitle("RC Bode")
 fig.tight_layout()
 savefig(fig, "ac_bode.png")
+ngspice_cli.cleanup_artifacts(res.run.artifacts)

@@ -123,7 +123,7 @@ class Vac(Component):
 # --------------------------------------------------------------------------------------
 # Helpers de criação com auto-ref (convenientes para notebooks/tests)
 # --------------------------------------------------------------------------------------
-_counter: dict[str, int] = {"R": 0, "C": 0, "V": 0}
+_counter: dict[str, int] = {"R": 0, "C": 0, "V": 0, "L": 0, "I": 0}
 
 
 def _next(prefix: str) -> str:
@@ -146,3 +146,62 @@ def V(value: str | float) -> Vdc:
 def VA(ac_mag: float = 1.0, ac_phase: float = 0.0, label: str | float = "") -> Vac:
     # label é apenas informativo; não aparece no card
     return Vac(ref=_next("V"), value=str(label), ac_mag=ac_mag, ac_phase=ac_phase)
+
+
+# --------------------------------------------------------------------------------------
+# Indutor e Fontes de Corrente
+# --------------------------------------------------------------------------------------
+
+
+class Inductor(Component):
+    """Indutor de 2 terminais; portas: a (positivo), b (negativo)."""
+
+    def __init__(self, ref: str, value: str | float = "") -> None:
+        super().__init__(ref=ref, value=value)
+        self._ports = (Port(self, "a", PortRole.POSITIVE), Port(self, "b", PortRole.NEGATIVE))
+
+    def spice_card(self, net_of: NetOf) -> str:
+        a, b = self.ports
+        return f"L{self.ref} {net_of(a)} {net_of(b)} {self.value}"
+
+
+class Idc(Component):
+    """Fonte de corrente DC; portas: p (de onde sai a corrente), n (retorno)."""
+
+    def __init__(self, ref: str, value: str | float = "") -> None:
+        super().__init__(ref=ref, value=value)
+        self._ports = (Port(self, "p", PortRole.POSITIVE), Port(self, "n", PortRole.NEGATIVE))
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p, n = self.ports
+        return f"I{self.ref} {net_of(p)} {net_of(n)} {self.value}"
+
+
+class Iac(Component):
+    """Fonte de corrente AC (small-signal). value é apenas label, AC usa ac_mag/ac_phase."""
+
+    def __init__(
+        self, ref: str, value: str | float = "", ac_mag: float = 1.0, ac_phase: float = 0.0
+    ) -> None:
+        super().__init__(ref=ref, value=value)
+        self.ac_mag = ac_mag
+        self.ac_phase = ac_phase
+        self._ports = (Port(self, "p", PortRole.POSITIVE), Port(self, "n", PortRole.NEGATIVE))
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p, n = self.ports
+        if self.ac_phase:
+            return f"I{self.ref} {net_of(p)} {net_of(n)} AC {self.ac_mag} {self.ac_phase}"
+        return f"I{self.ref} {net_of(p)} {net_of(n)} AC {self.ac_mag}"
+
+
+def L(value: str | float) -> Inductor:
+    return Inductor(ref=_next("L"), value=value)
+
+
+def I(value: str | float) -> Idc:  # noqa: E743 - single-letter helper kept for API symmetry
+    return Idc(ref=_next("I"), value=value)
+
+
+def IA(ac_mag: float = 1.0, ac_phase: float = 0.0, label: str | float = "") -> Iac:
+    return Iac(ref=_next("I"), value=str(label), ac_mag=ac_mag, ac_phase=ac_phase)

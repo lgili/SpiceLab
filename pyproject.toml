@@ -44,6 +44,9 @@ warn_redundant_casts = true
 warn_return_any = true
 disallow_untyped_defs = true
 disallow_any_generics = true
+# src-layout: avoid duplicate module detection in pre-commit envs
+explicit_package_bases = true
+mypy_path = "src"
 
 [tool.uv]
 dev-dependencies = [

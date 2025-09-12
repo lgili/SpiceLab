@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from ..core.circuit import Circuit
-from ..core.components import Capacitor, Resistor, Vac, Vdc  # sem Inductor por enquanto
+from ..core.components import Capacitor, Component, Iac, Idc, Inductor, Resistor, Vac, Vdc
 from ..core.net import GND, Net
 
 
@@ -78,8 +78,15 @@ def from_spice_netlist(text: str, *, title: str | None = None) -> Circuit:
             c.connect(cap.ports[0], _net_of(n1, nets))
             c.connect(cap.ports[1], _net_of(n2, nets))
 
-        # elif prefix == "L":  # aguardando componente Inductor no core
-        #     pass
+        elif prefix == "L":
+            # Lref n1 n2 value
+            if len(t) < 4:
+                continue
+            _, n1, n2, val = t[:4]
+            ind = Inductor(ref, _parse_value(val))
+            c.add(ind)
+            c.connect(ind.ports[0], _net_of(n1, nets))
+            c.connect(ind.ports[1], _net_of(n2, nets))
 
         elif prefix == "V":
             _, nplus, nminus, *rest = t
@@ -107,6 +114,30 @@ def from_spice_netlist(text: str, *, title: str | None = None) -> Circuit:
                 c.add(vdc)
                 c.connect(vdc.ports[0], _net_of(nplus, nets))
                 c.connect(vdc.ports[1], _net_of(nminus, nets))
+        elif prefix == "I":
+            # Corrente: Iref n+ n- DC <val> | AC <mag> [phase] | <val>
+            _, nplus, nminus, *rest = t
+            if not rest:
+                continue
+            if rest[0].upper() == "DC" and len(rest) >= 2:
+                val = rest[1]
+                src_obj: Component = Idc(ref, _parse_value(val))
+                c.add(src_obj)
+                c.connect(src_obj.ports[0], _net_of(nplus, nets))
+                c.connect(src_obj.ports[1], _net_of(nminus, nets))
+            elif rest[0].upper() == "AC" and len(rest) >= 2:
+                mag = float(rest[1])
+                phase = float(rest[2]) if len(rest) >= 3 else 0.0
+                src_obj = Iac(ref, "", ac_mag=mag, ac_phase=phase)
+                c.add(src_obj)
+                c.connect(src_obj.ports[0], _net_of(nplus, nets))
+                c.connect(src_obj.ports[1], _net_of(nminus, nets))
+            else:
+                val = rest[0]
+                src_obj = Idc(ref, _parse_value(val))
+                c.add(src_obj)
+                c.connect(src_obj.ports[0], _net_of(nplus, nets))
+                c.connect(src_obj.ports[1], _net_of(nminus, nets))
         else:
             # Ignora outros dispositivos por enquanto (I, D, X, etc.)
             continue

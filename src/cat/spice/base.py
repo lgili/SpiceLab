@@ -9,6 +9,8 @@ class RunArtifacts:
     netlist_path: str
     log_path: str
     raw_path: str | None
+    # Optional: working directory used for this run (when applicable)
+    workdir: str | None = None
 
 
 @dataclass

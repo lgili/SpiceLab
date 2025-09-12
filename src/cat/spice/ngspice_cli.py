@@ -1,30 +1,20 @@
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import tempfile
 from collections.abc import Sequence
-from dataclasses import dataclass
 from pathlib import Path
 
-
-@dataclass(frozen=True)
-class RunArtifacts:
-    workdir: Path
-    netlist_path: Path
-    raw_path: str | None
-    log_path: Path
-
-
-@dataclass(frozen=True)
-class RunResult:
-    returncode: int
-    stdout: str
-    stderr: str
-    artifacts: RunArtifacts
+from .base import RunArtifacts, RunResult
 
 
 def _which_ngspice() -> str:
+    # Permite override via variável de ambiente
+    env_exe = os.environ.get("CAT_SPICE_NGSPICE")
+    if env_exe:
+        return env_exe
     exe = shutil.which("ngspice")
     if not exe:
         raise RuntimeError("ngspice not found in PATH.")
@@ -62,7 +52,13 @@ def _write_deck(
     return deck, log
 
 
-def run_directives(netlist: str, directives: Sequence[str], title: str = "cat_run") -> RunResult:
+def run_directives(
+    netlist: str,
+    directives: Sequence[str],
+    title: str = "cat_run",
+    *,
+    keep_workdir: bool = True,
+) -> RunResult:
     """
     Roda NGSpice em modo batch com deck controlado e retorna artefatos.
     Forçamos:
@@ -80,32 +76,61 @@ def run_directives(netlist: str, directives: Sequence[str], title: str = "cat_ru
     raw_path: str | None = str(raw_out) if raw_out.exists() else None
 
     return RunResult(
+        artifacts=RunArtifacts(
+            netlist_path=str(deck),
+            log_path=str(log),
+            raw_path=raw_path,
+            workdir=str(workdir) if keep_workdir else str(workdir),
+        ),
         returncode=proc.returncode,
         stdout=proc.stdout,
         stderr=proc.stderr,
-        artifacts=RunArtifacts(
-            workdir=workdir,
-            netlist_path=deck,
-            raw_path=raw_path,
-            log_path=log,
-        ),
     )
 
 
 # Conveniências
-def run_tran(netlist: str, tstep: str, tstop: str, tstart: str | None = None) -> RunResult:
+def run_tran(
+    netlist: str,
+    tstep: str,
+    tstop: str,
+    tstart: str | None = None,
+    *,
+    keep_workdir: bool = True,
+) -> RunResult:
     lines: list[str] = []
     if tstart:
         lines.append(f".tran {tstep} {tstop} {tstart}")
     else:
         lines.append(f".tran {tstep} {tstop}")
-    return run_directives(netlist, lines, title="tran")
+    return run_directives(netlist, lines, title="tran", keep_workdir=keep_workdir)
 
 
-def run_op(netlist: str) -> RunResult:
-    return run_directives(netlist, [".op"], title="op")
+def run_op(netlist: str, *, keep_workdir: bool = True) -> RunResult:
+    return run_directives(netlist, [".op"], title="op", keep_workdir=keep_workdir)
 
 
-def run_ac(netlist: str, sweep_type: str, n: int, fstart: float, fstop: float) -> RunResult:
+def run_ac(
+    netlist: str,
+    sweep_type: str,
+    n: int,
+    fstart: float,
+    fstop: float,
+    *,
+    keep_workdir: bool = True,
+) -> RunResult:
     lines = [f".ac {sweep_type} {n} {fstart} {fstop}"]
-    return run_directives(netlist, lines, title="ac")
+    return run_directives(netlist, lines, title="ac", keep_workdir=keep_workdir)
+
+
+def cleanup_artifacts(art: RunArtifacts) -> None:
+    """Remove a pasta de trabalho se ela tiver sido criada por este runner (cat_ng_*)."""
+    wd = art.workdir
+    if not wd:
+        return
+    p = Path(wd)
+    try:
+        if p.is_dir() and p.name.startswith("cat_ng_"):
+            # remove somente se for diretório temporário nosso
+            shutil.rmtree(p, ignore_errors=True)
+    except Exception:
+        pass

@@ -1,24 +1,18 @@
 # examples/monte_carlo_rc.py
 from __future__ import annotations
 
+import os
 import shutil
 import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from cat import (
-    GND,
-    TRAN,
-    Capacitor,
-    Circuit,
-    NormalPct,
-    Resistor,
-    Vdc,
-    hist,
-    monte_carlo,
-    plot_traces,
-)
+from cat.analysis import TRAN, NormalPct, monte_carlo
+from cat.analysis.viz.plot import plot_traces
+from cat.core.circuit import Circuit
+from cat.core.components import Capacitor, Resistor, Vdc
+from cat.core.net import GND
 
 
 def _rc_circuit() -> tuple[Circuit, Resistor, str]:
@@ -58,7 +52,7 @@ def main() -> None:
         n=n_samples,
         analysis_factory=lambda: TRAN("50us", "5ms"),
         seed=42,
-        workers=None,  # None => usa todos os núcleos; ajuste se quiser (ex.: workers=4)
+        workers=os.cpu_count() or 4,
     )
 
     # Coleta de Vout(t_sample) em cada execução
@@ -94,14 +88,12 @@ def main() -> None:
     fig.tight_layout()
 
     # 2) Histograma do erro em %
-    hist(
-        err_pct,
-        bins=50,
-        title=f"Monte Carlo paralelo (N={n_samples}) — erro @ {t_sample * 1e3:.1f} ms [%]",
-        xlabel="Erro [%]",
-        ylabel="Contagem",
-        show_mean=True,
-    )
+    plt.figure()
+    plt.hist(err_pct, bins=50, alpha=0.8, edgecolor="black")
+    plt.title(f"Monte Carlo paralelo (N={n_samples}) — erro @ {t_sample * 1e3:.1f} ms [%]")
+    plt.xlabel("Erro [%]")
+    plt.ylabel("Contagem")
+    plt.grid(True, alpha=0.3)
 
     plt.show()
 

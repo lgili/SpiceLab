@@ -145,9 +145,16 @@ def monte_carlo(
         for s in samples:
             runs.append(_run_one(s))
     else:
+        # Executa em paralelo preservando a ordem dos samples
+        runs_buf: list[AnalysisResult | None] = [None] * len(samples)
         with ThreadPoolExecutor(max_workers=workers) as ex:
-            futs = [ex.submit(_run_one, s) for s in samples]
-            for f in as_completed(futs):
-                runs.append(f.result())
+            fut_to_idx = {}
+            for idx, s in enumerate(samples):
+                fut = ex.submit(_run_one, s)
+                fut_to_idx[fut] = idx
+            for f in as_completed(list(fut_to_idx.keys())):
+                idx = fut_to_idx[f]
+                runs_buf[idx] = f.result()
+        runs = [r for r in runs_buf if r is not None]
 
     return MonteCarloResult(samples=samples, runs=runs)

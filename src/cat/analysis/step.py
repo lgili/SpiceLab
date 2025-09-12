@@ -4,12 +4,11 @@ from collections.abc import Callable, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from itertools import product
-from typing import TypeVar, cast
+from typing import TypeVar
 
 from ..core.circuit import Circuit
 from ..io.raw_reader import parse_ngspice_ascii_raw
-from ..spice import ngspice_cli
-from ..spice.base import RunResult as BaseRunResult
+from ..spice.registry import get_run_directives
 from .core import AnalysisResult
 
 A = TypeVar("A")  # instância de análise com método _directives()
@@ -36,13 +35,14 @@ def _directives_with_params(
 
 
 def _run_once_with_params_text(netlist: str, lines_with_params: list[str]) -> AnalysisResult:
-    res = ngspice_cli.run_directives(netlist, lines_with_params)
+    run_directives = get_run_directives()
+    res = run_directives(netlist, lines_with_params)
     if res.returncode != 0:
         raise RuntimeError(f"NGSpice exited with code {res.returncode}")
     if not res.artifacts.raw_path:
         raise RuntimeError("NGSpice produced no RAW path")
     traces = parse_ngspice_ascii_raw(res.artifacts.raw_path)
-    return AnalysisResult(run=cast(BaseRunResult, res), traces=traces)
+    return AnalysisResult(run=res, traces=traces)
 
 
 def step_param(
@@ -62,14 +62,19 @@ def step_param(
             lines_with_params = _directives_with_params(base_dirs_one, point)
             runs.append(_run_once_with_params_text(net, lines_with_params))
     else:
-        futs = []
+        # Preserva ordem dos pontos mesmo com execução paralela
+        runs_buf: list[AnalysisResult | None] = [None] * len(grid_list)
         with ThreadPoolExecutor(max_workers=workers) as ex:
-            for point in grid_list:
+            fut_to_idx = {}
+            for idx, point in enumerate(grid_list):
                 base_dirs_two: list[str] = analysis_factory()._directives()  # type: ignore[attr-defined]
                 lines_with_params2 = _directives_with_params(base_dirs_two, point)
-                futs.append(ex.submit(_run_once_with_params_text, net, lines_with_params2))
-            for f in as_completed(futs):
-                runs.append(f.result())
+                fut = ex.submit(_run_once_with_params_text, net, lines_with_params2)
+                fut_to_idx[fut] = idx
+            for f in as_completed(list(fut_to_idx.keys())):
+                idx = fut_to_idx[f]
+                runs_buf[idx] = f.result()
+        runs = [r for r in runs_buf if r is not None]
 
     last = grid_list[-1] if grid_list else {}
     return StepResult(params=last, grid=grid_list, runs=runs)
@@ -97,14 +102,19 @@ def step_grid(
             lines_with_params = _directives_with_params(base_dirs_one, point)
             runs.append(_run_once_with_params_text(net, lines_with_params))
     else:
-        futs = []
+        # Preserva ordem do grid em execução paralela
+        runs_buf: list[AnalysisResult | None] = [None] * len(points)
         with ThreadPoolExecutor(max_workers=workers) as ex:
-            for point in points:
+            fut_to_idx = {}
+            for idx, point in enumerate(points):
                 base_dirs_two: list[str] = analysis_factory()._directives()  # type: ignore[attr-defined]
                 lines_with_params2 = _directives_with_params(base_dirs_two, point)
-                futs.append(ex.submit(_run_once_with_params_text, net, lines_with_params2))
-            for f in as_completed(futs):
-                runs.append(f.result())
+                fut = ex.submit(_run_once_with_params_text, net, lines_with_params2)
+                fut_to_idx[fut] = idx
+            for f in as_completed(list(fut_to_idx.keys())):
+                idx = fut_to_idx[f]
+                runs_buf[idx] = f.result()
+        runs = [r for r in runs_buf if r is not None]
 
     last = points[-1] if points else {}
     return StepResult(params=last, grid=points, runs=runs)

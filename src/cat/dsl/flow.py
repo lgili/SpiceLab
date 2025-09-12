@@ -44,44 +44,21 @@ class Parallel:
         """
         c = Circuit(name)
         a = Net("in")
+        b = Net("out")
         for ch in self.branches:
-            # Adiciona componentes da branch
             for it in ch.items:
                 c.add(it)
-            # Conecta: a -- items... -- b
             prev = a
-            for comp in ch.items:
-                p0, p1 = comp.ports
-                c.connect(p0, prev)
-                mid = Net()
-                c.connect(p1, mid)
-                prev = mid
-            # Ao final, 'prev' é o último nó da branch; ligue o último pino ao 'b'
-            # Para isso, precisamos adicionar um "jumper": conectar o último pino ao 'b'
-            # Como não há "wire" explícito, fazemos o último pino *diretamente* em b
-            # alterando a última conexão para b em vez de um Net novo.
-            # Implementação simples: refaz o último componente para terminar em b.
-            # (Mais eficiente seria construir com b direto no loop)
-            # Refator: reconstruir a branch usando b direto
-        # Refator mais simples: reconstruir de fato
-        c2 = Circuit(name)
-        a2 = Net("in")
-        b2 = Net("out")
-        # Reconstroi de forma certa: cada branch usa o mesmo 'a2' e 'b2'
-        for ch in self.branches:
-            for it in ch.items:
-                c2.add(it)
-            prev = a2
             for j, comp in enumerate(ch.items):
                 p0, p1 = comp.ports
-                c2.connect(p0, prev)
+                c.connect(p0, prev)
                 if j == len(ch.items) - 1:
-                    c2.connect(p1, b2)
+                    c.connect(p1, b)
                 else:
                     mid = Net()
-                    c2.connect(p1, mid)
+                    c.connect(p1, mid)
                     prev = mid
-        return c2, a2, b2
+        return c, a, b
 
 
 def chain(*components: Component) -> Chain:

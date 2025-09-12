@@ -2,6 +2,7 @@ from .core import AC, DC, OP, TRAN, AnalysisResult
 from .metrics_ac import (
     Bode,
     ac_gain_phase,
+    bandwidth_3db,
     crossover_freq_0db,
     gain_at,
     gain_margin_db,
