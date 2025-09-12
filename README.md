@@ -38,6 +38,23 @@ print(df.head())
 
 ---
 
+## Dev shortcuts (Makefile)
+
+```bash
+# 1) Create venv and install in editable mode
+make install
+
+# 2) Run the circuit preview example (prints connectivity and generates preview.svg/.dot)
+make preview
+
+# If you prefer without venv (uses PYTHONPATH=src)
+make preview-ci
+```
+
+Install Graphviz to render the SVG preview (macOS: `brew install graphviz`, Ubuntu: `sudo apt install -y graphviz`).
+
+---
+
 ## ✨ Features (MVP)
 
 - **Zero-string connectivity:** connect **Port ↔ Net** objects (type-safe, IDE-friendly).
