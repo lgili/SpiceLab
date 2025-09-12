@@ -1,0 +1,40 @@
+site_name: PyCircuitKit
+site_description: Circuit simulation helpers and analysis utilities
+site_author: lgili
+repo_name: lgili/PyCircuitKit
+
+theme:
+  name: material
+  language: en
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            # Ensure the project's source directory is included so
+            # mkdocstrings can import the local `cat` package.
+            search_path:
+              - src
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Getting Started: getting-started.md
+  - Examples: examples.md
+  - API Reference:
+      - Core: reference/core.md
+      - IO: reference/io.md
+      - Analysis: reference/analysis.md
+extra_css:
+  - assets/stylesheets/extra.css
+extra: {}
