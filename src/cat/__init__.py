@@ -51,18 +51,32 @@ from .analysis.viz.plot import (
 from .core.circuit import Circuit
 from .core.components import (
     IA,
+    IP,
+    IPWL,
+    IPWL_T,
+    ISIN,
+    ISIN_T,
     VA,
+    VP,
+    VPWL,
+    VPWL_T,
+    VSIN,
+    VSIN_T,
     C,
     Capacitor,
     I,
     Iac,
     Idc,
     Inductor,
+    Ipulse,
+    Ipwl,
     L,
     R,
     Resistor,
     V,
     Vdc,
+    Vpulse,
+    Vpwl,
 )
 from .core.net import GND, Net
 
@@ -73,9 +87,18 @@ __all__ = [
     "GND",
     "Resistor",
     "Capacitor",
+    "Vpulse",
+    "Ipulse",
+    "Vpwl",
+    "Ipwl",
     "Inductor",
     "Vdc",
     "VA",
+    "VP",
+    "VSIN",
+    "ISIN",
+    "VPWL",
+    "IPWL",
     "R",
     "C",
     "V",
@@ -84,6 +107,7 @@ __all__ = [
     "Iac",
     "I",
     "IA",
+    "IP",
     # Analyses
     "OP",
     "TRAN",
@@ -127,4 +151,12 @@ __all__ = [
     "plot_traces",
     "plot_bode",
     "plot_sweep_df",
+]
+
+# Typed source helpers (also export for convenience)
+__all__ += [
+    "VSIN_T",
+    "ISIN_T",
+    "VPWL_T",
+    "IPWL_T",
 ]

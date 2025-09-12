@@ -1,24 +1,57 @@
-repos:
-  - repo: local
-    hooks:
-      - id: ruff-check
-        name: Ruff check
-        entry: uv run ruff check .
-        language: system
-        types: [python]
-      - id: ruff-format
-        name: Ruff format
-        entry: uv run ruff format .
-        language: system
-        types: [python]
-      - id: mypy
-        name: Mypy type-check
-        entry: uv run mypy src tests
-        language: system
-        types: [python]
+name: CI
 
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
-    hooks:
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  lint-type-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install ruff mypy pytest pytest-cov
+      - name: Ruff (format + lint)
+        run: |
+          ruff version
+          ruff format .
+          ruff check .
+      - name: Mypy (type-check)
+        run: |
+          mypy --version
+          mypy --explicit-package-bases src tests
+      - name: Pytest
+        env:
+          PYTHONWARNINGS: default
+        run: |
+          pytest -q --maxfail=1 --disable-warnings --cov=cat --cov-report=term-missing
+
+  ngspice-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install NGSpice (Ubuntu)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ngspice
+          ngspice -v || true
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest pytest-cov
+      - name: Pytest (with ngspice)
+        env:
+          PYTHONWARNINGS: default
+        run: |
+          pytest -q --maxfail=1 --disable-warnings --cov=cat --cov-report=term-missing

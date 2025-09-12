@@ -4,7 +4,7 @@
 
 Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN / .AC) and **analyze** electronic circuits with a clean, Pythonic API. CAT targets real engineering workflows: parameter sweeps, **Monte Carlo**, worst‑case (soon), and painless result handling in NumPy/Pandas.
 
-> **Status:** MVP scaffold — strongly-typed Circuit DSL (Style 1: Ports & Nets), NGSpice (CLI) smoke runner for `.op`, utilities for E-series rounding and basic RC design helpers. Roadmap includes AC/DC/TRAN, parsers, Monte-Carlo & Worst-Case, DSL Styles 2 & 3, and LTspice adapter.
+> **Status:** MVP — Circuit DSL (Ports & Nets), NGSpice (CLI) `.op/.tran/.ac`, LTspice netlist import (includes `.include/.param`, V/I PULSE/SIN/PWL), Monte‑Carlo, and metrics/plots. Roadmap: control sources (E/G/F/H), worst‑case, docs site.
 
 ---
 
@@ -18,10 +18,11 @@ Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN /
   - **E-series** enumerator & rounding (E12/E24/E48/E96).
   - **RC low-pass** design helper by target `f_c`.
 
-### What’s new in this MVP
-- **.TRAN end‑to‑end**: run transient with NGSpice and parse traces into a `TraceSet`.
-- **Monte Carlo (beta)**: vary component values by distributions; stack results into Pandas.
-- **LTspice netlist import (beta)**: parse SPICE netlists exported from LTspice to a `Circuit` and run with NGSpice.
+### Highlights
+- **AC/DC/TRAN** via NGSpice (CLI).
+- **LTspice import**: handles `.include/.param`, V/I PULSE/SIN/PWL.
+- **Monte Carlo**: parallel, deterministic order; DataFrame stacking.
+- **Metrics/Plots**: AC (Bode/PM/GM) e tran (rise/fall/settling/overshoot).
 
 ---
 
@@ -34,30 +35,23 @@ Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN /
 
 > LTspice support is planned. For now, NGSpice is the reference backend.
 
-### macOS
+### macOS (pip)
 
 ```bash
 # 1) Install NGSpice
 brew install ngspice
 
-# 2) (Recommended) Install uv (fast Python package manager)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-# restart your shell so `uv` is on PATH
-
-# 3) Clone and set up the project
+# 2) Clone and set up the project
 git clone https://github.com/<your-org>/pycircuitkit.git
 cd pycircuitkit
-uv sync --all-extras --dev
-```
-
-### Alternative without uv:
-```bash
-python3 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate
 pip install -U pip
-pip install -e ".[opt]"  # installs project (editable) + optional deps if defined
-pip install -r dev-requirements.txt  # if you keep one (pytest, mypy, ruff, etc.)
+pip install -e .
+pip install ruff mypy pytest pytest-cov
 ```
+
+> Optionally, add `matplotlib` and `pandas` for plotting/stacking examples.
 
 ### Linux (Ubuntu/Debian)
 ```bash
@@ -65,29 +59,30 @@ pip install -r dev-requirements.txt  # if you keep one (pytest, mypy, ruff, etc.
 sudo apt update
 sudo apt install -y ngspice
 
-# 2) Install uv (recommended)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# 3) Clone and set up
+# 2) Clone and set up
 git clone https://github.com/<your-org>/pycircuitkit.git
 cd pycircuitkit
-uv sync --all-extras --dev
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -e .
+pip install ruff mypy pytest pytest-cov
 ```
 
-### Windows
+### Windows (PowerShell)
 ```powershell
 # 1) Install NGSpice
 # Download installer from: https://ngspice.sourceforge.io/download.html
 # Add the ngspice bin folder (e.g. C:\Program Files\Spice64\bin) to your PATH.
 
-# 2) Install uv (recommended)
-# In PowerShell:
-irm https://astral.sh/uv/install.ps1 | iex
-
-# 3) Clone and set up
+# 2) Clone and set up
 git clone https://github.com/<your-org>/pycircuitkit.git
 cd pycircuitkit
-uv sync --all-extras --dev
+py -m venv .venv
+.venv\Scripts\activate
+pip install -U pip
+pip install -e .
+pip install ruff mypy pytest pytest-cov
 ```
 
 ### Alternative without uv:
@@ -99,7 +94,7 @@ pip install -e ".[opt]"
 pip install -r dev-requirements.txt
 ```
 
-If ngspice is not on your PATH, CAT’s tests that require it will auto-skip.
+If ngspice is not on your PATH, tests that require it will auto-skip.
 
 ## 🚀 Quick Start (User Guide)
 
@@ -200,13 +195,13 @@ pre-commit install
 
 Run checks locally:
 ```bash
-uv run ruff check .
-uv run ruff format --check .
-uv run mypy src
-uv run pytest -q
+ruff check .
+ruff format --check .
+mypy --explicit-package-bases src
+pytest -q
 ```
 
-CI (GitHub Actions) runs the same steps. The NGSpice smoke test is skipped if ngspice isn’t installed on the runner.
+CI (GitHub Actions) runs the same steps via pip. NGSpice smoke tests are skipped if ngspice isn’t present on the runner.
 
 Adding Components
 
