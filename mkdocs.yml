@@ -21,10 +21,12 @@ plugins:
         python:
           options:
             docstring_style: google
-            # Ensure the project's source directory is included so
-            # mkdocstrings can import the local `cat` package.
-            search_path:
-              - src
+            # Extra options must be nested under `extra` to avoid deprecation
+            # warnings. `search_path` tells the python handler where to look
+            # for the local `cat` package (the src/ directory).
+            extra:
+              search_path:
+                - src
 
 nav:
   - Home: index.md
