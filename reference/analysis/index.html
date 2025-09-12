@@ -333,6 +333,28 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../examples-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples Gallery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
     
     
     
@@ -342,10 +364,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -358,12 +380,35 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Guides
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Circuit Preview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -424,6 +469,29 @@
   
   <span class="md-ellipsis">
     AC Stability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../opamp-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Op-Amp Stability
     
   </span>
   
@@ -549,10 +617,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   
@@ -565,8 +633,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             API Reference
           </label>
@@ -1325,19 +1393,19 @@
 
               <details class="quote">
                 <summary>Source code in <code>src/cat/analysis/metrics_ac.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
-<span class="normal">17</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">17</span>
 <span class="normal">18</span>
 <span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
-<span class="normal">22</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="normal">22</span>
+<span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Bode</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Container opcional para quem preferir um objeto tipado.&quot;&quot;&quot;</span>
 
-    <span class="n">f</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>  <span class="c1"># Hz</span>
-    <span class="n">mag_db</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>  <span class="c1"># dB</span>
-    <span class="n">ph_deg</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>  <span class="c1"># graus</span>
+    <span class="n">f</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>  <span class="c1"># Hz</span>
+    <span class="n">mag_db</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>  <span class="c1"># dB</span>
+    <span class="n">ph_deg</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>  <span class="c1"># graus</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -1784,12 +1852,12 @@
 
               <details class="quote">
                 <summary>Source code in <code>src/cat/analysis/metrics_tran.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">136</span>
 <span class="normal">137</span>
 <span class="normal">138</span>
-<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RiseFall</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Tempos de subida/descida entre frações de nível (ex.: 10%→90%).&quot;&quot;&quot;</span>
 
@@ -1836,17 +1904,17 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_ac.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">234</span>
-<span class="normal">235</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">235</span>
 <span class="normal">236</span>
 <span class="normal">237</span>
 <span class="normal">238</span>
 <span class="normal">239</span>
-<span class="normal">240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ac_gain_phase</span><span class="p">(</span>
+<span class="normal">240</span>
+<span class="normal">241</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ac_gain_phase</span><span class="p">(</span>
     <span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span>
     <span class="n">y_out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">y_in</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retorna (f, mag_db, fase_deg).&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_get_xy_ac</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">y_out</span><span class="o">=</span><span class="n">y_out</span><span class="p">,</span> <span class="n">y_in</span><span class="o">=</span><span class="n">y_in</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -1871,8 +1939,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_ac.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">266</span>
-<span class="normal">267</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">267</span>
 <span class="normal">268</span>
 <span class="normal">269</span>
 <span class="normal">270</span>
@@ -1891,7 +1958,8 @@
 <span class="normal">283</span>
 <span class="normal">284</span>
 <span class="normal">285</span>
-<span class="normal">286</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bandwidth_3db</span><span class="p">(</span>
+<span class="normal">286</span>
+<span class="normal">287</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">bandwidth_3db</span><span class="p">(</span>
     <span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span>
     <span class="n">y_out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">y_in</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1988,8 +2056,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_ac.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">289</span>
-<span class="normal">290</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">290</span>
 <span class="normal">291</span>
 <span class="normal">292</span>
 <span class="normal">293</span>
@@ -2006,7 +2073,8 @@
 <span class="normal">304</span>
 <span class="normal">305</span>
 <span class="normal">306</span>
-<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">crossover_freq_0db</span><span class="p">(</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">crossover_freq_0db</span><span class="p">(</span>
     <span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span>
     <span class="n">y_out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">y_in</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2048,13 +2116,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_tran.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">251</span>
 <span class="normal">252</span>
 <span class="normal">253</span>
 <span class="normal">254</span>
@@ -2095,7 +2157,13 @@
 <span class="normal">289</span>
 <span class="normal">290</span>
 <span class="normal">291</span>
-<span class="normal">292</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">fall_time</span><span class="p">(</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">fall_time</span><span class="p">(</span>
     <span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span>
     <span class="n">y_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">frac_low</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
@@ -2165,15 +2233,15 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_ac.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">255</span>
-<span class="normal">256</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">256</span>
 <span class="normal">257</span>
 <span class="normal">258</span>
 <span class="normal">259</span>
 <span class="normal">260</span>
 <span class="normal">261</span>
 <span class="normal">262</span>
-<span class="normal">263</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gain_at</span><span class="p">(</span>
+<span class="normal">263</span>
+<span class="normal">264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gain_at</span><span class="p">(</span>
     <span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span>
     <span class="n">y_out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">f_hz</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -2205,10 +2273,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_basic.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
@@ -2216,7 +2281,10 @@
 <span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span>
-<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gain_db_from_traces</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span> <span class="n">y_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gain_db_from_traces</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span> <span class="n">y_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;Ganho&quot; DC aproximado, usando a diferença final - inicial do traço (em dB do delta).</span>
 <span class="sd">    É um helper simples para testes; não é igual a ganho AC.</span>
@@ -2250,8 +2318,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_ac.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">332</span>
-<span class="normal">333</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">333</span>
 <span class="normal">334</span>
 <span class="normal">335</span>
 <span class="normal">336</span>
@@ -2259,7 +2326,8 @@
 <span class="normal">338</span>
 <span class="normal">339</span>
 <span class="normal">340</span>
-<span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gain_margin_db</span><span class="p">(</span>
+<span class="normal">341</span>
+<span class="normal">342</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">gain_margin_db</span><span class="p">(</span>
     <span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span>
     <span class="n">y_out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">y_in</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2291,17 +2359,17 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_ac.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">344</span>
-<span class="normal">345</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">345</span>
 <span class="normal">346</span>
 <span class="normal">347</span>
 <span class="normal">348</span>
 <span class="normal">349</span>
-<span class="normal">350</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">loop_gain_bode</span><span class="p">(</span>
+<span class="normal">350</span>
+<span class="normal">351</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">loop_gain_bode</span><span class="p">(</span>
     <span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span>
     <span class="n">y_out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">y_in</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retorna Bode do loop (y_out / y_in) como tupla (f, mag_db, fase).&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ac_gain_phase</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">y_out</span><span class="o">=</span><span class="n">y_out</span><span class="p">,</span> <span class="n">y_in</span><span class="o">=</span><span class="n">y_in</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2465,9 +2533,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_tran.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">71</span>
 <span class="normal">72</span>
 <span class="normal">73</span>
 <span class="normal">74</span>
@@ -2486,7 +2552,9 @@
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">overshoot</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span> <span class="n">y_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OvershootResult</span><span class="p">:</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">overshoot</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span> <span class="n">y_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OvershootResult</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Overshoot relativo ao degrau: (Vmax - Vfinal) / (Vfinal - Vinicial).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2530,9 +2598,9 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_basic.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">overshoot_pct</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span> <span class="n">y_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">overshoot_pct</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span> <span class="n">y_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Overshoot em % relativo ao degrau.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">_ov</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">y_name</span><span class="p">)</span><span class="o">.</span><span class="n">overshoot</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -2557,8 +2625,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_ac.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">310</span>
-<span class="normal">311</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">311</span>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
@@ -2576,7 +2643,8 @@
 <span class="normal">326</span>
 <span class="normal">327</span>
 <span class="normal">328</span>
-<span class="normal">329</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">phase_crossover_freq</span><span class="p">(</span>
+<span class="normal">329</span>
+<span class="normal">330</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">phase_crossover_freq</span><span class="p">(</span>
     <span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span>
     <span class="n">y_out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">y_in</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2621,8 +2689,7 @@ onde wp é obtido via largura de banda de -3 dB.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_ac.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">353</span>
-<span class="normal">354</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">354</span>
 <span class="normal">355</span>
 <span class="normal">356</span>
 <span class="normal">357</span>
@@ -2649,7 +2716,8 @@ onde wp é obtido via largura de banda de -3 dB.</p>
 <span class="normal">378</span>
 <span class="normal">379</span>
 <span class="normal">380</span>
-<span class="normal">381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">phase_margin</span><span class="p">(</span>
+<span class="normal">381</span>
+<span class="normal">382</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">phase_margin</span><span class="p">(</span>
     <span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span>
     <span class="n">y_out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">y_in</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2707,13 +2775,7 @@ onde wp é obtido via largura de banda de -3 dB.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_tran.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">195</span>
 <span class="normal">196</span>
 <span class="normal">197</span>
 <span class="normal">198</span>
@@ -2760,7 +2822,13 @@ onde wp é obtido via largura de banda de -3 dB.</p>
 <span class="normal">239</span>
 <span class="normal">240</span>
 <span class="normal">241</span>
-<span class="normal">242</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rise_time</span><span class="p">(</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rise_time</span><span class="p">(</span>
     <span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span>
     <span class="n">y_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">frac_low</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
@@ -3064,9 +3132,7 @@ e permanece assim até o final.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/cat/analysis/metrics_tran.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
@@ -3084,7 +3150,9 @@ e permanece assim até o final.</p>
 <span class="normal">123</span>
 <span class="normal">124</span>
 <span class="normal">125</span>
-<span class="normal">126</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">settling_time</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span> <span class="n">y_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SettlingResult</span><span class="p">:</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">settling_time</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">TraceSet</span><span class="p">,</span> <span class="n">y_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SettlingResult</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Primeiro instante em que |y(t) - y_final| &lt;= tol*|y_final - y_initial|</span>
 <span class="sd">    e permanece assim até o final.</span>

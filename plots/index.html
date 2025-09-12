@@ -333,6 +333,28 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples Gallery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -346,10 +368,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -362,12 +384,35 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Guides
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Circuit Preview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -428,6 +473,29 @@
   
   <span class="md-ellipsis">
     AC Stability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../opamp-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Op-Amp Stability
     
   </span>
   
@@ -620,10 +688,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   
@@ -636,8 +704,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             API Reference
           </label>
@@ -792,16 +860,16 @@
 <p>CAT includes light plotting helpers that use Matplotlib when available.</p>
 <h2 id="plot-traces">Plot traces</h2>
 <pre><code class="language-python">from cat.analysis.viz.plot import plot_traces
-fig = plot_traces(res.traces, ys=[&quot;v(out)&quot;], title=&quot;Vout vs time&quot;)
+fig = plot_traces(res.traces, ys=[&quot;v(n1)&quot;], title=&quot;Vout vs time&quot;)
 </code></pre>
 <h2 id="bode-plot">Bode plot</h2>
 <pre><code class="language-python">from cat.analysis.viz.plot import plot_bode
 # y must be a complex trace (e.g., AC result)
-fig_mag, fig_phase = plot_bode(res.traces, y=&quot;v(out)&quot;)
+fig_mag, fig_phase = plot_bode(res.traces, y=&quot;v(n1)&quot;)
 </code></pre>
 <h2 id="plot-sweeps-stacked-dataframe">Plot sweeps (stacked DataFrame)</h2>
 <pre><code class="language-python">from cat.analysis.viz.plot import plot_sweep_df
-fig = plot_sweep_df(df, x=&quot;time&quot;, y=&quot;v(out)&quot;, hue=&quot;R&quot;, title=&quot;Sweep R&quot;)
+fig = plot_sweep_df(df, x=&quot;time&quot;, y=&quot;v(n1)&quot;, hue=&quot;R&quot;, title=&quot;Sweep R&quot;)
 </code></pre>
 <p>If Matplotlib is not installed, these helpers raise a clear error.</p>
 

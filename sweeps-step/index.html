@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/sweeps-step/">
       
       
-        <link rel="prev" href="../examples/">
+        <link rel="prev" href="../preview/">
       
       
         <link rel="next" href="../monte-carlo/">
@@ -333,6 +333,28 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples Gallery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -346,10 +368,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   
@@ -362,12 +384,35 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Guides
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Circuit Preview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -505,6 +550,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../opamp-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Op-Amp Stability
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ltspice-import/" class="md-nav__link">
         
   
@@ -611,10 +679,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   
@@ -627,8 +695,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             API Reference
           </label>
@@ -776,6 +844,7 @@
 <li>Python-side sweeps (<code>step_param</code>, <code>step_grid</code>) — easiest to combine with Pandas.</li>
 <li>Native SPICE <code>.step</code> directives — use <code>run_step_native</code> to parse multi-plot RAW.</li>
 </ul>
+<p><img alt="STEP grid" src="../assets/examples/step_grid.png" /></p>
 <h2 id="python-sweeps">Python sweeps</h2>
 <p>Single parameter:</p>
 <pre><code class="language-python">from cat.analysis import step_param, TRAN
@@ -788,11 +857,11 @@ step = step_grid(c, grid, analysis_factory=lambda: TRAN(&quot;50us&quot;,&quot;5
 </code></pre>
 <p>Stacking to DataFrame:</p>
 <pre><code class="language-python">from cat.analysis import stack_step_to_df
-df = stack_step_to_df(step, y=[&quot;v(out)&quot;], with_x=True)
+df = stack_step_to_df(step, y=[&quot;v(n1)&quot;], with_x=True)
 </code></pre>
 <p>Plotting grouped curves (optional):</p>
 <pre><code class="language-python">from cat.analysis.viz.plot import plot_sweep_df
-fig = plot_sweep_df(df, x=&quot;time&quot;, y=&quot;v(out)&quot;, hue=&quot;R&quot;)
+fig = plot_sweep_df(df, x=&quot;time&quot;, y=&quot;v(n1)&quot;, hue=&quot;R&quot;)
 </code></pre>
 <h2 id="native-step">Native .STEP</h2>
 <p>Provide directives that include <code>.step</code> and parse all plots:</p>

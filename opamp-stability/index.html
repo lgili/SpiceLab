@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/ltspice-import/">
+        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/opamp-stability/">
       
       
-        <link rel="prev" href="../opamp-stability/">
+        <link rel="prev" href="../ac-stability/">
       
       
-        <link rel="next" href="../plots/">
+        <link rel="next" href="../ltspice-import/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>LTspice Import - PyCircuitKit</title>
+        <title>Op-Amp Stability - PyCircuitKit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#importing-ltspice-netlists" class="md-skip">
+        <a href="#op-amp-stability" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              LTspice Import
+              Op-Amp Stability
             
           </span>
         </div>
@@ -487,29 +487,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../opamp-stability/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Op-Amp Stability
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -527,7 +504,7 @@
   
   
   <span class="md-ellipsis">
-    LTspice Import
+    Op-Amp Stability
     
   </span>
   
@@ -540,7 +517,7 @@
   
   
   <span class="md-ellipsis">
-    LTspice Import
+    Op-Amp Stability
     
   </span>
   
@@ -563,27 +540,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#supported-features" class="md-nav__link">
+  <a href="#inverting-topology-with-ideal-oa" class="md-nav__link">
     <span class="md-ellipsis">
-      Supported features
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quick example
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Notes
+      Inverting topology with ideal OA
     </span>
   </a>
   
@@ -593,6 +552,29 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ltspice-import/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LTspice Import
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -814,27 +796,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#supported-features" class="md-nav__link">
+  <a href="#inverting-topology-with-ideal-oa" class="md-nav__link">
     <span class="md-ellipsis">
-      Supported features
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quick example
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Notes
+      Inverting topology with ideal OA
     </span>
   </a>
   
@@ -856,35 +820,39 @@
 
 
 
-<h1 id="importing-ltspice-netlists">Importing LTspice Netlists</h1>
-<p>CAT can import SPICE netlists exported from LTspice (View → SPICE Netlist) and
-run analyses using the same Python API.</p>
-<h2 id="supported-features">Supported features</h2>
-<ul>
-<li><code>.include</code> and <code>.param</code> (expanded recursively)</li>
-<li>Devices: R, C, L, V/I (DC/AC), <code>PULSE</code>, <code>SIN</code>, <code>PWL</code></li>
-<li>Controlled sources: E/G/F/H</li>
-<li>Diode <code>D</code></li>
-<li>Switches: <code>S</code> (VSWITCH), <code>W</code> (ISWITCH)</li>
-<li>Simple <code>.SUBCKT</code> flattening (one level, params via <code>{NAME}</code> placeholders)</li>
-</ul>
-<h2 id="quick-example">Quick example</h2>
-<pre><code class="language-python">from cat.io.ltspice_parser import from_ltspice_file
-from cat.analysis import run_tran
+<h1 id="op-amp-stability">Op-Amp Stability</h1>
+<p>Analyze closed-loop Bode and margins using the ideal op-amp helper.</p>
+<p><img alt="Op-Amp Bode" src="../assets/examples/opamp_bode.png" /></p>
+<h2 id="inverting-topology-with-ideal-oa">Inverting topology with ideal OA</h2>
+<pre><code class="language-python">from cat import Circuit, GND, opamp_inverting
+from cat.core.components import VA, R
+from cat.core.net import Net
+from cat.analysis import AC, ac_gain_phase, phase_margin, gain_margin_db
 
-c = from_ltspice_file(&quot;./my_filter.cir&quot;)  # exported plain netlist
-res_df = run_tran(c, &quot;1us&quot;, &quot;2ms&quot;, return_df=True)
-print(res_df.head())
+c = Circuit(&quot;opamp_inv&quot;)
+
+# Small-signal input (1 V)
+vin = VA(ac_mag=1.0); c.add(vin)
+
+# Output/load node
+vout = Net(&quot;vout&quot;); load = R(&quot;10k&quot;); c.add(load)
+c.connect(load.ports[0], vout); c.connect(load.ports[1], GND)
+
+# Inverting amplifier: gain = -Rf/Rin = -100k/10k = -10
+opamp_inverting(c, inp=vin.ports[0], out=vout, ref=GND, Rin=&quot;10k&quot;, Rf=&quot;100k&quot;, gain=1e6)
+c.connect(vin.ports[1], GND)
+
+res = AC(&quot;dec&quot;, 201, 10.0, 1e6).run(c)
+f, mag_db, ph = ac_gain_phase(res.traces, &quot;v(n1)&quot;)
+pm = phase_margin(res.traces, &quot;v(n1)&quot;)
+gm = gain_margin_db(res.traces, &quot;v(n1)&quot;)
+print(pm, gm)
 </code></pre>
-<h2 id="notes">Notes</h2>
-<ul>
-<li><code>.asc</code> schematic files are not netlists — export the SPICE netlist first.</li>
-<li>For switches, add your <code>.model</code> directives via <code>circuit.add_directive(".model ...")</code>
-  if the model is not already present in the netlist.</li>
-<li>SUBCKT flattening: the importer expands a single level of subcircuit instances.
-  Parameters are substituted when referenced as <code>{PARAM}</code> in the subckt body.</li>
-<li>If you see errors around unknown cards, file an issue with a minimal netlist.</li>
-</ul>
+<p>Notes:
+- The ideal OA is modeled as a high-gain VCVS; no power rails needed.
+- Use <code>plot_bode(ts, y)</code> to visualize complex AC traces.
+- <code>phase_margin</code> falls back to estimate if phase is missing; provide complex or phase info when possible.</p>
+<p>See also the runnable script under <code>examples/opamp_stability.py</code>.</p>
 
 
 

@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/ltspice-import/">
+        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/examples-gallery/">
       
       
-        <link rel="prev" href="../opamp-stability/">
+        <link rel="prev" href="../examples/">
       
       
-        <link rel="next" href="../plots/">
+        <link rel="next" href="../preview/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>LTspice Import - PyCircuitKit</title>
+        <title>Examples Gallery - PyCircuitKit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#importing-ltspice-netlists" class="md-skip">
+        <a href="#examples-gallery" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              LTspice Import
+              Examples Gallery
             
           </span>
         </div>
@@ -333,10 +333,32 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../examples-gallery/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Examples Gallery
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -347,6 +369,62 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#rc-bode-ac" class="md-nav__link">
+    <span class="md-ellipsis">
+      RC Bode (AC)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#op-amp-closed-loop-bode" class="md-nav__link">
+    <span class="md-ellipsis">
+      Op-Amp Closed-Loop Bode
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-grid-rc-step-vs-r" class="md-nav__link">
+    <span class="md-ellipsis">
+      STEP Grid (RC step vs R)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monte-carlo-histogram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Monte Carlo (histogram)
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -355,20 +433,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
@@ -384,7 +460,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Guides
@@ -510,32 +586,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    LTspice Import
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../ltspice-import/" class="md-nav__link">
         
   
   
@@ -546,53 +600,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#supported-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      Supported features
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quick example
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Notes
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -814,27 +821,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#supported-features" class="md-nav__link">
+  <a href="#rc-bode-ac" class="md-nav__link">
     <span class="md-ellipsis">
-      Supported features
+      RC Bode (AC)
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
+  <a href="#op-amp-closed-loop-bode" class="md-nav__link">
     <span class="md-ellipsis">
-      Quick example
+      Op-Amp Closed-Loop Bode
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
+  <a href="#step-grid-rc-step-vs-r" class="md-nav__link">
     <span class="md-ellipsis">
-      Notes
+      STEP Grid (RC step vs R)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monte-carlo-histogram" class="md-nav__link">
+    <span class="md-ellipsis">
+      Monte Carlo (histogram)
     </span>
   </a>
   
@@ -856,34 +872,31 @@
 
 
 
-<h1 id="importing-ltspice-netlists">Importing LTspice Netlists</h1>
-<p>CAT can import SPICE netlists exported from LTspice (View → SPICE Netlist) and
-run analyses using the same Python API.</p>
-<h2 id="supported-features">Supported features</h2>
+<h1 id="examples-gallery">Examples Gallery</h1>
+<p>Curated outputs from runnable examples. Click images or links to explore.</p>
+<h2 id="rc-bode-ac">RC Bode (AC)</h2>
+<p><a href="../ac-stability/"><img alt="RC Bode" src="../assets/examples/ac_bode.png" /></a></p>
 <ul>
-<li><code>.include</code> and <code>.param</code> (expanded recursively)</li>
-<li>Devices: R, C, L, V/I (DC/AC), <code>PULSE</code>, <code>SIN</code>, <code>PWL</code></li>
-<li>Controlled sources: E/G/F/H</li>
-<li>Diode <code>D</code></li>
-<li>Switches: <code>S</code> (VSWITCH), <code>W</code> (ISWITCH)</li>
-<li>Simple <code>.SUBCKT</code> flattening (one level, params via <code>{NAME}</code> placeholders)</li>
+<li>Guide: AC Stability</li>
+<li>Script: <code>examples/ac_bode.py</code></li>
 </ul>
-<h2 id="quick-example">Quick example</h2>
-<pre><code class="language-python">from cat.io.ltspice_parser import from_ltspice_file
-from cat.analysis import run_tran
-
-c = from_ltspice_file(&quot;./my_filter.cir&quot;)  # exported plain netlist
-res_df = run_tran(c, &quot;1us&quot;, &quot;2ms&quot;, return_df=True)
-print(res_df.head())
-</code></pre>
-<h2 id="notes">Notes</h2>
+<h2 id="op-amp-closed-loop-bode">Op-Amp Closed-Loop Bode</h2>
+<p><a href="../opamp-stability/"><img alt="Op-Amp Bode" src="../assets/examples/opamp_bode.png" /></a></p>
 <ul>
-<li><code>.asc</code> schematic files are not netlists — export the SPICE netlist first.</li>
-<li>For switches, add your <code>.model</code> directives via <code>circuit.add_directive(".model ...")</code>
-  if the model is not already present in the netlist.</li>
-<li>SUBCKT flattening: the importer expands a single level of subcircuit instances.
-  Parameters are substituted when referenced as <code>{PARAM}</code> in the subckt body.</li>
-<li>If you see errors around unknown cards, file an issue with a minimal netlist.</li>
+<li>Guide: Op-Amp Stability</li>
+<li>Script: <code>examples/opamp_stability.py</code></li>
+</ul>
+<h2 id="step-grid-rc-step-vs-r">STEP Grid (RC step vs R)</h2>
+<p><a href="../sweeps-step/"><img alt="STEP Grid" src="../assets/examples/step_grid.png" /></a></p>
+<ul>
+<li>Guide: Sweeps and .STEP</li>
+<li>Script: <code>examples/step_sweep_fig.py</code></li>
+</ul>
+<h2 id="monte-carlo-histogram">Monte Carlo (histogram)</h2>
+<p><a href="../monte-carlo/"><img alt="Monte Carlo histogram" src="../assets/examples/mc_hist.png" /></a></p>
+<ul>
+<li>Guide: Monte Carlo</li>
+<li>Script: <code>examples/monte_carlo_fig.py</code></li>
 </ul>
 
 
