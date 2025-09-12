@@ -15,6 +15,8 @@ Documentation: https://lgili.github.io/PyCircuitKit/
 - Site: https://lgili.github.io/PyCircuitKit/
 - Getting Started: https://lgili.github.io/PyCircuitKit/getting-started/
 - Guides: Monte Carlo (https://lgili.github.io/PyCircuitKit/monte-carlo/) · AC Stability (https://lgili.github.io/PyCircuitKit/ac-stability/)
+- Examples: https://lgili.github.io/PyCircuitKit/examples/
+- Examples Gallery: https://lgili.github.io/PyCircuitKit/examples-gallery/
 
 ---
 

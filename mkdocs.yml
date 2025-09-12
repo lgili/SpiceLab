@@ -35,6 +35,7 @@ nav:
   - Getting Started: getting-started.md
   - Concepts: concepts.md
   - Examples: examples.md
+  - Examples Gallery: examples-gallery.md
   - Guides:
       - Sweeps and STEP: sweeps-step.md
       - Monte Carlo: monte-carlo.md

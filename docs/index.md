@@ -29,3 +29,4 @@ pip install -e .
 - Installation: installation.md
 - Getting started: getting-started.md
 - Examples: examples.md
+- Examples Gallery: examples-gallery.md
