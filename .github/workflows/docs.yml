@@ -17,6 +17,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install NGSpice (Ubuntu)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ngspice
+          ngspice -v || true
       - name: Install requirements
         run: |
           python -m pip install --upgrade pip
@@ -30,6 +35,19 @@ jobs:
 
       - name: Verify import (fail early)
         run: python -c "import importlib.util, traceback, sys; print('find_spec cat ->', importlib.util.find_spec('cat')); import cat; print('cat imported OK:', getattr(cat, '__file__', None))"
+      - name: Generate example figures
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src
+        run: |
+          set -e
+          echo "=== run examples to generate figures ==="
+          mkdir -p docs/assets/examples
+          pushd examples
+          python ac_bode.py
+          python opamp_stability.py
+          popd
+          cp -v examples/ac_bode.png docs/assets/examples/ac_bode.png
+          cp -v examples/opamp_bode.png docs/assets/examples/opamp_bode.png
 
       - name: Build site
         env:

@@ -2,6 +2,8 @@
 
 Analyze closed-loop Bode and margins using the ideal op-amp helper.
 
+![Op-Amp Bode](assets/examples/opamp_bode.png)
+
 ## Inverting topology with ideal OA
 ```python
 from cat import Circuit, GND, opamp_inverting

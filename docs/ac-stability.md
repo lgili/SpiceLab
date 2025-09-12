@@ -2,6 +2,8 @@
 
 Compute Bode magnitude/phase and stability margins from an AC run.
 
+![RC Bode](assets/examples/ac_bode.png)
+
 ## Quick Bode
 
 ```python
