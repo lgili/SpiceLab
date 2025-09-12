@@ -4,6 +4,7 @@ import copy
 import importlib
 import math
 import random as _random
+import sys
 from collections.abc import Callable, Mapping, Sequence
 from collections.abc import Mapping as TMapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -183,6 +184,7 @@ def monte_carlo(
     seed: int | None = None,
     label_fn: Callable[[Component], str] | None = None,
     workers: int = 1,
+    progress: bool | Callable[[int, int], None] | None = None,
 ) -> MonteCarloResult:
     """
     Executa Monte Carlo variando valores dos componentes conforme distribuições.
@@ -216,10 +218,47 @@ def monte_carlo(
         analysis = analysis_factory()
         return analysis.run(c_copy)
 
+    # Progress handler (optional)
+    printer = None
+
+    def _notify(done: int, total: int) -> None:
+        if progress is None:
+            return
+        if callable(progress):
+            try:
+                progress(done, total)
+            except Exception:
+                pass
+            return
+        # simple stderr bar
+        nonlocal printer
+        if progress is True:
+            # lazy-init
+            class _Bar:
+                def __init__(self, total: int) -> None:
+                    self.total = total
+                    self.last = -1
+
+                def update(self, done: int) -> None:
+                    if done == self.last:
+                        return
+                    pct = int(round(100.0 * done / max(self.total, 1)))
+                    sys.stderr.write(f"\rMC: {done}/{self.total} ({pct}%)")
+                    sys.stderr.flush()
+                    self.last = done
+
+                def close(self) -> None:
+                    sys.stderr.write("\n")
+
+            if printer is None:
+                printer = _Bar(total)
+            printer.update(done)
+
     runs: list[AnalysisResult] = []
     if workers <= 1:
-        for s in samples:
+        for i, s in enumerate(samples, start=1):
             runs.append(_run_one(s))
+            _notify(i, len(samples))
     else:
         # Executa em paralelo preservando a ordem dos samples
         runs_buf: list[AnalysisResult | None] = [None] * len(samples)
@@ -228,9 +267,18 @@ def monte_carlo(
             for idx, s in enumerate(samples):
                 fut = ex.submit(_run_one, s)
                 fut_to_idx[fut] = idx
+            done = 0
             for f in as_completed(list(fut_to_idx.keys())):
                 idx = fut_to_idx[f]
                 runs_buf[idx] = f.result()
+                done += 1
+                _notify(done, len(samples))
         runs = [r for r in runs_buf if r is not None]
+
+    if isinstance(progress, bool) and progress and printer is not None:
+        try:
+            printer.close()
+        except Exception:
+            pass
 
     return MonteCarloResult(samples=samples, runs=runs)

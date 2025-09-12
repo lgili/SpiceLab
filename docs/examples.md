@@ -9,6 +9,7 @@ This project ships runnable examples in `examples/`:
 - `monte_carlo_rc.py` — Monte Carlo with metrics and plots
 - `opamp_closed_loop.py` — simple op-amp closed-loop wiring
 - `opamp_stability.py` — op-amp closed-loop Bode and margins
+- `pt1000_mc.py` — PT1000 front-end Monte Carlo (temp error histogram)
 - `rc_highpass.py` — RC highpass netlist builder
 - `import_ltspice_and_run.py` — import LTspice netlist and run
 
