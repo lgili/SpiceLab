@@ -55,6 +55,6 @@ opamp-stability:
 	PYTHONPATH=src python3 -m examples.opamp_stability
 
 pt1000:
-	PYTHONPATH=src python3 -m examples.pt1000_mc --temp $(TEMP) --n $(N) --sigma $(SIGMA)
+	PYTHONPATH=src python3 -m examples.pt1000_mc --temp $(TEMP) --n $(N) --sigma $(SIGMA) --workers 4
 
 examples: ac-bode step-fig mc-fig opamp-stability

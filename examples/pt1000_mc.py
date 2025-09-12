@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from dataclasses import dataclass
 from typing import Any
 
@@ -105,6 +106,14 @@ def run_mc(
     r_rtd = pt1000_r(t_true, r0=p.r0, alpha=p.alpha)
     c, Rpu, Rtop, Rbot = build_pt1000_chain(r_rtd, p)
 
+    # Optional quick connectivity check (uncomment if needed)
+    # print("=== Connectivity Summary ===\n" + c.summary())
+    # from cat.analysis import OP as _OP
+    # _res = _OP().run(c)
+    # print("OP traces:", _res.traces.names)
+    # print("OP V(vin)=", float(_res.traces["v(vin)"].values[-1]))
+    # print("OP V(vout)=", float(_res.traces["v(vout)"].values[-1]))
+
     # Vary all non-RTD resistors by 1% (1-sigma)
     mapping = {Rpu: NormalPct(sigma_pct), Rtop: NormalPct(sigma_pct), Rbot: NormalPct(sigma_pct)}
 
@@ -153,9 +162,34 @@ def main() -> None:
         help="Optional list of temperatures (°C) to overlay (defaults to --temp)",
     )
     ap.add_argument("--scatter", action="store_true", help="Plot scatter diagnostics")
+    ap.add_argument(
+        "--check", action="store_true", help="Sanity check OP and connectivity before MC"
+    )
     args = ap.parse_args()
 
     temps = args.temps if args.temps else [args.temp]
+
+    if args.check:
+        # Run a quick connectivity + OP sanity check at the first temperature
+        p = PT1000Params()
+        r_rtd = pt1000_r(temps[0], r0=p.r0, alpha=p.alpha)
+        c, *_ = build_pt1000_chain(r_rtd, p)
+        print("=== Connectivity Summary ===\n" + c.summary())
+        from cat.analysis import OP as _OP  # local import to avoid any circulars
+
+        _res = _OP().run(c)
+        print("OP traces:", _res.traces.names)
+        v_vin = float(_res.traces["v(vin)"].values[-1])
+        v_vout = float(_res.traces["v(vout)"].values[-1])
+        print(f"OP V(vin)={v_vin}")
+        print(f"OP V(vout)={v_vout}")
+        lo, hi = 0.5, PT1000Params().vdd  # expect ~1..3.3 V per design; use 0.5..VDD as guard
+        if not (lo <= v_vout <= hi):
+            print(
+                f"[ERROR] OP V(vout) out of expected range [{lo}, {hi}] V. Aborting MC.",
+                file=sys.stderr,
+            )
+            sys.exit(2)
 
     results: dict[float, dict[str, Any]] = {}
     for t in temps:
