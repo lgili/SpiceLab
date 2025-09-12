@@ -3,9 +3,11 @@
 [![Build](https://github.com/lgili/PyCircuitKit/actions/workflows/ci.yml/badge.svg)](https://github.com/lgili/PyCircuitKit/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://lgili.github.io/PyCircuitKit/)
 
-Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN / .AC) and **analyze** electronic circuits with a clean, Pythonic API. CAT targets real engineering workflows: parameter sweeps, **Monte Carlo**, worst‑case (soon), and painless result handling in NumPy/Pandas.
+Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN / .AC) and **analyze** electronic circuits with a clean, Pythonic API. CAT targets real engineering workflows: parameter sweeps, **Monte Carlo**, worst‑case, and painless result handling in NumPy/Pandas.
 
-> **Status:** MVP — Circuit DSL (Ports & Nets), NGSpice (CLI) `.op/.tran/.ac`, LTspice netlist import (includes `.include/.param`, V/I PULSE/SIN/PWL), Monte‑Carlo, and metrics/plots. Roadmap: control sources (E/G/F/H), worst‑case, docs site.
+Documentation: https://lgili.github.io/PyCircuitKit/
+
+> **Status:** MVP — Circuit DSL (Ports & Nets), NGSpice (CLI) `.op/.tran/.ac`, LTspice netlist import (includes `.include/.param`, V/I PULSE/SIN/PWL), controlled sources (E/G/F/H) and switches, Monte‑Carlo, and metrics/plots. Roadmap: worst‑case refinements, RAW binary, more examples.
 
 ---
 
@@ -43,7 +45,7 @@ Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN /
 brew install ngspice
 
 # 2) Clone and set up the project
-git clone https://github.com/<your-org>/pycircuitkit.git
+git clone https://github.com/lgili/PyCircuitKit.git
 cd pycircuitkit
 python -m venv .venv
 source .venv/bin/activate
@@ -61,7 +63,7 @@ sudo apt update
 sudo apt install -y ngspice
 
 # 2) Clone and set up
-git clone https://github.com/<your-org>/pycircuitkit.git
+git clone https://github.com/lgili/PyCircuitKit.git
 cd pycircuitkit
 python3 -m venv .venv
 source .venv/bin/activate
@@ -77,7 +79,7 @@ pip install ruff mypy pytest pytest-cov
 # Add the ngspice bin folder (e.g. C:\Program Files\Spice64\bin) to your PATH.
 
 # 2) Clone and set up
-git clone https://github.com/<your-org>/pycircuitkit.git
+git clone https://github.com/lgili/PyCircuitKit.git
 cd pycircuitkit
 py -m venv .venv
 .venv\Scripts\activate
@@ -86,7 +88,7 @@ pip install -e .
 pip install ruff mypy pytest pytest-cov
 ```
 
-### Alternative without uv:
+### Alternative without uv (pip-only):
 ```powershell
 py -m venv .venv
 .venv\Scripts\activate
@@ -205,18 +207,13 @@ print(design_rc_lowpass(fc=159.155, prefer_R=True, series="E24"))
 
 ## 📦 Project Layout
 src/cat/
-  core/          # Nets, Ports, Components, Circuit, NetlistBuilder
-  spice/         # Simulator adapters (MVP: ngspice_cli)
-  io/            # Parsers (stubs in MVP; AC/DC/TRAN parsers next)
-  utils/         # e_series, synth (design helpers), logging
+  core/          # Nets, Ports, Components, Circuit, netlist builder
+  analysis/      # OP/AC/DC/TRAN, metrics, sweep/step/montecarlo, viz
+  spice/         # Simulator adapters + registry (ngspice_cli)
+  io/            # RAW/LOG parsers, LTspice import/flatten
+  utils/         # e_series, units, synth, logging, topologies
+  dsl/           # chain/parallel helpers and schematic ctx manager
 tests/           # pytest suite (unit + smoke if ngspice available)
-
-
-Planned:
-	•	analysis/ for OP/AC/DC/TRAN engines
-	•	dsl/flow.py (Style 2, operators for series/parallel)
-	•	dsl/schematic.py (Style 3, context manager “schematic”)
-	•	spice/ltspice.py adapter
 
 ⸻
 

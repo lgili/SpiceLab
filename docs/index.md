@@ -26,6 +26,6 @@ pip install -e .
 
 ## Quick links
 
-- Installation: /installation
-- Getting started: /getting-started
-- Examples: /examples
+- Installation: installation.md
+- Getting started: getting-started.md
+- Examples: examples.md
