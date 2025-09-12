@@ -8,6 +8,7 @@ This project ships runnable examples in `examples/`:
 - `step_sweep_grid.py` — Python grid over parameters + DataFrame
 - `monte_carlo_rc.py` — Monte Carlo with metrics and plots
 - `opamp_closed_loop.py` — simple op-amp closed-loop wiring
+- `opamp_stability.py` — op-amp closed-loop Bode and margins
 - `rc_highpass.py` — RC highpass netlist builder
 - `import_ltspice_and_run.py` — import LTspice netlist and run
 

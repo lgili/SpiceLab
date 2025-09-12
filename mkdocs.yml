@@ -39,6 +39,7 @@ nav:
       - Sweeps and STEP: sweeps-step.md
       - Monte Carlo: monte-carlo.md
       - AC Stability: ac-stability.md
+      - Op-Amp Stability: opamp-stability.md
       - LTspice Import: ltspice-import.md
       - Plots: plots.md
       - Troubleshooting: troubleshooting.md
