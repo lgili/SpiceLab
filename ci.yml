@@ -43,6 +43,26 @@ jobs:
         run: python -m pip install -e .
       - name: Ensure PYTHONPATH includes src
         run: echo "${{ github.workspace }}/src" >> $GITHUB_ENV
+      - name: Debug Python environment for mkdocstrings
+        run: |
+          echo "=== python info ==="
+          python -V
+          python -c "import sys, pprint; pprint.pprint(sys.path)"
+          echo "PYTHONPATH: $PYTHONPATH"
+          echo "find_spec cat:"
+          python -c "import importlib.util as u, pprint; print(u.find_spec('cat'))"
+          echo "try import cat and list top-level modules (non-fatal)"
+          python - <<'PY'
+import importlib, traceback
+try:
+    m = importlib.import_module('cat')
+    print('cat imported:', m)
+    print('cat.__file__:', getattr(m, '__file__', None))
+    print('available attrs:', [a for a in dir(m) if not a.startswith('_')][:30])
+except Exception:
+    traceback.print_exc()
+PY
+
       - name: Build MkDocs site (strict)
         run: |
           PYTHONPATH="${{ github.workspace }}/src" python -m mkdocs build --strict
