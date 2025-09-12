@@ -6,7 +6,7 @@ from cat.analysis import OP, TRAN
 from cat.analysis.viz.plot import plot_traces
 from cat.core.circuit import Circuit
 from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND
+from cat.core.net import GND, Net
 
 # RC simples
 c = Circuit("ex_rc_op_tran")
@@ -15,8 +15,12 @@ R1 = Resistor("1", "1k")
 C1 = Capacitor("1", "100n")
 
 c.add(V1, R1, C1)
-c.connect(V1.ports[0], R1.ports[0])  # vin
-c.connect(R1.ports[1], C1.ports[0])  # vout
+vin = Net("vin")
+vout = Net("vout")
+c.connect(V1.ports[0], vin)  # vin
+c.connect(R1.ports[0], vin)
+c.connect(R1.ports[1], vout)  # vout
+c.connect(C1.ports[0], vout)
 c.connect(V1.ports[1], GND)
 c.connect(C1.ports[1], GND)
 
@@ -29,5 +33,5 @@ tran = TRAN("50us", "2ms").run(c)
 print("TRAN traces:", tran.traces.names)
 
 # Plota saída no tempo
-fig = plot_traces(tran.traces, ys=["v(out)"], title="RC step response")
+fig = plot_traces(tran.traces, ys=["v(vout)"], title="RC step response")
 savefig(fig, "rc_tran.png")

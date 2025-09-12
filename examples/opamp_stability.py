@@ -38,12 +38,11 @@ def main() -> None:
     c = build()
     # AC sweep
     res = AC("dec", 201, 10.0, 1e6).run(c)
-    # Pick the first voltage trace (typically v(n1) for the output)
-    f, mag_db, ph_deg = ac_gain_phase(res.traces, "v(n1)")
+    f, mag_db, ph_deg = ac_gain_phase(res.traces, "v(vout)")
 
     # Margins at loop crossover
-    pm = phase_margin(res.traces, "v(n1)")
-    gm = gain_margin_db(res.traces, "v(n1)")
+    pm = phase_margin(res.traces, "v(vout)")
+    gm = gain_margin_db(res.traces, "v(vout)")
     print("phase_margin:", pm, "deg")
     print("gain_margin:", gm, "dB")
 

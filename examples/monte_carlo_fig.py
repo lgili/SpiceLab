@@ -11,7 +11,7 @@ from cat.analysis import TRAN, NormalPct, monte_carlo
 from cat.analysis.viz.plot import plot_traces
 from cat.core.circuit import Circuit
 from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND
+from cat.core.net import GND, Net
 from cat.spice import ngspice_cli
 
 
@@ -21,11 +21,15 @@ def _rc() -> tuple[Circuit, Resistor, str]:
     R1 = Resistor("1", "1k")
     C1 = Capacitor("1", "1u")
     c.add(V1, R1, C1)
-    c.connect(V1.ports[0], R1.ports[0])
-    c.connect(R1.ports[1], C1.ports[0])
+    vin = Net("vin")
+    vout = Net("vout")
+    c.connect(V1.ports[0], vin)
+    c.connect(R1.ports[0], vin)
+    c.connect(R1.ports[1], vout)
+    c.connect(C1.ports[0], vout)
     c.connect(V1.ports[1], GND)
     c.connect(C1.ports[1], GND)
-    return c, R1, "v(n1)"
+    return c, R1, "v(vout)"
 
 
 def _select_indices(n: int, k: int = 6) -> Sequence[int]:
