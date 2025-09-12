@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/ac-stability/">
+        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/concepts/">
       
       
-        <link rel="prev" href="../monte-carlo/">
+        <link rel="prev" href="../getting-started/">
       
       
-        <link rel="next" href="../ltspice-import/">
+        <link rel="next" href="../examples/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>AC Stability - PyCircuitKit</title>
+        <title>Concepts - PyCircuitKit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ac-stability-bode-pmgm" class="md-skip">
+        <a href="#core-concepts" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              AC Stability
+              Concepts
             
           </span>
         </div>
@@ -289,10 +289,32 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../concepts/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Concepts
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -303,6 +325,53 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#wiring-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wiring rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimal-rc-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Minimal RC example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Directives
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -333,20 +402,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
@@ -362,7 +429,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Guides
@@ -419,32 +486,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    AC Stability
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../ac-stability/" class="md-nav__link">
         
   
   
@@ -455,44 +500,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#quick-bode" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quick Bode
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#margins-and-bandwidth" class="md-nav__link">
-    <span class="md-ellipsis">
-      Margins and bandwidth
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -737,18 +744,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#quick-bode" class="md-nav__link">
+  <a href="#wiring-rules" class="md-nav__link">
     <span class="md-ellipsis">
-      Quick Bode
+      Wiring rules
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#margins-and-bandwidth" class="md-nav__link">
+  <a href="#minimal-rc-example" class="md-nav__link">
     <span class="md-ellipsis">
-      Margins and bandwidth
+      Minimal RC example
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Directives
     </span>
   </a>
   
@@ -770,28 +786,36 @@
 
 
 
-<h1 id="ac-stability-bode-pmgm">AC Stability (Bode, PM/GM)</h1>
-<p>Compute Bode magnitude/phase and stability margins from an AC run.</p>
-<h2 id="quick-bode">Quick Bode</h2>
-<pre><code class="language-python">from cat.analysis import bode
+<h1 id="core-concepts">Core Concepts</h1>
+<ul>
+<li>Ports: typed terminals on components (positive/negative/node).</li>
+<li>Nets: logical nodes (use <code>GND</code> for ground). A <code>Net</code> can be named for readability.</li>
+<li>Components: objects with <code>ports</code> and a <code>spice_card(net_of)</code> method.</li>
+<li>Circuit: container that owns components, connections, and optional SPICE directives.</li>
+</ul>
+<h2 id="wiring-rules">Wiring rules</h2>
+<ul>
+<li>Connect <code>Port</code> to <code>Net</code>, or <code>Port</code> to <code>Port</code> (auto-creates a shared Net).</li>
+<li>All ports must be connected before building the netlist.</li>
+<li><code>GND</code> is reserved (node "0").</li>
+</ul>
+<h2 id="minimal-rc-example">Minimal RC example</h2>
+<pre><code class="language-python">from cat.core.circuit import Circuit
+from cat.core.components import Vdc, Resistor, Capacitor
+from cat.core.net import GND
 
-# Run an AC sweep and get (f, mag_db, phase_deg)
-f, mag_db, ph = bode(c, y_out=&quot;v(out)&quot;, sweep_type=&quot;dec&quot;, n=201, fstart=10.0, fstop=1e6)
+c = Circuit(&quot;rc&quot;)
+V1, R1, C1 = Vdc(&quot;1&quot;, 5.0), Resistor(&quot;1&quot;, &quot;1k&quot;), Capacitor(&quot;1&quot;, &quot;100n&quot;)
+c.add(V1, R1, C1)
+c.connect(V1.ports[0], R1.ports[0])  # vin
+c.connect(R1.ports[1], C1.ports[0])  # vout
+c.connect(V1.ports[1], GND)
+c.connect(C1.ports[1], GND)
+
+print(c.build_netlist())
 </code></pre>
-<p>The circuit must include a small-signal AC source (e.g., <code>VA()</code> or <code>Iac</code>).</p>
-<h2 id="margins-and-bandwidth">Margins and bandwidth</h2>
-<pre><code class="language-python">from cat.analysis import ac_gain_phase, bandwidth_3db, crossover_freq_0db, phase_margin, gain_margin_db
-
-res = run_ac(c, &quot;dec&quot;, 201, 10.0, 1e6)
-f, g_db, ph = ac_gain_phase(res.traces, y_out=&quot;v(out)&quot;)
-
-bw = bandwidth_3db(res.traces, y_out=&quot;v(out)&quot;)
-wc = crossover_freq_0db(res.traces, y_out=&quot;v(out)&quot;)
-pm = phase_margin(res.traces, y_out=&quot;v(out)&quot;)
-gm = gain_margin_db(res.traces, y_out=&quot;v(out)&quot;)
-print(bw, wc, pm, gm)
-</code></pre>
-<p>Use <code>plot_bode(ts, y)</code> to plot the complex trace when available.</p>
+<h2 id="directives">Directives</h2>
+<p>Use <code>circuit.add_directive(".model ...")</code> or <code>.param</code>, <code>.include</code>, etc., to embed raw SPICE lines.</p>
 
 
 

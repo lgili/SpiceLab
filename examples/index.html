@@ -15,10 +15,10 @@
         <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/examples/">
       
       
-        <link rel="prev" href="../getting-started/">
+        <link rel="prev" href="../concepts/">
       
       
-        <link rel="next" href="../monte-carlo/">
+        <link rel="next" href="../sweeps-step/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -289,6 +289,28 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Concepts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -332,10 +354,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   
@@ -348,12 +370,35 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Guides
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sweeps-step/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Sweeps and STEP
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -401,9 +446,100 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ltspice-import/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LTspice Import
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Plots
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cookbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Cookbook
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -423,10 +559,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   
@@ -439,8 +575,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             API Reference
           </label>
@@ -557,16 +693,24 @@
 
 
 <h1 id="examples">Examples</h1>
-<p>This project includes several example scripts under <code>examples/</code>:</p>
+<p>This project ships runnable examples in <code>examples/</code>:</p>
 <ul>
+<li><code>rc_tran.py</code> — transient of an RC low-pass</li>
+<li><code>ac_bode.py</code> — RC Bode magnitude/phase plot</li>
+<li><code>dc_sweep.py</code> — DC sweep example</li>
+<li><code>step_sweep_grid.py</code> — Python grid over parameters + DataFrame</li>
+<li><code>monte_carlo_rc.py</code> — Monte Carlo with metrics and plots</li>
+<li><code>opamp_closed_loop.py</code> — simple op-amp closed-loop wiring</li>
 <li><code>rc_highpass.py</code> — RC highpass netlist builder</li>
-<li><code>opamp_closed_loop.py</code> — simple op-amp closed-loop example</li>
-<li><code>monte_carlo_demo.py</code> — demo running monte_carlo with a fake runner</li>
+<li><code>import_ltspice_and_run.py</code> — import LTspice netlist and run</li>
 </ul>
-<p>You can run them directly with Python, for example:</p>
-<pre><code class="language-bash">python -m examples.rc_highpass
+<p>Run them as modules:</p>
+<pre><code class="language-bash">python -m examples.rc_tran
+python -m examples.ac_bode
+python -m examples.step_sweep_grid
+python -m examples.monte_carlo_rc
 </code></pre>
-<p>Or view the source in the <code>examples/</code> folder for more advanced usage.</p>
+<p>See the <code>examples/</code> folder for details and more scripts.</p>
 
 
 

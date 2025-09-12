@@ -9,6 +9,14 @@
          <lastmod>2025-09-12</lastmod>
     </url>
     <url>
+         <loc>https://lgili.github.io/PyCircuitKit/concepts/</loc>
+         <lastmod>2025-09-12</lastmod>
+    </url>
+    <url>
+         <loc>https://lgili.github.io/PyCircuitKit/cookbook/</loc>
+         <lastmod>2025-09-12</lastmod>
+    </url>
+    <url>
          <loc>https://lgili.github.io/PyCircuitKit/examples/</loc>
          <lastmod>2025-09-12</lastmod>
     </url>
@@ -21,7 +29,23 @@
          <lastmod>2025-09-12</lastmod>
     </url>
     <url>
+         <loc>https://lgili.github.io/PyCircuitKit/ltspice-import/</loc>
+         <lastmod>2025-09-12</lastmod>
+    </url>
+    <url>
          <loc>https://lgili.github.io/PyCircuitKit/monte-carlo/</loc>
+         <lastmod>2025-09-12</lastmod>
+    </url>
+    <url>
+         <loc>https://lgili.github.io/PyCircuitKit/plots/</loc>
+         <lastmod>2025-09-12</lastmod>
+    </url>
+    <url>
+         <loc>https://lgili.github.io/PyCircuitKit/sweeps-step/</loc>
+         <lastmod>2025-09-12</lastmod>
+    </url>
+    <url>
+         <loc>https://lgili.github.io/PyCircuitKit/troubleshooting/</loc>
          <lastmod>2025-09-12</lastmod>
     </url>
     <url>

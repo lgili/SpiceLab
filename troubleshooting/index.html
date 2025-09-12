@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/ac-stability/">
+        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/troubleshooting/">
       
       
-        <link rel="prev" href="../monte-carlo/">
+        <link rel="prev" href="../plots/">
       
       
-        <link rel="next" href="../ltspice-import/">
+        <link rel="next" href="../cookbook/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>AC Stability - PyCircuitKit</title>
+        <title>Troubleshooting - PyCircuitKit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ac-stability-bode-pmgm" class="md-skip">
+        <a href="#troubleshooting" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              AC Stability
+              Troubleshooting
             
           </span>
         </div>
@@ -419,32 +419,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    AC Stability
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../ac-stability/" class="md-nav__link">
         
   
   
@@ -455,44 +433,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#quick-bode" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quick Bode
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#margins-and-bandwidth" class="md-nav__link">
-    <span class="md-ellipsis">
-      Margins and bandwidth
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -548,10 +488,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../troubleshooting/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -562,6 +511,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -730,32 +680,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#quick-bode" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quick Bode
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#margins-and-bandwidth" class="md-nav__link">
-    <span class="md-ellipsis">
-      Margins and bandwidth
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -770,28 +694,19 @@
 
 
 
-<h1 id="ac-stability-bode-pmgm">AC Stability (Bode, PM/GM)</h1>
-<p>Compute Bode magnitude/phase and stability margins from an AC run.</p>
-<h2 id="quick-bode">Quick Bode</h2>
-<pre><code class="language-python">from cat.analysis import bode
-
-# Run an AC sweep and get (f, mag_db, phase_deg)
-f, mag_db, ph = bode(c, y_out=&quot;v(out)&quot;, sweep_type=&quot;dec&quot;, n=201, fstart=10.0, fstop=1e6)
-</code></pre>
-<p>The circuit must include a small-signal AC source (e.g., <code>VA()</code> or <code>Iac</code>).</p>
-<h2 id="margins-and-bandwidth">Margins and bandwidth</h2>
-<pre><code class="language-python">from cat.analysis import ac_gain_phase, bandwidth_3db, crossover_freq_0db, phase_margin, gain_margin_db
-
-res = run_ac(c, &quot;dec&quot;, 201, 10.0, 1e6)
-f, g_db, ph = ac_gain_phase(res.traces, y_out=&quot;v(out)&quot;)
-
-bw = bandwidth_3db(res.traces, y_out=&quot;v(out)&quot;)
-wc = crossover_freq_0db(res.traces, y_out=&quot;v(out)&quot;)
-pm = phase_margin(res.traces, y_out=&quot;v(out)&quot;)
-gm = gain_margin_db(res.traces, y_out=&quot;v(out)&quot;)
-print(bw, wc, pm, gm)
-</code></pre>
-<p>Use <code>plot_bode(ts, y)</code> to plot the complex trace when available.</p>
+<h1 id="troubleshooting">Troubleshooting</h1>
+<ul>
+<li>ngspice not found: install it and ensure it's on PATH.</li>
+<li>macOS: <code>brew install ngspice</code></li>
+<li>Ubuntu: <code>sudo apt install -y ngspice</code></li>
+<li>Windows: install Spice64 and add the <code>bin</code> to PATH</li>
+<li>Binary RAW: <code>Binary RAW not supported yet</code> → we force ASCII in our runner, but if you
+  run NGSpice manually, set <code>set filetype=ascii</code> in a <code>.control</code> block or use <code>-r</code>.</li>
+<li>Unconnected port: connect every component port to a Net or another Port before building.</li>
+<li>Missing .model for switches: add directives with <code>circuit.add_directive(".model ...")</code>.</li>
+<li>AC analysis looks flat or phase missing: ensure you use small-signal sources (VA/Iac),
+  or reconstruct complex traces with <code>ac_gain_phase</code> which handles re/im or mag/phase.</li>
+</ul>
 
 
 
