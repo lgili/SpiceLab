@@ -49,6 +49,18 @@ make preview
 
 # If you prefer without venv (uses PYTHONPATH=src)
 make preview-ci
+
+# Install plotting extras (Matplotlib) for figure examples
+make install-extras
+
+# Run plotting/simulation examples (require NGSpice in PATH)
+make ac-bode
+make step-fig
+make mc-fig
+make opamp-stability
+
+# Run all figure examples
+make examples
 ```
 
 Install Graphviz to render the SVG preview (macOS: `brew install graphviz`, Ubuntu: `sudo apt install -y graphviz`).
