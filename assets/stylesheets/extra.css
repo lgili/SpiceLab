@@ -1,0 +1,17 @@
+/* Extra docs styling */
+.md-content {
+  max-width: 1100px;
+}
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.hero .text {
+  flex: 1;
+}
+.hero .screenshot {
+  width: 360px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
