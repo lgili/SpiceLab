@@ -165,6 +165,11 @@ def main() -> None:
     ap.add_argument(
         "--check", action="store_true", help="Sanity check OP and connectivity before MC"
     )
+    ap.add_argument(
+        "--debug",
+        action="store_true",
+        help="Debug first MC trial (print sample, deck, traces, V(vin)/V(vout)) then exit",
+    )
     args = ap.parse_args()
 
     temps = args.temps if args.temps else [args.temp]
@@ -190,6 +195,31 @@ def main() -> None:
                 file=sys.stderr,
             )
             sys.exit(2)
+
+    if args.debug:
+        # Build and run a single MC trial, print diagnostics then exit
+        p = PT1000Params()
+        r_rtd = pt1000_r(temps[0], r0=p.r0, alpha=p.alpha)
+        c, Rpu, Rtop, Rbot = build_pt1000_chain(r_rtd, p)
+        from cat.analysis import OP as _OP
+        from cat.analysis import monte_carlo as _mc
+
+        mapping = {
+            Rpu: NormalPct(args.sigma),
+            Rtop: NormalPct(args.sigma),
+            Rbot: NormalPct(args.sigma),
+        }
+        mc_one = _mc(
+            c, mapping, n=1, analysis_factory=lambda: _OP(), seed=123, workers=1, progress=False
+        )
+        print("samples[0] =", mc_one.samples[0])
+        run0 = mc_one.runs[0]
+        print("deck:", run0.run.artifacts.netlist_path)
+        print("log :", run0.run.artifacts.log_path)
+        print("traces:", run0.traces.names)
+        print("V(vin) =", float(run0.traces["v(vin)"].values[-1]))
+        print("V(vout)=", float(run0.traces["v(vout)"].values[-1]))
+        sys.exit(0)
 
     results: dict[float, dict[str, Any]] = {}
     for t in temps:
