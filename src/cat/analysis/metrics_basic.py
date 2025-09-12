@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
+from numpy.typing import NDArray
 
 from ..io.raw_reader import TraceSet
 from .metrics_tran import overshoot as _ov
 
 
-def _vals(ts: TraceSet, name: str) -> np.ndarray:
+def _vals(ts: TraceSet, name: str) -> NDArray[Any]:
     tr = ts[name]
     if tr is None:
         raise ValueError(f"Trace {name!r} not found")

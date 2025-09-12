@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
+from numpy.typing import NDArray
 
 from ..io.raw_reader import TraceSet
 
@@ -13,7 +16,7 @@ def peak(ts: TraceSet, y: str) -> tuple[float, float]:
     return float(x[idx]), float(v[idx])
 
 
-def _final_value(v: np.ndarray, tail_frac: float = 0.1) -> float:
+def _final_value(v: NDArray[Any], tail_frac: float = 0.1) -> float:
     n = len(v)
     k = max(1, int(n * tail_frac))
     return float(np.mean(v[-k:]))
@@ -51,7 +54,7 @@ def gain_db_from_traces(
     y_out: str,
     y_in: str | None = None,
     eps: float = 1e-30,
-) -> tuple[np.ndarray, np.ndarray]:
+) -> tuple[NDArray[Any], NDArray[Any]]:
     """
     Retorna (x, gain_db). Útil para AC:
       - se `y_in` for None, assume 1V de referência.

@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import cast
+from typing import Any, cast
 
 import numpy as np
+from numpy.typing import NDArray
 
 from ..io.raw_reader import TraceSet
 
@@ -17,12 +18,12 @@ from ..io.raw_reader import TraceSet
 class Bode:
     """Container opcional para quem preferir um objeto tipado."""
 
-    f: np.ndarray  # Hz
-    mag_db: np.ndarray  # dB
-    ph_deg: np.ndarray  # graus
+    f: NDArray[Any]  # Hz
+    mag_db: NDArray[Any]  # dB
+    ph_deg: NDArray[Any]  # graus
 
 
-def _vals(ts: TraceSet, name: str) -> np.ndarray:
+def _vals(ts: TraceSet, name: str) -> NDArray[Any]:
     """
     Retorna os valores (numpy array) do traço `name`. Aceita que ts[name] retorne
     um objeto Trace com atributo `.values` ou diretamente uma sequência.
@@ -35,7 +36,7 @@ def _vals(ts: TraceSet, name: str) -> np.ndarray:
     return np.asarray(tr)
 
 
-def _try_trace(ts: TraceSet, name: str) -> np.ndarray | None:
+def _try_trace(ts: TraceSet, name: str) -> NDArray[Any] | None:
     """Versão segura: devolve ndarray ou None."""
     try:
         tr = ts[name]
@@ -48,14 +49,14 @@ def _try_trace(ts: TraceSet, name: str) -> np.ndarray | None:
     return np.asarray(tr)
 
 
-def _wrap_deg180(phi_deg: np.ndarray) -> np.ndarray:
+def _wrap_deg180(phi_deg: NDArray[Any]) -> NDArray[Any]:
     """Normaliza fase para o intervalo (-180, 180]."""
     out = (phi_deg + 180.0) % 360.0 - 180.0
     out[np.isclose(out, -180.0)] = -180.0
     return out
 
 
-def _phase_from_any_match(ts: TraceSet, n: int) -> np.ndarray | None:
+def _phase_from_any_match(ts: TraceSet, n: int) -> NDArray[Any] | None:
     """
     Fallback genérico: varre todos os traços buscando nomes que indiquem fase.
     Usa o primeiro que casar o comprimento.
@@ -70,7 +71,7 @@ def _phase_from_any_match(ts: TraceSet, n: int) -> np.ndarray | None:
     return None
 
 
-def _maybe_phase_array(ts: TraceSet, y_out: str, n: int) -> np.ndarray | None:
+def _maybe_phase_array(ts: TraceSet, y_out: str, n: int) -> NDArray[Any] | None:
     """
     Procura traço explícito de fase (em graus preferencialmente).
     Aceita variações comuns e, se falhar, tenta um fallback varrendo todos os nomes.
@@ -93,13 +94,13 @@ def _maybe_phase_array(ts: TraceSet, y_out: str, n: int) -> np.ndarray | None:
     return _phase_from_any_match(ts, n)
 
 
-def _maybe_complex_from_re_im(ts: TraceSet, y_out: str, n: int) -> np.ndarray | None:
+def _maybe_complex_from_re_im(ts: TraceSet, y_out: str, n: int) -> NDArray[Any] | None:
     """Reconstrói vetor complexo a partir de traços re()/im()."""
     re_candidates = (f"re({y_out})", f"real({y_out})", "re", "real")
     im_candidates = (f"im({y_out})", f"imag({y_out})", "im", "imag")
 
-    re_arr: np.ndarray | None = None
-    im_arr: np.ndarray | None = None
+    re_arr: NDArray[Any] | None = None
+    im_arr: NDArray[Any] | None = None
     for name in re_candidates:
         a = _try_trace(ts, name)
         if a is not None and a.shape[0] == n:
@@ -119,7 +120,7 @@ def _maybe_complex_from_mag_phase(
     ts: TraceSet,
     y_out: str,
     n: int,
-) -> np.ndarray | None:
+) -> NDArray[Any] | None:
     """
     Reconstrói vetor complexo a partir de (mag, phase) ou (db, phase).
     Detecta automaticamente graus vs radianos.
@@ -137,8 +138,8 @@ def _maybe_complex_from_mag_phase(
         f"ph({y_out})",
         "ph",
     )
-    mag: np.ndarray | None = None
-    ph: np.ndarray | None = None
+    mag: NDArray[Any] | None = None
+    ph: NDArray[Any] | None = None
     is_db = False
     for name in mag_candidates:
         a = _try_trace(ts, name)
@@ -166,7 +167,7 @@ def _maybe_complex_from_mag_phase(
     else:
         ph_rad = ph
     out = mag * np.exp(1j * ph_rad)
-    return cast(np.ndarray, out)
+    return cast(NDArray[Any], out)
 
 
 # ===========================
@@ -179,7 +180,7 @@ def _get_xy_ac(
     y_out: str,
     y_in: str | None = None,
     f_name: str = "frequency",
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """
     Obtém (f, |G|dB, fase_deg). Se y_in=None, assume que y_out já é a saída a ser analisada.
     Quando y_in é fornecida, retorna a razão y_out / y_in.
@@ -195,7 +196,7 @@ def _get_xy_ac(
 
     # tentar reconstruir y como complexo
     if np.iscomplexobj(y):
-        y_complex: np.ndarray = y
+        y_complex: NDArray[Any] = y
     else:
         tmp = _maybe_complex_from_re_im(ts, y_out, n)
         if tmp is None:
@@ -222,7 +223,7 @@ def _get_xy_ac(
     # fase: preferir traço explícito se existir
     ph_override = _maybe_phase_array(ts, y_out, n)
     if ph_override is not None:
-        ph_deg: np.ndarray = ph_override.astype(float)
+        ph_deg: NDArray[Any] = ph_override.astype(float)
     else:
         ph_deg = np.angle(num, deg=True)
         ph_deg = np.rad2deg(np.unwrap(np.deg2rad(ph_deg)))
@@ -235,7 +236,7 @@ def ac_gain_phase(
     ts: TraceSet,
     y_out: str,
     y_in: str | None = None,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """Retorna (f, mag_db, fase_deg)."""
     return _get_xy_ac(ts, y_out=y_out, y_in=y_in)
 
@@ -245,7 +246,7 @@ def ac_gain_phase(
 # =================
 
 
-def _interp_at_x(x: np.ndarray, y: np.ndarray, xq: float) -> float:
+def _interp_at_x(x: NDArray[Any], y: NDArray[Any], xq: float) -> float:
     if not np.all(np.diff(x) > 0):
         idx = np.argsort(x)
         x, y = x[idx], y[idx]
@@ -345,7 +346,7 @@ def loop_gain_bode(
     ts: TraceSet,
     y_out: str,
     y_in: str,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any]]:
     """Retorna Bode do loop (y_out / y_in) como tupla (f, mag_db, fase)."""
     return ac_gain_phase(ts, y_out=y_out, y_in=y_in)
 

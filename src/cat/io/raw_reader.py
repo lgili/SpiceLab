@@ -6,6 +6,7 @@ from math import hypot
 from typing import Any, cast
 
 import numpy as np
+from numpy.typing import NDArray
 
 
 @dataclass(frozen=True)
@@ -14,25 +15,25 @@ class Trace:
 
     name: str
     unit: str | None
-    values: np.ndarray
-    _complex: np.ndarray | None = None  # apenas AC: vetor complex
+    values: NDArray[Any]
+    _complex: NDArray[Any] | None = None  # apenas AC: vetor complex
 
-    def magnitude(self) -> np.ndarray:
+    def magnitude(self) -> NDArray[Any]:
         if self._complex is not None:
-            return cast(np.ndarray, np.abs(self._complex))
-        return cast(np.ndarray, np.abs(self.values))
+            return cast(NDArray[Any], np.abs(self._complex))
+        return cast(NDArray[Any], np.abs(self.values))
 
-    def real(self) -> np.ndarray:
+    def real(self) -> NDArray[Any]:
         if self._complex is not None:
             return self._complex.real
         return self.values
 
-    def imag(self) -> np.ndarray:
+    def imag(self) -> NDArray[Any]:
         if self._complex is not None:
             return self._complex.imag
         return np.zeros_like(self.values, dtype=float)
 
-    def phase_deg(self) -> np.ndarray:
+    def phase_deg(self) -> NDArray[Any]:
         if self._complex is not None:
             return np.angle(self._complex, deg=True)
         return np.zeros_like(self.values, dtype=float)
@@ -173,7 +174,7 @@ def _parse_values(
     start: int,
     nvars: int,
     npoints: int,
-) -> tuple[np.ndarray, list[np.ndarray | None]]:
+) -> tuple[NDArray[Any], list[NDArray[Any] | None]]:
     """
     Lê matriz (npoints x nvars) de valores e retorna também colunas complexas (se houver).
     """
@@ -212,7 +213,7 @@ def _parse_values(
         data[row, :] = vals_row
 
     # converte listas para np.ndarray
-    complex_arrays: list[np.ndarray | None] = []
+    complex_arrays: list[NDArray[Any] | None] = []
     for col in complex_cols:
         if col is None:
             complex_arrays.append(None)

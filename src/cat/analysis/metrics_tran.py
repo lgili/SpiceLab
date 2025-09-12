@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 
 from ..io.raw_reader import TraceSet
 
 
-def _vals(ts: TraceSet, name: str) -> np.ndarray:
+def _vals(ts: TraceSet, name: str) -> NDArray[Any]:
     """Obtém os valores de um traço como numpy array."""
     tr = ts[name]
     if tr is None:
@@ -35,7 +37,7 @@ def _pick_voltage_trace_name(ts: TraceSet, preferred: str) -> str:
     return preferred  # deixa estourar erro claro depois, se não existir
 
 
-def _get_xy(ts: TraceSet, y_name: str, x_name: str = "time") -> tuple[np.ndarray, np.ndarray]:
+def _get_xy(ts: TraceSet, y_name: str, x_name: str = "time") -> tuple[NDArray[Any], NDArray[Any]]:
     """
     Retorna (x, y) como ndarrays float para análise de transiente.
     Faz fallback do nome do traço de tensão, se necessário.
@@ -139,7 +141,7 @@ class RiseFall:
     tfall: float | None
 
 
-def _cross_time(x: np.ndarray, y: np.ndarray, level: float) -> float | None:
+def _cross_time(x: NDArray[Any], y: NDArray[Any], level: float) -> float | None:
     """Cruzamento linear (primeiro) de y(t) = level."""
     for i in range(1, len(x)):
         y0, y1 = y[i - 1], y[i]
@@ -152,7 +154,7 @@ def _cross_time(x: np.ndarray, y: np.ndarray, level: float) -> float | None:
     return None
 
 
-def _interp_time_rise(x: np.ndarray, y: np.ndarray, level: float) -> float | None:
+def _interp_time_rise(x: NDArray[Any], y: NDArray[Any], level: float) -> float | None:
     """
     Interpolação robusta para subida: usa envelope não-decrescente (cumulative max).
     Retorna None se nível estiver fora do alcance.
@@ -165,7 +167,7 @@ def _interp_time_rise(x: np.ndarray, y: np.ndarray, level: float) -> float | Non
     return float(np.interp(level, y_env, x))
 
 
-def _interp_time_fall(x: np.ndarray, y: np.ndarray, level: float) -> float | None:
+def _interp_time_fall(x: NDArray[Any], y: NDArray[Any], level: float) -> float | None:
     """
     Interpolação robusta para descida: usa envelope não-crescente (cumulative min).
     Retorna None se nível estiver fora do alcance.
@@ -178,7 +180,11 @@ def _interp_time_fall(x: np.ndarray, y: np.ndarray, level: float) -> float | Non
     return float(np.interp(level, y_env, x))
 
 
-def _discrete_time_first_at_or_above(x: np.ndarray, y: np.ndarray, level: float) -> float | None:
+def _discrete_time_first_at_or_above(
+    x: NDArray[Any],
+    y: NDArray[Any],
+    level: float,
+) -> float | None:
     """Fallback discreto: primeiro x[i] com y[i] >= level (ou None)."""
     idxs = np.where(y >= level)[0]
     if idxs.size == 0:

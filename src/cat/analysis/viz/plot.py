@@ -5,6 +5,7 @@ from collections.abc import Sequence
 from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 
 from ...io.raw_reader import TraceSet
 
@@ -17,7 +18,7 @@ def _ensure_pyplot() -> Any:
         raise RuntimeError("matplotlib is required for plotting") from exc
 
 
-def _pick_x(ts: TraceSet) -> tuple[np.ndarray, str]:
+def _pick_x(ts: TraceSet) -> tuple[NDArray[Any], str]:
     """Escolhe o eixo X automaticamente e retorna (valores, nome).
 
     Preferência: atributo `ts.x` (se existir e for válido) → 'time' → 'frequency' → primeira coluna.
