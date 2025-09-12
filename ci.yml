@@ -45,7 +45,7 @@ jobs:
         run: echo "${{ github.workspace }}/src" >> $GITHUB_ENV
       - name: Build MkDocs site (strict)
         run: |
-          PYTHONPATH="${{ github.workspace }}/src" mkdocs build --strict
+          PYTHONPATH="${{ github.workspace }}/src" python -m mkdocs build --strict
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
