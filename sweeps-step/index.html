@@ -479,15 +479,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#native-step" class="md-nav__link">
-    <span class="md-ellipsis">
-      Native .STEP
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -813,15 +804,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#native-step" class="md-nav__link">
-    <span class="md-ellipsis">
-      Native .STEP
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -848,12 +830,18 @@
 <h2 id="python-sweeps">Python sweeps</h2>
 <p>Single parameter:</p>
 <pre><code class="language-python">from cat.analysis import step_param, TRAN
-res = step_param(c, name=&quot;R&quot;, values=[&quot;1k&quot;,&quot;2k&quot;,&quot;5k&quot;], analysis_factory=lambda: TRAN(&quot;50us&quot;,&quot;5ms&quot;))
+res = step_param(
+    c,
+    name=&quot;R&quot;,
+    values=[&quot;1k&quot;,&quot;2k&quot;,&quot;5k&quot;],
+    analysis_factory=lambda: TRAN(&quot;50us&quot;,&quot;5ms&quot;),
+    progress=True,   # prints progress to stderr
+)
 </code></pre>
 <p>Grid of parameters:</p>
 <pre><code class="language-python">from cat.analysis import ParamGrid, step_grid
 grid: ParamGrid = {&quot;R&quot;: [&quot;1k&quot;,&quot;2k&quot;], &quot;C&quot;: [&quot;100n&quot;,&quot;220n&quot;]}
-step = step_grid(c, grid, analysis_factory=lambda: TRAN(&quot;50us&quot;,&quot;5ms&quot;))
+step = step_grid(c, grid, analysis_factory=lambda: TRAN(&quot;50us&quot;,&quot;5ms&quot;), progress=True)
 </code></pre>
 <p>Stacking to DataFrame:</p>
 <pre><code class="language-python">from cat.analysis import stack_step_to_df
@@ -862,10 +850,23 @@ df = stack_step_to_df(step, y=[&quot;v(n1)&quot;], with_x=True)
 <p>Plotting grouped curves (optional):</p>
 <pre><code class="language-python">from cat.analysis.viz.plot import plot_sweep_df
 fig = plot_sweep_df(df, x=&quot;time&quot;, y=&quot;v(n1)&quot;, hue=&quot;R&quot;)
+
+### Custom progress callback
+
+You can pass a function `callback(done, total)` to receive updates instead of the default bar:
+
+```python
+def cb(done: int, total: int) -&gt; None:
+    print(f&quot;{done}/{total}&quot;, end=&quot;\r&quot;)
+
+step = step_grid(c, grid, analysis_factory=lambda: TRAN(&quot;50us&quot;,&quot;5ms&quot;), progress=cb)
 </code></pre>
-<h2 id="native-step">Native .STEP</h2>
-<p>Provide directives that include <code>.step</code> and parse all plots:</p>
-<pre><code class="language-python">from cat.analysis import run_step_native
+<pre><code>
+## Native .STEP
+
+Provide directives that include `.step` and parse all plots:
+```python
+from cat.analysis import run_step_native
 out = run_step_native(c, directives=[&quot;.step param R list 1k 2k 5k&quot;, &quot;.tran 50us 5ms&quot;])
 sets = out.tracesets  # list[TraceSet]
 </code></pre>

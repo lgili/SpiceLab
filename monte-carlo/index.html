@@ -453,6 +453,19 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Monte Carlo
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -464,6 +477,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#progress-bar-callback" class="md-nav__link">
+    <span class="md-ellipsis">
+      Progress bar / callback
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -748,6 +789,23 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#progress-bar-callback" class="md-nav__link">
+    <span class="md-ellipsis">
+      Progress bar / callback
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -792,6 +850,23 @@ print(df.head())
 <p>Tips:
 - Use <code>workers</code> for parallel execution: <code>monte_carlo(..., workers=4)</code>.
 - Provide a metric function to compute scalar KPIs per trial, or set <code>y=[...]</code> and <code>sample_at</code> to extract trace values.</p>
+<h3 id="progress-bar-callback">Progress bar / callback</h3>
+<p>Add a lightweight progress bar to stderr:</p>
+<pre><code class="language-python">mc = monte_carlo(
+    circuit=c,
+    mapping={R1: NormalPct(0.01)},
+    n=1000,
+    analysis_factory=lambda: OP(),
+    progress=True,   # prints: &quot;MC: 317/1000 (31%)&quot;
+)
+</code></pre>
+<p>Or provide your own callback (<code>done</code>, <code>total</code>):</p>
+<pre><code class="language-python">def cb(done: int, total: int) -&gt; None:
+    print(f&quot;{done}/{total}&quot;, end=&quot;\r&quot;)
+
+mc = monte_carlo(c, mapping={R1: NormalPct(0.01)}, n=1000,
+                 analysis_factory=lambda: OP(), progress=cb)
+</code></pre>
 
 
 
