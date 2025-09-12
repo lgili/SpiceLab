@@ -2,6 +2,7 @@ site_name: PyCircuitKit
 site_description: Circuit simulation helpers and analysis utilities
 site_author: lgili
 repo_name: lgili/PyCircuitKit
+site_url: https://lgili.github.io/PyCircuitKit/
 
 theme:
   name: material

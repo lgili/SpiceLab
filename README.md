@@ -11,6 +11,13 @@ Documentation: https://lgili.github.io/PyCircuitKit/
 
 ---
 
+## Documentation
+- Site: https://lgili.github.io/PyCircuitKit/
+- Getting Started: https://lgili.github.io/PyCircuitKit/getting-started/
+- Guides: Monte Carlo (https://lgili.github.io/PyCircuitKit/monte-carlo/) · AC Stability (https://lgili.github.io/PyCircuitKit/ac-stability/)
+
+---
+
 ## ✨ Features (MVP)
 
 - **Zero-string connectivity:** connect **Port ↔ Net** objects (type-safe, IDE-friendly).
