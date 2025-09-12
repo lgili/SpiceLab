@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import random
+import sys
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 
@@ -39,6 +40,7 @@ def worst_case(
     mode: str = "min",  # "min" or "max"
     n_random: int = 64,
     n_refine: int = 3,
+    progress: bool | Callable[[int, int], None] | None = None,
 ) -> WorstCaseResult:
     """
     Busca pior caso sobre parâmetros .param discretizados em 'space'.
@@ -48,6 +50,21 @@ def worst_case(
     base = analysis_factory()._directives()  # type: ignore[attr-defined]
 
     # 1) random
+    total = n_random + sum(len(space[k]) for k in space) * n_refine
+
+    def _notify(done: int) -> None:
+        if not progress:
+            return
+        if callable(progress):
+            try:
+                progress(done, total)
+            except Exception:
+                pass
+            return
+        pct = int(round(100.0 * done / max(total, 1)))
+        sys.stderr.write(f"\rWORST: {done}/{total} ({pct}%)")
+        sys.stderr.flush()
+
     hist: list[tuple[dict[str, float | str], float]] = []
     best_p: dict[str, float | str] = {}
     best_v = math.inf if mode == "min" else -math.inf
@@ -55,6 +72,7 @@ def worst_case(
     keys = list(space.keys())
     choices = [list(space[k]) for k in keys]
 
+    done = 0
     for _ in range(n_random):
         p = {k: random.choice(choices[i]) for i, k in enumerate(keys)}
         res = _run_with_params(net, _directives_with_params(base, p))
@@ -62,6 +80,8 @@ def worst_case(
         hist.append((p, val))
         if (mode == "min" and val < best_v) or (mode == "max" and val > best_v):
             best_p, best_v = p, val
+        done += 1
+        _notify(done)
 
     # 2) refinamento coordenado
     for _ in range(n_refine):
@@ -75,6 +95,8 @@ def worst_case(
                 val = metric(res)
                 hist.append((p2, val))
                 cand.append((val, p2))
+                done += 1
+                _notify(done)
             if mode == "min":
                 val, p_sel = min(cand, key=lambda x: x[0])
                 if val < best_v:
