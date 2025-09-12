@@ -38,6 +38,7 @@ jobs:
       - name: Generate example figures
         env:
           PYTHONPATH: ${{ github.workspace }}/src
+          MPLBACKEND: Agg
         run: |
           set -e
           echo "=== run examples to generate figures ==="
