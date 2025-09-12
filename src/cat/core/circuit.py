@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import shutil
+import subprocess
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
 
 from ..utils.log import get_logger
 from .components import Component
@@ -64,7 +68,12 @@ class Circuit:
         node_id = self._net_ids.get(n)
         if node_id is None:
             raise RuntimeError("Node IDs not assigned.")
-        return "0" if n is GND else f"n{node_id}"
+        # Preserve user-provided names for nets (except GND)
+        if n is GND:
+            return "0"
+        if n.name and n.name != "0":
+            return n.name
+        return f"n{node_id}"
 
     def validate(self) -> None:
         # each component must have all ports connected
@@ -84,3 +93,123 @@ class Circuit:
             lines.append(d)
         lines.append(".end")
         return "\n".join(lines)
+
+    # -----------------------------
+    # Introspection / Preview
+    # -----------------------------
+    def summary(self) -> str:
+        """Return a human-friendly connectivity summary and basic lint warnings."""
+        # Map nets to connected ports (ref.port)
+        net_to_ports: dict[str, list[str]] = {}
+        unconnected: list[str] = []
+        # Ensure we have stable net names even if build wasn't called
+        # We'll map by object identity with temporary IDs
+        temp_ids: dict[Any, int] = {}
+        next_id = 1
+
+        def name_of_net(n: Net) -> str:
+            nonlocal next_id
+            if n is GND:
+                return "0"
+            if n.name and n.name != "0":
+                return n.name
+            if n not in temp_ids:
+                temp_ids[n] = next_id
+                next_id += 1
+            return f"n{temp_ids[n]}"
+
+        for comp in self._components:
+            for port in comp.ports:
+                key = f"{comp.ref}.{port.name}"
+                n = self._port_to_net.get(port)
+                if n is None:
+                    unconnected.append(key)
+                else:
+                    nn = name_of_net(n)
+                    net_to_ports.setdefault(nn, []).append(key)
+
+        lines: list[str] = [f"Circuit: {self.name}"]
+        lines.append("Connections:")
+        for nn, plist in sorted(net_to_ports.items()):
+            plist_sorted = ", ".join(sorted(plist))
+            lines.append(f"  {nn}: {plist_sorted}")
+
+        # Lint
+        warnings: list[str] = []
+        for nn, plist in net_to_ports.items():
+            if nn != "0" and len(plist) <= 1:
+                warnings.append(f"Net '{nn}' has degree {len(plist)} (possible floating)")
+        if unconnected:
+            warnings.append(f"Unconnected ports: {', '.join(sorted(unconnected))}")
+        if warnings:
+            lines.append("Warnings:")
+            for w in warnings:
+                lines.append(f"  - {w}")
+        return "\n".join(lines)
+
+    def print_connectivity(self) -> None:
+        print(self.summary())
+
+    def to_dot(self) -> str:
+        """Export a Graphviz DOT representation (components as boxes, nets as ellipses)."""
+        # Build stable names
+        self._assign_node_ids()
+        comp_ids: dict[Component, str] = {}
+        net_ids: dict[Net, str] = {}
+
+        def comp_id(c: Component) -> str:
+            if c not in comp_ids:
+                comp_ids[c] = f"comp_{c.ref}"
+            return comp_ids[c]
+
+        def net_id(n: Net) -> str:
+            if n not in net_ids:
+                if n is GND:
+                    net_ids[n] = "net_0"
+                else:
+                    name = n.name or f"n{self._net_ids.get(n, 0)}"
+                    safe = name.replace('"', "'")
+                    net_ids[n] = f"net_{safe}"
+            return net_ids[n]
+
+        lines: list[str] = []
+        lines.append("graph circuit {\n  rankdir=LR;\n  node [fontname=Helvetica];\n}")
+        out: list[str] = ["graph circuit {", "  rankdir=LR;"]
+        # Net nodes
+        seen_nets: set[Net] = set()
+        for n in set(self._port_to_net.values()):
+            nid = net_id(n)
+            label = "0" if n is GND else (n.name or f"n{self._net_ids.get(n, 0)}")
+            if n is GND:
+                out.append(
+                    f'  {nid} [shape=ellipse, label="{label}", style=filled, fillcolor=lightgray];'
+                )
+            else:
+                out.append(f'  {nid} [shape=ellipse, label="{label}"];')
+            seen_nets.add(n)
+        # Component nodes
+        for c in self._components:
+            cid = comp_id(c)
+            val = str(c.value)
+            out.append(f'  {cid} [shape=box, label="{type(c).__name__} {c.ref}\\n{val}"];')
+        # Edges
+        for c in self._components:
+            cid = comp_id(c)
+            for port in c.ports:
+                nn = self._port_to_net.get(port)
+                if nn is None:
+                    continue
+                nid = net_id(nn)
+                out.append(f'  {cid} -- {nid} [label="{port.name}"];')
+        out.append("}")
+        return "\n".join(out)
+
+    def render_svg(self, out_path: str) -> bool:
+        """Render DOT to SVG using the 'dot' executable (Graphviz). Returns True if saved."""
+        dot = shutil.which("dot")
+        if not dot:
+            return False
+        tmp_dot = Path(out_path).with_suffix(".dot")
+        tmp_dot.write_text(self.to_dot(), encoding="utf-8")
+        proc = subprocess.run([dot, "-Tsvg", str(tmp_dot), "-o", out_path], capture_output=True)
+        return proc.returncode == 0

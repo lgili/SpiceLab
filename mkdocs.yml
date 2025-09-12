@@ -37,6 +37,7 @@ nav:
   - Examples: examples.md
   - Examples Gallery: examples-gallery.md
   - Guides:
+      - Circuit Preview: preview.md
       - Sweeps and STEP: sweeps-step.md
       - Monte Carlo: monte-carlo.md
       - AC Stability: ac-stability.md

@@ -20,7 +20,7 @@ jobs:
       - name: Install NGSpice (Ubuntu)
         run: |
           sudo apt-get update
-          sudo apt-get install -y ngspice
+          sudo apt-get install -y ngspice graphviz
           ngspice -v || true
       - name: Install requirements
         run: |
@@ -48,12 +48,14 @@ jobs:
           python opamp_stability.py
           python monte_carlo_fig.py
           python step_sweep_fig.py
+          python circuit_preview.py
           popd
           cp -v examples/ac_bode.png docs/assets/examples/ac_bode.png
           cp -v examples/opamp_bode.png docs/assets/examples/opamp_bode.png
           cp -v examples/mc_hist.png docs/assets/examples/mc_hist.png
           cp -v examples/mc_traces.png docs/assets/examples/mc_traces.png
           cp -v examples/step_grid.png docs/assets/examples/step_grid.png
+          cp -v examples/circuit_preview.svg docs/assets/examples/circuit_preview.svg || true
 
       - name: Build site
         env:
