@@ -39,7 +39,10 @@ nav:
       - Sweeps and STEP: sweeps-step.md
       - Monte Carlo: monte-carlo.md
       - AC Stability: ac-stability.md
+      - LTspice Import: ltspice-import.md
+      - Plots: plots.md
       - Troubleshooting: troubleshooting.md
+  - Cookbook: cookbook.md
   - API Reference:
       - Core: reference/core.md
       - IO: reference/io.md
