@@ -33,6 +33,9 @@ nav:
   - Installation: installation.md
   - Getting Started: getting-started.md
   - Examples: examples.md
+  - Guides:
+      - Monte Carlo: monte-carlo.md
+      - AC Stability: ac-stability.md
   - API Reference:
       - Core: reference/core.md
       - IO: reference/io.md

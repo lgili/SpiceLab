@@ -22,3 +22,21 @@ print(c.build_netlist())
 ```
 
 This will print a SPICE netlist ready to be executed by a SPICE runner.
+
+## Run a transient in one line
+
+You can run a transient (.TRAN) analysis and get a pandas DataFrame directly:
+
+```python
+from cat.analysis import run_tran
+
+df = run_tran(c, "10us", "5ms", return_df=True)
+print(df.head())
+```
+
+Or keep the full result object for advanced usage:
+
+```python
+res = run_tran(c, "10us", "5ms")
+print(res.traces.names)
+```

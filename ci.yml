@@ -47,7 +47,7 @@ jobs:
         run: echo "PYTHONPATH=${{ github.workspace }}/src" >> $GITHUB_ENV
 
       - name: Verify package import (fail early)
-        run: python -c "import sys, importlib, traceback; spec = importlib.util.find_spec('cat'); print('find_spec(cat)=', spec); import cat; print('cat imported OK:', getattr(cat, '__file__', None))"
+        run: python -c "import sys, importlib.util, traceback; spec = importlib.util.find_spec('cat'); print('find_spec(cat)=', spec); import cat; print('cat imported OK:', getattr(cat, '__file__', None))"
 
       - name: Show installed package info (pip)
         run: |

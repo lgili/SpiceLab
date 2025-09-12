@@ -29,7 +29,7 @@ jobs:
         run: echo "PYTHONPATH=${{ github.workspace }}/src" >> $GITHUB_ENV
 
       - name: Verify import (fail early)
-        run: python -c "import importlib, traceback, sys; print('find_spec cat ->', importlib.util.find_spec('cat')); import cat; print('cat imported OK:', getattr(cat, '__file__', None))"
+        run: python -c "import importlib.util, traceback, sys; print('find_spec cat ->', importlib.util.find_spec('cat')); import cat; print('cat imported OK:', getattr(cat, '__file__', None))"
 
       - name: Build site
         env:

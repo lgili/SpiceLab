@@ -35,6 +35,7 @@ from .analysis import (
     WorstCaseResult,
     ac_gain_phase,
     bandwidth_3db,
+    bode,
     crossover_freq_0db,
     gain_db_from_traces,
     gain_margin_db,
@@ -43,7 +44,10 @@ from .analysis import (
     peak,
     phase_crossover_freq,
     phase_margin,
+    run_ac,
+    run_op,
     run_step_native,
+    run_tran,
     settling_time,
     stack_runs_to_df,
     stack_step_to_df,
@@ -185,6 +189,11 @@ __all__ = [
     "plot_traces",
     "plot_bode",
     "plot_sweep_df",
+    # High-level helpers
+    "run_op",
+    "run_tran",
+    "run_ac",
+    "bode",
 ]
 
 # Typed source helpers (also export for convenience)
