@@ -5,6 +5,7 @@ import shutil
 from cat import GND, Circuit, opamp_inverting
 from cat.analysis import AC, TRAN, ac_gain_phase
 from cat.core.components import R, V
+from cat.core.net import Net
 
 
 def inverting_demo() -> None:
@@ -15,10 +16,11 @@ def inverting_demo() -> None:
     c.add(V1)
     vin = V1.ports[0]  # source positive pin
 
-    # Define an output node using a load resistor
+    # Define named output node
     load = R("1k")
     c.add(load)
-    vout = load.ports[0]
+    vout = Net("vout")
+    c.connect(load.ports[0], vout)
     c.connect(load.ports[1], GND)
 
     # Inverting amplifier: gain = -Rf/Rin = -100k/10k = -10
@@ -33,7 +35,7 @@ def inverting_demo() -> None:
         print("tran traces:", res_tran.traces.names)
 
         res_ac = AC("dec", 20, 10.0, 1e5).run(c)
-        f, mag_db, _ = ac_gain_phase(res_ac.traces, "v(n1)")
+        f, mag_db, _ = ac_gain_phase(res_ac.traces, "v(vout)")
         print("ac points:", len(f), "| first mag[dB]=", mag_db[0])
 
 

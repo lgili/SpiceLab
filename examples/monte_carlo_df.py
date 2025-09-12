@@ -5,7 +5,7 @@ import shutil
 from cat.analysis import OP, NormalPct, monte_carlo
 from cat.core.circuit import Circuit
 from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND
+from cat.core.net import GND, Net
 
 
 def _rc() -> tuple[Circuit, Resistor]:
@@ -14,8 +14,12 @@ def _rc() -> tuple[Circuit, Resistor]:
     R1 = Resistor("1", 1000.0)
     C1 = Capacitor("1", "100n")
     c.add(V1, R1, C1)
-    c.connect(V1.ports[0], R1.ports[0])  # vin
-    c.connect(R1.ports[1], C1.ports[0])  # vout
+    vin = Net("vin")
+    vout = Net("vout")
+    c.connect(V1.ports[0], vin)  # vin
+    c.connect(R1.ports[0], vin)
+    c.connect(R1.ports[1], vout)  # vout
+    c.connect(C1.ports[0], vout)
     c.connect(V1.ports[1], GND)
     c.connect(C1.ports[1], GND)
     return c, R1
@@ -29,7 +33,7 @@ def main() -> None:
 
     def metric_map(res):
         # expose last value of vout as metric
-        return {"vout": float(res.traces["v(n1)"].values[-1])}
+        return {"vout": float(res.traces["v(vout)"].values[-1])}
 
     mc = monte_carlo(
         c,
