@@ -18,6 +18,24 @@ Documentation: https://lgili.github.io/PyCircuitKit/
 
 ---
 
+## Quickstart (1 min)
+```python
+from cat import Circuit, R, C, V, GND, run_tran
+
+c = Circuit("rc")
+V1, R1, C1 = V(5.0), R("1k"), C("100n")
+c.add(V1, R1, C1)
+c.connect(V1.ports[0], R1.ports[0])
+c.connect(R1.ports[1], C1.ports[0])
+c.connect(V1.ports[1], GND)
+c.connect(C1.ports[1], GND)
+
+df = run_tran(c, "10us", "5ms", return_df=True)
+print(df.head())
+```
+
+---
+
 ## ✨ Features (MVP)
 
 - **Zero-string connectivity:** connect **Port ↔ Net** objects (type-safe, IDE-friendly).

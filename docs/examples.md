@@ -1,15 +1,23 @@
 # Examples
 
-This project includes several example scripts under `examples/`:
+This project ships runnable examples in `examples/`:
 
+- `rc_tran.py` — transient of an RC low-pass
+- `ac_bode.py` — RC Bode magnitude/phase plot
+- `dc_sweep.py` — DC sweep example
+- `step_sweep_grid.py` — Python grid over parameters + DataFrame
+- `monte_carlo_rc.py` — Monte Carlo with metrics and plots
+- `opamp_closed_loop.py` — simple op-amp closed-loop wiring
 - `rc_highpass.py` — RC highpass netlist builder
-- `opamp_closed_loop.py` — simple op-amp closed-loop example
-- `monte_carlo_demo.py` — demo running monte_carlo with a fake runner
+- `import_ltspice_and_run.py` — import LTspice netlist and run
 
-You can run them directly with Python, for example:
+Run them as modules:
 
 ```bash
-python -m examples.rc_highpass
+python -m examples.rc_tran
+python -m examples.ac_bode
+python -m examples.step_sweep_grid
+python -m examples.monte_carlo_rc
 ```
 
-Or view the source in the `examples/` folder for more advanced usage.
+See the `examples/` folder for details and more scripts.

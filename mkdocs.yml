@@ -33,10 +33,13 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Getting Started: getting-started.md
+  - Concepts: concepts.md
   - Examples: examples.md
   - Guides:
+      - Sweeps and STEP: sweeps-step.md
       - Monte Carlo: monte-carlo.md
       - AC Stability: ac-stability.md
+      - Troubleshooting: troubleshooting.md
   - API Reference:
       - Core: reference/core.md
       - IO: reference/io.md
