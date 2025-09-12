@@ -327,6 +327,125 @@ class Ipwl(Component):
         return f"I{self.ref} {net_of(p)} {net_of(n)} PWL({self.args_raw})"
 
 
+# --------------------------------------------------------------------------------------
+# Fontes controladas (E/G/F/H) e Diodo
+# --------------------------------------------------------------------------------------
+
+
+class VCVS(Component):
+    """E: VCVS — Fonte de tensão controlada por tensão.
+
+    Portas: p, n, cp, cn (saída e nós de controle). Valor = ganho (av).
+    """
+
+    def __init__(self, ref: str, gain: str | float) -> None:
+        super().__init__(ref=ref, value=gain)
+        self._ports = (
+            Port(self, "p", PortRole.POSITIVE),
+            Port(self, "n", PortRole.NEGATIVE),
+            Port(self, "cp", PortRole.POSITIVE),
+            Port(self, "cn", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p, n, cp, cn = self.ports
+        return f"E{self.ref} {net_of(p)} {net_of(n)} {net_of(cp)} {net_of(cn)} {self.value}"
+
+
+class VCCS(Component):
+    """G: VCCS — Fonte de corrente controlada por tensão (transcondutância em S)."""
+
+    def __init__(self, ref: str, gm: str | float) -> None:
+        super().__init__(ref=ref, value=gm)
+        self._ports = (
+            Port(self, "p", PortRole.POSITIVE),
+            Port(self, "n", PortRole.NEGATIVE),
+            Port(self, "cp", PortRole.POSITIVE),
+            Port(self, "cn", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p, n, cp, cn = self.ports
+        return f"G{self.ref} {net_of(p)} {net_of(n)} {net_of(cp)} {net_of(cn)} {self.value}"
+
+
+class CCCS(Component):
+    """F: CCCS — Fonte de corrente controlada por corrente (ganho de corrente).
+
+    Requer a referência de uma fonte de tensão controladora (nome SPICE, ex.: V1).
+    """
+
+    def __init__(self, ref: str, ctrl_vsrc: str, gain: str | float) -> None:
+        super().__init__(ref=ref, value=gain)
+        self.ctrl_vsrc = ctrl_vsrc
+        self._ports = (Port(self, "p", PortRole.POSITIVE), Port(self, "n", PortRole.NEGATIVE))
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p, n = self.ports
+        return f"F{self.ref} {net_of(p)} {net_of(n)} {self.ctrl_vsrc} {self.value}"
+
+
+class CCVS(Component):
+    """H: CCVS — Fonte de tensão controlada por corrente (transresistência em ohms)."""
+
+    def __init__(self, ref: str, ctrl_vsrc: str, r: str | float) -> None:
+        super().__init__(ref=ref, value=r)
+        self.ctrl_vsrc = ctrl_vsrc
+        self._ports = (Port(self, "p", PortRole.POSITIVE), Port(self, "n", PortRole.NEGATIVE))
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p, n = self.ports
+        return f"H{self.ref} {net_of(p)} {net_of(n)} {self.ctrl_vsrc} {self.value}"
+
+
+class Diode(Component):
+    """D: Diodo mínimo — valor = nome do .model (string)."""
+
+    def __init__(self, ref: str, model: str) -> None:
+        super().__init__(ref=ref, value=model)
+        self._ports = (Port(self, "a", PortRole.POSITIVE), Port(self, "c", PortRole.NEGATIVE))
+
+    def spice_card(self, net_of: NetOf) -> str:
+        a, c = self.ports
+        return f"D{self.ref} {net_of(a)} {net_of(c)} {self.value}"
+
+
+class VSwitch(Component):
+    """Voltage-controlled switch (S): Sref p n cp cn model.
+
+    Requires a separate .model <model> VSWITCH(...) directive added to the Circuit.
+    """
+
+    def __init__(self, ref: str, model: str) -> None:
+        super().__init__(ref=ref, value=model)
+        self._ports = (
+            Port(self, "p", PortRole.POSITIVE),
+            Port(self, "n", PortRole.NEGATIVE),
+            Port(self, "cp", PortRole.POSITIVE),
+            Port(self, "cn", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p, n, cp, cn = self.ports
+        return f"S{self.ref} {net_of(p)} {net_of(n)} {net_of(cp)} {net_of(cn)} {self.value}"
+
+
+class ISwitch(Component):
+    """Current-controlled switch (W): Wref p n Vsrc model (LTspice syntax).
+
+    Requires a .model <model> ISWITCH(...) directive.
+    """
+
+    def __init__(self, ref: str, ctrl_vsrc: str, model: str) -> None:
+        super().__init__(ref=ref, value=model)
+        self.ctrl_vsrc = ctrl_vsrc
+        self._ports = (Port(self, "p", PortRole.POSITIVE), Port(self, "n", PortRole.NEGATIVE))
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p, n = self.ports
+        return f"W{self.ref} {net_of(p)} {net_of(n)} {self.ctrl_vsrc} {self.value}"
+
+
 # ==========================
 # Tipadas (SIN / PWL)
 # ==========================
@@ -498,3 +617,61 @@ def VPWL_T(points: list[tuple[str | float, str | float]]) -> VpwlT:
 
 def IPWL_T(points: list[tuple[str | float, str | float]]) -> IpwlT:
     return IpwlT(ref=_next("I"), points=points)
+
+
+# Helpers para controladas e diodo
+def E(gain: str | float) -> VCVS:
+    return VCVS(ref=_next("E"), gain=gain)
+
+
+def G(gm: str | float) -> VCCS:
+    return VCCS(ref=_next("G"), gm=gm)
+
+
+def F(ctrl_vsrc: str, gain: str | float) -> CCCS:
+    return CCCS(ref=_next("F"), ctrl_vsrc=ctrl_vsrc, gain=gain)
+
+
+def H(ctrl_vsrc: str, r: str | float) -> CCVS:
+    return CCVS(ref=_next("H"), ctrl_vsrc=ctrl_vsrc, r=r)
+
+
+def D(model: str) -> Diode:
+    return Diode(ref=_next("D"), model=model)
+
+
+def SW(model: str) -> VSwitch:
+    return VSwitch(ref=_next("S"), model=model)
+
+
+def SWI(ctrl_vsrc: str, model: str) -> ISwitch:
+    return ISwitch(ref=_next("W"), ctrl_vsrc=ctrl_vsrc, model=model)
+
+
+# --------------------------------------------------------------------------------------
+# Op-amp ideal (modelado como VCVS de alto ganho)
+# --------------------------------------------------------------------------------------
+
+
+class OpAmpIdeal(Component):
+    """Op-amp ideal de 3 pinos (inp, inn, out) modelado por VCVS de alto ganho.
+
+    Carta: E<ref> out 0 inp inn <gain>
+    """
+
+    def __init__(self, ref: str, gain: str | float = 1e6) -> None:
+        super().__init__(ref=ref, value=str(gain))
+        self._ports = (
+            Port(self, "inp", PortRole.POSITIVE),
+            Port(self, "inn", PortRole.NEGATIVE),
+            Port(self, "out", PortRole.POSITIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        inp, inn, out = self.ports
+        return f"E{self.ref} {net_of(out)} 0 {net_of(inp)} {net_of(inn)} {self.value}"
+
+
+def OA(gain: str | float = 1e6) -> OpAmpIdeal:
+    """Helper para op-amp ideal. Usa o prefixo 'E' para evitar colisão de refs."""
+    return OpAmpIdeal(ref=_next("E"), gain=gain)

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import copy
+import importlib
 import math
 import random as _random
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Mapping as TMapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Any, Protocol, cast
 
 from ..core.circuit import Circuit
 from ..core.components import Component
@@ -93,6 +95,80 @@ class TriangularPct(Dist):
 class MonteCarloResult:
     samples: list[dict[str, float]]
     runs: list[AnalysisResult]
+
+    def to_dataframe(
+        self,
+        metric: (
+            Callable[[AnalysisResult], float | dict[str, Any]]
+            | TMapping[str, Callable[[AnalysisResult], Any]]
+            | None
+        ) = None,
+        *,
+        trial_name: str = "trial",
+        param_prefix: str = "",
+        y: Sequence[str] | None = None,
+        sample_at: float | None = None,
+    ) -> Any:
+        """
+        Returns a per-trial DataFrame with columns:
+          - trial (index within this Monte Carlo run)
+          - one column per sampled parameter (from `samples`), optionally prefixed
+          - optional metric columns computed from each AnalysisResult
+          - optional raw trace columns (final value or sampled at `sample_at` seconds)
+
+        metric:
+          - callable → result stored in column 'metric' (float or scalar)
+          - mapping name->callable → adds one column per metric name
+        y: list of trace names to extract values for each run. If `sample_at` is given,
+           the value is linearly interpolated at t=sample_at using the run's time axis;
+           otherwise, the last value in the trace is used.
+        """
+        try:
+            pd: Any = importlib.import_module("pandas")
+        except Exception as exc:  # pragma: no cover
+            raise RuntimeError("pandas is required for MonteCarloResult.to_dataframe()") from exc
+
+        rows: list[dict[str, Any]] = []
+        for i, (s, run) in enumerate(zip(self.samples, self.runs, strict=False)):
+            # copy sampled params; optionally add prefix
+            if param_prefix:
+                row = {f"{param_prefix}{k}": v for k, v in s.items()}
+            else:
+                row = dict(s)
+            row[trial_name] = i
+            if metric is not None:
+                if hasattr(metric, "items"):
+                    for name, fn in cast(
+                        TMapping[str, Callable[[AnalysisResult], Any]], metric
+                    ).items():
+                        row[name] = fn(run)
+                else:
+                    m = cast(Callable[[AnalysisResult], Any], metric)(run)
+                    if isinstance(m, dict):
+                        row.update(m)
+                    else:
+                        row["metric"] = m
+
+            if y:
+                try:
+                    import numpy as _np  # local import to avoid hard dep at module import
+                except Exception:  # pragma: no cover
+                    _np = None  # type: ignore[assignment]
+
+                ts = run.traces
+                # pick x axis name
+                xname = getattr(ts.x, "name", "time")
+                for name in y:
+                    vals = ts[name].values
+                    if sample_at is not None and _np is not None and xname.lower() == "time":
+                        t = ts[xname].values
+                        row[name] = float(_np.interp(sample_at, t, vals))
+                    else:
+                        row[name] = (
+                            float(vals[-1]) if len(vals) else _np.nan if _np is not None else 0.0
+                        )
+            rows.append(row)
+        return pd.DataFrame(rows)
 
 
 def _as_float(value: str | float) -> float:

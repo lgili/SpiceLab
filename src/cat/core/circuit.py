@@ -15,10 +15,16 @@ class Circuit:
     _net_ids: dict[Net, int] = field(default_factory=dict, init=False)
     _port_to_net: dict[Port, Net] = field(default_factory=dict, init=False)
     _components: list[Component] = field(default_factory=list, init=False)
+    _directives: list[str] = field(default_factory=list, init=False)
 
     def add(self, *comps: Component) -> Circuit:
         for c in comps:
             self._components.append(c)
+        return self
+
+    def add_directive(self, line: str) -> Circuit:
+        """Append a raw SPICE directive (e.g., ".model ...", ".param ...")."""
+        self._directives.append(line.rstrip("\n"))
         return self
 
     def connect(self, a: Port, b: Net | Port) -> Circuit:
@@ -73,5 +79,8 @@ class Circuit:
         lines = [f"* {self.name}"]
         for comp in self._components:
             lines.append(comp.spice_card(self._net_of))
+        # Append directives (if any) before .end
+        for d in self._directives:
+            lines.append(d)
         lines.append(".end")
         return "\n".join(lines)

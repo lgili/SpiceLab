@@ -20,7 +20,7 @@ Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN /
 
 ### Highlights
 - **AC/DC/TRAN** via NGSpice (CLI).
-- **LTspice import**: handles `.include/.param`, V/I PULSE/SIN/PWL.
+- **LTspice import**: handles `.include/.param`, V/I PULSE/SIN/PWL, controlled sources (E/G/F/H), diode D, simple `.SUBCKT` flatten.
 - **Monte Carlo**: parallel, deterministic order; DataFrame stacking.
 - **Metrics/Plots**: AC (Bode/PM/GM) e tran (rise/fall/settling/overshoot).
 
@@ -143,6 +143,44 @@ mc = monte_carlo(
 from cat.analysis import stack_runs_to_df
 print(stack_runs_to_df(mc.runs).head())
 ```
+
+### 2.1) Monte Carlo to DataFrame (metrics)
+```python
+# Map metrics per run (e.g., last value of vout)
+from cat.analysis.core import AnalysisResult
+
+def metrics(res: AnalysisResult) -> dict[str, float]:
+    return {"vout": float(res.traces["v(n1)"].values[-1])}
+
+df = mc.to_dataframe(metric=metrics, param_prefix="param_")
+print(df.head())
+```
+Optionally, extract trace values at a given time for each trial:
+```python
+df2 = mc.to_dataframe(metric=None, y=["v(n1)"], sample_at=1e-3)  # t = 1 ms
+```
+
+### 3) Ideal Op-Amp (OA) and topology helpers
+```python
+from cat import GND, Circuit, opamp_inverting
+from cat.core.components import V, R
+
+c = Circuit("opamp_inv")
+V1 = V(1.0)
+c.add(V1)
+vin = V1.ports[0]
+load = R("1k"); c.add(load)
+vout = load.ports[0]; c.connect(load.ports[1], GND)
+
+# Inverting amplifier: gain = -Rf/Rin = -100k/10k
+opamp_inverting(c, inp=vin, out=vout, ref=GND, Rin="10k", Rf="100k", gain=1e6)
+```
+The helper `opamp_buffer(c, inp, out)` wires a voltage follower.
+
+### 4) Switches (S/W) with .model
+- Voltage-controlled: `SW("SWMOD")` → `Sref p n cp cn SWMOD` (requires `.model SWMOD VSWITCH(...)`).
+- Current-controlled: `SWI("V1","WMOD")` → `Wref p n V1 WMOD` (requires `.model WMOD ISWITCH(...)`).
+Add directives with `circuit.add_directive(".model ...")`.
 
 ### 3) Importar netlist do **LTspice** e simular
 Export no LTspice: *View → SPICE Netlist* → salve como `.cir`/`.net`.

@@ -50,6 +50,8 @@ from .analysis.viz.plot import (
 )
 from .core.circuit import Circuit
 from .core.components import (
+    CCCS,
+    CCVS,
     IA,
     IP,
     IPWL,
@@ -57,6 +59,8 @@ from .core.components import (
     ISIN,
     ISIN_T,
     VA,
+    VCCS,
+    VCVS,
     VP,
     VPWL,
     VPWL_T,
@@ -64,6 +68,10 @@ from .core.components import (
     VSIN_T,
     C,
     Capacitor,
+    Diode,
+    F,
+    G,
+    H,
     I,
     Iac,
     Idc,
@@ -71,6 +79,7 @@ from .core.components import (
     Ipulse,
     Ipwl,
     L,
+    OpAmpIdeal,
     R,
     Resistor,
     V,
@@ -79,6 +88,7 @@ from .core.components import (
     Vpwl,
 )
 from .core.net import GND, Net
+from .utils.topologies import opamp_buffer, opamp_inverting
 
 __all__ = [
     # Core
@@ -99,6 +109,18 @@ __all__ = [
     "ISIN",
     "VPWL",
     "IPWL",
+    "OpAmpIdeal",
+    "OA",
+    "Diode",
+    "D",
+    "VCVS",
+    "VCCS",
+    "CCCS",
+    "CCVS",
+    "E",
+    "G",
+    "F",
+    "H",
     "R",
     "C",
     "V",
@@ -108,6 +130,8 @@ __all__ = [
     "I",
     "IA",
     "IP",
+    "OpAmpIdeal",
+    "OA",
     # Analyses
     "OP",
     "TRAN",
@@ -159,4 +183,10 @@ __all__ += [
     "ISIN_T",
     "VPWL_T",
     "IPWL_T",
+]
+
+# Topology helpers
+__all__ += [
+    "opamp_buffer",
+    "opamp_inverting",
 ]

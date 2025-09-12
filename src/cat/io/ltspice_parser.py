@@ -5,20 +5,27 @@ from pathlib import Path
 
 from ..core.circuit import Circuit
 from ..core.components import (
+    CCCS,
+    CCVS,
+    VCCS,
+    VCVS,
     VPWL,
     VSIN,
     Capacitor,
     Component,
+    Diode,
     Iac,
     Idc,
     Inductor,
     Ipulse,
     Ipwl,
     Isin,
+    ISwitch,
     Resistor,
     Vac,
     Vdc,
     Vpulse,
+    VSwitch,
 )
 from ..core.net import GND, Net
 
@@ -95,6 +102,148 @@ def _collect_params_and_includes(text: str, base_dir: Path) -> tuple[str, dict[s
     return expanded, params
 
 
+def _parse_subckts(text: str) -> tuple[str, dict[str, tuple[list[str], list[str]]]]:
+    """Extract .SUBCKT blocks and return (text_without_blocks, subckt_map).
+
+    subckt_map[name] = (pins, body_lines)
+    """
+    lines = text.splitlines()
+    out: list[str] = []
+    subckts: dict[str, tuple[list[str], list[str]]] = {}
+    i = 0
+    while i < len(lines):
+        s = lines[i].strip()
+        low = s.lower()
+        if low.startswith(".subckt"):
+            parts = s.split()
+            if len(parts) >= 3:
+                name = parts[1]
+                pins = parts[2:]
+                body: list[str] = []
+                i += 1
+                while i < len(lines):
+                    ss = lines[i].strip()
+                    if ss.lower().startswith(".ends"):
+                        break
+                    body.append(lines[i])
+                    i += 1
+                subckts[name] = (pins, body)
+                # skip .ends
+                while i < len(lines) and not lines[i].strip().lower().startswith(".ends"):
+                    i += 1
+                i += 1
+                continue
+        out.append(lines[i])
+        i += 1
+    return "\n".join(out), subckts
+
+
+def _expand_subckt_instance(card: str, pins: list[str], body: list[str]) -> list[str]:
+    """Expand a single X instance line into flat device lines.
+
+    card: e.g., "XU1 n1 n2 RC"
+    pins: subckt formal pins
+    body: lines inside subckt
+    """
+    t = card.split()
+    inst_ref = t[0][1:]  # remove leading 'X'
+    # Identify subckt name (last token) and split args vs params
+    _subckt_name = t[-1]
+    arg_tokens = t[1:-1]
+    # Params: tokens containing '=' beyond the known positional pins
+    pin_args = arg_tokens[: len(pins)]
+    param_tokens = arg_tokens[len(pins) :]
+    param_map: dict[str, str] = {}
+    for tok in param_tokens:
+        if "=" in tok:
+            k, v = tok.split("=", 1)
+            param_map[k.strip()] = v.strip()
+    pin_map: dict[str, str] = {}
+    for i, p in enumerate(pins):
+        if i < len(pin_args):
+            pin_map[p] = pin_args[i]
+
+    def _map_node(tok: str) -> str:
+        if tok == "0":
+            return tok
+        if tok in pin_map:
+            return pin_map[tok]
+        return f"{inst_ref}_{tok}"
+
+    def _rewrite_ref(tok: str) -> str:
+        # Prefix ref with instance
+        if not tok:
+            return tok
+        return f"{tok[0]}{inst_ref}_{tok[1:]}"
+
+    def _node_count(prefix: str) -> int:
+        return {"R": 2, "C": 2, "L": 2, "D": 2, "V": 2, "I": 2, "E": 4, "G": 4, "F": 2, "H": 2}.get(
+            prefix, 0
+        )
+
+    out: list[str] = []
+    for ln in body:
+        s = ln.strip()
+        if not s or s.startswith("*"):
+            continue
+        # Apply param substitution within the body line using {NAME} placeholders
+        if param_map:
+            for k, v in param_map.items():
+                s = s.replace("{" + k + "}", v)
+        parts = s.split()
+        if not parts:
+            continue
+        dev = parts[0]
+        pref = dev[0].upper()
+        parts[0] = _rewrite_ref(dev)
+        ncnt = _node_count(pref)
+        # rewrite first ncnt node tokens
+        for i in range(1, min(1 + ncnt, len(parts))):
+            parts[i] = _map_node(parts[i])
+        out.append(" ".join(parts))
+    return out
+
+
+def _expand_subckts_in_text(text: str) -> str:
+    base, subckts = _parse_subckts(text)
+    if not subckts:
+        return text
+
+    def expand_once(txt: str) -> tuple[str, bool]:
+        changed = False
+        out: list[str] = []
+        for raw in txt.splitlines():
+            s = raw.strip()
+            if not s or s.startswith("*"):
+                out.append(raw)
+                continue
+            t = s.split()
+            if t[0][0].upper() == "X" and len(t) >= 2:
+                # subckt name is the last token that does NOT contain '=' (params come after)
+                subname = None
+                for tok in reversed(t[1:]):
+                    if "=" not in tok:
+                        subname = tok
+                        break
+                if subname is None:
+                    subname = t[-1]
+                if subname in subckts:
+                    pins, body = subckts[subname]
+                    out.extend(_expand_subckt_instance(s, pins, body))
+                    changed = True
+                    continue
+            out.append(raw)
+        return "\n".join(out), changed
+
+    cur = base
+    # Iterate expansion to handle one level of nesting (or until no changes)
+    for _ in range(3):  # small cap to prevent infinite loops
+        cur, ch = expand_once(cur)
+        if not ch:
+            break
+    return cur
+
+
 def from_spice_netlist(text: str, *, title: str | None = None) -> Circuit:
     """
     Converte um netlist SPICE (LTspice exportado via View→SPICE Netlist) em Circuit.
@@ -105,7 +254,14 @@ def from_spice_netlist(text: str, *, title: str | None = None) -> Circuit:
 
     for raw in text.splitlines():
         t = _tok(raw)
-        if not t or _is_directive(t):
+        if not t:
+            continue
+        if _is_directive(t):
+            # Preserve .model directives into the Circuit
+            if t[0].lower().startswith(".model"):
+                # full raw line
+                c.add_directive(raw)
+            continue
             continue
 
         card = t[0]
@@ -247,7 +403,76 @@ def from_spice_netlist(text: str, *, title: str | None = None) -> Circuit:
                 c.connect(src_obj.ports[0], _net_of(nplus, nets))
                 c.connect(src_obj.ports[1], _net_of(nminus, nets))
         else:
-            # Ignora outros dispositivos por enquanto (I, D, X, etc.)
+            # Dispositivos adicionais
+            if prefix == "S" and len(t) >= 6:
+                # Sref p n cp cn model
+                _, n1, n2, nc1, nc2, model = t[:6]
+                s = VSwitch(ref, model)
+                c.add(s)
+                p, n, cp, cn = s.ports
+                c.connect(p, _net_of(n1, nets))
+                c.connect(n, _net_of(n2, nets))
+                c.connect(cp, _net_of(nc1, nets))
+                c.connect(cn, _net_of(nc2, nets))
+                continue
+            if prefix == "W" and len(t) >= 5:
+                # Wref n+ n- Vsrc model
+                _, n1, n2, vsrc, model = t[:5]
+                w = ISwitch(ref, vsrc, model)
+                c.add(w)
+                p, n = w.ports
+                c.connect(p, _net_of(n1, nets))
+                c.connect(n, _net_of(n2, nets))
+                continue
+            if prefix == "E" and len(t) >= 6:
+                # Eref n+ n- nc+ nc- gain
+                _, n1, n2, nc1, nc2, gain = t[:6]
+                e = VCVS(ref, gain)
+                c.add(e)
+                p, n, cp, cn = e.ports
+                c.connect(p, _net_of(n1, nets))
+                c.connect(n, _net_of(n2, nets))
+                c.connect(cp, _net_of(nc1, nets))
+                c.connect(cn, _net_of(nc2, nets))
+                continue
+            if prefix == "G" and len(t) >= 6:
+                # Gref n+ n- nc+ nc- gm
+                _, n1, n2, nc1, nc2, gm = t[:6]
+                g = VCCS(ref, gm)
+                c.add(g)
+                p, n, cp, cn = g.ports
+                c.connect(p, _net_of(n1, nets))
+                c.connect(n, _net_of(n2, nets))
+                c.connect(cp, _net_of(nc1, nets))
+                c.connect(cn, _net_of(nc2, nets))
+                continue
+            if prefix == "F" and len(t) >= 5:
+                # Fref n+ n- Vsrc gain
+                _, n1, n2, vsrc, gain = t[:5]
+                f = CCCS(ref, vsrc, gain)
+                c.add(f)
+                p, n = f.ports
+                c.connect(p, _net_of(n1, nets))
+                c.connect(n, _net_of(n2, nets))
+                continue
+            if prefix == "H" and len(t) >= 5:
+                # Href n+ n- Vsrc r
+                _, n1, n2, vsrc, rr = t[:5]
+                h = CCVS(ref, vsrc, rr)
+                c.add(h)
+                p, n = h.ports
+                c.connect(p, _net_of(n1, nets))
+                c.connect(n, _net_of(n2, nets))
+                continue
+            if prefix == "D" and len(t) >= 4:
+                # Dref a c model
+                _, a, cc, model = t[:4]
+                d = Diode(ref, model)
+                c.add(d)
+                c.connect(d.ports[0], _net_of(a, nets))
+                c.connect(d.ports[1], _net_of(cc, nets))
+                continue
+            # Ignora outros dispositivos (X, etc.)
             continue
 
     return c
@@ -263,6 +488,8 @@ def from_ltspice_file(path: str | Path) -> Circuit:
     first = text.splitlines()[0].strip() if text else ""
     title = first[1:].strip() if first.startswith("*") else p.stem
     expanded, _ = _collect_params_and_includes(text, p.parent)
+    # Flatten simple .SUBCKT instances (one-level nesting supported)
+    expanded = _expand_subckts_in_text(expanded)
     return from_spice_netlist(expanded, title=title)
 
 
