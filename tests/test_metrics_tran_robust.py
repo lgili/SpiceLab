@@ -1,4 +1,7 @@
+from typing import Any
+
 import numpy as np
+from numpy.typing import NDArray
 
 from cat.analysis.metrics_tran import (
     OvershootResult,
@@ -11,7 +14,7 @@ from cat.analysis.metrics_tran import (
 from cat.io.raw_reader import Trace, TraceSet
 
 
-def _make_ts(names_and_arrays: list[tuple[str, np.ndarray]] | None = None) -> TraceSet:
+def _make_ts(names_and_arrays: list[tuple[str, NDArray[Any]]] | None = None) -> TraceSet:
     if names_and_arrays is None:
         t = np.linspace(0.0, 1.0, 11)
         y = np.linspace(0.0, 1.0, 11)

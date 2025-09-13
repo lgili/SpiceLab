@@ -750,11 +750,11 @@ class AnalogMux8(Component):
             for i, out in enumerate(outs):
                 mid = f"{self.ref}_mid{i}"
                 # S element: Sref p n cp cn model
-                # p = in node, n = mid node, cp/cn = en port (both same: active-high)
+                # Control is V(cp) - V(cn). Drive cp with enable, cn tied to ground (active-high)
                 p_name = net_of(in_port)
                 n_name = mid
                 cp = net_of(en_ports[i])
-                cn = cp
+                cn = "0"
                 lines.append(f"S{self.ref}_{i} {p_name} {n_name} {cp} {cn} {self.sw_model}")
                 lines.append(f"R{self.ref}_{i} {n_name} {net_of(out)} {self.r_series}")
             if self.emit_model:
