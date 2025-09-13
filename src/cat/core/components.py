@@ -675,3 +675,132 @@ class OpAmpIdeal(Component):
 def OA(gain: str | float = 1e6) -> OpAmpIdeal:
     """Helper para op-amp ideal. Usa o prefixo 'E' para evitar colisão de refs."""
     return OpAmpIdeal(ref=_next("E"), gain=gain)
+
+
+# --------------------------------------------------------------------------------------
+# Analog multiplexer 1-to-8
+# --------------------------------------------------------------------------------------
+
+
+class AnalogMux8(Component):
+    """Analog 1-to-8 multiplexer.
+
+    Ports:
+      - in: input node
+      - out0..out7: outputs
+      - en0..en7 (optional): active-high enable ports controlling each channel
+
+    Modeling choices:
+      - If `sel` is provided (int 0..7) the selected channel receives a series
+        resistor `r_series` between `in` and `outN`. Other channels receive a
+        large off-resistance (`off_resistance`).
+      - If `enable_ports=True`, the component exposes 8 enable ports and the
+        netlist will include voltage-controlled switches (S...) driven by the
+        corresponding enable port. The switch model name defaults to
+        `SW_<ref>` and a recommended `.model` should be added by the user.
+    """
+
+    def __init__(
+        self,
+        ref: str,
+        r_series: str | float = 100,
+        sel: int | None = None,
+        enable_ports: bool = False,
+        off_resistance: str | float = "1G",
+        sw_model: str | None = None,
+        emit_model: bool = False,
+        as_subckt: bool = False,
+    ) -> None:
+        super().__init__(ref=ref, value="")
+        ports: list[Port] = [Port(self, "in", PortRole.NODE)]
+        for i in range(8):
+            ports.append(Port(self, f"out{i}", PortRole.NODE))
+        if enable_ports:
+            for i in range(8):
+                ports.append(Port(self, f"en{i}", PortRole.NODE))
+        self._ports = tuple(ports)
+        self.r_series = r_series
+        self.sel = sel
+        self.enable_ports = enable_ports
+        self.off_resistance = off_resistance
+        # If user doesn't provide sw_model, default to SW_<ref>
+        self.sw_model = sw_model or f"SW_{self.ref}"
+        self.emit_model = emit_model
+        self.as_subckt = as_subckt
+        # simple validation
+        if self.sel is not None and not (0 <= self.sel < 8):
+            raise ValueError("sel must be in 0..7")
+        # if both sel and enable_ports are provided, we'll honor enable_ports
+
+    def spice_card(self, net_of: NetOf) -> str:
+        # indexing: 0 -> in, 1..8 -> out0..out7, optional enables follow
+        in_port = self._ports[0]
+        outs = [self._ports[1 + i] for i in range(8)]
+        en_ports: list[Port] = []
+        if self.enable_ports:
+            en_ports = [self._ports[1 + 8 + i] for i in range(8)]
+
+        lines: list[str] = []
+        models: list[str] = []
+
+        # If enable_ports, emit S switches + series resistor; otherwise emit
+        # series resistors with selected one = r_series and others = off_resistance
+        if self.enable_ports:
+            # Use mid nodes to place resistor after switch to allow correct control
+            for i, out in enumerate(outs):
+                mid = f"{self.ref}_mid{i}"
+                # S element: Sref p n cp cn model
+                # p = in node, n = mid node, cp/cn = en port (both same: active-high)
+                p_name = net_of(in_port)
+                n_name = mid
+                cp = net_of(en_ports[i])
+                cn = cp
+                lines.append(f"S{self.ref}_{i} {p_name} {n_name} {cp} {cn} {self.sw_model}")
+                lines.append(f"R{self.ref}_{i} {n_name} {net_of(out)} {self.r_series}")
+            if self.emit_model:
+                # simple SW model; these params are conservative defaults
+                models.append(f".model {self.sw_model} SW(RON=1 ROFF=1e9 Vt=0.5)")
+        else:
+            for i, out in enumerate(outs):
+                if self.sel is not None:
+                    if i == self.sel:
+                        lines.append(
+                            f"R{self.ref}_{i} {net_of(in_port)} {net_of(out)} {self.r_series}"
+                        )
+                    else:
+                        lines.append(
+                            f"R{self.ref}_{i} {net_of(in_port)} {net_of(out)} {self.off_resistance}"
+                        )
+                else:
+                    # No selection and no enables: all paths high-Z
+                    lines.append(
+                        f"R{self.ref}_{i} {net_of(in_port)} {net_of(out)} {self.off_resistance}"
+                    )
+
+        # Add a comment summarizing configuration
+        header = (
+            f"* AnalogMux8 {self.ref} r_series={self.r_series} sel={self.sel} "
+            f"enable_ports={self.enable_ports} subckt={self.as_subckt}"
+        )
+        # If as_subckt is requested, wrap ports into .subckt ... .ends
+        if self.as_subckt:
+            # collect port names in order: in, out0..out7, en0..en7?
+            port_names = ["in"] + [f"out{i}" for i in range(8)]
+            if self.enable_ports:
+                port_names += [f"en{i}" for i in range(8)]
+            subckt_header = f".subckt M{self.ref} {' '.join(port_names)}"
+            body = "\n".join(lines)
+            parts = [header, subckt_header, body, ".ends"]
+            if models:
+                parts += models
+            return "\n".join(parts)
+
+        parts = [header] + lines
+        if models:
+            parts += models
+        return "\n".join(parts)
+
+
+def MUX8(r_series: str | float = 100, sel: int | None = None) -> AnalogMux8:
+    """Convenience factory: create AnalogMux8 with auto-ref."""
+    return AnalogMux8(ref=_next("M"), r_series=r_series, sel=sel)
