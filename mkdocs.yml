@@ -37,12 +37,14 @@ nav:
   - Examples: examples.md
   - Examples Gallery: examples-gallery.md
   - Components: components.md
+  - Components Quickstart: components-quickstart.md
   - Guides:
       - Circuit Preview: preview.md
       - Sweeps and STEP: sweeps-step.md
       - Monte Carlo: monte-carlo.md
       - AC Stability: ac-stability.md
       - Op-Amp Stability: opamp-stability.md
+      - Device Models: device-models.md
       - LTspice Import: ltspice-import.md
       - Plots: plots.md
       - Troubleshooting: troubleshooting.md
