@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pycircuitkit"
-version = "0.1.0a0"
+version = "0.1.0"
 description = "PyCircuitKit (CAT): Modern, strongly-typed Python toolkit for SPICE circuit definition, simulation and analysis."
 readme = "README.md"
 requires-python = ">=3.10"
