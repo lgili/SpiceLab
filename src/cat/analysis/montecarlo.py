@@ -96,6 +96,8 @@ class TriangularPct(Dist):
 class MonteCarloResult:
     samples: list[dict[str, float]]
     runs: list[AnalysisResult]
+    # optional metadata about the varied parameters: list of (label, nominal, dist_repr)
+    mapping_manifest: list[tuple[str, float, str]] | None = None
 
     def to_dataframe(
         self,
@@ -170,6 +172,92 @@ class MonteCarloResult:
                         )
             rows.append(row)
         return pd.DataFrame(rows)
+
+    def to_csv(
+        self,
+        path: str,
+        metric: (
+            Callable[[AnalysisResult], float | dict[str, Any]]
+            | TMapping[str, Callable[[AnalysisResult], Any]]
+            | None
+        ) = None,
+        *,
+        trial_name: str = "trial",
+        param_prefix: str = "",
+        y: Sequence[str] | None = None,
+        sample_at: float | None = None,
+        columns: Sequence[str] | None = None,
+        index: bool = False,
+        **to_csv_kwargs: Any,
+    ) -> None:
+        """Write the Monte Carlo per-trial table to CSV.
+
+        - `path`: output file path (passed to pandas.DataFrame.to_csv).
+        - `metric`, `trial_name`, `param_prefix`, `y`, `sample_at` are forwarded
+          to :meth:`to_dataframe` and behave the same.
+        - `columns`: optional sequence of column names to keep (order preserved).
+        - `index`: whether to write the DataFrame index (default False).
+        - `to_csv_kwargs`: additional keyword args passed to pandas.DataFrame.to_csv.
+
+        Raises RuntimeError if pandas is not available.
+        """
+        try:
+            importlib.import_module("pandas")
+        except Exception as exc:  # pragma: no cover
+            raise RuntimeError("pandas is required for MonteCarloResult.to_csv()") from exc
+
+        df = self.to_dataframe(
+            metric=metric,
+            trial_name=trial_name,
+            param_prefix=param_prefix,
+            y=y,
+            sample_at=sample_at,
+        )
+        if columns is not None:
+            df = df.loc[:, list(columns)]
+        df.to_csv(path, index=index, **to_csv_kwargs)
+
+    def save_samples_csv(
+        self, path: str, *, param_prefix: str = "", index: bool = False, **to_csv_kwargs: Any
+    ) -> None:
+        """Write only the sampled parameters (and trial index) to CSV.
+
+        This is a convenience helper that writes the per-trial sampled parameters
+        (the entries produced when generating the Monte Carlo `samples`) to a CSV
+        file. Columns are the sampled parameter names (optionally prefixed) and
+        the trial column named 'trial'.
+        """
+        try:
+            importlib.import_module("pandas")
+        except Exception as exc:  # pragma: no cover
+            raise RuntimeError(
+                "pandas is required for MonteCarloResult.save_samples_csv()"
+            ) from exc
+
+        df = self.to_dataframe(metric=None, trial_name="trial", param_prefix=param_prefix, y=None)
+        df.to_csv(path, index=index, **to_csv_kwargs)
+
+    def save_manifest_csv(self, path: str, *, index: bool = False, **to_csv_kwargs: Any) -> None:
+        """Write a small manifest describing the varied parameters to CSV.
+
+        The manifest columns are: label, nominal, dist. The manifest is taken from
+        `mapping_manifest` populated by the `monte_carlo` helper when available.
+        """
+        try:
+            importlib.import_module("pandas")
+        except Exception as exc:  # pragma: no cover
+            raise RuntimeError(
+                "pandas is required for MonteCarloResult.save_manifest_csv()"
+            ) from exc
+
+        if not self.mapping_manifest:
+            # nothing to write
+            return
+
+        import pandas as pd  # type: ignore[import-untyped]  # local import; optional runtime dependency
+
+        df = pd.DataFrame(self.mapping_manifest, columns=["label", "nominal", "dist"])
+        df.to_csv(path, index=index, **to_csv_kwargs)
 
 
 def _as_float(value: str | float) -> float:
@@ -281,4 +369,13 @@ def monte_carlo(
         except Exception:
             pass
 
-    return MonteCarloResult(samples=samples, runs=runs)
+    # build optional manifest: list of (label, nominal, dist_repr)
+    manifest: list[tuple[str, float, str]] = []
+    for c, nom, d in zip(comps, nominals, dists, strict=False):
+        try:
+            d_repr = repr(d)
+        except Exception:
+            d_repr = type(d).__name__
+        manifest.append((_label(c), nom, d_repr))
+
+    return MonteCarloResult(samples=samples, runs=runs, mapping_manifest=manifest)

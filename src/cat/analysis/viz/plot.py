@@ -183,3 +183,192 @@ def plot_sweep_df(
         fig.tight_layout()
 
     return fig
+
+
+def plot_mc_metric_hist(
+    metrics: list[float] | None = None,
+    title: str | None = None,
+    bins: int | None = 50,
+    *,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+    grid: bool = True,
+    tight: bool = True,
+    ax: Any | None = None,
+) -> Any:
+    """Plota um histograma para uma lista de métricas de Monte Carlo.
+
+    - `metrics`: lista de valores (se None, raise).
+    - retorna a figure.
+    """
+    plt = _ensure_pyplot()
+    if metrics is None:
+        raise ValueError("metrics list is required")
+
+    if ax is None:
+        fig = plt.figure()
+        ax = fig.gca()
+    else:
+        fig = ax.figure
+
+    ax.hist(metrics, bins=bins, alpha=0.8)
+    ax.set_xlabel(xlabel or "metric")
+    ax.set_ylabel(ylabel or "count")
+    if title:
+        ax.set_title(title)
+    if grid:
+        ax.grid(True, alpha=0.3)
+    if tight:
+        fig.tight_layout()
+    return fig
+
+
+def plot_param_vs_metric(
+    samples: list[dict[str, float]],
+    metrics: list[float],
+    param: str,
+    *,
+    title: str | None = None,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+    grid: bool = True,
+    tight: bool = True,
+    ax: Any | None = None,
+) -> Any:
+    """Plota um scatter de um parâmetro Monte Carlo vs uma métrica.
+
+    - `samples`: lista de dicts (as returned by MonteCarloResult.samples)
+    - `metrics`: lista de scalar metric values, same length as samples
+    - `param`: the key in each sample to use as x
+    """
+    plt = _ensure_pyplot()
+
+    xs = [s.get(param, 0.0) for s in samples]
+    ys = list(metrics)
+
+    if ax is None:
+        fig = plt.figure()
+        ax = fig.gca()
+    else:
+        fig = ax.figure
+
+    ax.scatter(xs, ys, alpha=0.8)
+    ax.set_xlabel(xlabel or param)
+    ax.set_ylabel(ylabel or "metric")
+    if title:
+        ax.set_title(title)
+    if grid:
+        ax.grid(True, alpha=0.3)
+    if tight:
+        fig.tight_layout()
+    return fig
+
+
+def plot_mc_kde(
+    metrics: list[float],
+    *,
+    title: str | None = None,
+    bandwidth: float | None = None,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+    grid: bool = True,
+    tight: bool = True,
+    ax: Any | None = None,
+) -> Any:
+    """Plot a KDE-smoothed distribution for a metric list.
+
+    Will try to use `scipy.stats.gaussian_kde` if available, otherwise falls
+    back to a histogram.
+    """
+    plt = _ensure_pyplot()
+
+    if ax is None:
+        fig = plt.figure()
+        ax = fig.gca()
+    else:
+        fig = ax.figure
+
+    xs = list(metrics)
+    try:
+        from scipy.stats import gaussian_kde  # type: ignore
+
+        kde = gaussian_kde(xs, bw_method=bandwidth)
+        import numpy as _np
+
+        x_min, x_max = min(xs), max(xs)
+        x_grid = _np.linspace(x_min, x_max, 256)
+        ax.plot(x_grid, kde(x_grid))
+    except Exception:
+        # fallback: histogram
+        ax.hist(xs, bins=50, alpha=0.8)
+
+    ax.set_xlabel(xlabel or "metric")
+    ax.set_ylabel(ylabel or "density")
+    if title:
+        ax.set_title(title)
+    if grid:
+        ax.grid(True, alpha=0.3)
+    if tight:
+        fig.tight_layout()
+    return fig
+
+
+def plot_params_matrix(
+    samples: list[dict[str, float]],
+    params: list[str] | None = None,
+    *,
+    figsize: tuple[int, int] | None = None,
+    tight: bool = True,
+) -> Any:
+    """Create a pairwise scatter matrix for sampled parameters.
+
+    - `samples`: list of dicts as produced by MonteCarloResult.samples
+    - `params`: optional list of parameter names to include (default: all keys from first sample)
+    """
+    try:
+        import pandas as pd  # type: ignore
+    except Exception:
+        # Fallback: build small matrix of subplots with matplotlib
+        plt = _ensure_pyplot()
+        if not samples:
+            raise ValueError("no samples provided") from None
+        keys = params or list(samples[0].keys())
+        n = len(keys)
+        fig = plt.figure(figsize=figsize or (3 * n, 3 * n))
+        axes = [[fig.add_subplot(n, n, i * n + j + 1) for j in range(n)] for i in range(n)]
+        xs = [[s.get(k, 0.0) for s in samples] for k in keys]
+        for i in range(n):
+            for j in range(n):
+                ax = axes[i][j]
+                if i == j:
+                    ax.hist(xs[i], bins=30, alpha=0.8)
+                else:
+                    ax.scatter(xs[j], xs[i], s=8, alpha=0.6)
+                if i == n - 1:
+                    ax.set_xlabel(keys[j])
+                if j == 0:
+                    ax.set_ylabel(keys[i])
+        if tight:
+            fig.tight_layout()
+        return fig
+
+    # pandas available: use DataFrame.plot.scatter_matrix via pandas.plotting
+    df = pd.DataFrame(samples)
+    if params is not None:
+        df = df.loc[:, params]
+    try:
+        from pandas.plotting import scatter_matrix  # type: ignore
+
+        fig = None
+        if figsize is not None:
+            plt = _ensure_pyplot()
+            plt.figure(figsize=figsize)
+        axes = scatter_matrix(df, alpha=0.6, diagonal="hist")
+        # scatter_matrix returns a 2D array-like of Axes; index as [0][0]
+        fig = axes[0][0].figure
+        if tight:
+            fig.tight_layout()
+        return fig
+    except Exception:
+        # fallback to manual matrix
+        return plot_params_matrix(samples, params=params, figsize=figsize, tight=tight)
