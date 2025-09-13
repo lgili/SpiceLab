@@ -96,12 +96,12 @@ def invert_transfer(vout: float, p: PT1000Params) -> float:
 def run_mc(
     t_true: float,
     n: int = 1000,
-    sigma_pct: float = 0.01,
+    sigma_pct: float = 0.001,
     seed: int = 123,
     *,
     progress: bool = True,
     workers: int = 1,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[dict[str, float]]]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[dict[str, float]], Any]:
     p = PT1000Params()
     r_rtd = pt1000_r(t_true, r0=p.r0, alpha=p.alpha)
     c, Rpu, Rtop, Rbot = build_pt1000_chain(r_rtd, p)
@@ -117,12 +117,28 @@ def run_mc(
     # Vary all non-RTD resistors by 1% (1-sigma)
     mapping = {Rpu: NormalPct(sigma_pct), Rtop: NormalPct(sigma_pct), Rbot: NormalPct(sigma_pct)}
 
+    # Label parameters clearly for downstream analysis/CSV
+    def _label_fn(comp: Any) -> str:
+        try:
+            from cat.core.components import Resistor as _Res
+        except Exception:
+            _Res = None  # type: ignore[assignment]
+        if _Res is not None and isinstance(comp, _Res):
+            if comp.ref == "pu":
+                return "Rpu"
+            if comp.ref == "t":
+                return "Rtop"
+            if comp.ref == "b":
+                return "Rbot"
+        return f"{type(comp).__name__}.{comp.ref}"
+
     mc = monte_carlo(
         circuit=c,
         mapping=mapping,
         n=n,
         analysis_factory=lambda: OP(),
         seed=seed,
+        label_fn=_label_fn,
         workers=workers,
         progress=progress,
     )
@@ -138,12 +154,29 @@ def run_mc(
 
     # Print quick stats for debugging
     def _stats(a: np.ndarray) -> str:
-        return f"min={a.min():.6g} mean={a.mean():.6g} max={a.max():.6g} std={a.std(ddof=1):.6g}"
+        # Use ddof=1 for N>=2 (sample std); for N==1, use ddof=0 to avoid warnings (std=0)
+        ddof = 1 if a.size > 1 else 0
+        return (
+            f"min={a.min():.6g} mean={a.mean():.6g} max={a.max():.6g} "
+            f"std={a.std(ddof=ddof):.6g}"
+        )
 
     print(f"Vout stats: {_stats(vouts_arr)}")
     print(f"Temp err stats [°C]: {_stats(err)}")
 
-    return vouts_arr, t_est, err, mc.samples
+    # Build per-trial dataframe for easier inspection/CSV
+    try:
+        df = mc.to_dataframe(metric=None, y=["v(vout)"], param_prefix="")
+        if "v(vout)" in df.columns:
+            df = df.rename(columns={"v(vout)": "Vout"})
+        df["temp_true"] = t_true
+        df["temp_est"] = [invert_transfer(v, p) for v in df["Vout"]]
+        df["temp_error"] = df["temp_est"] - df["temp_true"]
+    except Exception as exc:  # pragma: no cover
+        print("[warn] could not build dataframe:", exc)
+        df = None  # type: ignore[assignment]
+
+    return vouts_arr, t_est, err, mc.samples, df
 
 
 def main() -> None:
@@ -154,6 +187,16 @@ def main() -> None:
     ap.add_argument("--no-progress", action="store_true", help="Disable progress output")
     ap.add_argument("--workers", type=int, default=1, help="MC workers (threads)")
     ap.add_argument("--bins", type=int, default=60, help="Histogram bins")
+    ap.add_argument("--no-vout-plot", action="store_true", help="Skip Vout histogram plot")
+    ap.add_argument(
+        "--no-error-plot", action="store_true", help="Skip temperature error histogram plot"
+    )
+    ap.add_argument(
+        "--min-n-to-plot",
+        type=int,
+        default=2,
+        help="Minimum Monte Carlo runs to generate hist plots (skip if N < this)",
+    )
     ap.add_argument(
         "--temps",
         type=float,
@@ -169,6 +212,12 @@ def main() -> None:
         "--debug",
         action="store_true",
         help="Debug first MC trial (print sample, deck, traces, V(vin)/V(vout)) then exit",
+    )
+    ap.add_argument(
+        "--csv",
+        type=str,
+        default=None,
+        help="Optional CSV path to save per-trial data (temp, params, Vout, temp_est, temp_error)",
     )
     args = ap.parse_args()
 
@@ -219,11 +268,22 @@ def main() -> None:
         print("traces:", run0.traces.names)
         print("V(vin) =", float(run0.traces["v(vin)"].values[-1]))
         print("V(vout)=", float(run0.traces["v(vout)"].values[-1]))
+        # Print relevant deck lines for quick inspection
+        try:
+            with open(run0.run.artifacts.netlist_path, encoding="utf-8", errors="ignore") as f:
+                lines = f.read().splitlines()
+            print("=== deck snippet ===")
+            for ln in lines:
+                if ln and ln[0] in ("R", "V", "E"):
+                    print(ln)
+        except Exception as exc:
+            print("[warn] could not read deck:", exc)
         sys.exit(0)
 
     results: dict[float, dict[str, Any]] = {}
+    dfs: list[Any] = []
     for t in temps:
-        vouts, t_est, err, samples = run_mc(
+        vouts, t_est, err, samples, df = run_mc(
             t_true=t,
             n=args.n,
             sigma_pct=args.sigma,
@@ -232,34 +292,46 @@ def main() -> None:
             workers=args.workers,
         )
         results[t] = {"vouts": vouts, "t_est": t_est, "err": err, "samples": samples}
+        if df is not None:
+            dfs.append(df)
 
     # 1) Vout distributions
-    fig1 = plt.figure()
-    ax1 = fig1.gca()
-    for t, r in results.items():
-        ax1.hist(r["vouts"], bins=args.bins, alpha=0.5, edgecolor="black", label=f"T={t:.1f}°C")
-    ax1.set_title("PT1000 MC — Vout distributions")
-    ax1.set_xlabel("Vout [V]")
-    ax1.set_ylabel("Count")
-    ax1.grid(True, alpha=0.3)
-    ax1.legend()
-    fig1.tight_layout()
-    fig1.savefig("pt1000_mc_vout_hist.png", dpi=150)
-    print("[saved] pt1000_mc_vout_hist.png")
+    if not args.no_vout_plot and args.n >= max(1, args.min_n_to_plot):
+        fig1 = plt.figure()
+        ax1 = fig1.gca()
+        for t, r in results.items():
+            ax1.hist(r["vouts"], bins=args.bins, alpha=0.5, edgecolor="black", label=f"T={t:.1f}°C")
+        ax1.set_title("PT1000 MC — Vout distributions")
+        ax1.set_xlabel("Vout [V]")
+        ax1.set_ylabel("Count")
+        ax1.grid(True, alpha=0.3)
+        if len(results) > 1:
+            ax1.legend()
+        fig1.tight_layout()
+        fig1.savefig("pt1000_mc_vout_hist.png", dpi=150)
+        plt.close(fig1)
+        print("[saved] pt1000_mc_vout_hist.png")
+    else:
+        print("[skip] Vout hist plot (disabled or N too small)")
 
     # 2) Temperature error distributions
-    fig2 = plt.figure()
-    ax2 = fig2.gca()
-    for t, r in results.items():
-        ax2.hist(r["err"], bins=args.bins, alpha=0.5, edgecolor="black", label=f"T={t:.1f}°C")
-    ax2.set_title("PT1000 MC — Temperature error")
-    ax2.set_xlabel("Error [°C]")
-    ax2.set_ylabel("Count")
-    ax2.grid(True, alpha=0.3)
-    ax2.legend()
-    fig2.tight_layout()
-    fig2.savefig("pt1000_mc_error_hist.png", dpi=150)
-    print("[saved] pt1000_mc_error_hist.png")
+    if not args.no_error_plot and args.n >= max(1, args.min_n_to_plot):
+        fig2 = plt.figure()
+        ax2 = fig2.gca()
+        for t, r in results.items():
+            ax2.hist(r["err"], bins=args.bins, alpha=0.5, edgecolor="black", label=f"T={t:.1f}°C")
+        ax2.set_title("PT1000 MC — Temperature error")
+        ax2.set_xlabel("Error [°C]")
+        ax2.set_ylabel("Count")
+        ax2.grid(True, alpha=0.3)
+        if len(results) > 1:
+            ax2.legend()
+        fig2.tight_layout()
+        fig2.savefig("pt1000_mc_error_hist.png", dpi=150)
+        plt.close(fig2)
+        print("[saved] pt1000_mc_error_hist.png")
+    else:
+        print("[skip] Error hist plot (disabled or N too small)")
 
     # 3) Optional scatter diagnostics using the last temperature run
     if args.scatter:
@@ -268,7 +340,7 @@ def main() -> None:
         samples = rlast["samples"]
         err = rlast["err"]
         keys = []
-        for k in ("Resistor.pu", "Resistor.t", "Resistor.b"):
+        for k in ("Rpu", "Rtop", "Rbot", "Resistor.pu", "Resistor.t", "Resistor.b"):
             if samples and (k in samples[0]):
                 keys.append(k)
         if keys:
@@ -284,6 +356,17 @@ def main() -> None:
             fig3.tight_layout()
             fig3.savefig("pt1000_mc_scatter.png", dpi=150)
             print("[saved] pt1000_mc_scatter.png")
+
+    # Save CSV if requested
+    if args.csv and dfs:
+        try:
+            import pandas as pd  # type: ignore
+
+            df_all = pd.concat(dfs, ignore_index=True)
+            df_all.to_csv(args.csv, index=False)
+            print(f"[saved] {args.csv} ({len(df_all)} rows)")
+        except Exception as exc:  # pragma: no cover
+            print("[warn] could not save CSV:", exc)
 
 
 if __name__ == "__main__":

@@ -21,6 +21,26 @@ def _which_ngspice() -> str:
     return exe
 
 
+def _strip_final_end(netlist: str) -> str:
+    """Remove a trailing '.end' (case-insensitive) and blank lines from a netlist string.
+
+    This allows Circuit.build_netlist() to include '.end' to satisfy tests and
+    standalone usage, while the runner appends analysis directives and a single
+    final '.end' after the control block without duplication.
+    """
+    lines = netlist.splitlines()
+    # drop trailing empty lines
+    while lines and not lines[-1].strip():
+        lines.pop()
+    # drop a single trailing .end (case-insensitive)
+    if lines and lines[-1].strip().lower() == ".end":
+        lines.pop()
+        # also drop any additional blank lines that may precede the .end we removed
+        while lines and not lines[-1].strip():
+            lines.pop()
+    return "\n".join(lines)
+
+
 def _write_deck(
     workdir: Path,
     title: str,
@@ -40,7 +60,10 @@ def _write_deck(
     log = workdir / "ngspice.log"
     with deck.open("w", encoding="utf-8") as f:
         f.write(f"* {title}\n")
-        f.write(netlist.rstrip() + "\n")
+        # Avoid duplicated '.end' when appending directives/control/end here
+        net_no_end = _strip_final_end(netlist)
+        if net_no_end:
+            f.write(net_no_end.rstrip() + "\n")
         # diretivas de análise (fora do .control)
         for line in directives:
             f.write(line.rstrip() + "\n")

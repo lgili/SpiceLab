@@ -51,11 +51,13 @@ class Circuit:
 
     def _assign_node_ids(self) -> None:
         self._net_ids.clear()
-        # always ensure GND is 0
+        # always ensure any logical GND (name == "0") maps to node id 0
+        # include the global GND sentinel for convenience
         self._net_ids[GND] = 0
         next_id = 1
         for n in set(self._port_to_net.values()):
-            if n is GND:
+            # treat any net named "0" as ground, not only the sentinel object
+            if (n is GND) or (getattr(n, "name", None) == "0"):
                 continue
             if n not in self._net_ids:
                 self._net_ids[n] = next_id
@@ -69,11 +71,13 @@ class Circuit:
         if node_id is None:
             raise RuntimeError("Node IDs not assigned.")
         # Preserve user-provided names for nets (except GND)
-        if n is GND:
+        # treat any net named "0" as ground
+        if (n is GND) or (n.name == "0"):
             return "0"
         if n.name and n.name != "0":
             return n.name
-        return f"n{node_id}"
+        # auto-generate a name that avoids colliding with common user names (like 'n1')
+        return f"net_{node_id}"
 
     def validate(self) -> None:
         # each component must have all ports connected
