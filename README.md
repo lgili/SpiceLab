@@ -268,7 +268,7 @@ src/cat/
   spice/         # Simulator adapters + registry (ngspice_cli)
   io/            # RAW/LOG parsers, LTspice import/flatten
   utils/         # e_series, units, synth, logging, topologies
-  dsl/           # chain/parallel helpers and schematic ctx manager
+	dsl/           # chain/parallel helpers
 tests/           # pytest suite (unit + smoke if ngspice available)
 
 ⸻
@@ -354,7 +354,7 @@ export CAT_LOG_LEVEL=DEBUG
 	1.	Engines: OP/AC/DC/TRAN with unified result object (TraceSet) and Pandas export.
 	2.	Parsers: NGSpice ASCII/RAW → structured traces (V(node), I(R1)).
 	3.	DSL Style 2: Operators (>> series, | parallel) for fast topologies.
-	4.	DSL Style 3: with schematic(): context and <</>> wiring sugar.
+	4.	DSL Style 3: (removed) schematic() context was previously supported but has been removed; use the chain/parallel helpers instead.
 	5.	Sweeps: Native .STEP + Python multi-param sweeps.
 	6.	Monte-Carlo: Distributions, samplers, parallel execution, metrics to DataFrame.
 	7.	Worst-Case: Corners + constrained optimization (scipy).

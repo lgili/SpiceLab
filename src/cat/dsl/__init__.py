@@ -1,4 +1,4 @@
-"""DSL helpers for cat (schematic/flow).
+"""DSL helpers for cat (flow).
 
 Expose only the public helpers to avoid star-imports which confuse linters.
 """

@@ -4,6 +4,7 @@ mkdocstrings[python]==0.30.0
 mkdocs-autorefs==1.4.3
 matplotlib
 
+
 # Optional testing / linting tools for docs environments
 mypy
 pytest

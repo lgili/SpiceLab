@@ -26,9 +26,11 @@ jobs:
       - name: Tests
         run: ~/.local/bin/uv run pytest -q
 
+  # regenerate-svg-images job removed: no custom SVG example generation required anymore
+
   docs:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build]
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
