@@ -36,6 +36,7 @@ nav:
   - Concepts: concepts.md
   - Examples: examples.md
   - Examples Gallery: examples-gallery.md
+  - Components: components.md
   - Guides:
       - Circuit Preview: preview.md
       - Sweeps and STEP: sweeps-step.md
