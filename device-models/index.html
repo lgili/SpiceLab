@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/getting-started/">
+        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/device-models/">
       
       
-        <link rel="prev" href="../installation/">
+        <link rel="prev" href="../opamp-stability/">
       
       
-        <link rel="next" href="../concepts/">
+        <link rel="next" href="../ltspice-import/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Getting Started - PyCircuitKit</title>
+        <title>Device Models - PyCircuitKit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#getting-started" class="md-skip">
+        <a href="#device-models-and-model-directives" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Getting Started
+              Device Models
             
           </span>
         </div>
@@ -267,32 +267,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Getting Started
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
         
   
   
@@ -303,35 +281,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#run-a-transient-in-one-line" class="md-nav__link">
-    <span class="md-ellipsis">
-      Run a transient in one line
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -450,18 +399,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           
           <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
@@ -477,7 +428,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Guides
@@ -603,10 +554,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../device-models/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Device Models
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -617,6 +588,66 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#device-models-and-model-directives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Device Models and .model Directives
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Device Models and .model Directives">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-diode-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding a diode model
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voltagecontrolled-switch-vswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Voltage‑controlled switch (VSwitch)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#currentcontrolled-elements-fh-and-sensors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Current‑controlled elements (F/H) and sensors
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -851,8 +882,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -861,11 +890,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#run-a-transient-in-one-line" class="md-nav__link">
+  <a href="#device-models-and-model-directives" class="md-nav__link">
     <span class="md-ellipsis">
-      Run a transient in one line
+      Device Models and .model Directives
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Device Models and .model Directives">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-diode-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding a diode model
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#voltagecontrolled-switch-vswitch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Voltage‑controlled switch (VSwitch)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#currentcontrolled-elements-fh-and-sensors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Current‑controlled elements (F/H) and sensors
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -885,37 +947,113 @@
 
 
 
-<h1 id="getting-started">Getting started</h1>
-<p>Create a Circuit and build a netlist:</p>
-<pre><code class="language-python">from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Resistor, Capacitor
-from cat.core.net import GND
+  <h1>Device Models</h1>
 
-c = Circuit(&quot;rc_lowpass&quot;)
+<h2 id="device-models-and-model-directives">Device Models and <code>.model</code> Directives</h2>
+<p>Some components in PyCircuitKit rely on SPICE device models defined via
+<code>.model</code> lines in the netlist. This page shows how to add models and wire
+typical circuits using the high‑level API.</p>
+<p>Key points:</p>
+<ul>
+<li>Use <code>Circuit.add_directive(line)</code> to append raw SPICE directives.</li>
+<li>Diodes must reference a named model (e.g. <code>D1</code> → <code>.model D1 D(...)</code>).</li>
+<li>Voltage/Current‑controlled switches (<code>VSwitch</code>, <code>ISwitch</code>) require a
+  <code>.model &lt;name&gt; SW(...)</code> with thresholds and on/off resistances.</li>
+<li>Controlled sources <code>F</code>/<code>H</code> use a named voltage source as current sensor
+  (no <code>.model</code>, but a topology note).</li>
+</ul>
+<h3 id="adding-a-diode-model">Adding a diode model</h3>
+<pre><code>from cat.core.circuit import Circuit
+from cat.core.components import Vdc, Resistor, Diode
+from cat.core.net import GND, Net
+from cat.analysis import OP
+
+c = Circuit(&quot;d_fwd&quot;)
+n1 = Net(&quot;n1&quot;)
+V = Vdc(&quot;1&quot;, 1.0)
+R = Resistor(&quot;1&quot;, 1000.0)
+D = Diode(&quot;1&quot;, &quot;D1&quot;)  # references model D1
+
+# Add a diode model (Shockley params shown as an example)
+c.add_directive(&quot;.model D1 D(Is=1e-14 N=1.9 Rs=5 Cjo=2p)&quot;)
+
+c.add(V, R, D)
+c.connect(V.ports[0], R.ports[0])
+c.connect(R.ports[1], n1)
+c.connect(D.ports[0], n1)  # anode
+c.connect(D.ports[1], GND)  # cathode
+c.connect(V.ports[1], GND)
+
+res = OP().run(c)
+print(&quot;V(n1)=&quot;, float(res.traces[&quot;v(n1)&quot;].values[-1]))
+</code></pre>
+<p>Typical parameters for the SPICE diode (<code>D</code>) model include <code>Is</code>, <code>N</code>, <code>Rs</code>,
+<code>Cjo</code>, <code>Bv</code>, etc. Choose values appropriate to your target device.</p>
+<h3 id="voltagecontrolled-switch-vswitch">Voltage‑controlled switch (<code>VSwitch</code>)</h3>
+<pre><code>from cat.core.circuit import Circuit
+from cat.core.components import Vdc, Vpulse, VSwitch, Resistor
+from cat.core.net import GND, Net
+from cat.analysis import TRAN
+
+c = Circuit(&quot;vswitch_demo&quot;)
+vin = Net(&quot;vin&quot;)
+vout = Net(&quot;vout&quot;)
+en = Net(&quot;en&quot;)
+
+# Control signal: 0→1 V pulse
+EN = Vpulse(&quot;en&quot;, 0.0, 1.0, 0.0, 1e-6, 1e-6, 1e-3, 2e-3)
 V1 = Vdc(&quot;1&quot;, 5.0)
-R1 = Resistor(&quot;1&quot;, &quot;1k&quot;)
-C1 = Capacitor(&quot;1&quot;, &quot;100n&quot;)
+S1 = VSwitch(&quot;1&quot;, model=&quot;SW1&quot;)
+RL = Resistor(&quot;L&quot;, 1000.0)
 
-c.add(V1, R1, C1)
-c.connect(V1.ports[0], R1.ports[0])
-c.connect(R1.ports[1], C1.ports[0])
+# Recommended switch model (tune as needed)
+c.add_directive(&quot;.model SW1 SW(RON=10 ROFF=1e9 Vt=0.5 VH=0.1)&quot;)
+
+c.add(EN, V1, S1, RL)
+
+# Source side
+c.connect(V1.ports[0], vin)
 c.connect(V1.ports[1], GND)
-c.connect(C1.ports[1], GND)
 
-print(c.build_netlist())
-</code></pre>
-<p>This will print a SPICE netlist ready to be executed by a SPICE runner.</p>
-<h2 id="run-a-transient-in-one-line">Run a transient in one line</h2>
-<p>You can run a transient (.TRAN) analysis and get a pandas DataFrame directly:</p>
-<pre><code class="language-python">from cat.analysis import run_tran
+# Switch: p→vin, n→vout, control cp→en, cn→GND (active high)
+c.connect(S1.ports[0], vin)   # p
+c.connect(S1.ports[1], vout)  # n
+c.connect(S1.ports[2], en)    # cp
+c.connect(S1.ports[3], GND)   # cn
 
-df = run_tran(c, &quot;10us&quot;, &quot;5ms&quot;, return_df=True)
-print(df.head())
+# Load
+c.connect(RL.ports[0], vout)
+c.connect(RL.ports[1], GND)
+
+# Control signal wiring
+c.connect(EN.ports[0], en)
+c.connect(EN.ports[1], GND)
+
+res = TRAN(&quot;0.1ms&quot;, &quot;5ms&quot;).run(c)
+print(&quot;final V(vout)=&quot;, float(res.traces[&quot;v(vout)&quot;].values[-1]))
 </code></pre>
-<p>Or keep the full result object for advanced usage:</p>
-<pre><code class="language-python">res = run_tran(c, &quot;10us&quot;, &quot;5ms&quot;)
-print(res.traces.names)
+<p>Notes for switches:</p>
+<ul>
+<li>The switch turns on when <code>(V(cp) − V(cn)) &gt; Vt</code>. <code>VH</code> sets hysteresis.</li>
+<li>Choose <code>RON</code> and <code>ROFF</code> appropriate to your application.</li>
+<li>For current‑controlled switches (<code>ISwitch</code>), the control is the current
+  through a named voltage source <code>Vref</code> (current sensor) provided via the
+  <code>ctrl_vsrc</code> argument.</li>
+</ul>
+<h3 id="currentcontrolled-elements-fh-and-sensors">Current‑controlled elements (<code>F</code>/<code>H</code>) and sensors</h3>
+<p><code>CCCS</code> (<code>F</code>) and <code>CCVS</code> (<code>H</code>) measure the current through an existing voltage
+source. A common pattern is to insert a 0 V source as sensor:</p>
+<pre><code>from cat.core.components import Vdc, Resistor, CCCS
+
+# Sensor source at the node of interest
+VSENS = Vdc(&quot;S&quot;, 0.0)
+F1 = CCCS(&quot;1&quot;, ctrl_vsrc=&quot;S&quot;, gain=2.0)  # 2× current mirror
+
+# Wire VSENS in series with the branch you want to sense
+# Then connect F1.p/n to the output branch where mirrored current flows.
 </code></pre>
+<p>This pattern avoids modifying the DC operating point (0 V across the sensor)
+while providing a reference for <code>F</code>/<code>H</code> controlled elements.</p>
 
 
 

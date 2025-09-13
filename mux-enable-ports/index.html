@@ -12,13 +12,9 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/getting-started/">
+        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/mux-enable-ports/">
       
       
-        <link rel="prev" href="../installation/">
-      
-      
-        <link rel="next" href="../concepts/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +22,7 @@
     
     
       
-        <title>Getting Started - PyCircuitKit</title>
+        <title>Mux enable ports - PyCircuitKit</title>
       
     
     
@@ -82,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#getting-started" class="md-skip">
+        <a href="#analogmux8-enable-ports-mode" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Getting Started
+              Mux enable ports
             
           </span>
         </div>
@@ -267,32 +263,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Getting Started
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
         
   
   
@@ -303,35 +277,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#run-a-transient-in-one-line" class="md-nav__link">
-    <span class="md-ellipsis">
-      Run a transient in one line
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -851,8 +796,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -861,9 +804,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#run-a-transient-in-one-line" class="md-nav__link">
+  <a href="#analogmux8-enable-ports-mode" class="md-nav__link">
     <span class="md-ellipsis">
-      Run a transient in one line
+      AnalogMux8 — Enable Ports Mode
     </span>
   </a>
   
@@ -885,37 +828,71 @@
 
 
 
-<h1 id="getting-started">Getting started</h1>
-<p>Create a Circuit and build a netlist:</p>
-<pre><code class="language-python">from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Resistor, Capacitor
-from cat.core.net import GND
+  <h1>Mux enable ports</h1>
 
-c = Circuit(&quot;rc_lowpass&quot;)
+<h2 id="analogmux8-enable-ports-mode">AnalogMux8 — Enable Ports Mode</h2>
+<p><code>AnalogMux8</code> can operate in dynamic mode by exposing enable ports <code>en0..en7</code>.
+Each channel uses a voltage‑controlled switch (<code>S...</code>) followed by a series
+resistor <code>r_series</code>. When an enable input is high, the corresponding channel
+conducts with <code>RON</code> (from the switch) and <code>r_series</code> in series; other channels
+remain high‑Z (switch <code>ROFF</code>).</p>
+<p>Options</p>
+<ul>
+<li><code>enable_ports=True</code>: expose <code>en0..en7</code> and emit <code>S...</code> elements.</li>
+<li><code>emit_model=True</code>: also emit a default <code>.model SW_&lt;ref&gt; SW(...)</code> for the switches.</li>
+<li><code>sw_model</code>: custom model name (defaults to <code>SW_&lt;ref&gt;</code>).</li>
+</ul>
+<p>Control polarity</p>
+<ul>
+<li>Switch control is <code>V(cp) - V(cn)</code>; the mux ties <code>cn</code> to ground so driving
+  <code>enX</code> high enables channel <code>X</code>.</li>
+</ul>
+<p>Example (OP)</p>
+<pre><code>from cat.core.circuit import Circuit
+from cat.core.components import AnalogMux8, Vdc, Resistor
+from cat.core.net import GND, Net
+from cat.analysis import OP
+
+c = Circuit(&quot;mux_en_ports&quot;)
+vin = Net(&quot;vin&quot;)
+vout = Net(&quot;vout&quot;)
+
+# 5 V source at mux input
 V1 = Vdc(&quot;1&quot;, 5.0)
-R1 = Resistor(&quot;1&quot;, &quot;1k&quot;)
-C1 = Capacitor(&quot;1&quot;, &quot;100n&quot;)
+M = AnalogMux8(ref=&quot;MU1&quot;, r_series=100.0, enable_ports=True, emit_model=True)
+RL = Resistor(&quot;L&quot;, 1000.0)
 
-c.add(V1, R1, C1)
-c.connect(V1.ports[0], R1.ports[0])
-c.connect(R1.ports[1], C1.ports[0])
-c.connect(V1.ports[1], GND)
-c.connect(C1.ports[1], GND)
+c.add(V1, M, RL)
+c.connect(V1.ports[0], vin); c.connect(V1.ports[1], GND)
+c.connect(M.ports[0], vin)           # in
+c.connect(M.ports[1 + 2], vout)      # out2 -&gt; vout
+# Terminate other outputs if needed; for OP leave them floating or to GND
 
-print(c.build_netlist())
-</code></pre>
-<p>This will print a SPICE netlist ready to be executed by a SPICE runner.</p>
-<h2 id="run-a-transient-in-one-line">Run a transient in one line</h2>
-<p>You can run a transient (.TRAN) analysis and get a pandas DataFrame directly:</p>
-<pre><code class="language-python">from cat.analysis import run_tran
+# Load at vout
+c.connect(RL.ports[0], vout); c.connect(RL.ports[1], GND)
 
-df = run_tran(c, &quot;10us&quot;, &quot;5ms&quot;, return_df=True)
-print(df.head())
+# Drive enables: en2=1 V (on), others 0 V (off)
+for i in range(8):
+    V_en = Vdc(f&quot;EN{i}&quot;, 1.0 if i == 2 else 0.0)
+    c.add(V_en)
+    c.connect(V_en.ports[0], M.ports[1 + 8 + i])  # en ports follow the 8 outputs
+    c.connect(V_en.ports[1], GND)
+
+r = OP().run(c)
+print(&quot;V(vout)=&quot;, float(r.traces[&quot;v(vout)&quot;].values[-1]))
 </code></pre>
-<p>Or keep the full result object for advanced usage:</p>
-<pre><code class="language-python">res = run_tran(c, &quot;10us&quot;, &quot;5ms&quot;)
-print(res.traces.names)
-</code></pre>
+<p>Expected result</p>
+<ul>
+<li>With <code>SW</code> model <code>RON=10</code> and <code>r_series=100</code>, and <code>RL=1k</code>, a static divider
+  yields <code>Vout ≈ 5 V × 1k / (1k + 10 + 100)</code>.</li>
+</ul>
+<p>Notes</p>
+<ul>
+<li>For time‑varying enables use <code>Vpulse</code> sources on selected <code>enX</code> nets and
+  run a <code>TRAN</code> analysis to observe switching.</li>
+<li>If you prefer your own switch model, pass <code>sw_model="MY_SW"</code> and add a
+  <code>.model MY_SW SW(...)</code> via <code>c.add_directive()</code>.</li>
+</ul>
 
 
 

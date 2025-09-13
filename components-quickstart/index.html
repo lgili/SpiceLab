@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/getting-started/">
+        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/components-quickstart/">
       
       
-        <link rel="prev" href="../installation/">
+        <link rel="prev" href="../components/">
       
       
-        <link rel="next" href="../concepts/">
+        <link rel="next" href="../preview/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Getting Started - PyCircuitKit</title>
+        <title>Components Quickstart - PyCircuitKit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#getting-started" class="md-skip">
+        <a href="#components-quickstart" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Getting Started
+              Components Quickstart
             
           </span>
         </div>
@@ -267,32 +267,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Getting Started
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
         
   
   
@@ -303,35 +281,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#run-a-transient-in-one-line" class="md-nav__link">
-    <span class="md-ellipsis">
-      Run a transient in one line
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -428,10 +377,30 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../components-quickstart/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Components Quickstart
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -442,6 +411,33 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#components-quickstart" class="md-nav__link">
+    <span class="md-ellipsis">
+      Components Quickstart
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -851,8 +847,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -861,9 +855,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#run-a-transient-in-one-line" class="md-nav__link">
+  <a href="#components-quickstart" class="md-nav__link">
     <span class="md-ellipsis">
-      Run a transient in one line
+      Components Quickstart
     </span>
   </a>
   
@@ -885,37 +879,192 @@
 
 
 
-<h1 id="getting-started">Getting started</h1>
-<p>Create a Circuit and build a netlist:</p>
-<pre><code class="language-python">from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Resistor, Capacitor
-from cat.core.net import GND
+  <h1>Components Quickstart</h1>
 
-c = Circuit(&quot;rc_lowpass&quot;)
-V1 = Vdc(&quot;1&quot;, 5.0)
-R1 = Resistor(&quot;1&quot;, &quot;1k&quot;)
-C1 = Capacitor(&quot;1&quot;, &quot;100n&quot;)
-
-c.add(V1, R1, C1)
-c.connect(V1.ports[0], R1.ports[0])
-c.connect(R1.ports[1], C1.ports[0])
-c.connect(V1.ports[1], GND)
-c.connect(C1.ports[1], GND)
-
-print(c.build_netlist())
+<h2 id="components-quickstart">Components Quickstart</h2>
+<p>A compact cheat‑sheet for the main components exposed by PyCircuitKit. The
+table shows the Python class, an optional helper function, the SPICE card that
+is generated, port names, and relevant notes.</p>
+<p>Import helpers used below:</p>
+<pre><code>from cat.core.circuit import Circuit
+from cat.core.net import GND, Net
+from cat.core.components import *
 </code></pre>
-<p>This will print a SPICE netlist ready to be executed by a SPICE runner.</p>
-<h2 id="run-a-transient-in-one-line">Run a transient in one line</h2>
-<p>You can run a transient (.TRAN) analysis and get a pandas DataFrame directly:</p>
-<pre><code class="language-python">from cat.analysis import run_tran
-
-df = run_tran(c, &quot;10us&quot;, &quot;5ms&quot;, return_df=True)
-print(df.head())
-</code></pre>
-<p>Or keep the full result object for advanced usage:</p>
-<pre><code class="language-python">res = run_tran(c, &quot;10us&quot;, &quot;5ms&quot;)
-print(res.traces.names)
-</code></pre>
+<table>
+<thead>
+<tr>
+<th>Python (Class)</th>
+<th>Helper</th>
+<th>SPICE Card (shape)</th>
+<th>Ports</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Resistor</code></td>
+<td><code>R(value)</code></td>
+<td><code>Rref a b value</code></td>
+<td><code>a, b</code></td>
+<td>Value accepts suffixes (<code>"1k"</code>, <code>"100n"</code>).</td>
+</tr>
+<tr>
+<td><code>Capacitor</code></td>
+<td><code>C(value)</code></td>
+<td><code>Cref a b value</code></td>
+<td><code>a, b</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Inductor</code></td>
+<td><code>L(value)</code></td>
+<td><code>Lref a b value</code></td>
+<td><code>a, b</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Vdc</code></td>
+<td><code>V(value)</code></td>
+<td><code>Vref p n value</code></td>
+<td><code>p, n</code></td>
+<td>DC source.</td>
+</tr>
+<tr>
+<td><code>Vac</code></td>
+<td><code>VA(ac_mag, ac_phase=0)</code></td>
+<td><code>Vref p n AC mag [phase]</code></td>
+<td><code>p, n</code></td>
+<td>Small‑signal AC.</td>
+</tr>
+<tr>
+<td><code>Vpulse</code></td>
+<td><code>VP(v1, v2, td, tr, tf, pw, per)</code></td>
+<td><code>Vref p n PULSE(...)</code></td>
+<td><code>p, n</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Vsin</code></td>
+<td>—</td>
+<td><code>Vref p n SIN(vdc vac freq td theta)</code></td>
+<td><code>p, n</code></td>
+<td>Sine.</td>
+</tr>
+<tr>
+<td><code>Vpwl</code></td>
+<td>—</td>
+<td><code>Vref p n PWL(&lt;args_raw&gt;)</code></td>
+<td><code>p, n</code></td>
+<td>Raw args string.</td>
+</tr>
+<tr>
+<td><code>Idc</code></td>
+<td><code>I(value)</code></td>
+<td><code>Iref p n value</code></td>
+<td><code>p, n</code></td>
+<td>DC current source.</td>
+</tr>
+<tr>
+<td><code>Iac</code></td>
+<td><code>IA(ac_mag, ac_phase=0)</code></td>
+<td><code>Iref p n AC mag [phase]</code></td>
+<td><code>p, n</code></td>
+<td>Small‑signal AC.</td>
+</tr>
+<tr>
+<td><code>Ipulse</code></td>
+<td><code>IP(i1, i2, td, tr, tf, pw, per)</code></td>
+<td><code>Iref p n PULSE(...)</code></td>
+<td><code>p, n</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Isin</code></td>
+<td>—</td>
+<td><code>Iref p n SIN(idc iac freq td theta)</code></td>
+<td><code>p, n</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Ipwl</code></td>
+<td>—</td>
+<td><code>Iref p n PWL(&lt;args_raw&gt;)</code></td>
+<td><code>p, n</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>VCVS</code></td>
+<td><code>E(gain)</code></td>
+<td><code>Eref p n cp cn gain</code></td>
+<td><code>p, n, cp, cn</code></td>
+<td>Voltage‑controlled voltage src.</td>
+</tr>
+<tr>
+<td><code>VCCS</code></td>
+<td><code>G(gm)</code></td>
+<td><code>Gref p n cp cn gm</code></td>
+<td><code>p, n, cp, cn</code></td>
+<td>Voltage‑controlled current src.</td>
+</tr>
+<tr>
+<td><code>CCCS</code></td>
+<td><code>F(ctrl_vsrc, gain)</code></td>
+<td><code>Fref p n Vsrc gain</code></td>
+<td><code>p, n</code></td>
+<td>Current‑controlled current src.</td>
+</tr>
+<tr>
+<td><code>CCVS</code></td>
+<td><code>H(ctrl_vsrc, r)</code></td>
+<td><code>Href p n Vsrc r</code></td>
+<td><code>p, n</code></td>
+<td>Current‑controlled voltage src.</td>
+</tr>
+<tr>
+<td><code>Diode</code></td>
+<td><code>D(model)</code></td>
+<td><code>Dref a c model</code></td>
+<td><code>a, c</code></td>
+<td>Requires matching <code>.model</code> directive.</td>
+</tr>
+<tr>
+<td><code>VSwitch</code></td>
+<td><code>SW(model)</code></td>
+<td><code>Sref p n cp cn model</code></td>
+<td><code>p, n, cp, cn</code></td>
+<td>Needs <code>.model &lt;name&gt; SW(...)</code>.</td>
+</tr>
+<tr>
+<td><code>ISwitch</code></td>
+<td><code>SWI(ctrl_vsrc, model)</code></td>
+<td><code>Wref p n Vsrc model</code></td>
+<td><code>p, n</code></td>
+<td>Current‑controlled switch.</td>
+</tr>
+<tr>
+<td><code>OpAmpIdeal</code></td>
+<td><code>OA(gain=1e6)</code></td>
+<td><code>Eref out 0 inp inn gain</code></td>
+<td><code>inp, inn, out</code></td>
+<td>3‑pin ideal OA, VCVS‑based.</td>
+</tr>
+<tr>
+<td><code>AnalogMux8</code></td>
+<td><code>MUX8(r_series, sel)</code></td>
+<td>—</td>
+<td><code>in, out0..out7, [en0..en7]</code></td>
+<td>Emits Rs (static <code>sel</code>) or <code>S...</code> + R when <code>enable_ports=True</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Notes</p>
+<ul>
+<li>Numeric strings accept engineering suffixes (k, m, u/µ, n, p, g, t, <code>meg</code>).</li>
+<li>Controlled sources <code>F</code>/<code>H</code> use a voltage source name (<code>V1</code> etc.) as current sensor.</li>
+<li><code>AnalogMux8</code> parameters: <code>r_series</code>, <code>sel</code> (0..7), <code>off_resistance</code>, <code>enable_ports</code>,
+  <code>emit_model</code>, <code>sw_model</code>. When using switches, add a suitable <code>.model</code> line for the
+  <code>SW</code> element (or pass <code>emit_model=True</code>).</li>
+</ul>
 
 
 
