@@ -12,6 +12,7 @@ This project ships runnable examples in `examples/`:
 - `pt1000_mc.py` — PT1000 front-end Monte Carlo (temp error histogram)
 - `rc_highpass.py` — RC highpass netlist builder
 - `import_ltspice_and_run.py` — import LTspice netlist and run
+- `ltspice_schematic_roundtrip.py` — export/import `.asc` schematics using `cat.io.ltspice_asc`
 - `analog_mux_demo.py` — example showing AnalogMux8 netlist and DOT diagram
 
 Run them as modules:

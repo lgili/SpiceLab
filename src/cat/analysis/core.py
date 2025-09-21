@@ -6,7 +6,7 @@ from ..core.circuit import Circuit
 from ..io.log_reader import read_errors
 from ..io.raw_reader import TraceSet, parse_ngspice_ascii_raw
 from ..spice.base import RunResult as BaseRunResult
-from ..spice.registry import get_run_directives
+from ..spice.registry import get_active_adapter
 
 
 @dataclass(frozen=True)
@@ -21,8 +21,8 @@ class _BaseAnalysis:
 
     def run(self, circuit: Circuit) -> AnalysisResult:
         net = circuit.build_netlist()
-        run_directives = get_run_directives()
-        res = run_directives(net, self._directives())
+        adapter = get_active_adapter()
+        res = adapter.run_directives(net, self._directives())
         if res.returncode != 0:
             try:
                 with open(res.artifacts.log_path, encoding="utf-8", errors="ignore") as f:

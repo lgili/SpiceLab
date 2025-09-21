@@ -5,7 +5,7 @@ import importlib
 import math
 import random as _random
 import sys
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from collections.abc import Mapping as TMapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
@@ -92,6 +92,34 @@ class TriangularPct(Dist):
 # ---------- Execução ----------
 
 
+class _MiniDataFrame:
+    """Tiny, pandas-free table used when pandas isn't available."""
+
+    def __init__(self, rows: list[dict[str, Any]]) -> None:
+        self._rows = [dict(r) for r in rows]
+        columns: list[str] = []
+        for row in self._rows:
+            for key in row.keys():
+                if key not in columns:
+                    columns.append(key)
+        self.columns: list[str] = columns
+        self._data: dict[str, list[Any]] = {
+            col: [r.get(col) for r in self._rows] for col in columns
+        }
+
+    def __getitem__(self, key: str) -> list[Any]:
+        return self._data[key]
+
+    def __len__(self) -> int:  # pragma: no cover - defensive helper
+        return len(self._rows)
+
+    def __iter__(self) -> Iterator[dict[str, Any]]:  # pragma: no cover - rarely used in tests
+        return iter(self._rows)
+
+    def __repr__(self) -> str:  # pragma: no cover - debugging aid
+        return f"MiniDataFrame(columns={self.columns!r}, rows={len(self._rows)})"
+
+
 @dataclass(frozen=True)
 class MonteCarloResult:
     samples: list[dict[str, float]]
@@ -128,8 +156,8 @@ class MonteCarloResult:
         """
         try:
             pd: Any = importlib.import_module("pandas")
-        except Exception as exc:  # pragma: no cover
-            raise RuntimeError("pandas is required for MonteCarloResult.to_dataframe()") from exc
+        except Exception:  # pragma: no cover
+            pd = None
 
         rows: list[dict[str, Any]] = []
         for i, (s, run) in enumerate(zip(self.samples, self.runs, strict=False)):
@@ -171,6 +199,8 @@ class MonteCarloResult:
                             float(vals[-1]) if len(vals) else _np.nan if _np is not None else 0.0
                         )
             rows.append(row)
+        if pd is None:
+            return _MiniDataFrame(rows)
         return pd.DataFrame(rows)
 
     def to_csv(

@@ -6,6 +6,7 @@ PyCircuitKit is a modern Python toolkit for building circuits, generating SPICE 
 
 - Clean, typed APIs
 - Pluggable SPICE runners (ngspice)
+- LTspice integration (netlist import + `.asc` schematic round-trip)
 - Example-driven tutorials and automated tests
 
 ### Quick start

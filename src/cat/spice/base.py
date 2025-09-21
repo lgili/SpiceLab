@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -22,4 +23,6 @@ class RunResult:
 
 
 class SimulatorAdapter(Protocol):
-    def run_op(self, netlist_text: str) -> RunResult: ...
+    """Minimal interface required by CAT to talk to a SPICE backend."""
+
+    def run_directives(self, netlist_text: str, directives: Sequence[str]) -> RunResult: ...

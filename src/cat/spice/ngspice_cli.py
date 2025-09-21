@@ -7,7 +7,7 @@ import tempfile
 from collections.abc import Sequence
 from pathlib import Path
 
-from .base import RunArtifacts, RunResult
+from .base import RunArtifacts, RunResult, SimulatorAdapter
 
 
 def _which_ngspice() -> str:
@@ -109,6 +109,25 @@ def run_directives(
         stdout=proc.stdout,
         stderr=proc.stderr,
     )
+
+
+# --------------------------------------------------------------------------------------
+# Adapter implementation
+# --------------------------------------------------------------------------------------
+
+
+class NgSpiceCLIAdapter(SimulatorAdapter):
+    """Adapter that wraps the ngspice CLI helper functions."""
+
+    def __init__(self, *, keep_workdir: bool = True) -> None:
+        self.keep_workdir = keep_workdir
+
+    def run_directives(self, netlist_text: str, directives: Sequence[str]) -> RunResult:
+        return run_directives(netlist_text, directives, keep_workdir=self.keep_workdir)
+
+
+# Convenience singleton used by the registry
+DEFAULT_ADAPTER = NgSpiceCLIAdapter()
 
 
 # Conveniências

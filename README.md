@@ -7,7 +7,7 @@ Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN /
 
 Documentation: https://lgili.github.io/PyCircuitKit/
 
-> **Status:** MVP — Circuit DSL (Ports & Nets), NGSpice (CLI) `.op/.tran/.ac`, LTspice netlist import (includes `.include/.param`, V/I PULSE/SIN/PWL), controlled sources (E/G/F/H) and switches, Monte‑Carlo, and metrics/plots. Roadmap: worst‑case refinements, RAW binary, more examples.
+> **Status:** MVP — Circuit DSL (Ports & Nets), NGSpice (CLI) `.op/.tran/.ac`, LTspice netlist & schematic import/export (netlists with `.include/.param`, V/I PULSE/SIN/PWL, controlled sources, diode; schematics via `.asc` round-trip), Monte‑Carlo, and metrics/plots. Roadmap: worst‑case refinements, RAW binary, more examples.
 
 ---
 
@@ -79,7 +79,7 @@ Install Graphviz to render the SVG preview (macOS: `brew install graphviz`, Ubun
 
 ### Highlights
 - **AC/DC/TRAN** via NGSpice (CLI).
-- **LTspice import**: handles `.include/.param`, V/I PULSE/SIN/PWL, controlled sources (E/G/F/H), diode D, simple `.SUBCKT` flatten.
+- **LTspice integration**: import flattened `.cir/.net` files (includes `.include/.param`, PULSE/SIN/PWL, E/G/F/H, diode, simple `.SUBCKT`) and round-trip `.asc` schematics (with `SpiceLine` metadata or via geometry fallback).
 - **Monte Carlo**: parallel, deterministic order; DataFrame stacking.
 - **Metrics/Plots**: AC (Bode/PM/GM) e tran (rise/fall/settling/overshoot).
 
@@ -92,7 +92,7 @@ Install Graphviz to render the SVG preview (macOS: `brew install graphviz`, Ubun
 - pip / virtualenv (or **uv** / **poetry**)
 - **NGSpice** (recommended for simulation; optional for building & unit tests)
 
-> LTspice support is planned. For now, NGSpice is the reference backend.
+
 
 ### macOS (pip)
 

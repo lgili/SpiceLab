@@ -45,7 +45,7 @@ nav:
       - AC Stability: ac-stability.md
       - Op-Amp Stability: opamp-stability.md
       - Device Models: device-models.md
-      - LTspice Import: ltspice-import.md
+      - LTspice Integration: ltspice-import.md
       - Plots: plots.md
       - Troubleshooting: troubleshooting.md
   - Cookbook: cookbook.md
