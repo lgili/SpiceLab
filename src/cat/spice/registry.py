@@ -150,8 +150,7 @@ def set_run_directives(handler: Runner | SimulatorAdapter | str) -> None:
         _registry.set_adapter(adapter)
         return
 
-    runner = cast(Runner, handler)
-    _registry.set_callable(runner)
+    _registry.set_callable(handler)
 
 
 def get_run_directives() -> Runner:

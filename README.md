@@ -64,6 +64,8 @@ make examples
 ```
 
 Install Graphviz to render the SVG preview (macOS: `brew install graphviz`, Ubuntu: `sudo apt install -y graphviz`).
+See `docs/components-library.md` for details on registering custom components
+and building reusable catalogues.
 
 ---
 
@@ -80,6 +82,8 @@ Install Graphviz to render the SVG preview (macOS: `brew install graphviz`, Ubun
 ### Highlights
 - **AC/DC/TRAN** via NGSpice (CLI).
 - **LTspice integration**: import flattened `.cir/.net` files (includes `.include/.param`, PULSE/SIN/PWL, E/G/F/H, diode, simple `.SUBCKT`) and round-trip `.asc` schematics (with `SpiceLine` metadata or via geometry fallback).
+- **Component library**: registry for reusable parts (for example `diode.1n4007`)
+  and an API (`cat.library`) to register project-specific components.
 - **Monte Carlo**: parallel, deterministic order; DataFrame stacking.
 - **Metrics/Plots**: AC (Bode/PM/GM) e tran (rise/fall/settling/overshoot).
 

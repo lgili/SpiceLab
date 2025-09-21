@@ -125,3 +125,7 @@ print(res.traces.names)
 
 If your schematic has symbols that CAT does not understand, consider exporting a
 netlist instead or filing an issue with a small reproduction.
+
+See also [Component Library](components-library.md) if you want to register manufacturer
+specific devices (for example a diode with a recommended `.model` line) and
+re-use them across multiple projects.

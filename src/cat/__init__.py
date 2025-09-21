@@ -103,6 +103,15 @@ from .core.components import (
     Vpwl,
 )
 from .core.net import GND, Net
+from .library import (
+    ComponentFactory,
+    ComponentSpec,
+    create_component,
+    get_component_spec,
+    list_components,
+    register_component,
+    unregister_component,
+)
 from .utils.topologies import opamp_buffer, opamp_inverting
 
 __all__ = [
@@ -146,6 +155,14 @@ __all__ = [
     "I",
     "IA",
     "IP",
+    # Component library
+    "ComponentFactory",
+    "ComponentSpec",
+    "register_component",
+    "unregister_component",
+    "create_component",
+    "get_component_spec",
+    "list_components",
     # Analyses
     "OP",
     "TRAN",
