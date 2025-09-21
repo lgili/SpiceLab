@@ -57,3 +57,32 @@ Many entries expose a `model_card` metadata field containing a ready-to-use
     from cat.library import get_component_spec
     spec = get_component_spec('mosfet.bss138')
     circuit.add_directive(spec.metadata['model_card'])
+
+You can discover parts programmatically using ``search_components``::
+
+    from cat.library import search_components
+    mosfets = search_components(metadata={'polarity': 'n-channel'})
+
+This supports filtering by name substring, category, metadata key/value pairs,
+and custom predicates.
+
+To inject the recommended SPICE directives into a circuit once::
+
+    from cat.core.circuit import Circuit
+    from cat.library import get_component_spec, apply_metadata_to_circuit
+
+    circuit = Circuit('demo')
+    spec = get_component_spec('diode.1n4007')
+    apply_metadata_to_circuit(circuit, spec)  # adds .model/.include only if absent
+
+### Importing external catalogs
+
+You can register many parts at once using the import helpers::
+
+    from cat.library.importers import import_catalog_from_json
+    import_catalog_from_json('my_components.json')
+
+The JSON file should contain a list of entries with `name`, `factory` (or a
+custom `factory_builder`), optional `category`, and metadata fields. Similar
+helpers exist for CSV data (``import_catalog_from_csv``) and in-memory
+structures (``import_catalog_from_mapping``).

@@ -1,0 +1,9 @@
+* Simplified TL081 FET-input op-amp macro-model
+.subckt TL081 1 2 6 7 4
+* pins: non-inv inv out v+ v-
+EGAIN 3 0 1 2 1000000
+ROUT 3 4 60
+COUT 3 4 4p
+RIN+ 1 4 10MEG
+RIN- 2 4 10MEG
+.ENDS TL081

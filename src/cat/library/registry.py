@@ -11,6 +11,7 @@ from collections.abc import Callable, Iterable, Mapping, MutableMapping
 from dataclasses import dataclass
 
 from ..core.components import Component
+from .metadata import validate_metadata
 
 ComponentFactory = Callable[..., Component]
 
@@ -58,6 +59,10 @@ def register_component(
     if not overwrite and name in _registry:
         raise ValueError(f"Component '{name}' already registered")
 
+    if metadata is not None and not isinstance(metadata, Mapping):
+        raise ValueError("metadata must be a mapping if provided")
+    if category and metadata:
+        validate_metadata(category, metadata)
     spec = ComponentSpec(name=name, factory=factory, category=category, metadata=metadata)
     _registry[name] = spec
 
@@ -102,3 +107,55 @@ __all__ = [
     "create_component",
     "list_components",
 ]
+
+
+def search_components(
+    *,
+    name_contains: str | None = None,
+    category: str | None = None,
+    metadata: Mapping[str, object] | None = None,
+    predicate: Callable[[ComponentSpec], bool] | None = None,
+) -> list[ComponentSpec]:
+    """Return component specs matching optional filters.
+
+    Parameters
+    ----------
+    name_contains:
+        Case-insensitive substring that must appear in the component name.
+    category:
+        Optional category filter (exact match).
+    metadata:
+        Mapping of metadata keys/values that must be present in the component
+        metadata (comparison uses ``==``).
+    predicate:
+        Optional callable for custom filtering; receives the spec and must
+        return ``True`` to keep it.
+    """
+
+    specs: Iterable[ComponentSpec] = _registry.values()
+
+    if name_contains is not None:
+        lowered = name_contains.lower()
+        specs = [spec for spec in specs if lowered in spec.name.lower()]
+
+    if category is not None:
+        specs = [spec for spec in specs if spec.category == category]
+
+    if metadata:
+
+        def _metadata_matches(spec: ComponentSpec) -> bool:
+            meta = spec.metadata or {}
+            for key, expected in metadata.items():
+                if meta.get(key) != expected:
+                    return False
+            return True
+
+        specs = [spec for spec in specs if _metadata_matches(spec)]
+
+    if predicate is not None:
+        specs = [spec for spec in specs if predicate(spec)]
+
+    return list(specs)
+
+
+__all__.append("search_components")

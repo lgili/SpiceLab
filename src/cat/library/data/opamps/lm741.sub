@@ -1,0 +1,9 @@
+* Simplified LM741 operational amplifier macro-model
+.subckt LM741 1 2 6 7 4
+* pins: non-inv inv out v+ v-
+EGAIN 3 0 1 2 1000000
+ROUT 3 4 100
+COUT 3 4 5p
+RIN+ 1 4 1MEG
+RIN- 2 4 1MEG
+.ENDS LM741

@@ -55,6 +55,15 @@ class Circuit:
         self._directives.append(line.rstrip("\n"))
         return self
 
+    def add_directive_once(self, line: str) -> Circuit:
+        """Add a directive if an identical line (ignoring whitespace) is absent."""
+
+        normalized = line.strip()
+        for existing in self._directives:
+            if existing.strip() == normalized:
+                return self
+        return self.add_directive(line)
+
     def connect(self, a: Port, b: Net | Port) -> Circuit:
         """Connect a port to another port or to a logical net."""
 

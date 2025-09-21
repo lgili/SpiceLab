@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
+from importlib.resources import files
 
 from ..core.components import OpAmpIdeal
 from ..core.net import Port, PortRole
@@ -41,6 +42,8 @@ class OpAmpEntry:
     gain: str | float | None = None
     subckt_name: str | None = None
     model_card: str | None = None
+    includes: tuple[str, ...] | None = None
+    extra: Mapping[str, object] | None = None
 
     def metadata(self) -> Mapping[str, object]:
         data: dict[str, object] = {
@@ -53,8 +56,17 @@ class OpAmpEntry:
             data["subckt"] = self.subckt_name
         if self.gain is not None:
             data["gain"] = self.gain
+        if self.includes:
+            if len(self.includes) == 1:
+                data["include"] = self.includes[0]
+            else:
+                data["include"] = list(self.includes)
+        if self.extra:
+            data.update(self.extra)
         return data
 
+
+_DATA_ROOT = files("cat.library.data.opamps")
 
 _OPAMPS = [
     OpAmpEntry(
@@ -68,22 +80,14 @@ _OPAMPS = [
         description="LM741 macro-model",
         variant="subckt",
         subckt_name="LM741",
-        model_card=(
-            ".include lm741.sub\n"
-            "\n.SUBCKT LM741 1 2 6 7 4\n"
-            "* (simplified placeholder model)\n"
-            "EGAIN 3 0 1 2 1000000\n"
-            "ROUT 3 4 100\n"
-            "COUT 3 4 5p\n"
-            ".ENDS LM741"
-        ),
+        includes=(str(_DATA_ROOT.joinpath("lm741.sub")),),
     ),
     OpAmpEntry(
         slug="tl081",
         description="TL081 FET-input op-amp",
         variant="subckt",
         subckt_name="TL081",
-        model_card=".include tl081.sub",
+        includes=(str(_DATA_ROOT.joinpath("tl081.sub")),),
     ),
 ]
 

@@ -39,7 +39,7 @@ where = ["src"]
 include = ["cat*"]
 
 [tool.setuptools.package-data]
-cat = ["py.typed"]
+cat = ["py.typed", "library/data/opamps/*.sub"]
 
 [tool.pytest.ini_options]
 addopts = "-q --maxfail=1 --disable-warnings --cov=cat --cov-report=term-missing"
