@@ -5,14 +5,14 @@ import os
 import shutil
 import sys
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 from cat.analysis import TRAN, NormalPct, monte_carlo
-from cat.analysis.viz.plot import plot_traces
+from cat.analysis.viz.plot import plot_mc_metric_hist, plot_traces
 from cat.core.circuit import Circuit
 from cat.core.components import Capacitor, Resistor, Vdc
 from cat.core.net import GND, Net
+from cat.io.raw_reader import Trace, TraceSet
 
 
 def _rc_circuit() -> tuple[Circuit, Resistor, str]:
@@ -77,29 +77,31 @@ def main() -> None:
     # --- Plots ---
 
     # 1) Transientes de algumas amostras (sobre o mesmo axes)
-    fig, ax = plt.subplots()
-    ax.set_title("Monte Carlo (amostras) — Vout")
-    ax.set_xlabel("tempo [s]")
-    ax.set_ylabel("tensão [V]")
-
     # seleciona 6 índices espaçados ao longo das execuções
     sample_idx = np.linspace(0, len(res.runs) - 1, 6, dtype=int)
-    for i in sample_idx:
-        ts_i = res.runs[i].traces
-        # passa o axes para sobrepor curvas no mesmo gráfico
-        plot_traces(ts_i, ys=[yname], ax=ax, legend=True, grid=True, tight=False)
-
-    fig.tight_layout()
+    base = res.runs[0].traces
+    time_trace = Trace("time", base["time"].unit, base["time"].values)
+    traces = [time_trace]
+    for idx in sample_idx:
+        ts_i = res.runs[idx].traces
+        traces.append(Trace(f"run_{idx}", ts_i[yname].unit, ts_i[yname].values))
+    overlay = TraceSet(traces)
+    fig_overlay = plot_traces(
+        overlay,
+        title="Monte Carlo (amostras) — Vout",
+        xlabel="tempo [s]",
+        ylabel="tensão [V]",
+    )
+    fig_overlay.show()
 
     # 2) Histograma do erro em %
-    plt.figure()
-    plt.hist(err_pct, bins=50, alpha=0.8, edgecolor="black")
-    plt.title(f"Monte Carlo paralelo (N={n_samples}) — erro @ {t_sample * 1e3:.1f} ms [%]")
-    plt.xlabel("Erro [%]")
-    plt.ylabel("Contagem")
-    plt.grid(True, alpha=0.3)
-
-    plt.show()
+    fig_hist = plot_mc_metric_hist(
+        err_pct,
+        title=f"Monte Carlo paralelo (N={n_samples}) — erro @ {t_sample * 1e3:.1f} ms [%]",
+        xlabel="Erro [%]",
+        ylabel="Contagem",
+    )
+    fig_hist.show()
 
 
 if __name__ == "__main__":

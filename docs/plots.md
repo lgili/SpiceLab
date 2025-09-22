@@ -1,24 +1,41 @@
 # Plotting
 
-CAT includes light plotting helpers that use Matplotlib when available.
+CAT ships interactive Plotly helpers for common visualization tasks. Each helper
+returns a `VizFigure`, which wraps the underlying Plotly figure and exposes
+`show()`, `to_html()`, and `to_image()` convenience methods.
 
-## Plot traces
+Install the optional ``viz`` extra to pull in Plotly and Kaleido (for static image
+export):
+
+```bash
+pip install pycircuitkit[viz]
+```
+
+## Time-domain traces
 ```python
 from cat.analysis.viz.plot import plot_traces
-fig = plot_traces(res.traces, ys=["v(n1)"], title="Vout vs time")
+
+fig = plot_traces(res.traces, ys=["v(n1)", "i(R1)"], title="RC response")
+fig.to_html("rc_response.html")  # standalone HTML with embedded Plotly figure
 ```
 
-## Bode plot
+## Bode plots
 ```python
 from cat.analysis.viz.plot import plot_bode
-# y must be a complex trace (e.g., AC result)
-fig_mag, fig_phase = plot_bode(res.traces, y="v(n1)")
+
+# 'y' must reference a complex trace (AC/Small-signal analysis)
+bode_fig = plot_bode(res.traces, y="v(vout)")
+bode_fig.show()  # open an interactive browser window
 ```
 
-## Plot sweeps (stacked DataFrame)
+## Parameter sweeps
 ```python
 from cat.analysis.viz.plot import plot_sweep_df
-fig = plot_sweep_df(df, x="time", y="v(n1)", hue="R", title="Sweep R")
+
+fig = plot_sweep_df(df, x="time", y="v(vout)", hue="R", title="Parameter sweep")
+fig.to_image("sweep.png")  # requires kaleido; falls back to HTML otherwise
 ```
 
-If Matplotlib is not installed, these helpers raise a clear error.
+Explore ``cat.viz`` for lower-level building blocks (`time_series_view`, `bode_view`,
+`monte_carlo_histogram`, `monte_carlo_param_scatter`, etc.) when you want to assemble
+custom dashboards or compose multiple views manually.

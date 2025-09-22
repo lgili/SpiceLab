@@ -3,15 +3,15 @@ from __future__ import annotations
 import os
 from collections.abc import Sequence
 
-import matplotlib.pyplot as plt
 import numpy as np
 from _common import savefig
 
 from cat.analysis import TRAN, NormalPct, monte_carlo
-from cat.analysis.viz.plot import plot_traces
+from cat.analysis.viz.plot import plot_mc_metric_hist, plot_traces
 from cat.core.circuit import Circuit
 from cat.core.components import Capacitor, Resistor, Vdc
 from cat.core.net import GND, Net
+from cat.io.raw_reader import Trace, TraceSet
 from cat.spice import ngspice_cli
 
 
@@ -52,14 +52,21 @@ def main() -> None:
         workers=min(2, os.cpu_count() or 1),
     )
 
-    # 1) Overlay a few transients
-    fig1, ax = plt.subplots()
-    ax.set_title("Monte Carlo — Vout (samples)")
-    ax.set_xlabel("time [s]")
-    ax.set_ylabel("voltage [V]")
-    for i in _select_indices(len(mc.runs), 6):
-        plot_traces(mc.runs[i].traces, ys=[yname], ax=ax, legend=False, grid=True, tight=False)
-    fig1.tight_layout()
+    # 1) Overlay a few transients using the Plotly helper
+    indices = _select_indices(len(mc.runs), 6)
+    base_ts = mc.runs[0].traces
+    time_trace = Trace("time", base_ts["time"].unit, base_ts["time"].values)
+    traces = [time_trace]
+    for idx in indices:
+        ts = mc.runs[idx].traces
+        traces.append(Trace(f"run_{idx}", ts[yname].unit, ts[yname].values))
+    overlay = TraceSet(traces)
+    fig1 = plot_traces(
+        overlay,
+        title="Monte Carlo — Vout (samples)",
+        xlabel="time [s]",
+        ylabel="voltage [V]",
+    )
     savefig(fig1, "mc_traces.png")
 
     # 2) Histogram of value at t_sample
@@ -72,13 +79,12 @@ def main() -> None:
     vals_arr = np.asarray(vals, dtype=float)
     v_nom = float(vals_arr[0]) if vals_arr.size else 1.0
     err_pct = (vals_arr - v_nom) / max(abs(v_nom), 1e-30) * 100.0
-    fig2 = plt.figure()
-    plt.hist(err_pct, bins=20, alpha=0.85, edgecolor="black")
-    plt.title(f"Monte Carlo (N={runs}) — error @ {t_sample*1e3:.1f} ms [%]")
-    plt.xlabel("Error [%]")
-    plt.ylabel("Count")
-    plt.grid(True, alpha=0.3)
-    fig2.tight_layout()
+    fig2 = plot_mc_metric_hist(
+        err_pct,
+        title=f"Monte Carlo (N={runs}) — error @ {t_sample*1e3:.1f} ms [%]",
+        xlabel="Error [%]",
+        ylabel="Count",
+    )
     savefig(fig2, "mc_hist.png")
 
     # cleanup artifacts (temporary workdirs)

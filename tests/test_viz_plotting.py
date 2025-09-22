@@ -1,5 +1,3 @@
-import importlib
-
 import numpy as np
 import pytest
 
@@ -20,14 +18,18 @@ def _ts_complex() -> TraceSet:
     return TraceSet([Trace("frequency", "Hz", f), Trace("v(out)", "V", z)])
 
 
-@pytest.mark.skipif(importlib.util.find_spec("matplotlib") is None, reason="no matplotlib")
 def test_plot_traces_and_bode() -> None:
+    plotly = pytest.importorskip("plotly.graph_objects")
+
     ts_r = _ts_real()
-    fig = plot_traces(
+    vf = plot_traces(
         ts_r, ys=["v(n1)"], title="t", xlabel="x", ylabel="y", legend=False, grid=False, tight=False
     )
-    assert hasattr(fig, "savefig")
+    assert vf.figure.layout.title.text == "t"
+    assert any(trace.name == "v(n1)" for trace in vf.figure.data)
 
     ts_c = _ts_complex()
-    f1, f2 = plot_bode(ts_c, "v(out)", unwrap_phase=False, title_mag="m", title_phase="p")
-    assert hasattr(f1, "savefig") and hasattr(f2, "savefig")
+    bode = plot_bode(ts_c, "v(out)", unwrap_phase=False, title_mag="m", template="plotly_dark")
+    assert isinstance(bode.figure, plotly.Figure)
+    assert len(bode.figure.data) == 2
+    assert bode.figure.layout.template.layout.paper_bgcolor is not None

@@ -58,11 +58,7 @@ from .analysis import (
 )
 
 # Plotting
-from .analysis.viz.plot import (
-    plot_bode,
-    plot_sweep_df,
-    plot_traces,
-)
+from .analysis.viz.plot import plot_bode, plot_sweep_df, plot_traces
 from .core.circuit import Circuit
 from .core.components import (
     CCCS,
@@ -127,6 +123,16 @@ from .library import (
     unregister_component,
 )
 from .utils.topologies import opamp_buffer, opamp_inverting
+from .viz import (
+    VizFigure,
+    bode_view,
+    monte_carlo_histogram,
+    monte_carlo_kde,
+    monte_carlo_param_scatter,
+    params_scatter_matrix,
+    sweep_curve,
+    time_series_view,
+)
 
 __all__ = [
     "__version__",
@@ -234,6 +240,14 @@ __all__ = [
     "plot_traces",
     "plot_bode",
     "plot_sweep_df",
+    "VizFigure",
+    "time_series_view",
+    "bode_view",
+    "sweep_curve",
+    "monte_carlo_histogram",
+    "monte_carlo_param_scatter",
+    "monte_carlo_kde",
+    "params_scatter_matrix",
     # High-level helpers
     "run_op",
     "run_tran",

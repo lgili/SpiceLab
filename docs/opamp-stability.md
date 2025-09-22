@@ -33,7 +33,7 @@ print(pm, gm)
 
 Notes:
 - The ideal OA is modeled as a high-gain VCVS; no power rails needed.
-- Use `plot_bode(ts, y)` to visualize complex AC traces.
+- Use `plot_bode(ts, y).show()` to render interactive Bode charts (requires the ``viz`` extra).
 - `phase_margin` falls back to estimate if phase is missing; provide complex or phase info when possible.
 
 See also the runnable script under `examples/opamp_stability.py`.

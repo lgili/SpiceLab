@@ -18,6 +18,8 @@ optional CLI flags documented below.
 - `register_and_metadata.py` — shows how to register custom components and
   attach metadata to them; writes a small models file and runs an OP analysis
   to demonstrate the model usage.
+- `plotly_viz_demo.py` — demonstrates the Plotly-based visualization helpers
+  (install the ``viz`` extra and inspect the generated HTML dashboards).
 
 Common CLI flags
 ----------------

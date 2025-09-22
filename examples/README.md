@@ -9,6 +9,8 @@ Minimal examples showing how to use the library with NGSpice.
   ```bash
   uv run --active pip install -e .
   uv run --active pip install matplotlib pandas
+  # optional Plotly demo
+  uv run --active pip install -e '.[viz]'
   ```
 
 ## How to run
@@ -41,6 +43,11 @@ From the `examples/` directory, run any script with the active uv environment. E
   uv run --active python monte_carlo_demo.py
   ```
 
+- Run the Plotly visualization demo (requires the ``viz`` extra):
+  ```bash
+  uv run --active python plotly_viz_demo.py --outdir ./plotly_output
+  ```
+
 Each script saves PNG graphs into the current working directory (or into a script-specific output folder).
 
 ---
@@ -58,6 +65,7 @@ Exemplos mínimos usando `cat` com NGSpice.
   ```bash
   uv run --active pip install -e .
   uv run --active pip install matplotlib pandas
+  uv run --active pip install -e '.[viz]'  # opcional, para o demo Plotly
 
   Como rodar
 
@@ -77,6 +85,9 @@ uv run --active python step_sweep_grid.py
 
 # Monte Carlo (normal 5% no R)
 uv run --active python monte_carlo_rc.py
+
+# Demo Plotly (HTML interativo)
+uv run --active python plotly_viz_demo.py --outdir ./plotly_output
 
 Cada script gera gráficos .png na pasta.
 

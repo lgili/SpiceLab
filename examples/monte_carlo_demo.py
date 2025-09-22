@@ -1,38 +1,35 @@
 import argparse
-import importlib
 import os
 import tempfile
 from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any, cast
-
-import numpy as np
+from typing import TYPE_CHECKING, Any
 
 from cat.analysis import OP, UniformAbs, monte_carlo
+from cat.analysis.viz.plot import (
+    plot_mc_kde,
+    plot_mc_metric_hist,
+    plot_param_vs_metric,
+    plot_params_matrix,
+)
 from cat.core.circuit import Circuit
 from cat.core.components import Resistor, Vdc
 from cat.core.net import GND
 from cat.spice.base import RunArtifacts, RunResult
 from cat.spice.registry import get_run_directives, set_run_directives
-from examples._common import savefig
 
-plt: Any | None
-try:
-    plt = importlib.import_module("matplotlib.pyplot")
-except ModuleNotFoundError:
-    plt = None
+if TYPE_CHECKING:
+    from cat.viz.plotly import _PlotlyNotAvailable as PlotlyNotAvailable
+else:
+    try:
+        from cat.viz.plotly import _PlotlyNotAvailable as PlotlyNotAvailable
+    except Exception:  # pragma: no cover - fallback type
 
-try:
-    pandas_plotting = importlib.import_module("pandas.plotting")
-    scatter_matrix = getattr(pandas_plotting, "scatter_matrix", None)
-except ModuleNotFoundError:  # pragma: no cover - optional dependency
-    scatter_matrix = None
+        class PlotlyNotAvailable(RuntimeError):
+            """Fallback exception when Plotly helpers are unavailable."""
 
-try:  # optional dependency for nicer KDE overlays; tests may not have scipy
-    scipy_stats = importlib.import_module("scipy.stats")
-    gaussian_kde = getattr(scipy_stats, "gaussian_kde", None)
-except ModuleNotFoundError:
-    gaussian_kde = None
+            pass
+
 
 ASCII_TEMPLATE = """Title:  op
 Date:   Thu Sep  1 12:00:00 2025
@@ -72,6 +69,74 @@ def build_demo_circuit() -> tuple[Circuit, Resistor]:
     c.connect(R1.ports[1], GND)
     c.connect(V1.ports[1], GND)
     return c, R1
+
+
+def _emit_plotly_report(
+    df: Any,
+    numeric_cols: list[str],
+    metrics: dict[str, dict[str, float]],
+    outdir: Path,
+) -> None:
+    col0 = numeric_cols[0]
+    hist_fig = plot_mc_metric_hist(
+        df[col0].dropna().tolist(),
+        title=f"Distribution of {col0}",
+        xlabel=col0,
+    )
+    hist_path = outdir / f"monte_carlo_{col0}_hist.html"
+    hist_fig.to_html(hist_path, include_plotlyjs="cdn")
+
+    kde_fig = plot_mc_kde(df[col0].dropna().tolist(), title=f"KDE of {col0}", xlabel=col0)
+    (outdir / f"monte_carlo_{col0}_kde.html").write_text(
+        kde_fig.figure.to_html(include_plotlyjs="cdn", full_html=True),
+        encoding="utf-8",
+    )
+
+    out_matrix: Path | None = None
+    matrix_fig = None
+    scatter_fig = None
+    if len(numeric_cols) > 1:
+        samples = df[numeric_cols].to_dict("records")
+        matrix_fig = plot_params_matrix(samples, params=numeric_cols)
+        out_matrix = outdir / "monte_carlo_params_matrix.html"
+        matrix_fig.to_html(out_matrix, include_plotlyjs="cdn")
+
+        scatter_fig = plot_param_vs_metric(
+            samples,
+            df[col0].tolist(),
+            param=numeric_cols[1],
+            title=f"{numeric_cols[1]} vs {col0}",
+            xlabel=numeric_cols[1],
+            ylabel=col0,
+        )
+        scatter_fig.to_html(outdir / "monte_carlo_param_metric.html", include_plotlyjs="cdn")
+
+    report_path = outdir / "monte_carlo_report.html"
+    html_sections = [
+        "<html>",
+        "<head><meta charset='utf-8'><title>Monte Carlo Report</title></head>",
+        "<body>",
+        f"<h1>Monte Carlo Report ({col0})</h1>",
+        "<h2>Metrics</h2>",
+        "<pre>",
+        str(metrics),
+        "</pre>",
+        "<h2>Histogram</h2>",
+        hist_fig.figure.to_html(include_plotlyjs="cdn", full_html=False),
+        "<h2>KDE</h2>",
+        kde_fig.figure.to_html(include_plotlyjs=False, full_html=False),
+    ]
+    if out_matrix is not None:
+        html_sections.append("<h2>Parameter scatter matrix</h2>")
+        assert matrix_fig is not None
+        html_sections.append(matrix_fig.figure.to_html(include_plotlyjs="cdn", full_html=False))
+        if scatter_fig is not None:
+            html_sections.append("<h2>Parameter vs metric</h2>")
+            html_sections.append(
+                scatter_fig.figure.to_html(include_plotlyjs="cdn", full_html=False)
+            )
+    html_sections.append("</body></html>")
+    report_path.write_text("\n".join(html_sections), encoding="utf-8")
 
 
 def run_demo(n: int = 3, outdir: str | Path | None = None, use_real_runner: bool = False) -> Any:
@@ -132,55 +197,10 @@ def run_demo(n: int = 3, outdir: str | Path | None = None, use_real_runner: bool
         for k, v in metrics.items():
             print(k, v)
 
-        # Plot histogram for the first numeric column; optionally overlay a KDE
-        col0 = numeric_cols[0]
-        out_name = outdir / f"monte_carlo_{col0}_hist.png"
-        if plt is None:
-            print("matplotlib not available; skipping plot generation")
-        else:
-            fig, ax = cast(Any, plt).subplots(figsize=(6, 4))
-            df[col0].plot(kind="hist", density=True, bins=20, ax=ax, alpha=0.6, color="C0")
-            if gaussian_kde is not None and len(df[col0].dropna()) > 1:
-                kde = gaussian_kde(df[col0].dropna())
-                xs = np.linspace(df[col0].min(), df[col0].max(), 200)
-                ax.plot(xs, kde(xs), color="C1")
-            ax.set_title(f"Monte Carlo distribution: {col0}")
-            ax.set_xlabel(col0)
-            ax.set_ylabel("Density")
-            savefig(fig, str(out_name))
-
-        # Scatter matrix for numeric parameters
-        out_matrix: Path | None = None
-        if len(numeric_cols) > 1 and scatter_matrix is not None and plt is not None:
-            axes = scatter_matrix(
-                df[numeric_cols],
-                diagonal="kde" if gaussian_kde is not None else "hist",
-                figsize=(6, 6),
-            )
-            fig_parent = axes[0, 0].get_figure()
-            out_matrix = outdir / "monte_carlo_scatter_matrix.png"
-            savefig(fig_parent, str(out_matrix))
-
-        # Create a simple HTML report with embedded images and metrics
-        report_lines = [
-            "<html>",
-            "<head><meta charset='utf-8'><title>Monte Carlo Report</title></head>",
-            "<body>",
-            f"<h1>Monte Carlo Report ({col0})</h1>",
-            "<h2>Metrics</h2>",
-            "<pre>",
-            str(metrics),
-            "</pre>",
-            "<h2>Plots</h2>",
-            f"<img src='{out_name.name}' alt='hist' width='600'/>",
-        ]
-        if out_matrix is not None:
-            report_lines.append(
-                f"<h3>Scatter matrix</h3><img src='{out_matrix.name}' width='600' />"
-            )
-        report_lines.extend(["</body>", "</html>"])
-        report_path = outdir / "monte_carlo_report.html"
-        report_path.write_text("\n".join(report_lines), encoding="utf-8")
+        try:
+            _emit_plotly_report(df, numeric_cols, metrics, outdir)
+        except PlotlyNotAvailable:
+            print("Plotly not available; skipping interactive outputs")
 
         return df
     finally:

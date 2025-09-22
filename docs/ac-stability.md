@@ -33,4 +33,4 @@ gm = gain_margin_db(res.traces, y_out="v(n1)")
 print(bw, wc, pm, gm)
 ```
 
-Use `plot_bode(ts, y)` to plot the complex trace when available.
+Use `plot_bode(ts, y)` to open an interactive Plotly Bode chart when a complex trace is available.
