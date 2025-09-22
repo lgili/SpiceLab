@@ -1,14 +1,16 @@
+---
 name: release
 
 on:
   push:
     tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
+      - 'v[0-9]+\.[0-9]+\.[0-9]+'
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    # Proteção extra: só segue se a tag for estável (sem sufixos)
+    # Proteção extra: só segue se a tag for estável
+    # (sem sufixos)
     if: >
       startsWith(github.ref_name, 'v') &&
       !contains(github.ref_name, '-') &&
@@ -23,13 +25,22 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
       - name: Install uv
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
 
       - name: Add uv to PATH
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Set version from tag
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "Setting version to $VERSION from tag $GITHUB_REF_NAME"
+          export VERSION
+          # Use helper script to update pyproject.toml.
+          python .github/scripts/set_version.py
 
       - name: Sync deps
         run: ~/.local/bin/uv sync

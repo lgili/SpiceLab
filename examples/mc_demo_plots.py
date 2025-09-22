@@ -29,14 +29,14 @@ for _ in range(N):
 
 # KDE histogram
 fig = plot_mc_kde(metrics, title="Metric KDE (R1/V1)")
-fig.savefig(OUT / "mc_metric_kde.png")
+fig.to_image(OUT / "mc_metric_kde.png")
 
 # param vs metric scatter
 fig2 = plot_param_vs_metric(samples, metrics, param="R1", title="R1 vs Metric")
-fig2.savefig(OUT / "mc_R1_vs_metric.png")
+fig2.to_image(OUT / "mc_R1_vs_metric.png")
 
 # params matrix
 fig3 = plot_params_matrix(samples, params=["R1", "V1", "R2"])
-fig3.savefig(OUT / "mc_params_matrix.png")
+fig3.to_image(OUT / "mc_params_matrix.png")
 
 print("Wrote demo images to", OUT)

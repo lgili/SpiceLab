@@ -28,7 +28,7 @@ jobs:
           python -m pip install -r docs-requirements.txt
       - name: Install project (editable)
         run: |
-          python -m pip install -e . --verbose
+          python -m pip install -e .[viz] --verbose
 
       - name: Ensure PYTHONPATH includes src
         run: echo "PYTHONPATH=${{ github.workspace }}/src" >> $GITHUB_ENV
@@ -48,14 +48,12 @@ jobs:
           python opamp_stability.py
           python monte_carlo_fig.py
           python step_sweep_fig.py
-          python circuit_preview.py
           popd
           cp -v examples/ac_bode.png docs/assets/examples/ac_bode.png
           cp -v examples/opamp_bode.png docs/assets/examples/opamp_bode.png
           cp -v examples/mc_hist.png docs/assets/examples/mc_hist.png
           cp -v examples/mc_traces.png docs/assets/examples/mc_traces.png
           cp -v examples/step_grid.png docs/assets/examples/step_grid.png
-          cp -v examples/circuit_preview.svg docs/assets/examples/circuit_preview.svg || true
 
       - name: Build site
         env:
