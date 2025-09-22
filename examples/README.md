@@ -1,5 +1,54 @@
 # CAT Examples
 
+Minimal examples showing how to use the library with NGSpice.
+
+## Prerequisites
+
+- `ngspice` available on PATH (macOS: `brew install ngspice`, Linux: apt/dnf/pacman, Windows: install and add to PATH).
+- Install the package in editable mode from the repo root and required plotting libraries:
+  ```bash
+  uv run --active pip install -e .
+  uv run --active pip install matplotlib pandas
+  ```
+
+## How to run
+
+From the `examples/` directory, run any script with the active uv environment. Examples:
+
+- Run the getting-started tutorial (AC, DC, TRAN):
+  ```bash
+  uv run --active python getting_started.py
+  ```
+
+- Run AC Bode plot example:
+  ```bash
+  uv run --active python ac_bode.py
+  ```
+
+- Run DC sweep example:
+  ```bash
+  uv run --active python dc_sweep.py
+  ```
+
+- Run parameter step grid example:
+  ```bash
+  uv run --active python step_sweep_grid.py
+  ```
+
+- Run Monte Carlo examples:
+  ```bash
+  uv run --active python monte_carlo_rc.py
+  uv run --active python monte_carlo_demo.py
+  ```
+
+Each script saves PNG graphs into the current working directory (or into a script-specific output folder).
+
+---
+
+### `examples/_common.py`
+This module provides a small helper `savefig(fig, path)` used by the examples to save figures without requiring a display.
+# CAT Examples
+
 Exemplos mínimos usando `cat` com NGSpice.
 
 ## Pré-requisitos

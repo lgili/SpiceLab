@@ -34,7 +34,9 @@ nav:
   - Installation: installation.md
   - Getting Started: getting-started.md
   - Concepts: concepts.md
-  - Examples: examples.md
+  - Examples:
+      - Overview: examples.md
+      - Monte Carlo example: monte-carlo-example.md
   - Examples Gallery: examples-gallery.md
   - Components: components.md
   - Components Quickstart: components-quickstart.md
@@ -49,6 +51,7 @@ nav:
       - Component Library: components-library.md
       - Plots: plots.md
       - Troubleshooting: troubleshooting.md
+  - API guidance: api-reference.md
   - Cookbook: cookbook.md
   - API Reference:
       - Core: reference/core.md

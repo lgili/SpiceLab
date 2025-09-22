@@ -1,5 +1,46 @@
 # Examples
 
+This page describes the runnable examples included in the `examples/` folder
+and shows common CLI flags used by many scripts.
+
+Overview
+--------
+
+The repository includes a set of examples that demonstrate typical
+workflows. Each example is a self-contained Python script that accepts
+optional CLI flags documented below.
+
+- `getting_started.py` — step-by-step tutorial: build a circuit and run AC,
+  DC and transient analyses.
+- `monte_carlo_demo.py` — Monte Carlo sweep, computes metrics and writes an
+  HTML report. Supports a fake-runner for CI and a real-run option with
+  `--real-run`.
+- `register_and_metadata.py` — shows how to register custom components and
+  attach metadata to them; writes a small models file and runs an OP analysis
+  to demonstrate the model usage.
+
+Common CLI flags
+----------------
+
+Most examples accept these optional flags (use `-h` to see them in each
+script):
+
+- `--outdir PATH` — write plots, model files and reports to PATH (defaults to
+  the current working directory). Use a temporary directory in CI to avoid
+  polluting the repo.
+- `--real-run` — when present, the script will attempt to call the real
+  simulator (`ngspice`) instead of using the fast fake-runner. Omit this in
+  CI if ngspice is not available.
+
+Fake-runner vs real-run
+-----------------------
+
+The examples are written to accept either a "fake" runner (fast, deterministic
+for CI) or to invoke the real external simulator. Prefer the fake-runner in
+unit tests and CI. When debugging actual simulator behavior, run with
+`--real-run`.
+# Examples
+
 This project ships runnable examples in `examples/`:
 
 - `rc_tran.py` — transient of an RC low-pass

@@ -1,3 +1,6 @@
+::: cat.core
+
+Include the core public API (Circuit, Component base types, net utilities).
 # Core API
 
 This section will be populated by `mkdocstrings` from the `cat.core` package.

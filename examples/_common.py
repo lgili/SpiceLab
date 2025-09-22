@@ -1,12 +1,18 @@
 from __future__ import annotations
 
+import importlib
 import os
-from typing import Any
+from typing import Any, cast
 
-import matplotlib
-
-matplotlib.use("Agg")  # renderiza sem display quando salvar figuras
-import matplotlib.pyplot as plt  # noqa: E402
+matplotlib: Any | None
+plt: Any | None
+try:
+    matplotlib = importlib.import_module("matplotlib")
+    matplotlib.use("Agg")
+    plt = importlib.import_module("matplotlib.pyplot")
+except ModuleNotFoundError:  # pragma: no cover - optional dependency
+    matplotlib = None
+    plt = None
 
 
 def ensure_dir(path: str) -> None:
@@ -18,5 +24,6 @@ def savefig(fig: Any, name: str) -> str:
     out = os.path.abspath(name)
     fig.savefig(out, dpi=150)
     print(f"[saved] {out}")
-    plt.close(fig)
+    if plt is not None:
+        cast(Any, plt).close(fig)
     return out
