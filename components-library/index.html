@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/preview/">
+        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/components-library/">
       
       
-        <link rel="prev" href="../components-quickstart/">
+        <link rel="prev" href="../ltspice-import/">
       
       
-        <link rel="next" href="../sweeps-step/">
+        <link rel="next" href="../plots/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Circuit Preview - PyCircuitKit</title>
+        <title>Component Library - PyCircuitKit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#circuit-preview-summary-and-graphviz" class="md-skip">
+        <a href="#component-library" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Circuit Preview
+              Component Library
             
           </span>
         </div>
@@ -508,32 +508,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Circuit Preview
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../preview/" class="md-nav__link">
         
   
   
@@ -544,62 +522,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#connectivity-summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      Connectivity summary
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#graphviz-rendering" class="md-nav__link">
-    <span class="md-ellipsis">
-      Graphviz rendering
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#netlist-helpers" class="md-nav__link">
-    <span class="md-ellipsis">
-      Netlist helpers
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#monte-carlo-quick-export-plots" class="md-nav__link">
-    <span class="md-ellipsis">
-      Monte Carlo — quick export &amp; plots
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -747,10 +669,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../components-library/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Component Library
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -761,6 +705,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#built-in-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      Built-in catalog
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-reusable-parts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating reusable parts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating reusable parts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#importing-external-catalogs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Importing external catalogs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1004,38 +1001,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#connectivity-summary" class="md-nav__link">
+  <a href="#built-in-catalog" class="md-nav__link">
     <span class="md-ellipsis">
-      Connectivity summary
+      Built-in catalog
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#graphviz-rendering" class="md-nav__link">
+  <a href="#creating-reusable-parts" class="md-nav__link">
     <span class="md-ellipsis">
-      Graphviz rendering
+      Creating reusable parts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating reusable parts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#importing-external-catalogs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Importing external catalogs
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#netlist-helpers" class="md-nav__link">
-    <span class="md-ellipsis">
-      Netlist helpers
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#monte-carlo-quick-export-plots" class="md-nav__link">
-    <span class="md-ellipsis">
-      Monte Carlo — quick export &amp; plots
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1055,49 +1049,73 @@
 
 
 
-<h1 id="circuit-preview-summary-and-graphviz">Circuit Preview (Summary and Graphviz)</h1>
-<p>Use the preview helpers to validate connectivity and generate a quick Graphviz-based diagram of nets and components (no schematic rendering).</p>
-<h2 id="connectivity-summary">Connectivity summary</h2>
-<pre><code class="language-python">print(c.summary())
-</code></pre>
-<p>Outputs a compact mapping of <code>ref.port -&gt; net</code>, highlights nets with degree 1 and unconnected ports.</p>
-<h2 id="graphviz-rendering">Graphviz rendering</h2>
-<pre><code class="language-python">dot = c.to_dot()
-# render_svg() will call out to the `dot` binary if available; otherwise you can run dot manually:
-ok = c.render_svg(&quot;circuit_preview.svg&quot;)  # requires 'dot' in PATH
-</code></pre>
-<p>If Graphviz isn't installed, you still get a <code>.dot</code> file:</p>
-<pre><code class="language-bash">dot -Tsvg circuit_preview.dot -o preview.svg
-</code></pre>
-<p>Example (RC low-pass):</p>
-<p><img alt="Circuit preview" src="../assets/examples/circuit_preview.svg" /></p>
-<h2 id="netlist-helpers">Netlist helpers</h2>
-<pre><code class="language-python">print(c.netlist_string())
-# or
-c.print_netlist()
-</code></pre>
-<h2 id="monte-carlo-quick-export-plots">Monte Carlo — quick export &amp; plots</h2>
-<pre><code class="language-python"># run a Monte Carlo varying components (example only)
-from cat.analysis.montecarlo import monte_carlo, NormalPct
-from cat.analysis.core import TRAN
+<h1 id="component-library">Component Library</h1>
+<p>CAT provides a lightweight registry that lets you register custom component
+factories and instantiate them later by name. This makes it easy to distribute
+manufacturer-specific parts (for example, a diode with a recommended <code>.model</code>
+card) or project-specific helpers.</p>
+<pre><code class="language-python">from cat.library import create_component, register_component
+from cat.core.components import Resistor
 
-# mapping would be Component -&gt; Dist (here pseudo-code)
-# mc = monte_carlo(circuit, mapping, n=100, analysis_factory=lambda: TRAN('1e-6','1e-3'))
-
-# export sampled parameters and the manifest
-# mc.save_samples_csv('mc_samples.csv')
-# mc.save_manifest_csv('mc_manifest.csv')
-
-# compute a metric per run (example: final Vout) and plot
-# metrics = [my_metric(r) for r in mc.runs]
-# from cat.analysis.viz.plot import plot_mc_metric_hist, plot_param_vs_metric
-# fig_hist = plot_mc_metric_hist(metrics, title='Gain distribution')
-# fig_scatter = plot_param_vs_metric(mc.samples, metrics, param='R1')
+register_component(&quot;custom.res&quot;, lambda ref, value: Resistor(ref, value))
+part = create_component(&quot;custom.res&quot;, ref=&quot;R1&quot;, value=&quot;4k7&quot;)
 </code></pre>
-<p>Example outputs (generated by <code>examples/mc_demo_plots.py</code>):</p>
-<p><img alt="MC Metric KDE" src="../assets/examples/mc_metric_kde.png" /></p>
-<p><img alt="R1 vs Metric" src="../assets/examples/mc_R1_vs_metric.png" /></p>
-<p><img alt="Parameter matrix" src="../assets/examples/mc_params_matrix.png" /></p>
+<h2 id="built-in-catalog">Built-in catalog</h2>
+<p>The <code>cat.library</code> package ships with a starter catalog. For example:</p>
+<pre><code class="language-python">from cat.library import create_component, get_component_spec
+
+d = create_component(&quot;diode.1n4007&quot;, ref=&quot;D1&quot;)
+spec = get_component_spec(&quot;diode.1n4007&quot;)
+print(spec.metadata[&quot;model_card&quot;])  # recommended .model statement
+</code></pre>
+<p>The catalog is organised by category. You can discover available entries via
+<code>list_components()</code> or <code>list_components(category="diode")</code>.</p>
+<h2 id="creating-reusable-parts">Creating reusable parts</h2>
+<p>A registered factory can accept any positional/keyword arguments. Metadata can
+be attached during registration to capture links, model cards, etc.</p>
+<pre><code class="language-python">from cat.core.components import Diode
+from cat.library import register_component
+
+register_component(
+    &quot;diode.bat54&quot;,
+    lambda ref, model=&quot;DBAT54&quot;: Diode(ref, model),
+    category=&quot;diode&quot;,
+    metadata={&quot;datasheet&quot;: &quot;https://www.onsemi.com/pdf/datasheet/bat54-d.pdf&quot;},
+)
+</code></pre>
+<p>Factories can also return subclasses of <code>Component</code>, enabling more elaborate
+behaviour.</p>
+<p>Remember to unregister temporary factories used inside tests by calling
+<code>unregister_component(name)</code>.</p>
+<p>Many entries expose a <code>model_card</code> metadata field containing a ready-to-use
+<code>.model</code> or <code>.include</code> statement. For example::</p>
+<pre><code>from cat.library import get_component_spec
+spec = get_component_spec('mosfet.bss138')
+circuit.add_directive(spec.metadata['model_card'])
+</code></pre>
+<p>You can discover parts programmatically using <code>search_components</code>::</p>
+<pre><code>from cat.library import search_components
+mosfets = search_components(metadata={'polarity': 'n-channel'})
+</code></pre>
+<p>This supports filtering by name substring, category, metadata key/value pairs,
+and custom predicates.</p>
+<p>To inject the recommended SPICE directives into a circuit once::</p>
+<pre><code>from cat.core.circuit import Circuit
+from cat.library import get_component_spec, apply_metadata_to_circuit
+
+circuit = Circuit('demo')
+spec = get_component_spec('diode.1n4007')
+apply_metadata_to_circuit(circuit, spec)  # adds .model/.include only if absent
+</code></pre>
+<h3 id="importing-external-catalogs">Importing external catalogs</h3>
+<p>You can register many parts at once using the import helpers::</p>
+<pre><code>from cat.library.importers import import_catalog_from_json
+import_catalog_from_json('my_components.json')
+</code></pre>
+<p>The JSON file should contain a list of entries with <code>name</code>, <code>factory</code> (or a
+custom <code>factory_builder</code>), optional <code>category</code>, and metadata fields. Similar
+helpers exist for CSV data (<code>import_catalog_from_csv</code>) and in-memory
+structures (<code>import_catalog_from_mapping</code>).</p>
 
 
 

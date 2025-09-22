@@ -18,7 +18,7 @@
         <link rel="prev" href="../device-models/">
       
       
-        <link rel="next" href="../plots/">
+        <link rel="next" href="../components-library/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>LTspice Import - PyCircuitKit</title>
+        <title>LTspice Integration - PyCircuitKit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#importing-ltspice-netlists" class="md-skip">
+        <a href="#ltspice-integration" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              LTspice Import
+              LTspice Integration
             
           </span>
         </div>
@@ -313,9 +313,20 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../examples/" class="md-nav__link">
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -324,7 +335,65 @@
   </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monte-carlo-example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Monte Carlo example
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -594,7 +663,7 @@
   
   
   <span class="md-ellipsis">
-    LTspice Import
+    LTspice Integration
     
   </span>
   
@@ -607,7 +676,7 @@
   
   
   <span class="md-ellipsis">
-    LTspice Import
+    LTspice Integration
     
   </span>
   
@@ -630,29 +699,77 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#supported-features" class="md-nav__link">
+  <a href="#netlists-cir-net" class="md-nav__link">
     <span class="md-ellipsis">
-      Supported features
+      Netlists (.cir / .net)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Netlists (.cir / .net)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-cards" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported cards
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quick example
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
+  <a href="#schematics-asc" class="md-nav__link">
     <span class="md-ellipsis">
-      Notes
+      Schematics (.asc)
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Schematics (.asc)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-should-i-use-spiceline" class="md-nav__link">
+    <span class="md-ellipsis">
+      When should I use SpiceLine?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported-symbols-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported symbols (export)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Limitations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#converting-existing-asc" class="md-nav__link">
+    <span class="md-ellipsis">
+      Converting existing .asc
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -660,6 +777,29 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../components-library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Component Library
+    
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -725,6 +865,28 @@
   
   
     <li class="md-nav__item">
+      <a href="../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API guidance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../cookbook/" class="md-nav__link">
         
   
@@ -755,10 +917,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
             
   
   
@@ -771,8 +933,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
             <span class="md-nav__icon md-icon"></span>
             API Reference
           </label>
@@ -881,29 +1043,77 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#supported-features" class="md-nav__link">
+  <a href="#netlists-cir-net" class="md-nav__link">
     <span class="md-ellipsis">
-      Supported features
+      Netlists (.cir / .net)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Netlists (.cir / .net)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-cards" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported cards
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quick example
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#notes" class="md-nav__link">
+  <a href="#schematics-asc" class="md-nav__link">
     <span class="md-ellipsis">
-      Notes
+      Schematics (.asc)
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Schematics (.asc)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-should-i-use-spiceline" class="md-nav__link">
+    <span class="md-ellipsis">
+      When should I use SpiceLine?
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported-symbols-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      Supported symbols (export)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Limitations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#converting-existing-asc" class="md-nav__link">
+    <span class="md-ellipsis">
+      Converting existing .asc
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -923,35 +1133,158 @@
 
 
 
-<h1 id="importing-ltspice-netlists">Importing LTspice Netlists</h1>
-<p>CAT can import SPICE netlists exported from LTspice (View → SPICE Netlist) and
-run analyses using the same Python API.</p>
-<h2 id="supported-features">Supported features</h2>
+<h1 id="ltspice-integration">LTspice Integration</h1>
+<p>CAT interoperates with LTspice in two complementary ways:</p>
+<ol>
+<li>Import <strong>netlists</strong> exported via <em>View → SPICE Netlist</em> (<code>.cir</code>/<code>.net</code>).</li>
+<li>Round-trip <strong>schematics</strong> (<code>.asc</code>) for a curated symbol library, generating
+   LTspice-friendly projects straight from your Python models.</li>
+</ol>
+<h2 id="netlists-cir-net">Netlists (<code>.cir</code> / <code>.net</code>)</h2>
+<p>Use <code>cat.io.ltspice_parser.from_ltspice_file</code> to parse a netlist and obtain a
+<code>Circuit</code> object that can be analysed, modified or exported again.</p>
+<h3 id="supported-cards">Supported cards</h3>
 <ul>
-<li><code>.include</code> and <code>.param</code> (expanded recursively)</li>
-<li>Devices: R, C, L, V/I (DC/AC), <code>PULSE</code>, <code>SIN</code>, <code>PWL</code></li>
-<li>Controlled sources: E/G/F/H</li>
-<li>Diode <code>D</code></li>
-<li>Switches: <code>S</code> (VSWITCH), <code>W</code> (ISWITCH)</li>
-<li>Simple <code>.SUBCKT</code> flattening (one level, params via <code>{NAME}</code> placeholders)</li>
+<li><code>.include</code> / <code>.param</code> expansion (recursive)</li>
+<li>Devices: R, C, L, independent V/I (DC/AC), <code>PULSE</code>, <code>SIN</code>, <code>PWL</code></li>
+<li>Controlled sources: E, G, F, H</li>
+<li>Diodes <code>D</code></li>
+<li>Voltage/current controlled switches: <code>S</code> (VSWITCH), <code>W</code> (ISWITCH)</li>
+<li>One-level <code>.SUBCKT</code> flattening with <code>{PARAM}</code> substitution</li>
 </ul>
-<h2 id="quick-example">Quick example</h2>
 <pre><code class="language-python">from cat.io.ltspice_parser import from_ltspice_file
 from cat.analysis import run_tran
 
-c = from_ltspice_file(&quot;./my_filter.cir&quot;)  # exported plain netlist
-res_df = run_tran(c, &quot;1us&quot;, &quot;2ms&quot;, return_df=True)
-print(res_df.head())
+c = from_ltspice_file(&quot;./my_filter.cir&quot;)
+tran = run_tran(c, &quot;1us&quot;, &quot;2ms&quot;, return_df=True)
+print(tran.head())
 </code></pre>
-<h2 id="notes">Notes</h2>
+<blockquote>
+<p>ℹ️ <strong>Tips</strong>
+- Keep <code>.model</code> statements together with the circuit or re-add them via
+  <code>circuit.add_directive(".model ...")</code>.
+- Unknown cards will raise a descriptive <code>ValueError</code>. If something critical is
+  missing, please open an issue with a minimal example.</p>
+</blockquote>
+<h2 id="schematics-asc">Schematics (<code>.asc</code>)</h2>
+<p>The module <code>cat.io.ltspice_asc</code> introduces helpers to load, generate and save
+schematic files:</p>
 <ul>
-<li><code>.asc</code> schematic files are not netlists — export the SPICE netlist first.</li>
-<li>For switches, add your <code>.model</code> directives via <code>circuit.add_directive(".model ...")</code>
-  if the model is not already present in the netlist.</li>
-<li>SUBCKT flattening: the importer expands a single level of subcircuit instances.
-  Parameters are substituted when referenced as <code>{PARAM}</code> in the subckt body.</li>
-<li>If you see errors around unknown cards, file an issue with a minimal netlist.</li>
+<li><code>parse_asc(path_or_text)</code> → <code>AscSchematic</code></li>
+<li><code>schematic_to_circuit(AscSchematic)</code> → <code>Circuit</code></li>
+<li><code>circuit_to_schematic(Circuit, include_wires=True)</code> → <code>AscSchematic</code></li>
+<li><code>circuit_to_asc_text</code> / <code>save_circuit_as_asc</code></li>
 </ul>
+<h3 id="when-should-i-use-spiceline">When should I use <code>SpiceLine</code>?</h3>
+<p>The exporter attaches <code>SYMATTR SpiceLine ...</code> to every symbol with the exact
+SPICE card produced by CAT. When these attributes are present the importer uses
+those directives verbatim, guaranteeing an exact round-trip.</p>
+<p>If a schematic lacks <code>SpiceLine</code>, CAT falls back to analysing wires and symbol
+pins (union-find). This allows importing hand-drawn LTspice schematics, but the
+result may require manual clean-up if multiple nets share the same coordinates.</p>
+<h3 id="supported-symbols-export">Supported symbols (export)</h3>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>CAT component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>res</code></td>
+<td><code>Resistor</code></td>
+</tr>
+<tr>
+<td><code>cap</code></td>
+<td><code>Capacitor</code></td>
+</tr>
+<tr>
+<td><code>ind</code></td>
+<td><code>Inductor</code></td>
+</tr>
+<tr>
+<td><code>voltage</code></td>
+<td><code>Vdc</code></td>
+</tr>
+<tr>
+<td><code>current</code></td>
+<td><code>Idc</code></td>
+</tr>
+<tr>
+<td><code>dio</code></td>
+<td><code>Diode</code></td>
+</tr>
+<tr>
+<td><code>vcvs</code></td>
+<td><code>VCVS</code></td>
+</tr>
+<tr>
+<td><code>vccs</code></td>
+<td><code>VCCS</code></td>
+</tr>
+<tr>
+<td><code>cccs</code></td>
+<td><code>CCCS</code></td>
+</tr>
+<tr>
+<td><code>ccvs</code></td>
+<td><code>CCVS</code></td>
+</tr>
+</tbody>
+</table>
+<p>Orientation is auto-selected when practical (for example, capacitors tied to
+GND are placed vertically).</p>
+<pre><code class="language-python">from cat.core.circuit import Circuit
+from cat.core.components import Capacitor, Resistor, Vdc
+from cat.core.net import GND, Net
+from cat.io.ltspice_asc import circuit_to_asc_text, parse_asc, schematic_to_circuit
+
+vin = Net(&quot;vin&quot;)
+vout = Net(&quot;vout&quot;)
+
+c = Circuit(&quot;rc&quot;)
+V1 = Vdc(&quot;1&quot;, 5.0)
+R1 = Resistor(&quot;1&quot;, &quot;1k&quot;)
+C1 = Capacitor(&quot;1&quot;, &quot;10n&quot;)
+
+c.add(V1, R1, C1)
+c.connect(V1.ports[0], vin)
+c.connect(R1.ports[0], vin)
+c.connect(R1.ports[1], vout)
+c.connect(C1.ports[0], vout)
+c.connect(C1.ports[1], GND)
+c.connect(V1.ports[1], GND)
+
+asc_text = circuit_to_asc_text(c)
+print(asc_text)
+
+round_trip = schematic_to_circuit(parse_asc(asc_text))
+print(round_trip.build_netlist())
+</code></pre>
+<h3 id="limitations">Limitations</h3>
+<ul>
+<li>Unsupported symbols raise <code>ValueError</code>. You can still edit the exported <code>.asc</code>
+  in LTspice and swap symbols manually.</li>
+<li>The geometry fallback assumes orthogonal wires; schematics using unusual
+  routing may need touch-ups before importing.</li>
+<li><code>include_wires=False</code> produces schematic stubs that rely entirely on
+  <code>SpiceLine</code>. This is convenient for programmatic generation but results in
+  schematics without conductor art.</li>
+</ul>
+<h3 id="converting-existing-asc">Converting existing <code>.asc</code></h3>
+<pre><code class="language-python">from cat.io.ltspice_asc import circuit_from_asc
+from cat.analysis import run_ac
+
+c = circuit_from_asc(&quot;./filter.asc&quot;)
+res = run_ac(c, &quot;dec&quot;, 201, 10, 1e5)
+print(res.traces.names)
+</code></pre>
+<p>If your schematic has symbols that CAT does not understand, consider exporting a
+netlist instead or filing an issue with a small reproduction.</p>
+<p>See also <a href="../components-library/">Component Library</a> if you want to register manufacturer
+specific devices (for example a diode with a recommended <code>.model</code> line) and
+re-use them across multiple projects.</p>
 
 
 

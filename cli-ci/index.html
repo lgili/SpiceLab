@@ -12,13 +12,9 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/preview/">
+        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/cli-ci/">
       
       
-        <link rel="prev" href="../components-quickstart/">
-      
-      
-        <link rel="next" href="../sweeps-step/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +22,7 @@
     
     
       
-        <title>Circuit Preview - PyCircuitKit</title>
+        <title>CLI and CI guide - PyCircuitKit</title>
       
     
     
@@ -82,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#circuit-preview-summary-and-graphviz" class="md-skip">
+        <a href="#cli-and-ci-guide" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Circuit Preview
+              CLI and CI guide
             
           </span>
         </div>
@@ -468,20 +464,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
@@ -497,7 +491,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Guides
@@ -508,32 +502,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Circuit Preview
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../preview/" class="md-nav__link">
         
   
   
@@ -544,62 +516,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#connectivity-summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      Connectivity summary
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#graphviz-rendering" class="md-nav__link">
-    <span class="md-ellipsis">
-      Graphviz rendering
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#netlist-helpers" class="md-nav__link">
-    <span class="md-ellipsis">
-      Netlist helpers
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#monte-carlo-quick-export-plots" class="md-nav__link">
-    <span class="md-ellipsis">
-      Monte Carlo — quick export &amp; plots
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1004,36 +920,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#connectivity-summary" class="md-nav__link">
+  <a href="#common-flags" class="md-nav__link">
     <span class="md-ellipsis">
-      Connectivity summary
+      Common flags
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#graphviz-rendering" class="md-nav__link">
+  <a href="#ci-recommendations" class="md-nav__link">
     <span class="md-ellipsis">
-      Graphviz rendering
+      CI recommendations
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#netlist-helpers" class="md-nav__link">
+  <a href="#how-to-enable-the-fake-runner-in-tests" class="md-nav__link">
     <span class="md-ellipsis">
-      Netlist helpers
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#monte-carlo-quick-export-plots" class="md-nav__link">
-    <span class="md-ellipsis">
-      Monte Carlo — quick export &amp; plots
+      How to enable the fake-runner in tests
     </span>
   </a>
   
@@ -1055,49 +962,50 @@
 
 
 
-<h1 id="circuit-preview-summary-and-graphviz">Circuit Preview (Summary and Graphviz)</h1>
-<p>Use the preview helpers to validate connectivity and generate a quick Graphviz-based diagram of nets and components (no schematic rendering).</p>
-<h2 id="connectivity-summary">Connectivity summary</h2>
-<pre><code class="language-python">print(c.summary())
+<h1 id="cli-and-ci-guide">CLI and CI guide</h1>
+<p>This page documents the common CLI flags supported by examples and
+recommended patterns for running examples in CI.</p>
+<h2 id="common-flags">Common flags</h2>
+<ul>
+<li><code>--outdir PATH</code> — write all generated artifacts (plots, model files,
+  reports) to PATH. Examples default to the current working directory. For CI
+  use a temporary directory (see pattern below).</li>
+<li><code>--real-run</code> — when present, the example invokes the real simulator
+  (<code>ngspice</code>) instead of the internal fake-runner used for fast CI runs.</li>
+<li><code>--n</code> or <code>--trials</code> — number of Monte Carlo trials (used by
+  <code>monte_carlo_demo.py</code>).</li>
+</ul>
+<h2 id="ci-recommendations">CI recommendations</h2>
+<ol>
+<li>Use a temporary output directory and pass it with <code>--outdir</code> so test
+artifacts don't leak into the repo. Example pytest pattern:</li>
+</ol>
+<pre><code class="language-python">def test_example_smoke(tmp_path):
+    outdir = tmp_path / &quot;example_out&quot;
+    outdir.mkdir()
+    subprocess.run([&quot;python&quot;, &quot;examples/monte_carlo_demo.py&quot;, &quot;--outdir&quot;, str(outdir)], check=True)
+    assert any(outdir.iterdir())
 </code></pre>
-<p>Outputs a compact mapping of <code>ref.port -&gt; net</code>, highlights nets with degree 1 and unconnected ports.</p>
-<h2 id="graphviz-rendering">Graphviz rendering</h2>
-<pre><code class="language-python">dot = c.to_dot()
-# render_svg() will call out to the `dot` binary if available; otherwise you can run dot manually:
-ok = c.render_svg(&quot;circuit_preview.svg&quot;)  # requires 'dot' in PATH
-</code></pre>
-<p>If Graphviz isn't installed, you still get a <code>.dot</code> file:</p>
-<pre><code class="language-bash">dot -Tsvg circuit_preview.dot -o preview.svg
-</code></pre>
-<p>Example (RC low-pass):</p>
-<p><img alt="Circuit preview" src="../assets/examples/circuit_preview.svg" /></p>
-<h2 id="netlist-helpers">Netlist helpers</h2>
-<pre><code class="language-python">print(c.netlist_string())
-# or
-c.print_netlist()
-</code></pre>
-<h2 id="monte-carlo-quick-export-plots">Monte Carlo — quick export &amp; plots</h2>
-<pre><code class="language-python"># run a Monte Carlo varying components (example only)
-from cat.analysis.montecarlo import monte_carlo, NormalPct
-from cat.analysis.core import TRAN
-
-# mapping would be Component -&gt; Dist (here pseudo-code)
-# mc = monte_carlo(circuit, mapping, n=100, analysis_factory=lambda: TRAN('1e-6','1e-3'))
-
-# export sampled parameters and the manifest
-# mc.save_samples_csv('mc_samples.csv')
-# mc.save_manifest_csv('mc_manifest.csv')
-
-# compute a metric per run (example: final Vout) and plot
-# metrics = [my_metric(r) for r in mc.runs]
-# from cat.analysis.viz.plot import plot_mc_metric_hist, plot_param_vs_metric
-# fig_hist = plot_mc_metric_hist(metrics, title='Gain distribution')
-# fig_scatter = plot_param_vs_metric(mc.samples, metrics, param='R1')
-</code></pre>
-<p>Example outputs (generated by <code>examples/mc_demo_plots.py</code>):</p>
-<p><img alt="MC Metric KDE" src="../assets/examples/mc_metric_kde.png" /></p>
-<p><img alt="R1 vs Metric" src="../assets/examples/mc_R1_vs_metric.png" /></p>
-<p><img alt="Parameter matrix" src="../assets/examples/mc_params_matrix.png" /></p>
+<ol>
+<li>
+<p>Prefer the fake-runner in automated tests. The fake-runner provides a
+deterministic, fast output that is sufficient for smoke tests and
+visualization pipelines.</p>
+</li>
+<li>
+<p>Run heavier simulations with <code>--real-run</code> only in dedicated integration
+tests or developer runs where <code>ngspice</code> is available.</p>
+</li>
+<li>
+<p>Upload the <code>--outdir</code> contents as CI artifacts when you need to inspect
+plots or the HTML report.</p>
+</li>
+</ol>
+<h2 id="how-to-enable-the-fake-runner-in-tests">How to enable the fake-runner in tests</h2>
+<p>Examples are written to select the fake-runner by default when the real
+simulator is unavailable. If you need to force the fake-runner from code,
+most examples accept an entrypoint to pass the runner object directly. See
+the example module docstrings for details.</p>
 
 
 

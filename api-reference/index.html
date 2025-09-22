@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/preview/">
+        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/api-reference/">
       
       
-        <link rel="prev" href="../components-quickstart/">
+        <link rel="prev" href="../troubleshooting/">
       
       
-        <link rel="next" href="../sweeps-step/">
+        <link rel="next" href="../cookbook/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Circuit Preview - PyCircuitKit</title>
+        <title>API guidance - PyCircuitKit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#circuit-preview-summary-and-graphviz" class="md-skip">
+        <a href="#api-reference-guidance" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Circuit Preview
+              API guidance
             
           </span>
         </div>
@@ -468,20 +468,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
@@ -497,7 +495,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Guides
@@ -508,32 +506,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Circuit Preview
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../preview/" class="md-nav__link">
         
   
   
@@ -544,62 +520,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#connectivity-summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      Connectivity summary
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#graphviz-rendering" class="md-nav__link">
-    <span class="md-ellipsis">
-      Graphviz rendering
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#netlist-helpers" class="md-nav__link">
-    <span class="md-ellipsis">
-      Netlist helpers
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#monte-carlo-quick-export-plots" class="md-nav__link">
-    <span class="md-ellipsis">
-      Monte Carlo — quick export &amp; plots
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -823,10 +743,32 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../api-reference/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    API guidance
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -837,6 +779,53 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-add-a-module-to-the-api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to add a module to the API reference
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-imports" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting imports
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#packaging-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Packaging tips
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1004,36 +993,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#connectivity-summary" class="md-nav__link">
+  <a href="#how-to-add-a-module-to-the-api-reference" class="md-nav__link">
     <span class="md-ellipsis">
-      Connectivity summary
+      How to add a module to the API reference
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#graphviz-rendering" class="md-nav__link">
+  <a href="#troubleshooting-imports" class="md-nav__link">
     <span class="md-ellipsis">
-      Graphviz rendering
+      Troubleshooting imports
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#netlist-helpers" class="md-nav__link">
+  <a href="#packaging-tips" class="md-nav__link">
     <span class="md-ellipsis">
-      Netlist helpers
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#monte-carlo-quick-export-plots" class="md-nav__link">
-    <span class="md-ellipsis">
-      Monte Carlo — quick export &amp; plots
+      Packaging tips
     </span>
   </a>
   
@@ -1055,49 +1035,46 @@
 
 
 
-<h1 id="circuit-preview-summary-and-graphviz">Circuit Preview (Summary and Graphviz)</h1>
-<p>Use the preview helpers to validate connectivity and generate a quick Graphviz-based diagram of nets and components (no schematic rendering).</p>
-<h2 id="connectivity-summary">Connectivity summary</h2>
-<pre><code class="language-python">print(c.summary())
+<h1 id="api-reference-guidance">API reference guidance</h1>
+<p>This project uses <code>mkdocstrings</code> to collect API documentation from the
+<code>src/</code> package. The handler is configured in <code>mkdocs.yml</code> with a <code>search_path</code>
+that points to <code>src</code> so local imports resolve during the site build.</p>
+<h2 id="how-to-add-a-module-to-the-api-reference">How to add a module to the API reference</h2>
+<ol>
+<li>Add a markdown file under <code>docs/reference/</code> and include the <code>::: path.to.module</code>
+   directive where you want the auto-generated docstring content to appear.</li>
+</ol>
+<p>Example: <code>docs/reference/analysis.md</code></p>
+<pre><code class="language-markdown">::: cat.analysis
 </code></pre>
-<p>Outputs a compact mapping of <code>ref.port -&gt; net</code>, highlights nets with degree 1 and unconnected ports.</p>
-<h2 id="graphviz-rendering">Graphviz rendering</h2>
-<pre><code class="language-python">dot = c.to_dot()
-# render_svg() will call out to the `dot` binary if available; otherwise you can run dot manually:
-ok = c.render_svg(&quot;circuit_preview.svg&quot;)  # requires 'dot' in PATH
-</code></pre>
-<p>If Graphviz isn't installed, you still get a <code>.dot</code> file:</p>
-<pre><code class="language-bash">dot -Tsvg circuit_preview.dot -o preview.svg
-</code></pre>
-<p>Example (RC low-pass):</p>
-<p><img alt="Circuit preview" src="../assets/examples/circuit_preview.svg" /></p>
-<h2 id="netlist-helpers">Netlist helpers</h2>
-<pre><code class="language-python">print(c.netlist_string())
-# or
-c.print_netlist()
-</code></pre>
-<h2 id="monte-carlo-quick-export-plots">Monte Carlo — quick export &amp; plots</h2>
-<pre><code class="language-python"># run a Monte Carlo varying components (example only)
-from cat.analysis.montecarlo import monte_carlo, NormalPct
-from cat.analysis.core import TRAN
-
-# mapping would be Component -&gt; Dist (here pseudo-code)
-# mc = monte_carlo(circuit, mapping, n=100, analysis_factory=lambda: TRAN('1e-6','1e-3'))
-
-# export sampled parameters and the manifest
-# mc.save_samples_csv('mc_samples.csv')
-# mc.save_manifest_csv('mc_manifest.csv')
-
-# compute a metric per run (example: final Vout) and plot
-# metrics = [my_metric(r) for r in mc.runs]
-# from cat.analysis.viz.plot import plot_mc_metric_hist, plot_param_vs_metric
-# fig_hist = plot_mc_metric_hist(metrics, title='Gain distribution')
-# fig_scatter = plot_param_vs_metric(mc.samples, metrics, param='R1')
-</code></pre>
-<p>Example outputs (generated by <code>examples/mc_demo_plots.py</code>):</p>
-<p><img alt="MC Metric KDE" src="../assets/examples/mc_metric_kde.png" /></p>
-<p><img alt="R1 vs Metric" src="../assets/examples/mc_R1_vs_metric.png" /></p>
-<p><img alt="Parameter matrix" src="../assets/examples/mc_params_matrix.png" /></p>
+<ol>
+<li>
+<p>Run <code>mkdocs build</code> locally to generate the site and verify that
+   mkdocstrings finds the module. If mkdocstrings fails to import the module,
+   ensure your virtualenv has the package installed (<code>pip install -e .</code>) and
+   that <code>mkdocs</code> is executed from the repository root.</p>
+</li>
+<li>
+<p>Keep exported API stable: prefer documenting public top-level methods and
+   classes from the <code>cat.*</code> namespace. Avoid heavy implementation details; use
+   examples for usage patterns.</p>
+</li>
+</ol>
+<h2 id="troubleshooting-imports">Troubleshooting imports</h2>
+<ul>
+<li>If mkdocstrings complains about missing dependencies, install them into the
+  environment used for the docs build (dev-requirements.txt).</li>
+<li>If you need to alter the import path, update <code>mkdocs.yml</code> <code>plugins.mkdocstrings.python.extra.search_path</code>.</li>
+</ul>
+<h2 id="packaging-tips">Packaging tips</h2>
+<ul>
+<li>Keep <code>pyproject.toml</code> up to date with any extra dependencies needed for
+  examples you intend to show in the API docs. This keeps local builds
+  reproducible.</li>
+<li>When publishing the site from CI, make sure the build job creates an
+  environment that includes dev/test dependencies so mkdocstrings can import
+  modules without errors.</li>
+</ul>
 
 
 
