@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from ..core.types import AnalysisSpec, ResultHandle, ResultMeta, SweepSpec, circuit_hash
+from ..core.types import AnalysisSpec, Probe, ResultHandle, ResultMeta, SweepSpec, circuit_hash
 from ..io.readers import read_xyce_table
 from ..spice.xyce_cli import DEFAULT_ADAPTER
 from .base import EngineFeatures, Simulator
@@ -55,6 +55,7 @@ class XyceSimulator(Simulator):
         circuit: object,
         analyses: Sequence[AnalysisSpec],
         sweep: SweepSpec | None = None,
+        probes: list[Probe] | None = None,
     ) -> ResultHandle:
         if sweep is not None and sweep.variables:
             raise NotImplementedError("SweepSpec is not supported yet in XyceSimulator.run()")
@@ -88,6 +89,7 @@ class XyceSimulator(Simulator):
             engine_version=None,
             netlist_hash=nl_hash,
             analyses=list(analyses),
+            probes=list(probes) if probes else [],
             attrs={
                 "workdir": res.artifacts.workdir,
                 "log_path": res.artifacts.log_path,

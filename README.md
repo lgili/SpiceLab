@@ -5,6 +5,8 @@
 
 Modern, strongly-typed Python toolkit to **define**, **simulate** (.OP / .TRAN / .AC) and **analyze** electronic circuits with a clean, Pythonic API. CAT targets real engineering workflows: parameter sweeps, **Monte Carlo**, worst‑case, and painless result handling in NumPy/Pandas.
 
+> M1 (Core Contracts) concluído: `AnalysisSpec`, `SweepSpec` e `Probe` migrados para Pydantic v2 com hashing determinístico. Veja `docs/core-contracts.md` para detalhes e notas de migração (dataclasses antigas → modelos Pydantic, construtor posicional preservado).
+
 Documentation: https://lgili.github.io/PyCircuitKit/
 
 > **Status:** MVP — Circuit DSL (Ports & Nets), NGSpice (CLI) `.op/.tran/.ac`, LTspice netlist & schematic import/export (netlists with `.include/.param`, V/I PULSE/SIN/PWL, controlled sources, diode; schematics via `.asc` round-trip), Monte‑Carlo, and metrics/plots. Roadmap: worst‑case refinements, RAW binary, more examples.

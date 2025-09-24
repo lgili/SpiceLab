@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Protocol
 
-from ..core.types import AnalysisSpec, ResultHandle, SweepSpec
+from ..core.types import AnalysisSpec, Probe, ResultHandle, SweepSpec
 
 
 @dataclass(frozen=True)
@@ -30,6 +30,7 @@ class Simulator(Protocol):
         circuit: object,
         analyses: Sequence[AnalysisSpec],
         sweep: SweepSpec | None = None,
+        probes: list[Probe] | None = None,
     ) -> ResultHandle: ...
 
 

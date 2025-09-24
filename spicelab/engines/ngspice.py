@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from ..core.types import AnalysisSpec, ResultHandle, ResultMeta, SweepSpec, circuit_hash
+from ..core.types import AnalysisSpec, Probe, ResultHandle, ResultMeta, SweepSpec, circuit_hash
 from ..io.readers import read_ltspice_raw
 from ..spice.registry import get_active_adapter
 from .base import EngineFeatures, Simulator
@@ -59,6 +59,7 @@ class NgSpiceSimulator(Simulator):
         circuit: object,
         analyses: Sequence[AnalysisSpec],
         sweep: SweepSpec | None = None,
+        probes: list[Probe] | None = None,
     ) -> ResultHandle:
         if sweep is not None and sweep.variables:
             # Not yet implemented in this thin adapter; will be added in sweep orchestrator
@@ -151,6 +152,7 @@ class NgSpiceSimulator(Simulator):
             engine_version=eng_ver,
             netlist_hash=nl_hash,
             analyses=list(analyses),
+            probes=list(probes) if probes else [],
             attrs={
                 "workdir": res.artifacts.workdir,
                 "log_path": res.artifacts.log_path,

@@ -23,6 +23,23 @@ class Component:
     def __init__(self, ref: str, value: str | float = "") -> None:
         self.ref = ref
         self.value = value
+        self._value_si_cache: float | None = None
+
+    @property
+    def value_si(self) -> float | None:
+        """Return numeric SI value if parseable else None (lazy)."""
+        if self._value_si_cache is not None:
+            return self._value_si_cache
+        from ..utils.units import to_float
+
+        try:
+            if isinstance(self.value, int | float):
+                self._value_si_cache = float(self.value)
+            elif isinstance(self.value, str) and self.value.strip():
+                self._value_si_cache = to_float(self.value)
+        except Exception:
+            self._value_si_cache = None
+        return self._value_si_cache
 
     @property
     def ports(self) -> tuple[Port, ...]:

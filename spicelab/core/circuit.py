@@ -160,6 +160,20 @@ class Circuit:
         return p
 
     # ----------------------------------------------------------------------------------
+    # Hash (deterministic) - part of M1 contract
+    # ----------------------------------------------------------------------------------
+    def hash(self, *, extra: dict[str, object] | None = None) -> str:  # pragma: no cover - thin
+        """Return a deterministic short hash for this circuit.
+
+        Wrapper around ``spicelab.core.types.circuit_hash`` so callers do not need
+        to import the helper directly. ``extra`` can include engine/version/analysis
+        args to bind caches firmly to execution context.
+        """
+        from .types import circuit_hash  # local import to avoid cycle during module init
+
+        return circuit_hash(self, extra=extra)
+
+    # ----------------------------------------------------------------------------------
     # Introspection helpers
     # ----------------------------------------------------------------------------------
     def _net_label(self, net: Net | None) -> str:

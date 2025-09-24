@@ -22,12 +22,28 @@ class DatasetResultHandle(ResultHandle):
         try:
             ds_attrs = getattr(self._dataset, "attrs", None)
             if isinstance(ds_attrs, dict):
+                analyses_serialized: list[dict[str, Any]] = []
+                for a in meta.analyses:
+                    if hasattr(a, "model_dump"):
+                        analyses_serialized.append(a.model_dump())
+                    else:  # dataclass fallback
+                        analyses_serialized.append(asdict(a))
+                probes_serialized: list[dict[str, Any]] = []
+                for p in getattr(meta, "probes", []) or []:
+                    if hasattr(p, "model_dump"):
+                        probes_serialized.append(p.model_dump())
+                    else:
+                        try:
+                            probes_serialized.append(asdict(p))
+                        except Exception:
+                            probes_serialized.append({"repr": repr(p)})
                 ds_attrs.update(
                     {
                         "engine": meta.engine,
                         "engine_version": meta.engine_version,
                         "netlist_hash": meta.netlist_hash,
-                        "analyses": [asdict(a) for a in meta.analyses],
+                        "analyses": analyses_serialized,
+                        "probes": probes_serialized,
                         **meta.attrs,
                     }
                 )
@@ -70,11 +86,27 @@ class DatasetResultHandle(ResultHandle):
         return to_df()
 
     def attrs(self) -> Mapping[str, Any]:
+        analyses_serialized: list[dict[str, Any]] = []
+        for a in self._meta.analyses:
+            if hasattr(a, "model_dump"):
+                analyses_serialized.append(a.model_dump())
+            else:
+                analyses_serialized.append(asdict(a))
+        probes_serialized: list[dict[str, Any]] = []
+        for p in getattr(self._meta, "probes", []) or []:
+            if hasattr(p, "model_dump"):
+                probes_serialized.append(p.model_dump())
+            else:
+                try:
+                    probes_serialized.append(asdict(p))
+                except Exception:
+                    probes_serialized.append({"repr": repr(p)})
         return {
             "engine": self._meta.engine,
             "engine_version": self._meta.engine_version,
             "netlist_hash": self._meta.netlist_hash,
-            "analyses": [asdict(a) for a in self._meta.analyses],
+            "analyses": analyses_serialized,
+            "probes": probes_serialized,
             **self._meta.attrs,
         }
 
