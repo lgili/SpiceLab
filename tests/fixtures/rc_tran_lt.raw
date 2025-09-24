@@ -1,0 +1,14 @@
+Title: RC transient lt
+Date: today
+Plotname: Transient Analysis
+Flags: real
+No. Variables: 3
+No. Points: 3
+Variables:
+	0	T	time
+	1	V(out)	voltage
+	2	I(R1)	current
+Values:
+0	0	0	0
+1	1e-3	0.6315	-0.0006315
+2	2e-3	0.8645	-0.0008645

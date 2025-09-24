@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+import struct
 from dataclasses import dataclass
 from math import hypot
 from typing import Any, cast
@@ -50,11 +51,17 @@ class TraceSet:
         ts.to_dataframe() -> pandas.DataFrame (se pandas instalado)
     """
 
-    def __init__(self, traces: list[Trace]) -> None:
+    def __init__(
+        self,
+        traces: list[Trace],
+        *,
+        meta: dict[str, Any] | None = None,
+    ) -> None:
         if not traces:
             raise ValueError("TraceSet requires at least one trace")
         self._traces = traces
         self._by_name: dict[str, Trace] = {t.name: t for t in traces}
+        self.meta: dict[str, Any] = meta or {}
 
         # valida tamanhos
         n = len(self._traces[0].values)
@@ -91,7 +98,7 @@ def _strip_prefix(line: str) -> str:
     return line.lstrip(" \t")
 
 
-def _parse_header(lines: list[str]) -> tuple[dict[str, int | str], int]:
+def _parse_header(lines: list[str]) -> tuple[dict[str, Any], int]:
     """
     Lê cabeçalho até a linha 'Variables:' (inclusive).
 
@@ -99,7 +106,7 @@ def _parse_header(lines: list[str]) -> tuple[dict[str, int | str], int]:
       - meta (dict com chaves úteis)
       - idx (próxima linha a ser lida)
     """
-    meta: dict[str, int | str] = {}
+    meta: dict[str, Any] = {}
     i = 0
     while i < len(lines):
         s = lines[i].strip()
@@ -248,27 +255,227 @@ def parse_ngspice_ascii_raw(path: str) -> TraceSet:
                 _complex=complex_cols[j],
             )
         )
-    return TraceSet(traces)
+    return TraceSet(traces, meta=meta)
 
 
 # --- Detect/dispatch RAW (ASCII vs "Binary") ---
 
 
-def parse_ngspice_raw(path: str) -> TraceSet:
+def _parse_binary_header_and_data(raw: bytes) -> tuple[dict[str, Any], bytes]:
+    """Parse cabeçalho textual de um RAW binário (ngspice ou LTspice-like).
+
+    Retorna meta e bloco binário puro.
+    O cabeçalho termina na linha que inicia com 'Binary:' (incluída) —
+    os bytes seguintes constituem os dados em float64 little endian.
     """
-    Dispatcher: se for ASCII, usa parse_ngspice_ascii_raw; se for 'Binary', tenta
-    fallback convertendo para ASCII não invasivo (a depender da geração do arquivo).
-    Por ora, detecta 'Binary' e dispara erro com mensagem clara.
+    marker = b"Binary:"  # LTspice usa 'Binary:'; ngspice similar
+    pos = raw.find(marker)
+    if pos == -1:
+        raise ValueError("Binary RAW: missing 'Binary:' marker")
+    # avançar até final da linha
+    line_end = raw.find(b"\n", pos)
+    if line_end == -1:
+        raise ValueError("Binary RAW header malformed (no newline after 'Binary:')")
+    header_bytes = raw[: line_end + 1]
+    data_bytes = raw[line_end + 1 :]
+    text = header_bytes.decode("utf-8", errors="ignore")
+    lines = text.splitlines()
+    meta: dict[str, Any] = {}
+    backannotations: list[str] = []
+    for ln in lines:
+        s = ln.strip()
+        if s.startswith("Title:"):
+            meta["title"] = s.split("Title:", 1)[1].strip()
+        elif s.startswith("Date:"):
+            meta["date"] = s.split("Date:", 1)[1].strip()
+        elif s.startswith("Plotname:"):
+            meta["plotname"] = s.split("Plotname:", 1)[1].strip()
+        elif s.startswith("Flags:"):
+            meta["flags"] = s.split("Flags:", 1)[1].strip()
+        elif s.startswith("No. Variables:"):
+            meta["nvars"] = int(s.split("No. Variables:", 1)[1].strip())
+        elif s.startswith("No. Points:"):
+            meta["npoints"] = int(s.split("No. Points:", 1)[1].strip())
+        elif s.startswith("Offset:"):
+            off_txt = s.split("Offset:", 1)[1].strip()
+            try:
+                meta["offset"] = float(off_txt)
+            except ValueError:
+                meta["offset"] = off_txt
+        elif s.startswith("Command:"):
+            meta["command"] = s.split("Command:", 1)[1].strip()
+        elif s.startswith("Backannotation:"):
+            backannotations.append(s.split("Backannotation:", 1)[1].strip())
+        elif s.startswith("Variables:"):
+            # variáveis ficam nas linhas subsequentes até 'Binary:'
+            continue
+    if backannotations:
+        meta["backannotation"] = backannotations
+    # segunda passada para pegar variáveis com índice
+    vars_meta: list[tuple[str, str | None]] = []
+    in_vars = False
+    for ln in lines:
+        st = ln.strip()
+        if st.startswith("Variables:"):
+            in_vars = True
+            continue
+        if st.startswith("Binary:"):
+            break
+        if in_vars and st:
+            parts = st.split()
+            if len(parts) >= 2 and parts[0].isdigit():
+                # idx name type
+                name = parts[1]
+                unit = parts[2] if len(parts) >= 3 else None
+                vars_meta.append((name, unit))
+    if "nvars" not in meta or "npoints" not in meta:
+        # Some minimal 'Binary:' markers (used only to signal unsupported early format) lack counts.
+        raise NotImplementedError("Binary RAW: missing counts (nvars/npoints) in header")
+    # store separately under private key (not part of original RAW header schema)
+    meta["_vars_meta"] = vars_meta
+    return meta, data_bytes
+
+
+def _parse_binary_payload(meta: dict[str, Any], blob: bytes) -> TraceSet:
+    # The meta dict may contain auxiliary list for '_vars_meta'; cast as needed.
+    nvars = int(meta["nvars"])  # meta keys validated earlier
+    npoints = int(meta["npoints"])  # meta keys validated earlier
+    flags = str(meta.get("flags", "")).lower()
+    vars_meta = meta.get("_vars_meta")
+    if not isinstance(vars_meta, list):  # pragma: no cover - defensive
+        raise ValueError("Binary RAW: internal vars metadata missing")
+
+    is_complex = "complex" in flags
+    # Determine expected total values and scalar size (8 or 4)
+    if is_complex:
+        total_values = npoints * (1 + 2 * (nvars - 1))
+    else:
+        total_values = npoints * nvars
+    scalar_size: int | None = None
+    for cand in (8, 4):
+        if len(blob) >= total_values * cand:
+            scalar_size = cand
+            break
+    if scalar_size is None:
+        raise ValueError("Binary RAW: insufficient data length for counts declared")
+
+    raw_vals = blob[: total_values * scalar_size]
+    fmt = f"<{total_values}{'d' if scalar_size == 8 else 'f'}"
+    values = struct.unpack(fmt, raw_vals)
+
+    # Build layout helpers shared by both real/complex paths
+    def build_point_major(
+        vals: tuple[float, ...],
+    ) -> tuple[list[list[float]], list[list[complex] | None]]:
+        cols_pm: list[list[float]] = [[] for _ in range(nvars)]
+        ccols_pm: list[list[complex] | None] = [None for _ in range(nvars)]
+        itp = iter(vals)
+        if is_complex:
+            for _ in range(npoints):
+                cols_pm[0].append(next(itp))
+                for vi in range(1, nvars):
+                    re = next(itp)
+                    im = next(itp)
+                    cols_pm[vi].append((re**2 + im**2) ** 0.5)
+                    lst = ccols_pm[vi]
+                    if lst is None:
+                        lst = []
+                        ccols_pm[vi] = lst
+                    lst.append(complex(re, im))
+        else:
+            for _ in range(npoints):
+                for vi in range(nvars):
+                    cols_pm[vi].append(next(itp))
+        return cols_pm, ccols_pm
+
+    def build_variable_major(
+        vals: tuple[float, ...],
+    ) -> tuple[list[list[float]], list[list[complex] | None]]:
+        cols_vm: list[list[float]] = [[] for _ in range(nvars)]
+        ccols_vm: list[list[complex] | None] = [None for _ in range(nvars)]
+        if is_complex:
+            idx = 0
+            cols_vm[0] = list(values[idx : idx + npoints])
+            idx += npoints
+            for vi in range(1, nvars):
+                re_block = values[idx : idx + npoints]
+                idx += npoints
+                im_block = values[idx : idx + npoints]
+                idx += npoints
+                mag_block: list[float] = []
+                cc: list[complex] = []
+                for r, im in zip(re_block, im_block, strict=False):
+                    mag_block.append((r**2 + im**2) ** 0.5)
+                    cc.append(complex(r, im))
+                cols_vm[vi] = mag_block
+                ccols_vm[vi] = cc
+        else:
+            idx = 0
+            for vi in range(nvars):
+                cols_vm[vi] = list(values[idx : idx + npoints])
+                idx += npoints
+        return cols_vm, ccols_vm
+
+    cols, complex_cols = build_point_major(values)
+    time_like = cols[0]
+    monotonic = all(time_like[i] <= time_like[i + 1] for i in range(len(time_like) - 1))
+    if not monotonic:
+        cols, complex_cols = build_variable_major(values)
+
+    traces: list[Trace] = []
+    import numpy as _np
+
+    for j, (name, unit) in enumerate(vars_meta):
+        c_arr = None
+        if is_complex and j > 0:
+            cc = complex_cols[j]
+            if cc is not None:
+                c_arr = _np.array(cc, dtype=complex)
+        traces.append(
+            Trace(
+                name=name,
+                unit=unit,
+                values=_np.array(cols[j], dtype=float),
+                _complex=c_arr,
+            )
+        )
+    return TraceSet(traces, meta=meta)
+
+
+def parse_ngspice_raw(path: str) -> TraceSet:
+    """Dispatcher para RAW ASCII ou binário.
+
+    Suporta formato binário de linha simples (LTspice/NGSpice) para casos reais e complexos.
     """
     with open(path, "rb") as f:
-        head = f.read(256)
-    if b"Binary:" in head or b"binary" in head:
-        # Implementação binária completa é extensa; orientar uso de ASCII no runner.
-        raise NotImplementedError(
-            "Binary RAW not supported yet. Configure NGSpice to write ASCII RAW "
-            "(set filetype=ascii)."
-        )
-    # ASCII
+        blob = f.read()
+    # Heurísticas:
+    # 1. ASCII header: contém 'Binary:' sem null interleaving.
+    # 2. UTF-16 (wide) header: contém padrão intercalado
+    #    B\x00i\x00n\x00a... ou grande densidade de nulls.
+    head_scan = blob[:8192]
+    wide_pattern = b"B\x00i\x00n\x00a\x00r\x00y\x00:\x00"
+    is_ascii_binary = b"Binary:" in head_scan or b"binary" in head_scan.lower()
+    is_wide_binary = wide_pattern in head_scan
+
+    if is_ascii_binary:
+        meta, data_bytes = _parse_binary_header_and_data(blob)
+        return _parse_binary_payload(meta, data_bytes)
+    if is_wide_binary:
+        # Localizar fim da linha 'Binary:' (padrão newline UTF-16 '\n\x00')
+        marker_pos = head_scan.find(wide_pattern)
+        newline_pat = b"\n\x00"
+        nl_pos = head_scan.find(newline_pat, marker_pos)
+        if nl_pos == -1:
+            raise ValueError("UTF-16 binary RAW: newline after Binary: not found")
+        header_bytes = blob[: nl_pos + 2]
+        # Remover nulls para obter texto ascii simplificado
+        ascii_header = header_bytes[::2].decode("utf-8", errors="ignore")
+        # Reaproveitar parser ascii-binary: reconstruir bytes artificiais com ascii header e newline
+        rebuilt = ascii_header.encode("utf-8") + blob[nl_pos + 2 :]
+        meta, data_bytes = _parse_binary_header_and_data(rebuilt)
+        return _parse_binary_payload(meta, data_bytes)
+    # caso contrário tratar como ASCII
     return parse_ngspice_ascii_raw(path)
 
 
@@ -310,7 +517,7 @@ def parse_ngspice_ascii_raw_multi(path: str) -> list[TraceSet]:
             traces.append(
                 Trace(name=name, unit=unit, values=data[:, j].copy(), _complex=complex_cols[j])
             )
-        out.append(TraceSet(traces))
+        out.append(TraceSet(traces, meta=meta))
         # avançar: i += i1 + npoints ... mas já usamos slices; então mova i para frente
         # tenta achar próximo 'Title:' após o bloco atual
         # heurística simples: move i até encontrar próxima 'Title:' ou EOF

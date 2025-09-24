@@ -46,5 +46,4 @@ site/
 .pytest_cache/
 
 # SPICE RAW outputs and temp run dirs
-*.raw
 cat_ng_*/

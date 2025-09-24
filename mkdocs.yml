@@ -51,6 +51,7 @@ nav:
       - Device Models: device-models.md
       - LTspice Integration: ltspice-import.md
       - Component Library: components-library.md
+  - Unified I/O: unified-io.md
       - Plots: plots.md
       - Troubleshooting: troubleshooting.md
   - API guidance: api-reference.md
