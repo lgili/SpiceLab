@@ -10,6 +10,7 @@ from .raw_reader import (
     parse_ngspice_ascii_raw_multi,
     parse_ngspice_raw,
 )
+from .readers import read, read_ltspice, read_ltspice_raw
 
 __all__ = [
     "Trace",
@@ -17,4 +18,7 @@ __all__ = [
     "parse_ngspice_raw",
     "parse_ngspice_ascii_raw",
     "parse_ngspice_ascii_raw_multi",
+    "read_ltspice_raw",
+    "read",
+    "read_ltspice",
 ]

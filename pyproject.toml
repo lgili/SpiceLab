@@ -10,7 +10,13 @@ readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name="Luiz Carlos Gili" }]
 license = { text = "MIT" }
-dependencies = ["numpy>=1.26", "pandas>=2.1", "typing-extensions>=4.9"]
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "polars>=1.33.1",
+    "typing-extensions>=4.9",
+    "xarray>=2025.6.1",
+]
 
 keywords = ["spice", "circuit", "simulation", "ngspice", "electronics"]
 classifiers = [
@@ -34,6 +40,9 @@ Documentation = "https://lgili.github.io/spicelab/"
 [project.optional-dependencies]
 opt = ["scipy>=1.12"]
 viz = ["plotly>=5.20", "kaleido>=0.2.1"]
+data = ["xarray>=2024.1", "polars>=1.6.0"]
+xarray = ["xarray>=2024.1"]
+polars = ["polars>=1.6.0"]
 
 [tool.setuptools.packages.find]
 where = ["."]
@@ -83,5 +92,7 @@ dev = [
     "twine>=6.1.0",
     "lark>=1.0.0",
     "plotly>=5.20",
-    "kaleido>=0.2.1"
+    "kaleido>=0.2.1",
+    "xarray>=2024.1",
+    "polars>=1.6.0"
 ]
