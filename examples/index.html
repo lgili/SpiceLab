@@ -1085,7 +1085,7 @@ unit tests and CI. When debugging actual simulator behavior, run with
 <li><code>pt1000_mc.py</code> — PT1000 front-end Monte Carlo (temp error histogram)</li>
 <li><code>rc_highpass.py</code> — RC highpass netlist builder</li>
 <li><code>import_ltspice_and_run.py</code> — import LTspice netlist and run</li>
-<li><code>ltspice_schematic_roundtrip.py</code> — export/import <code>.asc</code> schematics using <code>cat.io.ltspice_asc</code></li>
+<li><code>ltspice_schematic_roundtrip.py</code> — export/import <code>.asc</code> schematics using <code>spicelab.io.ltspice_asc</code></li>
 <li><code>analog_mux_demo.py</code> — example showing AnalogMux8 netlist and DOT diagram</li>
 </ul>
 <p>Run them as modules:</p>
@@ -1107,12 +1107,12 @@ generated netlist and emits a Graphviz DOT string for quick visual inspection.</
 - Default series resistance <code>r_series</code> is 100 (ohms). Off-resistance is <code>1G</code>.</p>
 <h2 id="run-the-demo">Run the demo</h2>
 <p>To run the example locally (from the project root):</p>
-<pre><code class="language-bash">PYTHONPATH=src python examples/analog_mux_demo.py
+<pre><code class="language-bash">python examples/analog_mux_demo.py
 </code></pre>
 <p>This prints the generated SPICE card and a DOT string which you can render
 with Graphviz if available.</p>
 <h2 id="quick-snippet">Quick snippet</h2>
-<pre><code class="language-python">from cat.core.components import AnalogMux8
+<pre><code class="language-python">from spicelab.core.components import AnalogMux8
 
 mux = AnalogMux8(ref=&quot;MU1&quot;, r_series=100, sel=4)
 print(mux.spice_card(lambda p: p.name))

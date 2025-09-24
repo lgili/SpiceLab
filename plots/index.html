@@ -1043,28 +1043,28 @@ returns a <code>VizFigure</code>, which wraps the underlying Plotly figure and e
 <code>show()</code>, <code>to_html()</code>, and <code>to_image()</code> convenience methods.</p>
 <p>Install the optional <code>viz</code> extra to pull in Plotly and Kaleido (for static image
 export):</p>
-<pre><code class="language-bash">pip install pycircuitkit[viz]
+<pre><code class="language-bash">pip install spicelab[viz]
 </code></pre>
 <h2 id="time-domain-traces">Time-domain traces</h2>
-<pre><code class="language-python">from cat.analysis.viz.plot import plot_traces
+<pre><code class="language-python">from spicelab.analysis.viz.plot import plot_traces
 
 fig = plot_traces(res.traces, ys=[&quot;v(n1)&quot;, &quot;i(R1)&quot;], title=&quot;RC response&quot;)
 fig.to_html(&quot;rc_response.html&quot;)  # standalone HTML with embedded Plotly figure
 </code></pre>
 <h2 id="bode-plots">Bode plots</h2>
-<pre><code class="language-python">from cat.analysis.viz.plot import plot_bode
+<pre><code class="language-python">from spicelab.analysis.viz.plot import plot_bode
 
 # 'y' must reference a complex trace (AC/Small-signal analysis)
 bode_fig = plot_bode(res.traces, y=&quot;v(vout)&quot;)
 bode_fig.show()  # open an interactive browser window
 </code></pre>
 <h2 id="parameter-sweeps">Parameter sweeps</h2>
-<pre><code class="language-python">from cat.analysis.viz.plot import plot_sweep_df
+<pre><code class="language-python">from spicelab.analysis.viz.plot import plot_sweep_df
 
 fig = plot_sweep_df(df, x=&quot;time&quot;, y=&quot;v(vout)&quot;, hue=&quot;R&quot;, title=&quot;Parameter sweep&quot;)
 fig.to_image(&quot;sweep.png&quot;)  # requires kaleido; falls back to HTML otherwise
 </code></pre>
-<p>Explore <code>cat.viz</code> for lower-level building blocks (<code>time_series_view</code>, <code>bode_view</code>,
+<p>Explore <code>spicelab.viz</code> for lower-level building blocks (<code>time_series_view</code>, <code>bode_view</code>,
 <code>monte_carlo_histogram</code>, <code>monte_carlo_param_scatter</code>, etc.) when you want to assemble
 custom dashboards or compose multiple views manually.</p>
 

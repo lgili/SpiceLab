@@ -1074,17 +1074,17 @@
 <h1 id="cookbook">Cookbook</h1>
 <p>Short, copy-paste recipes for common tasks.</p>
 <h2 id="3-db-bandwidth">−3 dB bandwidth</h2>
-<pre><code class="language-python">from cat.analysis import bandwidth_3db
+<pre><code class="language-python">from spicelab.analysis import bandwidth_3db
 bw = bandwidth_3db(res.traces, y_out=&quot;v(n1)&quot;)
 </code></pre>
 <h2 id="0-db-crossover-and-margins">0 dB crossover and margins</h2>
-<pre><code class="language-python">from cat.analysis import crossover_freq_0db, phase_margin, gain_margin_db
+<pre><code class="language-python">from spicelab.analysis import crossover_freq_0db, phase_margin, gain_margin_db
 wc = crossover_freq_0db(res.traces, y_out=&quot;v(n1)&quot;)
 pm = phase_margin(res.traces, y_out=&quot;v(n1)&quot;)
 gm = gain_margin_db(res.traces, y_out=&quot;v(n1)&quot;)
 </code></pre>
 <h2 id="overshoot-and-settling-time">Overshoot and settling time</h2>
-<pre><code class="language-python">from cat.analysis import overshoot_pct, settling_time
+<pre><code class="language-python">from spicelab.analysis import overshoot_pct, settling_time
 ov = overshoot_pct(res.traces, &quot;v(n1)&quot;)  # %
 st = settling_time(res.traces, &quot;v(n1)&quot;)
 </code></pre>
@@ -1097,7 +1097,7 @@ def sample_at(ts, name: str, t: float) -&gt; float:
     return float(np.interp(t, t_arr, y_arr))
 </code></pre>
 <h2 id="stack-multiple-runs-into-a-dataframe">Stack multiple runs into a DataFrame</h2>
-<pre><code class="language-python">from cat.analysis import stack_runs_to_df
+<pre><code class="language-python">from spicelab.analysis import stack_runs_to_df
 # runs: list[AnalysisResult]
 df = stack_runs_to_df(runs, y=[&quot;v(n1)&quot;], with_x=True)
 </code></pre>

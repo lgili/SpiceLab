@@ -1025,14 +1025,14 @@
 <p>Note: NGSpice names nodes as <code>n1</code>, <code>n2</code>, ... in the RAW file by default. Use <code>v(n1)</code>
 for the first node voltage (output in the RC examples).</p>
 <h2 id="quick-bode">Quick Bode</h2>
-<pre><code class="language-python">from cat.analysis import bode
+<pre><code class="language-python">from spicelab.analysis import bode
 
 # Run an AC sweep and get (f, mag_db, phase_deg)
 f, mag_db, ph = bode(c, y_out=&quot;v(n1)&quot;, sweep_type=&quot;dec&quot;, n=201, fstart=10.0, fstop=1e6)
 </code></pre>
 <p>The circuit must include a small-signal AC source (e.g., <code>VA()</code> or <code>Iac</code>).</p>
 <h2 id="margins-and-bandwidth">Margins and bandwidth</h2>
-<pre><code class="language-python">from cat.analysis import ac_gain_phase, bandwidth_3db, crossover_freq_0db, phase_margin, gain_margin_db
+<pre><code class="language-python">from spicelab.analysis import ac_gain_phase, bandwidth_3db, crossover_freq_0db, phase_margin, gain_margin_db
 
 res = run_ac(c, &quot;dec&quot;, 201, 10.0, 1e6)
 f, g_db, ph = ac_gain_phase(res.traces, y_out=&quot;v(n1)&quot;)

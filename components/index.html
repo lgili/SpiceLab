@@ -1160,13 +1160,13 @@ PyCircuitKit, with small runnable snippets. All examples use the same pattern:</
 <li>Optionally run an analysis (OP/TRAN/AC/DC) to verify behavior</li>
 </ul>
 <p>Minimal scaffolding used below:</p>
-<pre><code>from cat.core.circuit import Circuit
-from cat.core.net import GND, Net
-from cat.core.components import *  # convenient in examples
-from cat.analysis import OP, TRAN, AC, DC
+<pre><code>from spicelab.core.circuit import Circuit
+from spicelab.core.net import GND, Net
+from spicelab.core.components import *  # convenient in examples
+from spicelab.analysis import OP, TRAN, AC, DC
 </code></pre>
 <p>Tip: Run examples from docs by copying blocks into a file and using
-<code>PYTHONPATH=src python your_file.py</code>.</p>
+<code>python your_file.py</code> (after <code>pip install -e .</code>) or <code>PYTHONPATH=. python your_file.py</code> from repo root.</p>
 <h3 id="passive-components">Passive Components</h3>
 <ul>
 <li><code>Resistor(ref, value)</code> — two-terminal R. Value accepts numeric or suffixed string (e.g. "1k").</li>
@@ -1259,7 +1259,7 @@ print(float(OP().run(c).traces[&quot;v(vout)&quot;].values[-1]))  # ≈ 1.0 V
 <li>Static selection: <code>sel=N</code> chooses <code>outN</code> with series resistance <code>r_series</code> (others at <code>off_resistance</code>).</li>
 <li>Dynamic enable ports: <code>enable_ports=True</code> exposes <code>en0..en7</code> and emits <code>S...</code> elements; add a <code>.model</code> for the switch (or <code>emit_model=True</code>).</li>
 </ul>
-<pre><code>from cat.core.components import AnalogMux8
+<pre><code>from spicelab.core.components import AnalogMux8
 mux = AnalogMux8(ref=&quot;MU1&quot;, r_series=100, sel=4)
 print(mux.spice_card(lambda p: p.name))
 </code></pre>
@@ -1276,7 +1276,7 @@ res = DC(&quot;1&quot;, 0.0, 5.0, 0.1).run(c)
 <h3 id="notes">Notes</h3>
 <ul>
 <li>Ensure <code>ngspice</code> is installed and available in PATH.</li>
-<li>Numeric strings with suffixes are accepted (e.g. <code>"1k"</code>, <code>"100n"</code>). See <code>cat.utils.units</code>.</li>
+<li>Numeric strings with suffixes are accepted (e.g. <code>"1k"</code>, <code>"100n"</code>). See <code>spicelab.utils.units</code>.</li>
 <li>Controlled sources <code>F/H</code> require the name of a (dummy) voltage source for current sensing.</li>
 </ul>
 

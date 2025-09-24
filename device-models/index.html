@@ -1077,10 +1077,10 @@ typical circuits using the high‑level API.</p>
   (no <code>.model</code>, but a topology note).</li>
 </ul>
 <h3 id="adding-a-diode-model">Adding a diode model</h3>
-<pre><code>from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Resistor, Diode
-from cat.core.net import GND, Net
-from cat.analysis import OP
+<pre><code>from spicelab.core.circuit import Circuit
+from spicelab.core.components import Vdc, Resistor, Diode
+from spicelab.core.net import GND, Net
+from spicelab.analysis import OP
 
 c = Circuit(&quot;d_fwd&quot;)
 n1 = Net(&quot;n1&quot;)
@@ -1104,10 +1104,10 @@ print(&quot;V(n1)=&quot;, float(res.traces[&quot;v(n1)&quot;].values[-1]))
 <p>Typical parameters for the SPICE diode (<code>D</code>) model include <code>Is</code>, <code>N</code>, <code>Rs</code>,
 <code>Cjo</code>, <code>Bv</code>, etc. Choose values appropriate to your target device.</p>
 <h3 id="voltagecontrolled-switch-vswitch">Voltage‑controlled switch (<code>VSwitch</code>)</h3>
-<pre><code>from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Vpulse, VSwitch, Resistor
-from cat.core.net import GND, Net
-from cat.analysis import TRAN
+<pre><code>from spicelab.core.circuit import Circuit
+from spicelab.core.components import Vdc, Vpulse, VSwitch, Resistor
+from spicelab.core.net import GND, Net
+from spicelab.analysis import TRAN
 
 c = Circuit(&quot;vswitch_demo&quot;)
 vin = Net(&quot;vin&quot;)
@@ -1157,7 +1157,7 @@ print(&quot;final V(vout)=&quot;, float(res.traces[&quot;v(vout)&quot;].values[-
 <h3 id="currentcontrolled-elements-fh-and-sensors">Current‑controlled elements (<code>F</code>/<code>H</code>) and sensors</h3>
 <p><code>CCCS</code> (<code>F</code>) and <code>CCVS</code> (<code>H</code>) measure the current through an existing voltage
 source. A common pattern is to insert a 0 V source as sensor:</p>
-<pre><code>from cat.core.components import Vdc, Resistor, CCCS
+<pre><code>from spicelab.core.components import Vdc, Resistor, CCCS
 
 # Sensor source at the node of interest
 VSENS = Vdc(&quot;S&quot;, 0.0)

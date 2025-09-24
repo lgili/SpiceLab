@@ -1141,7 +1141,7 @@
    LTspice-friendly projects straight from your Python models.</li>
 </ol>
 <h2 id="netlists-cir-net">Netlists (<code>.cir</code> / <code>.net</code>)</h2>
-<p>Use <code>cat.io.ltspice_parser.from_ltspice_file</code> to parse a netlist and obtain a
+<p>Use <code>spicelab.io.ltspice_parser.from_ltspice_file</code> to parse a netlist and obtain a
 <code>Circuit</code> object that can be analysed, modified or exported again.</p>
 <h3 id="supported-cards">Supported cards</h3>
 <ul>
@@ -1152,8 +1152,8 @@
 <li>Voltage/current controlled switches: <code>S</code> (VSWITCH), <code>W</code> (ISWITCH)</li>
 <li>One-level <code>.SUBCKT</code> flattening with <code>{PARAM}</code> substitution</li>
 </ul>
-<pre><code class="language-python">from cat.io.ltspice_parser import from_ltspice_file
-from cat.analysis import run_tran
+<pre><code class="language-python">from spicelab.io.ltspice_parser import from_ltspice_file
+from spicelab.analysis import run_tran
 
 c = from_ltspice_file(&quot;./my_filter.cir&quot;)
 tran = run_tran(c, &quot;1us&quot;, &quot;2ms&quot;, return_df=True)
@@ -1167,7 +1167,7 @@ print(tran.head())
   missing, please open an issue with a minimal example.</p>
 </blockquote>
 <h2 id="schematics-asc">Schematics (<code>.asc</code>)</h2>
-<p>The module <code>cat.io.ltspice_asc</code> introduces helpers to load, generate and save
+<p>The module <code>spicelab.io.ltspice_asc</code> introduces helpers to load, generate and save
 schematic files:</p>
 <ul>
 <li><code>parse_asc(path_or_text)</code> → <code>AscSchematic</code></li>
@@ -1177,9 +1177,9 @@ schematic files:</p>
 </ul>
 <h3 id="when-should-i-use-spiceline">When should I use <code>SpiceLine</code>?</h3>
 <p>The exporter attaches <code>SYMATTR SpiceLine ...</code> to every symbol with the exact
-SPICE card produced by CAT. When these attributes are present the importer uses
+SPICE card produced by spicelab. When these attributes are present the importer uses
 those directives verbatim, guaranteeing an exact round-trip.</p>
-<p>If a schematic lacks <code>SpiceLine</code>, CAT falls back to analysing wires and symbol
+<p>If a schematic lacks <code>SpiceLine</code>, spicelab falls back to analysing wires and symbol
 pins (union-find). This allows importing hand-drawn LTspice schematics, but the
 result may require manual clean-up if multiple nets share the same coordinates.</p>
 <h3 id="supported-symbols-export">Supported symbols (export)</h3>
@@ -1235,10 +1235,10 @@ result may require manual clean-up if multiple nets share the same coordinates.<
 </table>
 <p>Orientation is auto-selected when practical (for example, capacitors tied to
 GND are placed vertically).</p>
-<pre><code class="language-python">from cat.core.circuit import Circuit
-from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND, Net
-from cat.io.ltspice_asc import circuit_to_asc_text, parse_asc, schematic_to_circuit
+<pre><code class="language-python">from spicelab.core.circuit import Circuit
+from spicelab.core.components import Capacitor, Resistor, Vdc
+from spicelab.core.net import GND, Net
+from spicelab.io.ltspice_asc import circuit_to_asc_text, parse_asc, schematic_to_circuit
 
 vin = Net(&quot;vin&quot;)
 vout = Net(&quot;vout&quot;)
@@ -1273,8 +1273,8 @@ print(round_trip.build_netlist())
   schematics without conductor art.</li>
 </ul>
 <h3 id="converting-existing-asc">Converting existing <code>.asc</code></h3>
-<pre><code class="language-python">from cat.io.ltspice_asc import circuit_from_asc
-from cat.analysis import run_ac
+<pre><code class="language-python">from spicelab.io.ltspice_asc import circuit_from_asc
+from spicelab.analysis import run_ac
 
 c = circuit_from_asc(&quot;./filter.asc&quot;)
 res = run_ac(c, &quot;dec&quot;, 201, 10, 1e5)

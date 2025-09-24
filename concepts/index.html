@@ -1049,9 +1049,9 @@
 <li><code>GND</code> is reserved (node "0").</li>
 </ul>
 <h2 id="minimal-rc-example">Minimal RC example</h2>
-<pre><code class="language-python">from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Resistor, Capacitor
-from cat.core.net import GND
+<pre><code class="language-python">from spicelab.core.circuit import Circuit
+from spicelab.core.components import Vdc, Resistor, Capacitor
+from spicelab.core.net import GND
 
 c = Circuit(&quot;rc&quot;)
 V1, R1, C1 = Vdc(&quot;1&quot;, 5.0), Resistor(&quot;1&quot;, &quot;1k&quot;), Capacitor(&quot;1&quot;, &quot;100n&quot;)

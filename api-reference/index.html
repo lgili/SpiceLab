@@ -755,19 +755,6 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    API guidance
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -779,52 +766,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#how-to-add-a-module-to-the-api-reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      How to add a module to the API reference
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#troubleshooting-imports" class="md-nav__link">
-    <span class="md-ellipsis">
-      Troubleshooting imports
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#packaging-tips" class="md-nav__link">
-    <span class="md-ellipsis">
-      Packaging tips
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -986,41 +927,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#how-to-add-a-module-to-the-api-reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      How to add a module to the API reference
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#troubleshooting-imports" class="md-nav__link">
-    <span class="md-ellipsis">
-      Troubleshooting imports
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#packaging-tips" class="md-nav__link">
-    <span class="md-ellipsis">
-      Packaging tips
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -1038,14 +944,17 @@
 <h1 id="api-reference-guidance">API reference guidance</h1>
 <p>This project uses <code>mkdocstrings</code> to collect API documentation from the
 <code>src/</code> package. The handler is configured in <code>mkdocs.yml</code> with a <code>search_path</code>
-that points to <code>src</code> so local imports resolve during the site build.</p>
-<h2 id="how-to-add-a-module-to-the-api-reference">How to add a module to the API reference</h2>
+that points to <code>src</code> so local imports resolve during the site build.
+This project uses <code>mkdocstrings</code> to collect API documentation from the
+root package (<code>spicelab</code>). The handler is configured in <code>mkdocs.yml</code> and
+searches the repository root so local imports resolve during the site build.</p>
+<p>How to add a module to the API reference</p>
 <ol>
 <li>Add a markdown file under <code>docs/reference/</code> and include the <code>::: path.to.module</code>
    directive where you want the auto-generated docstring content to appear.</li>
 </ol>
 <p>Example: <code>docs/reference/analysis.md</code></p>
-<pre><code class="language-markdown">::: cat.analysis
+<pre><code class="language-markdown">::: spicelab.analysis
 </code></pre>
 <ol>
 <li>
@@ -1056,25 +965,17 @@ that points to <code>src</code> so local imports resolve during the site build.<
 </li>
 <li>
 <p>Keep exported API stable: prefer documenting public top-level methods and
-   classes from the <code>cat.*</code> namespace. Avoid heavy implementation details; use
+   classes from the <code>spicelab.*</code> namespace. Avoid heavy implementation details; use
    examples for usage patterns.</p>
 </li>
 </ol>
-<h2 id="troubleshooting-imports">Troubleshooting imports</h2>
-<ul>
-<li>If mkdocstrings complains about missing dependencies, install them into the
-  environment used for the docs build (dev-requirements.txt).</li>
-<li>If you need to alter the import path, update <code>mkdocs.yml</code> <code>plugins.mkdocstrings.python.extra.search_path</code>.</li>
-</ul>
-<h2 id="packaging-tips">Packaging tips</h2>
-<ul>
-<li>Keep <code>pyproject.toml</code> up to date with any extra dependencies needed for
-  examples you intend to show in the API docs. This keeps local builds
-  reproducible.</li>
-<li>When publishing the site from CI, make sure the build job creates an
+<p>Troubleshooting imports</p>
+<p>environment used for the docs build (dev-requirements.txt).</p>
+<p>Packaging tips</p>
+<p>examples you intend to show in the API docs. This keeps local builds
+  reproducible.
   environment that includes dev/test dependencies so mkdocstrings can import
-  modules without errors.</li>
-</ul>
+  modules without errors.</p>
 
 
 

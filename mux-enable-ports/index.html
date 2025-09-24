@@ -945,7 +945,7 @@
   <h1>Mux enable ports</h1>
 
 <h2 id="analogmux8-enable-ports-mode">AnalogMux8 — Enable Ports Mode</h2>
-<p><code>AnalogMux8</code> can operate in dynamic mode by exposing enable ports <code>en0..en7</code>.
+<p><code>AnalogMux8</code> (spicelab.core.components) can operate in dynamic mode by exposing enable ports <code>en0..en7</code>.
 Each channel uses a voltage‑controlled switch (<code>S...</code>) followed by a series
 resistor <code>r_series</code>. When an enable input is high, the corresponding channel
 conducts with <code>RON</code> (from the switch) and <code>r_series</code> in series; other channels
@@ -962,10 +962,10 @@ remain high‑Z (switch <code>ROFF</code>).</p>
   <code>enX</code> high enables channel <code>X</code>.</li>
 </ul>
 <p>Example (OP)</p>
-<pre><code>from cat.core.circuit import Circuit
-from cat.core.components import AnalogMux8, Vdc, Resistor
-from cat.core.net import GND, Net
-from cat.analysis import OP
+<pre><code>from spicelab.core.circuit import Circuit
+from spicelab.core.components import AnalogMux8, Vdc, Resistor
+from spicelab.core.net import GND, Net
+from spicelab.analysis import OP
 
 c = Circuit(&quot;mux_en_ports&quot;)
 vin = Net(&quot;vin&quot;)

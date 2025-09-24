@@ -1054,15 +1054,15 @@
 factories and instantiate them later by name. This makes it easy to distribute
 manufacturer-specific parts (for example, a diode with a recommended <code>.model</code>
 card) or project-specific helpers.</p>
-<pre><code class="language-python">from cat.library import create_component, register_component
-from cat.core.components import Resistor
+<pre><code class="language-python">from spicelab.library import create_component, register_component
+from spicelab.core.components import Resistor
 
 register_component(&quot;custom.res&quot;, lambda ref, value: Resistor(ref, value))
 part = create_component(&quot;custom.res&quot;, ref=&quot;R1&quot;, value=&quot;4k7&quot;)
 </code></pre>
 <h2 id="built-in-catalog">Built-in catalog</h2>
-<p>The <code>cat.library</code> package ships with a starter catalog. For example:</p>
-<pre><code class="language-python">from cat.library import create_component, get_component_spec
+<p>The <code>spicelab.library</code> package ships with a starter catalog. For example:</p>
+<pre><code class="language-python">from spicelab.library import create_component, get_component_spec
 
 d = create_component(&quot;diode.1n4007&quot;, ref=&quot;D1&quot;)
 spec = get_component_spec(&quot;diode.1n4007&quot;)
@@ -1073,8 +1073,8 @@ print(spec.metadata[&quot;model_card&quot;])  # recommended .model statement
 <h2 id="creating-reusable-parts">Creating reusable parts</h2>
 <p>A registered factory can accept any positional/keyword arguments. Metadata can
 be attached during registration to capture links, model cards, etc.</p>
-<pre><code class="language-python">from cat.core.components import Diode
-from cat.library import register_component
+<pre><code class="language-python">from spicelab.core.components import Diode
+from spicelab.library import register_component
 
 register_component(
     &quot;diode.bat54&quot;,
@@ -1089,19 +1089,19 @@ behaviour.</p>
 <code>unregister_component(name)</code>.</p>
 <p>Many entries expose a <code>model_card</code> metadata field containing a ready-to-use
 <code>.model</code> or <code>.include</code> statement. For example::</p>
-<pre><code>from cat.library import get_component_spec
+<pre><code>from spicelab.library import get_component_spec
 spec = get_component_spec('mosfet.bss138')
 circuit.add_directive(spec.metadata['model_card'])
 </code></pre>
 <p>You can discover parts programmatically using <code>search_components</code>::</p>
-<pre><code>from cat.library import search_components
+<pre><code>from spicelab.library import search_components
 mosfets = search_components(metadata={'polarity': 'n-channel'})
 </code></pre>
 <p>This supports filtering by name substring, category, metadata key/value pairs,
 and custom predicates.</p>
 <p>To inject the recommended SPICE directives into a circuit once::</p>
-<pre><code>from cat.core.circuit import Circuit
-from cat.library import get_component_spec, apply_metadata_to_circuit
+<pre><code>from spicelab.core.circuit import Circuit
+from spicelab.library import get_component_spec, apply_metadata_to_circuit
 
 circuit = Circuit('demo')
 spec = get_component_spec('diode.1n4007')
@@ -1109,7 +1109,7 @@ apply_metadata_to_circuit(circuit, spec)  # adds .model/.include only if absent
 </code></pre>
 <h3 id="importing-external-catalogs">Importing external catalogs</h3>
 <p>You can register many parts at once using the import helpers::</p>
-<pre><code>from cat.library.importers import import_catalog_from_json
+<pre><code>from spicelab.library.importers import import_catalog_from_json
 import_catalog_from_json('my_components.json')
 </code></pre>
 <p>The JSON file should contain a list of entries with <code>name</code>, <code>factory</code> (or a

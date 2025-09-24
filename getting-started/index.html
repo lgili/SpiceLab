@@ -1202,9 +1202,9 @@ subprocess.run([&quot;python&quot;, &quot;examples/getting_started.py&quot;, &qu
 </ul>
 <h1 id="getting-started_1">Getting started</h1>
 <p>Create a Circuit and build a netlist:</p>
-<pre><code class="language-python">from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Resistor, Capacitor
-from cat.core.net import GND
+<pre><code class="language-python">from spicelab.core.circuit import Circuit
+from spicelab.core.components import Vdc, Resistor, Capacitor
+from spicelab.core.net import GND
 
 c = Circuit(&quot;rc_lowpass&quot;)
 V1 = Vdc(&quot;1&quot;, 5.0)
@@ -1222,7 +1222,7 @@ print(c.build_netlist())
 <p>This will print a SPICE netlist ready to be executed by a SPICE runner.</p>
 <h2 id="run-a-transient-in-one-line">Run a transient in one line</h2>
 <p>You can run a transient (.TRAN) analysis and get a pandas DataFrame directly:</p>
-<pre><code class="language-python">from cat.analysis import run_tran
+<pre><code class="language-python">from spicelab.analysis import run_tran
 
 df = run_tran(c, &quot;10us&quot;, &quot;5ms&quot;, return_df=True)
 print(df.head())

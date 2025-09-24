@@ -1068,7 +1068,7 @@ pip install -e .
 </code></pre>
 <p>Try the examples in the <code>examples/</code> folder after installing the package. Many examples print SPICE cards you can save as <code>.cir</code> and run with Ngspice or LTspice.</p>
 <h3 id="simulate-analog-adc-quick-note">Simulate analog + ADC (quick note)</h3>
-<p>This repo includes an <code>AnalogMux8</code> component that emits SPICE for an 8:1 analog multiplexer and a Python <code>ADCModel</code> (in <code>src/cat/core/adc.py</code>) that emulates sample-and-hold, aperture/jitter and quantization. Typical workflow:</p>
+<p>This repo includes an <code>AnalogMux8</code> component that emits SPICE for an 8:1 analog multiplexer and a Python <code>ADCModel</code> (in <code>src/spicelab/core/adc.py</code>) that emulates sample-and-hold, aperture/jitter and quantization. Typical workflow:</p>
 <ol>
 <li>Use components' <code>spice_card(net_of)</code> to generate a netlist (mux, sources, R/C front-end).</li>
 <li>Run Ngspice/LTspice transient simulation on the netlist.</li>
