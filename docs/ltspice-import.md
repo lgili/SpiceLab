@@ -129,3 +129,48 @@ netlist instead or filing an issue with a small reproduction.
 See also [Component Library](components-library.md) if you want to register manufacturer
 specific devices (for example a diode with a recommended `.model` line) and
 re-use them across multiple projects.
+
+## Reading simulation results as xarray.Dataset (RAW/CSV/PRN)
+
+Besides importing schematics/netlists, you can load simulation results produced by LTspice/NGSpice/Xyce directly into an `xarray.Dataset`.
+
+- LTspice/NGSpice RAW (ASCII):
+
+```
+from spicelab.io import read_ltspice_raw
+
+ds = read_ltspice_raw("./output.raw")  # xarray.Dataset
+print(ds)
+```
+
+- Simple tables (.csv / .prn), Xyce-like or exported tabular data:
+
+```
+from spicelab.io import read_xyce_table
+
+ds_csv = read_xyce_table("./data.csv")  # xarray.Dataset
+ds_prn = read_xyce_table("./data.prn")  # xarray.Dataset
+```
+
+- Unified entry point by extension:
+
+```
+from spicelab.io import read
+
+ds = read("./result.raw")  # also supports .csv / .prn
+```
+
+Notes:
+
+- The first column is treated as the independent variable and promoted to a coordinate.
+- If the first column name indicates time/frequency, it's renamed to `time`/`freq` and set as a coordinate.
+- Other columns become data variables (e.g., `V(out)`).
+
+Once you have an `xarray.Dataset`, you can convert to pandas or polars:
+
+```
+pdf = ds.to_dataframe()  # pandas.DataFrame
+# or
+import polars as pl
+pldf = pl.from_pandas(pdf)
+```

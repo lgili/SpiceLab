@@ -29,3 +29,37 @@ print(c.build_netlist())
 
 ## Directives
 Use `circuit.add_directive(".model ...")` or `.param`, `.include`, etc., to embed raw SPICE lines.
+
+## Results and post-processing
+
+After running an analysis, you receive a result handle that provides multiple views of the data and metadata.
+
+### Data access
+
+- `handle.dataset()` → `xarray.Dataset`
+- `handle.to_pandas()` → `pandas.DataFrame`
+- `handle.to_polars()` → `polars.DataFrame`
+
+### Metadata
+
+Call `handle.attrs()` to obtain a dict-like structure with descriptive attributes, for example:
+
+```
+attrs = handle.attrs()
+print(attrs["engine"])           # "ngspice"
+print(attrs.get("engine_version"))
+print(attrs.get("netlist_hash"))
+print(attrs.get("analysis_modes"))     # ["tran"], ["ac"], ["dc"], ...
+print(attrs.get("analysis_params"))    # [{"mode": "tran", "tstep": ..., "tstop": ...}]
+```
+
+These normalized attributes make it easy to build reports and cache results deterministically.
+
+For DC sweeps, the dataset also carries convenience attributes:
+
+```
+ds = handle.dataset()
+print(ds.attrs.get("sweep_src"))    # e.g., "V1" (source name)
+print(ds.attrs.get("sweep_unit"))   # "V" or "A" when inferable
+print(ds.attrs.get("sweep_label"))  # original coordinate label before renaming to "sweep"
+```

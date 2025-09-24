@@ -10,7 +10,7 @@ from .raw_reader import (
     parse_ngspice_ascii_raw_multi,
     parse_ngspice_raw,
 )
-from .readers import read, read_ltspice, read_ltspice_raw
+from .readers import read, read_ltspice, read_ltspice_raw, read_xyce_table
 
 __all__ = [
     "Trace",
@@ -21,4 +21,5 @@ __all__ = [
     "read_ltspice_raw",
     "read",
     "read_ltspice",
+    "read_xyce_table",
 ]

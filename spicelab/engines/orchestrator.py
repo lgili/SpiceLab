@@ -5,14 +5,20 @@ from typing import Literal
 
 from ..core.types import AnalysisSpec, ResultHandle, SweepSpec
 from .base import Simulator
+from .ltspice import LtSpiceSimulator
 from .ngspice import NgSpiceSimulator
+from .xyce import XyceSimulator
 
-EngineName = Literal["ngspice"]
+EngineName = Literal["ngspice", "ltspice", "xyce"]
 
 
 def get_simulator(name: EngineName = "ngspice") -> Simulator:
     if name == "ngspice":
         return NgSpiceSimulator()
+    if name == "ltspice":
+        return LtSpiceSimulator()
+    if name == "xyce":
+        return XyceSimulator()
     raise NotImplementedError(f"Engine '{name}' not supported yet")
 
 

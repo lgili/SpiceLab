@@ -62,6 +62,13 @@ class DatasetResultHandle(ResultHandle):
             ) from exc
         return pl.from_pandas(pdf)
 
+    def to_pandas(self) -> Any:
+        """Return results as a pandas.DataFrame (requires xarray+pandas)."""
+        to_df = getattr(self._dataset, "to_dataframe", None)
+        if to_df is None:
+            raise RuntimeError("Underlying dataset does not support to_dataframe()")
+        return to_df()
+
     def attrs(self) -> Mapping[str, Any]:
         return {
             "engine": self._meta.engine,

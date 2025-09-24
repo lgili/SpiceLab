@@ -42,6 +42,7 @@ nav:
   - Components Quickstart: components-quickstart.md
   - Guides:
       - Circuit Preview: preview.md
+    - Engines & Backends: engines.md
       - Sweeps and STEP: sweeps-step.md
       - Monte Carlo: monte-carlo.md
       - AC Stability: ac-stability.md
