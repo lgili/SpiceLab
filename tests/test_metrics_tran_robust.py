@@ -2,8 +2,7 @@ from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
-
-from cat.analysis.metrics_tran import (
+from spicelab.analysis.metrics_tran import (
     OvershootResult,
     RiseFall,
     fall_time,
@@ -11,7 +10,7 @@ from cat.analysis.metrics_tran import (
     rise_time,
     settling_time,
 )
-from cat.io.raw_reader import Trace, TraceSet
+from spicelab.io.raw_reader import Trace, TraceSet
 
 
 def _make_ts(names_and_arrays: list[tuple[str, NDArray[Any]]] | None = None) -> TraceSet:

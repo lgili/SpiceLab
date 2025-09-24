@@ -1,11 +1,10 @@
 import shutil
 
 import pytest
-
-from cat.analysis import AC
-from cat.core.circuit import Circuit
-from cat.core.components import VA, Resistor
-from cat.core.net import GND
+from spicelab.analysis import AC
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import VA, Resistor
+from spicelab.core.net import GND
 
 
 def test_ac_runs_with_vac() -> None:

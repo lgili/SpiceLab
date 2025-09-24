@@ -296,7 +296,10 @@ def monte_carlo_kde(
         except ModuleNotFoundError:  # pragma: no cover - optional dependency missing
             gaussian_kde = None
         if gaussian_kde is not None:
-            kde = gaussian_kde(values)
+            try:
+                kde = gaussian_kde(values)
+            except Exception:  # pragma: no cover - scipy errors fall back to hist
+                kde = None
     if kde is not None:
         xs = np.linspace(values.min(), values.max(), 256)
         fig.add_trace(go.Scatter(x=xs, y=kde(xs), mode="lines", name="KDE"))

@@ -24,7 +24,7 @@ from .components import (
 )
 from .net import GND, Net, Port
 
-log = get_logger("cat.core.circuit")
+log = get_logger("spicelab.core.circuit")
 
 
 @dataclass
@@ -259,7 +259,7 @@ class Circuit:
         p = Path(path)
         text = p.read_text(encoding="utf-8")
 
-        from cat.io.spice_parser import parse_lines_to_ast, preprocess_netlist
+        from spicelab.io.spice_parser import parse_lines_to_ast, preprocess_netlist
 
         lines = preprocess_netlist(text)
         ast = parse_lines_to_ast(lines)

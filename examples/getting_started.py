@@ -12,12 +12,11 @@ from pathlib import Path
 from typing import Any, cast
 
 import numpy as np
-
-from cat.analysis import AC, DC, TRAN, ac_gain_phase
-from cat.core.circuit import Circuit
-from cat.core.components import Capacitor, Resistor, Vac, Vdc
-from cat.core.net import GND, Net
-from cat.spice import ngspice_cli
+from spicelab.analysis import AC, DC, TRAN, ac_gain_phase
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Capacitor, Resistor, Vac, Vdc
+from spicelab.core.net import GND, Net
+from spicelab.spice import ngspice_cli
 
 plt: Any | None
 try:  # optional plotting dependency

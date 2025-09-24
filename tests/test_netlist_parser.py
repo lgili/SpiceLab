@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from cat.core.circuit import Circuit
+from spicelab.core.circuit import Circuit
 
 
 def test_pulse_and_continuation(tmp_path: Path) -> None:

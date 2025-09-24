@@ -1,6 +1,6 @@
-from cat.core.circuit import Circuit
-from cat.core.components import OA
-from cat.core.net import Net
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import OA
+from spicelab.core.net import Net
 
 
 def test_opamp_ideal_card() -> None:

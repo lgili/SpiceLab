@@ -1,4 +1,4 @@
-"""Public exports for :mod:`cat.io` used by docs tooling.
+"""Public exports for :mod:`spicelab.io` used by docs tooling.
 
 Keep explicit exports to avoid star-imports which trigger linter errors.
 """

@@ -103,9 +103,9 @@ def run_op(circuit: Circuit) -> AnalysisResult:
     """Run a simple .OP analysis and return the AnalysisResult.
 
     Example:
-        >>> from cat.core.circuit import Circuit
-        >>> from cat.core.components import Vdc, Resistor
-        >>> from cat.core.net import GND
+        >>> from spicelab.core.circuit import Circuit
+        >>> from spicelab.core.components import Vdc, Resistor
+        >>> from spicelab.core.net import GND
         >>> c = Circuit("rc")
         >>> V1, R1 = Vdc("1", 5.0), Resistor("1", "1k")
         >>> c.add(V1, R1)
@@ -162,7 +162,7 @@ def bode(
     fstart: float = 10.0,
     fstop: float = 1e6,
 ) -> tuple[Any, Any, Any]:
-    """Run AC and return (f, |G|_dB, phase_deg) using cat.analysis.metrics_ac.
+    """Run AC and return (f, |G|_dB, phase_deg) using spicelab.analysis.metrics_ac.
 
     Note: The circuit must include appropriate small-signal sources for AC analysis.
     """

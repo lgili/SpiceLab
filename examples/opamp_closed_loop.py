@@ -1,6 +1,6 @@
-from cat.core.circuit import Circuit
-from cat.core.components import OpAmpIdeal, Resistor, Vdc
-from cat.core.net import GND
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import OpAmpIdeal, Resistor, Vdc
+from spicelab.core.net import GND
 
 
 def build_opamp_closed_loop() -> Circuit:

@@ -1,6 +1,6 @@
 import math
 
-from cat.utils.e_series import enumerate_values, round_to_series
+from spicelab.utils.e_series import enumerate_values, round_to_series
 
 
 def test_enumerate_values_counts() -> None:

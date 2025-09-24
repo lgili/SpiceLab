@@ -1,13 +1,12 @@
 import numpy as np
-
-from cat.analysis import (
+from spicelab.analysis import (
     ac_gain_phase,
     crossover_freq_0db,
     gain_margin_db,
     phase_crossover_freq,
     phase_margin,
 )
-from cat.io.raw_reader import Trace, TraceSet
+from spicelab.io.raw_reader import Trace, TraceSet
 
 
 def _synthetic_open_loop() -> TraceSet:

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from cat.io.spice_parser import preprocess_netlist, tokenize_card
+from spicelab.io.spice_parser import preprocess_netlist, tokenize_card
 
 
 def test_preprocess_continuation_and_subckt(tmp_path: Path) -> None:

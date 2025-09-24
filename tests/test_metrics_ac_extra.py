@@ -1,6 +1,5 @@
 import numpy as np
-
-from cat.analysis.metrics_ac import (
+from spicelab.analysis.metrics_ac import (
     ac_gain_phase,
     bandwidth_3db,
     crossover_freq_0db,
@@ -9,7 +8,7 @@ from cat.analysis.metrics_ac import (
     loop_gain_bode,
     phase_margin,
 )
-from cat.io.raw_reader import Trace, TraceSet
+from spicelab.io.raw_reader import Trace, TraceSet
 
 
 def _ts_complex_names() -> TraceSet:

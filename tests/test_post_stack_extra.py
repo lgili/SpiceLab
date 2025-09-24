@@ -2,16 +2,15 @@ from collections.abc import Sequence
 
 import numpy as np
 import pytest
-
-from cat.analysis.core import AnalysisResult
-from cat.analysis.post import stack_runs_to_df
-from cat.io.raw_reader import Trace, TraceSet
+from spicelab.analysis.core import AnalysisResult
+from spicelab.analysis.post import stack_runs_to_df
+from spicelab.io.raw_reader import Trace, TraceSet
 
 
 def _make_res(xname: str, yname: str, xs: Sequence[float], ys: Sequence[float]) -> AnalysisResult:
     ts = TraceSet([Trace(xname, None, np.asarray(xs)), Trace(yname, None, np.asarray(ys))])
     # Dummy run result minimal
-    from cat.spice.base import RunArtifacts, RunResult
+    from spicelab.spice.base import RunArtifacts, RunResult
 
     art = RunArtifacts(netlist_path="n", log_path="l", raw_path=None)
     rr = RunResult(artifacts=art, returncode=0, stdout="", stderr="")

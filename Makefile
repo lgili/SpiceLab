@@ -12,7 +12,7 @@ help:
 	@echo "  make install     # create venv and install package in editable mode"
 	@echo "  make install-extras  # install matplotlib for plotting"
 	@echo "  make preview     # run circuit preview example (uses venv if present)"
-	@echo "  make preview-ci  # run preview with PYTHONPATH=src (no venv)"
+	@echo "  make preview-ci  # run preview without venv"
 	@echo "  make ac-bode     # run AC Bode example (requires ngspice + matplotlib)"
 	@echo "  make step-fig    # run STEP grid example (requires ngspice + matplotlib)"
 	@echo "  make mc-fig      # run Monte Carlo figures (requires ngspice + matplotlib)"
@@ -36,25 +36,25 @@ preview:
 	@if [ -x "$(PY)" ]; then \
 		"$(PY)" -m examples.circuit_preview; \
 	else \
-		PYTHONPATH=src python3 -m examples.circuit_preview; \
+		python3 -m examples.circuit_preview; \
 	fi
 
 preview-ci:
-	PYTHONPATH=src python3 -m examples.circuit_preview
+	python3 -m examples.circuit_preview
 
 ac-bode:
-	PYTHONPATH=src python3 -m examples.ac_bode
+	python3 -m examples.ac_bode
 
 step-fig:
-	PYTHONPATH=src python3 -m examples.step_sweep_fig
+	python3 -m examples.step_sweep_fig
 
 mc-fig:
-	PYTHONPATH=src python3 -m examples.monte_carlo_fig
+	python3 -m examples.monte_carlo_fig
 
 opamp-stability:
-	PYTHONPATH=src python3 -m examples.opamp_stability
+	python3 -m examples.opamp_stability
 
 pt1000:
-	PYTHONPATH=src python3 -m examples.pt1000_mc --temp $(TEMP) --n $(N) --sigma $(SIGMA) --workers 4
+	python3 -m examples.pt1000_mc --temp $(TEMP) --n $(N) --sigma $(SIGMA) --workers 4
 
 examples: ac-bode step-fig mc-fig opamp-stability

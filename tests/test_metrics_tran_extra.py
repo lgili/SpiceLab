@@ -1,7 +1,6 @@
 import numpy as np
-
-from cat.analysis.metrics_tran import fall_time, overshoot, rise_time, settling_time
-from cat.io.raw_reader import Trace, TraceSet
+from spicelab.analysis.metrics_tran import fall_time, overshoot, rise_time, settling_time
+from spicelab.io.raw_reader import Trace, TraceSet
 
 
 def _ts_step_up() -> TraceSet:

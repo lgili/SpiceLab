@@ -56,7 +56,7 @@ Each script saves PNG graphs into the current working directory (or into a scrip
 This module provides a small helper `savefig(fig, path)` used by the examples to save figures without requiring a display.
 # CAT Examples
 
-Exemplos mínimos usando `cat` com NGSpice.
+Exemplos mínimos usando `spicelab` com NGSpice.
 
 ## Pré-requisitos
 

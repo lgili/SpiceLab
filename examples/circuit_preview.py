@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from cat import GND, C, Circuit, R, V
+from spicelab import GND, C, Circuit, R, V
 
 
 def build() -> Circuit:
@@ -8,7 +8,7 @@ def build() -> Circuit:
     V1, R1, C1 = V(5.0), R("1k"), C("100n")
     c.add(V1, R1, C1)
     # Name nets for readability in netlist and traces (explicit nets)
-    from cat.core.net import Net
+    from spicelab.core.net import Net
 
     vin = Net("vin")
     vout = Net("vout")

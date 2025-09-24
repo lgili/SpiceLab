@@ -3,7 +3,7 @@
 Run as module: python -m examples.analog_mux_demo
 """
 
-from cat.core.components import AnalogMux8
+from spicelab.core.components import AnalogMux8
 
 
 def mux_to_dot(mux: AnalogMux8, net_of) -> str:

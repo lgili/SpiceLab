@@ -6,13 +6,12 @@ import shutil
 import sys
 
 import numpy as np
-
-from cat.analysis import TRAN, NormalPct, monte_carlo
-from cat.analysis.viz.plot import plot_mc_metric_hist, plot_traces
-from cat.core.circuit import Circuit
-from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND, Net
-from cat.io.raw_reader import Trace, TraceSet
+from spicelab.analysis import TRAN, NormalPct, monte_carlo
+from spicelab.analysis.viz.plot import plot_mc_metric_hist, plot_traces
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Capacitor, Resistor, Vdc
+from spicelab.core.net import GND, Net
+from spicelab.io.raw_reader import Trace, TraceSet
 
 
 def _rc_circuit() -> tuple[Circuit, Resistor, str]:

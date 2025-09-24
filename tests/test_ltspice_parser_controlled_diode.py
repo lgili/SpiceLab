@@ -1,7 +1,7 @@
 import os
 import tempfile
 
-from cat.io.ltspice_parser import from_ltspice_file
+from spicelab.io.ltspice_parser import from_ltspice_file
 
 
 def _write(p: str, text: str) -> str:

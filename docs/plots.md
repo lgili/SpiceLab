@@ -8,12 +8,12 @@ Install the optional ``viz`` extra to pull in Plotly and Kaleido (for static ima
 export):
 
 ```bash
-pip install pycircuitkit[viz]
+pip install spicelab[viz]
 ```
 
 ## Time-domain traces
 ```python
-from cat.analysis.viz.plot import plot_traces
+from spicelab.analysis.viz.plot import plot_traces
 
 fig = plot_traces(res.traces, ys=["v(n1)", "i(R1)"], title="RC response")
 fig.to_html("rc_response.html")  # standalone HTML with embedded Plotly figure
@@ -21,7 +21,7 @@ fig.to_html("rc_response.html")  # standalone HTML with embedded Plotly figure
 
 ## Bode plots
 ```python
-from cat.analysis.viz.plot import plot_bode
+from spicelab.analysis.viz.plot import plot_bode
 
 # 'y' must reference a complex trace (AC/Small-signal analysis)
 bode_fig = plot_bode(res.traces, y="v(vout)")
@@ -30,12 +30,12 @@ bode_fig.show()  # open an interactive browser window
 
 ## Parameter sweeps
 ```python
-from cat.analysis.viz.plot import plot_sweep_df
+from spicelab.analysis.viz.plot import plot_sweep_df
 
 fig = plot_sweep_df(df, x="time", y="v(vout)", hue="R", title="Parameter sweep")
 fig.to_image("sweep.png")  # requires kaleido; falls back to HTML otherwise
 ```
 
-Explore ``cat.viz`` for lower-level building blocks (`time_series_view`, `bode_view`,
+Explore ``spicelab.viz`` for lower-level building blocks (`time_series_view`, `bode_view`,
 `monte_carlo_histogram`, `monte_carlo_param_scatter`, etc.) when you want to assemble
 custom dashboards or compose multiple views manually.

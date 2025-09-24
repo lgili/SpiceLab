@@ -1,7 +1,7 @@
 import re
 
-from cat.core.components import MUX8, AnalogMux8
-from cat.core.net import Port
+from spicelab.core.components import MUX8, AnalogMux8
+from spicelab.core.net import Port
 
 
 def _net_of(port: Port) -> str:

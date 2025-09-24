@@ -2,12 +2,12 @@ import os
 import tempfile
 from collections.abc import Callable, Sequence
 
-from cat.analysis import OP, monte_carlo, step_param
-from cat.core.circuit import Circuit
-from cat.core.components import Resistor, Vdc
-from cat.core.net import GND
-from cat.spice.base import RunArtifacts, RunResult
-from cat.spice.registry import get_run_directives, set_run_directives
+from spicelab.analysis import OP, monte_carlo, step_param
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Resistor, Vdc
+from spicelab.core.net import GND
+from spicelab.spice.base import RunArtifacts, RunResult
+from spicelab.spice.registry import get_run_directives, set_run_directives
 
 ASCII_TEMPLATE = """Title:  op
 Date:   Thu Sep  1 12:00:00 2025
@@ -88,7 +88,7 @@ def test_montecarlo_preserves_order_parallel() -> None:
         c.connect(V1.ports[0], R1.ports[0])
         c.connect(R1.ports[1], GND)
         c.connect(V1.ports[1], GND)
-        from cat.analysis import NormalPct
+        from spicelab.analysis import NormalPct
 
         mc = monte_carlo(
             c, {R1: NormalPct(0.01)}, n=4, analysis_factory=lambda: OP(), seed=1, workers=3

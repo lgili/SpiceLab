@@ -8,7 +8,7 @@ CAT interoperates with LTspice in two complementary ways:
 
 ## Netlists (`.cir` / `.net`)
 
-Use `cat.io.ltspice_parser.from_ltspice_file` to parse a netlist and obtain a
+Use `spicelab.io.ltspice_parser.from_ltspice_file` to parse a netlist and obtain a
 `Circuit` object that can be analysed, modified or exported again.
 
 ### Supported cards
@@ -21,8 +21,8 @@ Use `cat.io.ltspice_parser.from_ltspice_file` to parse a netlist and obtain a
 - One-level `.SUBCKT` flattening with `{PARAM}` substitution
 
 ```python
-from cat.io.ltspice_parser import from_ltspice_file
-from cat.analysis import run_tran
+from spicelab.io.ltspice_parser import from_ltspice_file
+from spicelab.analysis import run_tran
 
 c = from_ltspice_file("./my_filter.cir")
 tran = run_tran(c, "1us", "2ms", return_df=True)
@@ -37,7 +37,7 @@ print(tran.head())
 
 ## Schematics (`.asc`)
 
-The module `cat.io.ltspice_asc` introduces helpers to load, generate and save
+The module `spicelab.io.ltspice_asc` introduces helpers to load, generate and save
 schematic files:
 
 - `parse_asc(path_or_text)` → `AscSchematic`
@@ -48,10 +48,10 @@ schematic files:
 ### When should I use `SpiceLine`?
 
 The exporter attaches `SYMATTR SpiceLine ...` to every symbol with the exact
-SPICE card produced by CAT. When these attributes are present the importer uses
+SPICE card produced by spicelab. When these attributes are present the importer uses
 those directives verbatim, guaranteeing an exact round-trip.
 
-If a schematic lacks `SpiceLine`, CAT falls back to analysing wires and symbol
+If a schematic lacks `SpiceLine`, spicelab falls back to analysing wires and symbol
 pins (union-find). This allows importing hand-drawn LTspice schematics, but the
 result may require manual clean-up if multiple nets share the same coordinates.
 
@@ -74,10 +74,10 @@ Orientation is auto-selected when practical (for example, capacitors tied to
 GND are placed vertically).
 
 ```python
-from cat.core.circuit import Circuit
-from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND, Net
-from cat.io.ltspice_asc import circuit_to_asc_text, parse_asc, schematic_to_circuit
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Capacitor, Resistor, Vdc
+from spicelab.core.net import GND, Net
+from spicelab.io.ltspice_asc import circuit_to_asc_text, parse_asc, schematic_to_circuit
 
 vin = Net("vin")
 vout = Net("vout")
@@ -115,8 +115,8 @@ print(round_trip.build_netlist())
 ### Converting existing `.asc`
 
 ```python
-from cat.io.ltspice_asc import circuit_from_asc
-from cat.analysis import run_ac
+from spicelab.io.ltspice_asc import circuit_from_asc
+from spicelab.analysis import run_ac
 
 c = circuit_from_asc("./filter.asc")
 res = run_ac(c, "dec", 201, 10, 1e5)

@@ -1,8 +1,8 @@
-from cat.analysis import TRAN
-from cat.core.circuit import Circuit
-from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND, Net
-from cat.spice import ngspice_cli
+from spicelab.analysis import TRAN
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Capacitor, Resistor, Vdc
+from spicelab.core.net import GND, Net
+from spicelab.spice import ngspice_cli
 
 c = Circuit("rc_lowpass")
 vin, vout = Net("vin"), Net("vout")

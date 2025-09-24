@@ -1,8 +1,8 @@
 import shutil
 
-from cat.core.circuit import Circuit
-from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Capacitor, Resistor, Vdc
+from spicelab.core.net import GND
 
 ng = shutil.which("ngspice")
 

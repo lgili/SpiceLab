@@ -3,10 +3,9 @@ import shutil
 
 import numpy as np
 import pytest
-
-from cat.analysis import AC, OP, TRAN
-from cat.core.circuit import Circuit
-from cat.core.components import (
+from spicelab.analysis import AC, OP, TRAN
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import (
     VCCS,
     VCVS,
     Capacitor,
@@ -17,7 +16,7 @@ from cat.core.components import (
     Vac,
     Vdc,
 )
-from cat.core.net import GND, Net
+from spicelab.core.net import GND, Net
 
 ng = shutil.which("ngspice")
 

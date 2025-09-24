@@ -7,9 +7,9 @@ is generated, port names, and relevant notes.
 Import helpers used below:
 
 ```
-from cat.core.circuit import Circuit
-from cat.core.net import GND, Net
-from cat.core.components import *
+from spicelab.core.circuit import Circuit
+from spicelab.core.net import GND, Net
+from spicelab.core.components import *
 ```
 
 | Python (Class) | Helper | SPICE Card (shape) | Ports | Notes |

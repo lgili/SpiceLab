@@ -76,9 +76,9 @@ Troubleshooting
 Create a Circuit and build a netlist:
 
 ```python
-from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Resistor, Capacitor
-from cat.core.net import GND
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Vdc, Resistor, Capacitor
+from spicelab.core.net import GND
 
 c = Circuit("rc_lowpass")
 V1 = Vdc("1", 5.0)
@@ -101,7 +101,7 @@ This will print a SPICE netlist ready to be executed by a SPICE runner.
 You can run a transient (.TRAN) analysis and get a pandas DataFrame directly:
 
 ```python
-from cat.analysis import run_tran
+from spicelab.analysis import run_tran
 
 df = run_tran(c, "10us", "5ms", return_df=True)
 print(df.head())

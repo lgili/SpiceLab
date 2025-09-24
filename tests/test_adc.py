@@ -1,4 +1,4 @@
-from cat.core.adc import ADCModel
+from spicelab.core.adc import ADCModel
 
 
 def test_quantize_basic() -> None:

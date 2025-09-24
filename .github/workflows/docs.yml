@@ -30,14 +30,12 @@ jobs:
         run: |
           python -m pip install -e .[viz] --verbose
 
-      - name: Ensure PYTHONPATH includes src
-        run: echo "PYTHONPATH=${{ github.workspace }}/src" >> $GITHUB_ENV
-
       - name: Verify import (fail early)
-        run: python -c "import importlib.util, traceback, sys; print('find_spec cat ->', importlib.util.find_spec('cat')); import cat; print('cat imported OK:', getattr(cat, '__file__', None))"
+        run: |
+          python -c "import importlib.util; print('find_spec spicelab ->', importlib.util.find_spec('spicelab'))"
+          python -c "import spicelab; print('spicelab imported OK:', getattr(spicelab, '__file__', None))"
       - name: Generate example figures
         env:
-          PYTHONPATH: ${{ github.workspace }}/src
           MPLBACKEND: Agg
         run: |
           set -e
@@ -56,8 +54,6 @@ jobs:
           cp -v examples/step_grid.png docs/assets/examples/step_grid.png
 
       - name: Build site
-        env:
-          PYTHONPATH: ${{ github.workspace }}/src
         run: |
           python -m mkdocs build --strict
       - name: Deploy to GitHub Pages

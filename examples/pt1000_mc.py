@@ -7,11 +7,10 @@ from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
-
-from cat.analysis import OP, NormalPct, monte_carlo
-from cat.core.circuit import Circuit
-from cat.core.components import Resistor, Vdc
-from cat.core.net import GND, Net
+from spicelab.analysis import OP, NormalPct, monte_carlo
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Resistor, Vdc
+from spicelab.core.net import GND, Net
 
 # --- RTD model (PT1000, IEC 60751 alpha ~ 0.00385) ---
 
@@ -60,7 +59,7 @@ def build_pt1000_chain(
     c.connect(Rrtd.ports[1], GND)
 
     # Non-inverting amplifier using ideal OA and two resistors
-    from cat.core.components import OpAmpIdeal
+    from spicelab.core.components import OpAmpIdeal
 
     oa = OpAmpIdeal("1", gain=1e6)
     Rtop = Resistor("t", p.r_gain_top_nom)
@@ -108,7 +107,7 @@ def run_mc(
 
     # Optional quick connectivity check (uncomment if needed)
     # print("=== Connectivity Summary ===\n" + c.summary())
-    # from cat.analysis import OP as _OP
+    # from spicelab.analysis import OP as _OP
     # _res = _OP().run(c)
     # print("OP traces:", _res.traces.names)
     # print("OP V(vin)=", float(_res.traces["v(vin)"].values[-1]))
@@ -120,7 +119,7 @@ def run_mc(
     # Label parameters clearly for downstream analysis/CSV
     def _label_fn(comp: Any) -> str:
         try:
-            from cat.core.components import Resistor as _Res
+            from spicelab.core.components import Resistor as _Res
         except Exception:
             _Res = None  # type: ignore[assignment]
         if _Res is not None and isinstance(comp, _Res):
@@ -229,7 +228,7 @@ def main() -> None:
         r_rtd = pt1000_r(temps[0], r0=p.r0, alpha=p.alpha)
         c, *_ = build_pt1000_chain(r_rtd, p)
         print("=== Connectivity Summary ===\n" + c.summary())
-        from cat.analysis import OP as _OP  # local import to avoid any circulars
+        from spicelab.analysis import OP as _OP  # local import to avoid any circulars
 
         _res = _OP().run(c)
         print("OP traces:", _res.traces.names)
@@ -250,8 +249,8 @@ def main() -> None:
         p = PT1000Params()
         r_rtd = pt1000_r(temps[0], r0=p.r0, alpha=p.alpha)
         c, Rpu, Rtop, Rbot = build_pt1000_chain(r_rtd, p)
-        from cat.analysis import OP as _OP
-        from cat.analysis import monte_carlo as _mc
+        from spicelab.analysis import OP as _OP
+        from spicelab.analysis import monte_carlo as _mc
 
         mapping = {
             Rpu: NormalPct(args.sigma),

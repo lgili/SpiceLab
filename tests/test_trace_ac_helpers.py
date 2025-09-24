@@ -1,6 +1,5 @@
 import numpy as np
-
-from cat.io.raw_reader import Trace
+from spicelab.io.raw_reader import Trace
 
 
 def test_trace_ac_helpers() -> None:

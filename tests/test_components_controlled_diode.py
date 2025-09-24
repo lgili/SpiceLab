@@ -1,4 +1,4 @@
-from cat.core.components import CCCS, CCVS, VCCS, VCVS, D, Diode
+from spicelab.core.components import CCCS, CCVS, VCCS, VCVS, D, Diode
 
 
 def _n(_: object) -> str:

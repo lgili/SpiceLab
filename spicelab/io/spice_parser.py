@@ -9,7 +9,7 @@ Functions available:
 * ``parse_with_lark(lines)`` – optional AST parsing if `lark` is installed.
 
 The Lark dependency is optional; preprocessing/tokenizing work standalone and are
-used by :func:`cat.core.circuit.Circuit.from_netlist`.
+used by :func:`spicelab.core.circuit.Circuit.from_netlist`.
 """
 
 from __future__ import annotations

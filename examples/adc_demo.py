@@ -2,7 +2,7 @@
 
 from math import pi, sin
 
-from cat.core.adc import ADCModel
+from spicelab.core.adc import ADCModel
 
 
 def generate_sine(vpp: float, freq: float, fs: float, duration: float):

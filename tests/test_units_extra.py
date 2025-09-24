@@ -1,6 +1,5 @@
 import pytest
-
-from cat.utils.units import format_eng, to_float
+from spicelab.utils.units import format_eng, to_float
 
 
 def test_to_float_unknown_suffix_raises() -> None:

@@ -5,10 +5,10 @@ Run Monte Carlo by mapping components to distributions and a per-trial analysis:
 ![Monte Carlo histogram](assets/examples/mc_hist.png)
 
 ```python
-from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Resistor, Capacitor
-from cat.core.net import GND
-from cat.analysis import OP, monte_carlo, NormalPct
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Vdc, Resistor, Capacitor
+from spicelab.core.net import GND
+from spicelab.analysis import OP, monte_carlo, NormalPct
 
 c = Circuit("rc")
 V1, R1, C1 = Vdc("1", 5.0), Resistor("1", "1k"), Capacitor("1", "100n")

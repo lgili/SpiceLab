@@ -16,10 +16,10 @@ Key points:
 ### Adding a diode model
 
 ```
-from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Resistor, Diode
-from cat.core.net import GND, Net
-from cat.analysis import OP
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Vdc, Resistor, Diode
+from spicelab.core.net import GND, Net
+from spicelab.analysis import OP
 
 c = Circuit("d_fwd")
 n1 = Net("n1")
@@ -47,10 +47,10 @@ Typical parameters for the SPICE diode (`D`) model include `Is`, `N`, `Rs`,
 ### Voltage‑controlled switch (`VSwitch`)
 
 ```
-from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Vpulse, VSwitch, Resistor
-from cat.core.net import GND, Net
-from cat.analysis import TRAN
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Vdc, Vpulse, VSwitch, Resistor
+from spicelab.core.net import GND, Net
+from spicelab.analysis import TRAN
 
 c = Circuit("vswitch_demo")
 vin = Net("vin")
@@ -104,7 +104,7 @@ Notes for switches:
 source. A common pattern is to insert a 0 V source as sensor:
 
 ```
-from cat.core.components import Vdc, Resistor, CCCS
+from spicelab.core.components import Vdc, Resistor, CCCS
 
 # Sensor source at the node of interest
 VSENS = Vdc("S", 0.0)

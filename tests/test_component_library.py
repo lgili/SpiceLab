@@ -1,9 +1,8 @@
 from pathlib import Path
 
 import pytest
-
-from cat.core.components import Component, OpAmpIdeal, Resistor
-from cat.library import (
+from spicelab.core.components import Component, OpAmpIdeal, Resistor
+from spicelab.library import (
     ComponentSpec,
     create_component,
     get_component_spec,
@@ -12,8 +11,8 @@ from cat.library import (
     search_components,
     unregister_component,
 )
-from cat.library.opamps import OpAmpSubckt
-from cat.library.transistors import Bjt, Mosfet
+from spicelab.library.opamps import OpAmpSubckt
+from spicelab.library.transistors import Bjt, Mosfet
 
 
 def test_register_and_create_custom_component() -> None:
@@ -80,20 +79,20 @@ def test_resistor_and_capacitor_entries() -> None:
     metadata_cap = c_spec.metadata or {}
     assert metadata_cap.get("dielectric") == "X7R"
     c = create_component("capacitor.ceramic_100n_50v_x7r", ref="C1")
-    from cat.core.components import Capacitor as _Cap
+    from spicelab.core.components import Capacitor as _Cap
 
     assert isinstance(c, _Cap)
     assert c.value == "100n"
 
 
 def test_inductor_and_switch_entries() -> None:
-    from cat.core.components import Inductor as _Ind
+    from spicelab.core.components import Inductor as _Ind
 
     ind = create_component("inductor.power_10u_3a", ref="L1")
     assert isinstance(ind, _Ind)
 
     vsw = create_component("switch.vsw_spst_fast", ref="S1")
-    from cat.core.components import VSwitch as _VS
+    from spicelab.core.components import VSwitch as _VS
 
     assert isinstance(vsw, _VS)
     assert vsw.value == "SW_SPST_FAST"
@@ -103,7 +102,7 @@ def test_inductor_and_switch_entries() -> None:
         ref="W1",
         ctrl_vsrc="VCTRL",
     )
-    from cat.core.components import ISwitch as _IS
+    from spicelab.core.components import ISwitch as _IS
 
     assert isinstance(csw, _IS)
     assert csw.value == "ISW_SPST_SLOW"
@@ -120,8 +119,8 @@ def test_transistor_entries() -> None:
 
 
 def test_opamp_entries() -> None:
-    from cat.core.circuit import Circuit
-    from cat.library.utils import apply_metadata_to_circuit
+    from spicelab.core.circuit import Circuit
+    from spicelab.library.utils import apply_metadata_to_circuit
 
     op_ideal = create_component("opamp.ideal", ref="U1")
     assert isinstance(op_ideal, OpAmpIdeal)
@@ -163,7 +162,7 @@ def test_search_components_filters() -> None:
 
 
 def test_protocol_assignment_examples() -> None:
-    from cat.library import MosfetFactory, ResistorFactory
+    from spicelab.library import MosfetFactory, ResistorFactory
 
     def resistor_factory(ref: str, *, value: str | float | None = None) -> Resistor:
         return Resistor(ref, value or "1k")
@@ -179,8 +178,8 @@ def test_protocol_assignment_examples() -> None:
 
 
 def test_apply_metadata_to_circuit() -> None:
-    from cat.core.circuit import Circuit
-    from cat.library.utils import apply_metadata_to_circuit
+    from spicelab.core.circuit import Circuit
+    from spicelab.library.utils import apply_metadata_to_circuit
 
     circuit = Circuit("meta")
     spec = get_component_spec("diode.1n4007")

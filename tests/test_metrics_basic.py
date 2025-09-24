@@ -2,17 +2,16 @@ import shutil
 from typing import Any
 
 import pytest
-
-from cat.analysis import (
+from spicelab.analysis import (
     TRAN,
     gain_db_from_traces,
     overshoot_pct,
     peak,
     settling_time,
 )
-from cat.core.circuit import Circuit
-from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Capacitor, Resistor, Vdc
+from spicelab.core.net import GND
 
 
 def _rc_tran(vstep: float = 1.0) -> Circuit:

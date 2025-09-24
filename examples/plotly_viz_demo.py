@@ -1,7 +1,7 @@
-"""Plotly visualization demo for CAT's interactive figures.
+"""Plotly visualization demo for spicelab's interactive figures.
 
 This script runs a few small analyses and writes Plotly HTML dashboards using
-the ``cat.viz`` helpers (``time_series_view``, ``bode_view``, etc.). It requires
+the ``spicelab.viz`` helpers (``time_series_view``, ``bode_view``, etc.). It requires
 the optional ``viz`` extra (``pip install -e '.[viz]'``) so that Plotly and
 Kaleido are available.
 """
@@ -12,14 +12,13 @@ import argparse
 from pathlib import Path
 
 import numpy as np
-
-from cat.analysis import AC, TRAN, UniformAbs, ac_gain_phase, monte_carlo
-from cat.core.circuit import Circuit
-from cat.core.components import Capacitor, Resistor, Vac, Vdc
-from cat.core.net import GND, Net
-from cat.io.raw_reader import Trace, TraceSet
-from cat.viz import VizFigure, monte_carlo_histogram, time_series_view
-from cat.viz.plotly import _PlotlyNotAvailable
+from spicelab.analysis import AC, TRAN, UniformAbs, ac_gain_phase, monte_carlo
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Capacitor, Resistor, Vac, Vdc
+from spicelab.core.net import GND, Net
+from spicelab.io.raw_reader import Trace, TraceSet
+from spicelab.viz import VizFigure, monte_carlo_histogram, time_series_view
+from spicelab.viz.plotly import _PlotlyNotAvailable
 
 
 def build_rc_lowpass(

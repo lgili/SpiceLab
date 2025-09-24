@@ -1,7 +1,6 @@
 import numpy as np
-
-from cat.analysis.metrics_ac import ac_gain_phase
-from cat.io.raw_reader import Trace, TraceSet
+from spicelab.analysis.metrics_ac import ac_gain_phase
+from spicelab.io.raw_reader import Trace, TraceSet
 
 
 def test_reconstruct_from_re_im() -> None:

@@ -1,12 +1,12 @@
-from cat.core.components import Resistor
-from cat.dsl.flow import Parallel, S, chain
+from spicelab.core.components import Resistor
+from spicelab.dsl.flow import Parallel, S, chain
 
 
 def test_chain_and_parallel_to_circuit() -> None:
     # Build two branches in parallel between same nets
     br1 = chain(Resistor("1", "1k"))
     br2 = S(Resistor("2", "2k")) >> Resistor("3", "3k")
-    from cat.dsl.flow import Chain
+    from spicelab.dsl.flow import Chain
 
     par = Parallel([br1, Chain(br2.items)])
     c, a, b = par.to_circuit("p")

@@ -2,9 +2,9 @@ import tempfile
 from collections.abc import Sequence
 from pathlib import Path
 
-from cat.spice.base import RunArtifacts, RunResult
-from cat.spice.ngspice_cli import NgSpiceCLIAdapter, cleanup_artifacts
-from cat.spice.registry import (
+from spicelab.spice.base import RunArtifacts, RunResult
+from spicelab.spice.ngspice_cli import NgSpiceCLIAdapter, cleanup_artifacts
+from spicelab.spice.registry import (
     get_active_adapter,
     get_run_directives,
     list_adapters,

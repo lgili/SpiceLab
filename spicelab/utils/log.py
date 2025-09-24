@@ -18,7 +18,7 @@ def _env_level() -> int:
     return _LEVELS.get(lvl, logging.INFO)
 
 
-def get_logger(name: str = "cat") -> logging.Logger:
+def get_logger(name: str = "spicelab") -> logging.Logger:
     logger = logging.getLogger(name)
     if not logger.handlers:
         handler = logging.StreamHandler()

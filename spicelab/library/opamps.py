@@ -66,7 +66,7 @@ class OpAmpEntry:
         return data
 
 
-_DATA_ROOT = files("cat.library.data.opamps")
+_DATA_ROOT = files("spicelab.library.data.opamps")
 
 _OPAMPS = [
     OpAmpEntry(

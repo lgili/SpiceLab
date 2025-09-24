@@ -55,7 +55,7 @@ This project ships runnable examples in `examples/`:
 - `pt1000_mc.py` — PT1000 front-end Monte Carlo (temp error histogram)
 - `rc_highpass.py` — RC highpass netlist builder
 - `import_ltspice_and_run.py` — import LTspice netlist and run
-- `ltspice_schematic_roundtrip.py` — export/import `.asc` schematics using `cat.io.ltspice_asc`
+- `ltspice_schematic_roundtrip.py` — export/import `.asc` schematics using `spicelab.io.ltspice_asc`
 - `analog_mux_demo.py` — example showing AnalogMux8 netlist and DOT diagram
 
 Run them as modules:
@@ -89,7 +89,7 @@ Run the demo
 To run the example locally (from the project root):
 
 ```bash
-PYTHONPATH=src python examples/analog_mux_demo.py
+python examples/analog_mux_demo.py
 ```
 
 This prints the generated SPICE card and a DOT string which you can render
@@ -99,7 +99,7 @@ Quick snippet
 -------------
 
 ```python
-from cat.core.components import AnalogMux8
+from spicelab.core.components import AnalogMux8
 
 mux = AnalogMux8(ref="MU1", r_series=100, sel=4)
 print(mux.spice_card(lambda p: p.name))

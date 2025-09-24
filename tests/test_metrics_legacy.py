@@ -1,7 +1,6 @@
 import numpy as np
-
-from cat.analysis import metrics as legacy
-from cat.io.raw_reader import Trace, TraceSet
+from spicelab.analysis import metrics as legacy
+from spicelab.io.raw_reader import Trace, TraceSet
 
 
 def _ts() -> TraceSet:

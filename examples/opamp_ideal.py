@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import shutil
 
-from cat import GND, Circuit, opamp_inverting
-from cat.analysis import AC, TRAN, ac_gain_phase
-from cat.core.components import R, V
-from cat.core.net import Net
+from spicelab import GND, Circuit, opamp_inverting
+from spicelab.analysis import AC, TRAN, ac_gain_phase
+from spicelab.core.components import R, V
+from spicelab.core.net import Net
 
 
 def inverting_demo() -> None:

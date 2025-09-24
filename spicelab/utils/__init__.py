@@ -1,4 +1,4 @@
-"""Utilities package for cat."""
+"""Utilities package for spicelab."""
 
 from .log import get_logger
 

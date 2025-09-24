@@ -5,24 +5,24 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from cat.analysis import OP, UniformAbs, monte_carlo
-from cat.analysis.viz.plot import (
+from spicelab.analysis import OP, UniformAbs, monte_carlo
+from spicelab.analysis.viz.plot import (
     plot_mc_kde,
     plot_mc_metric_hist,
     plot_param_vs_metric,
     plot_params_matrix,
 )
-from cat.core.circuit import Circuit
-from cat.core.components import Resistor, Vdc
-from cat.core.net import GND
-from cat.spice.base import RunArtifacts, RunResult
-from cat.spice.registry import get_run_directives, set_run_directives
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Resistor, Vdc
+from spicelab.core.net import GND
+from spicelab.spice.base import RunArtifacts, RunResult
+from spicelab.spice.registry import get_run_directives, set_run_directives
 
 if TYPE_CHECKING:
-    from cat.viz.plotly import _PlotlyNotAvailable as PlotlyNotAvailable
+    from spicelab.viz.plotly import _PlotlyNotAvailable as PlotlyNotAvailable
 else:
     try:
-        from cat.viz.plotly import _PlotlyNotAvailable as PlotlyNotAvailable
+        from spicelab.viz.plotly import _PlotlyNotAvailable as PlotlyNotAvailable
     except Exception:  # pragma: no cover - fallback type
 
         class PlotlyNotAvailable(RuntimeError):

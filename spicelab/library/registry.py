@@ -2,7 +2,7 @@
 
 Users can register custom component factories and later instantiate them by
 name. Factories receive arbitrary positional/keyword arguments and must return a
-:class:`cat.core.components.Component` instance.
+:class:`spicelab.core.components.Component` instance.
 """
 
 from __future__ import annotations

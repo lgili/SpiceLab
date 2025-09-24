@@ -1,4 +1,4 @@
-"""DSL helpers for cat (flow).
+"""DSL helpers for spicelab (flow).
 
 Expose only the public helpers to avoid star-imports which confuse linters.
 """

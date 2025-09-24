@@ -1,4 +1,4 @@
-from cat.core.components import IPWL_T, ISIN_T, VPWL_T, VSIN_T
+from spicelab.core.components import IPWL_T, ISIN_T, VPWL_T, VSIN_T
 
 
 def _net_of(_: object) -> str:

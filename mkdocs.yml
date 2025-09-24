@@ -24,10 +24,10 @@ plugins:
             docstring_style: google
             # Extra options must be nested under `extra` to avoid deprecation
             # warnings. `search_path` tells the python handler where to look
-            # for the local `cat` package (the src/ directory).
+            # for the local package in a root-layout project.
             extra:
               search_path:
-                - src
+                - .
 
 nav:
   - Home: index.md

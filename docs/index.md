@@ -23,7 +23,7 @@ Try the examples in the `examples/` folder after installing the package. Many ex
 
 ### Simulate analog + ADC (quick note)
 
-This repo includes an `AnalogMux8` component that emits SPICE for an 8:1 analog multiplexer and a Python `ADCModel` (in `src/cat/core/adc.py`) that emulates sample-and-hold, aperture/jitter and quantization. Typical workflow:
+This repo includes an `AnalogMux8` component that emits SPICE for an 8:1 analog multiplexer and a Python `ADCModel` (in `src/spicelab/core/adc.py`) that emulates sample-and-hold, aperture/jitter and quantization. Typical workflow:
 
 1. Use components' `spice_card(net_of)` to generate a netlist (mux, sources, R/C front-end).
 2. Run Ngspice/LTspice transient simulation on the netlist.

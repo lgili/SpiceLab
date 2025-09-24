@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 from _common import savefig
-
-from cat import GND, Circuit, opamp_inverting
-from cat.analysis import AC, ac_gain_phase, gain_margin_db, phase_margin
-from cat.core.components import VA, R
-from cat.core.net import Net
-from cat.spice import ngspice_cli
+from spicelab import GND, Circuit, opamp_inverting
+from spicelab.analysis import AC, ac_gain_phase, gain_margin_db, phase_margin
+from spicelab.core.components import VA, R
+from spicelab.core.net import Net
+from spicelab.spice import ngspice_cli
 
 
 def build() -> Circuit:

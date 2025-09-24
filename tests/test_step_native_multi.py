@@ -2,12 +2,12 @@ import os
 import tempfile
 from collections.abc import Sequence
 
-from cat.analysis import StepNativeResult, run_step_native
-from cat.core.circuit import Circuit
-from cat.core.components import Resistor, Vdc
-from cat.core.net import GND
-from cat.spice.base import RunArtifacts, RunResult
-from cat.spice.registry import get_run_directives, set_run_directives
+from spicelab.analysis import StepNativeResult, run_step_native
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Resistor, Vdc
+from spicelab.core.net import GND
+from spicelab.spice.base import RunArtifacts, RunResult
+from spicelab.spice.registry import get_run_directives, set_run_directives
 
 ASCII_MULTI = """Title:  plot1
 Date:   Thu Sep  1 12:00:00 2025

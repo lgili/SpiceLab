@@ -22,7 +22,7 @@ Documentation: https://lgili.github.io/PyCircuitKit/
 
 ## Quickstart (1 min)
 ```python
-from cat import Circuit, R, C, V, GND, run_tran
+from spicelab import Circuit, R, C, V, GND, run_tran
 
 c = Circuit("rc")
 V1, R1, C1 = V(5.0), R("1k"), C("100n")
@@ -83,7 +83,7 @@ and building reusable catalogues.
 - **AC/DC/TRAN** via NGSpice (CLI).
 - **LTspice integration**: import flattened `.cir/.net` files (includes `.include/.param`, PULSE/SIN/PWL, E/G/F/H, diode, simple `.SUBCKT`) and round-trip `.asc` schematics (with `SpiceLine` metadata or via geometry fallback).
 - **Component library**: registry for reusable parts (for example `diode.1n4007`)
-  and an API (`cat.library`) to register project-specific components.
+  and an API (`spicelab.library`) to register project-specific components.
 - **Monte Carlo**: parallel, deterministic order; DataFrame stacking.
 - **Metrics/Plots**: AC (Bode/PM/GM) e tran (rise/fall/settling/overshoot).
 
@@ -163,10 +163,10 @@ If ngspice is not on your PATH, tests that require it will auto-skip.
 
 ### 1) Define a circuit (Style 1: Ports & Nets) and run **.TRAN**
 ```python
-from cat.core.circuit import Circuit
-from cat.core.net import Net, GND
-from cat.core.components import Vdc, Resistor, Capacitor
-from cat.analysis import TRAN
+from spicelab.core.circuit import Circuit
+from spicelab.core.net import Net, GND
+from spicelab.core.components import Vdc, Resistor, Capacitor
+from spicelab.analysis import TRAN
 
 # Circuit: RC low‑pass
 c = Circuit("rc_lowpass")
@@ -192,7 +192,7 @@ print("traces:", ts.names)
 
 ### 2) **Monte Carlo** on the same circuit
 ```python
-from cat.analysis import OP, monte_carlo, NormalPct
+from spicelab.analysis import OP, monte_carlo, NormalPct
 
 # Varia apenas R1 com 5% (sigma) — 16 amostras
 mc = monte_carlo(
@@ -203,14 +203,14 @@ mc = monte_carlo(
     seed=123,
 )
 # Empilha em DataFrame (se quiser)
-from cat.analysis import stack_runs_to_df
+from spicelab.analysis import stack_runs_to_df
 print(stack_runs_to_df(mc.runs).head())
 ```
 
 ### 2.1) Monte Carlo to DataFrame (metrics)
 ```python
 # Map metrics per run (e.g., last value of vout)
-from cat.analysis.core import AnalysisResult
+from spicelab.analysis.core import AnalysisResult
 
 def metrics(res: AnalysisResult) -> dict[str, float]:
     return {"vout": float(res.traces["v(n1)"].values[-1])}
@@ -225,8 +225,8 @@ df2 = mc.to_dataframe(metric=None, y=["v(n1)"], sample_at=1e-3)  # t = 1 ms
 
 ### 3) Ideal Op-Amp (OA) and topology helpers
 ```python
-from cat import GND, Circuit, opamp_inverting
-from cat.core.components import V, R
+from spicelab import GND, Circuit, opamp_inverting
+from spicelab.core.components import V, R
 
 c = Circuit("opamp_inv")
 V1 = V(1.0)
@@ -248,8 +248,8 @@ Add directives with `circuit.add_directive(".model ...")`.
 ### 3) Importar netlist do **LTspice** e simular
 Export no LTspice: *View → SPICE Netlist* → salve como `.cir`/`.net`.
 ```python
-from cat.io.ltspice_parser import from_ltspice_file
-from cat.analysis import TRAN
+from spicelab.io.ltspice_parser import from_ltspice_file
+from spicelab.analysis import TRAN
 
 c2 = from_ltspice_file("./my_filter.cir")
 res2 = TRAN("1us", "2ms").run(c2)
@@ -258,15 +258,15 @@ print(res2.traces.names)
 
 ### 4) Utilities (E‑series & RC helper)
 ```python
-from cat.utils.e_series import round_to_series
-from cat.utils.synth import design_rc_lowpass
+from spicelab.utils.e_series import round_to_series
+from spicelab.utils.synth import design_rc_lowpass
 
 print(round_to_series(12700, "E96"))
 print(design_rc_lowpass(fc=159.155, prefer_R=True, series="E24"))
 ```
 
 ## 📦 Project Layout
-src/cat/
+src/spicelab/
   core/          # Nets, Ports, Components, Circuit, netlist builder
   analysis/      # OP/AC/DC/TRAN, metrics, sweep/step/montecarlo, viz
   spice/         # Simulator adapters + registry (ngspice_cli)
@@ -301,7 +301,7 @@ CI (GitHub Actions) runs the same steps via pip. NGSpice smoke tests are skipped
 
 Adding Components
 
-Create a class in cat/core/components.py:
+Create a class in spicelab/core/components.py:
 
 ```python
 from dataclasses import dataclass
@@ -339,7 +339,7 @@ Tests
 Run:
 
 ```bash
-uv run pytest -q --cov=cat --cov-report=term-missing
+uv run pytest -q --cov=spicelab --cov-report=term-missing
 ```
 
 ⚙️ Configuration

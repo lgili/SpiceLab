@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from cat.core.circuit import Circuit
-from cat.core.components import D, E, F, G, H, R, V
-from cat.core.net import GND, Net
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import D, E, F, G, H, R, V
+from spicelab.core.net import GND, Net
 
 # Simple demo with controlled sources and a diode
 c = Circuit("controlled_sources_demo")

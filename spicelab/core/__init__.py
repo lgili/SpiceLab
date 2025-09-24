@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-# Public API for cat.core subpackage. Keep minimal and explicit to satisfy
+# Public API for spicelab.core subpackage. Keep minimal and explicit to satisfy
 # linters and to make the package importable by tools like griffe/mkdocstrings.
 from .circuit import Circuit
 from .components import Capacitor, Inductor, Ipulse, Ipwl, OpAmpIdeal, Resistor, Vdc, Vpulse, Vpwl

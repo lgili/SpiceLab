@@ -12,9 +12,9 @@
 
 ## Minimal RC example
 ```python
-from cat.core.circuit import Circuit
-from cat.core.components import Vdc, Resistor, Capacitor
-from cat.core.net import GND
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Vdc, Resistor, Capacitor
+from spicelab.core.net import GND
 
 c = Circuit("rc")
 V1, R1, C1 = Vdc("1", 5.0), Resistor("1", "1k"), Capacitor("1", "100n")

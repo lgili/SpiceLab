@@ -1,4 +1,4 @@
-from cat.io.log_reader import read_errors
+from spicelab.io.log_reader import read_errors
 
 
 def test_read_errors_finds_percent_error() -> None:

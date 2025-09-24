@@ -2,11 +2,10 @@ import shutil
 
 import numpy as np
 import pytest
-
-from cat.analysis import OP, TRAN, NormalPct, monte_carlo
-from cat.core.circuit import Circuit
-from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND, Net
+from spicelab.analysis import OP, TRAN, NormalPct, monte_carlo
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Capacitor, Resistor, Vdc
+from spicelab.core.net import GND, Net
 
 ng = shutil.which("ngspice")
 
@@ -69,7 +68,7 @@ def test_montecarlo_tran_rc_monotonic_vs_resistance() -> None:
     vout = Net("vout")
     # Step source 0 -> 1 V, fast edges compared to RC.
     # Use a pulse source for a clean rising edge without extra directives.
-    from cat.core.components import Vpulse
+    from spicelab.core.components import Vpulse
 
     VP = Vpulse("1p", 0.0, 1.0, 0.0, 1e-6, 1e-6, 1.0, 2.0)
     R1 = Resistor("1", 1000.0)

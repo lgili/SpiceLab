@@ -1,7 +1,6 @@
 import pytest
-
-from cat.core.circuit import Circuit
-from cat.core.components import Resistor
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Resistor
 
 
 def test_unconnected_raises() -> None:

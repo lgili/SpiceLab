@@ -35,6 +35,7 @@ from ..core.components import (
     Diode,
     Idc,
     Inductor,
+    OpAmpIdeal,
     Resistor,
     Vdc,
 )
@@ -382,7 +383,50 @@ SYMBOL_LIBRARY: dict[str, SymbolSpec] = {
         allowed_orientations=("R0",),
         from_spice=_from_spice_ccvs,
     ),
+    # Minimal op-amp symbol support: 3 pins (inp, inn, out)
+    "opamp": SymbolSpec(
+        symbol="opamp2",
+        build_component=lambda comp: OpAmpIdeal(
+            ref=comp.attr("InstName", "OA1") or "OA1",
+            gain=comp.attr("Value", "1e6") or "1e6",
+        ),
+        extract_attributes=lambda comp: {
+            "InstName": getattr(comp, "ref", "OA1"),
+            "Value": getattr(comp, "value", "1e6"),
+        },
+        pin_offsets=(
+            AscPoint(0, 0),  # inp
+            AscPoint(0, _PIN_SPACING),  # inn
+            AscPoint(_PIN_SPACING, _PIN_SPACING // 2),  # out
+        ),
+        allowed_orientations=("R0",),
+    ),
+    # Alias symbol names used by LTspice for the generic op-amp to our spec
+    "opamp2": None,  # placeholder, will be replaced below
+    "OpAmps\\UniversalOpAmp": None,  # Windows path-like symbol name in some ASCs
 }
+
+# Fill in alias entries to point to the same SymbolSpec instance
+_op_spec = SYMBOL_LIBRARY["opamp"]
+SYMBOL_LIBRARY["opamp2"] = _op_spec
+SYMBOL_LIBRARY["OpAmps\\UniversalOpAmp"] = _op_spec
+
+
+def _resolve_symbol_spec(sym: str) -> SymbolSpec | None:
+    spec = SYMBOL_LIBRARY.get(sym)
+    if spec:
+        return spec
+    # Reverse lookup by declared symbol field
+    for s in SYMBOL_LIBRARY.values():
+        if s and s.symbol == sym:
+            return s
+    # Normalize path prefixes like 'OpAmps\\UniversalOpAmp'
+    norm = sym.replace("\\", "/")
+    base = norm.split("/")[-1]
+    if base in {"UniversalOpAmp", "opamp2"}:
+        return SYMBOL_LIBRARY["opamp"]
+    return None
+
 
 COMPONENT_TO_SYMBOL: dict[type[Component], SymbolSpec] = {
     Resistor: SYMBOL_LIBRARY["res"],
@@ -395,6 +439,7 @@ COMPONENT_TO_SYMBOL: dict[type[Component], SymbolSpec] = {
     VCCS: SYMBOL_LIBRARY["vccs"],
     CCCS: SYMBOL_LIBRARY["cccs"],
     CCVS: SYMBOL_LIBRARY["ccvs"],
+    OpAmpIdeal: SYMBOL_LIBRARY["opamp"],
 }
 
 
@@ -560,9 +605,9 @@ def parse_asc(text: str) -> AscSchematic:
 
         current = None
 
-    # Assign pins using symbol catalogue
+    # Assign pins using symbol catalogue (after parsing all components)
     for comp in components:
-        spec = SYMBOL_LIBRARY.get(comp.symbol)
+        spec = _resolve_symbol_spec(comp.symbol)
         if not spec:
             raise ValueError(f"Unsupported symbol '{comp.symbol}' in ASC file")
         comp.pins = _absolute_pins(comp, spec)
@@ -598,7 +643,7 @@ def _schematic_to_circuit_spice(schematic: AscSchematic) -> Circuit:
     nets: dict[str, Net] = {"0": GND}
 
     for comp in schematic.components:
-        spec = SYMBOL_LIBRARY.get(comp.symbol)
+        spec = _resolve_symbol_spec(comp.symbol)
         if not spec:
             raise ValueError(f"Unsupported symbol '{comp.symbol}' in ASC file")
         spice_line = comp.attributes.get("SpiceLine")
@@ -671,7 +716,7 @@ def _schematic_to_circuit_geometry(schematic: AscSchematic) -> Circuit:
     circuit = Circuit("ltspice_import")
 
     for comp in schematic.components:
-        spec = SYMBOL_LIBRARY.get(comp.symbol)
+        spec = _resolve_symbol_spec(comp.symbol)
         if not spec:
             raise ValueError(f"Unsupported symbol '{comp.symbol}' in ASC file")
         cat_component = spec.create_component(comp)

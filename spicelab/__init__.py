@@ -7,7 +7,7 @@ from importlib.metadata import PackageNotFoundError, version
 
 # Package version
 try:  # pragma: no cover - metadata resolution may vary in editable installs
-    __version__ = version("pycircuitkit")
+    __version__ = version("spicelab")
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "0.0.0"
 
@@ -69,6 +69,7 @@ from .core.components import (
     IPWL_T,
     ISIN,
     ISIN_T,
+    OA,
     VA,
     VCCS,
     VCVS,
@@ -79,7 +80,9 @@ from .core.components import (
     VSIN_T,
     C,
     Capacitor,
+    D,
     Diode,
+    E,
     F,
     G,
     H,

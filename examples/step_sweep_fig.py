@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from _common import savefig
-
-from cat.analysis import TRAN, ParamGrid, stack_step_to_df, step_grid
-from cat.analysis.viz.plot import plot_sweep_df
-from cat.core.circuit import Circuit
-from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND, Net
-from cat.spice import ngspice_cli
+from spicelab.analysis import TRAN, ParamGrid, stack_step_to_df, step_grid
+from spicelab.analysis.viz.plot import plot_sweep_df
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Capacitor, Resistor, Vdc
+from spicelab.core.net import GND, Net
+from spicelab.spice import ngspice_cli
 
 
 def build_circuit() -> Circuit:

@@ -11,9 +11,9 @@ from __future__ import annotations
 import argparse
 from collections.abc import Callable
 
-from cat.analysis import AC, DC, OP, TRAN
-from cat.core.circuit import Circuit
-from cat.core.components import (
+from spicelab.analysis import AC, DC, OP, TRAN
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import (
     VCCS,
     VCVS,
     AnalogMux8,
@@ -25,7 +25,7 @@ from cat.core.components import (
     Vdc,
     Vpulse,
 )
-from cat.core.net import GND, Net
+from spicelab.core.net import GND, Net
 
 
 def demo_op_rc() -> None:

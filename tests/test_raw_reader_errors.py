@@ -2,8 +2,7 @@ import os
 import tempfile
 
 import pytest
-
-from cat.io.raw_reader import parse_ngspice_ascii_raw, parse_ngspice_raw
+from spicelab.io.raw_reader import parse_ngspice_ascii_raw, parse_ngspice_raw
 
 
 def test_parse_ascii_missing_values_raises() -> None:

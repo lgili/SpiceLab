@@ -12,13 +12,13 @@ Run with:
 from pathlib import Path
 from typing import Any
 
-from cat.analysis import OP
-from cat.core.circuit import Circuit
-from cat.core.components import Diode, Resistor, Vdc
-from cat.core.net import GND
-from cat.library import get_component_spec, register_component, unregister_component
-from cat.library.utils import apply_metadata_to_circuit
-from cat.spice import ngspice_cli
+from spicelab.analysis import OP
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Diode, Resistor, Vdc
+from spicelab.core.net import GND
+from spicelab.library import get_component_spec, register_component, unregister_component
+from spicelab.library.utils import apply_metadata_to_circuit
+from spicelab.spice import ngspice_cli
 
 
 def my_resistor_factory(ref: str, *, value: str | float | None = None) -> Resistor:

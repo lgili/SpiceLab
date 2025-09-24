@@ -3,9 +3,9 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pycircuitkit"
+name = "spicelab"
 version = "0.1.0"
-description = "PyCircuitKit (CAT): Modern, strongly-typed Python toolkit for SPICE circuit definition, simulation and analysis."
+description = "SpiceLab: Modern, strongly-typed Python toolkit for SPICE circuit definition, simulation and analysis."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name="Luiz Carlos Gili" }]
@@ -26,30 +26,30 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/lgili/PyCircuitKit"
-Repository = "https://github.com/lgili/PyCircuitKit.git"
-Issues = "https://github.com/lgili/PyCircuitKit/issues"
-Documentation = "https://lgili.github.io/PyCircuitKit/"
+Homepage = "https://github.com/lgili/spicelab"
+Repository = "https://github.com/lgili/spicelab.git"
+Issues = "https://github.com/lgili/spicelab/issues"
+Documentation = "https://lgili.github.io/spicelab/"
 
 [project.optional-dependencies]
 opt = ["scipy>=1.12"]
 viz = ["plotly>=5.20", "kaleido>=0.2.1"]
 
 [tool.setuptools.packages.find]
-where = ["src"]
-include = ["cat*"]
+where = ["."]
+include = ["spicelab*", "spicelab"]
 
 [tool.setuptools.package-data]
-cat = ["py.typed", "library/data/opamps/*.sub"]
+spicelab = ["py.typed", "library/data/opamps/*.sub"]
 
 [tool.pytest.ini_options]
-addopts = "-q --maxfail=1 --disable-warnings --cov=cat --cov-report=term-missing"
+addopts = "-q --maxfail=1 --disable-warnings --cov=spicelab --cov-report=term-missing"
 testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-src = ["src", "tests"]
+src = ["spicelab", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
@@ -67,9 +67,9 @@ warn_redundant_casts = true
 warn_return_any = true
 disallow_untyped_defs = true
 disallow_any_generics = true
-# src-layout: avoid duplicate module detection in pre-commit envs
+# root layout
 explicit_package_bases = true
-mypy_path = "src"
+mypy_path = "."
 
 [dependency-groups]
 dev = [

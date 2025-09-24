@@ -1,4 +1,4 @@
-"""Public exports for :mod:`cat.spice` used by docs tooling.
+"""Public exports for :mod:`spicelab.spice` used by docs tooling.
 
 Expose a small, explicit surface for registry helpers.
 """

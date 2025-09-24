@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 from _common import savefig
-
-from cat.analysis import DC
-from cat.core.circuit import Circuit
-from cat.core.components import Resistor, Vdc
-from cat.core.net import GND, Net
-from cat.spice import ngspice_cli
+from spicelab.analysis import DC
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Resistor, Vdc
+from spicelab.core.net import GND, Net
+from spicelab.spice import ngspice_cli
 
 c = Circuit("ex_dc_sweep")
 V1 = Vdc("1", 0.0)

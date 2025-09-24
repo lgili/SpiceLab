@@ -34,8 +34,8 @@ c.print_netlist()
 ## Monte Carlo — quick export & plots
 ```python
 # run a Monte Carlo varying components (example only)
-from cat.analysis.montecarlo import monte_carlo, NormalPct
-from cat.analysis.core import TRAN
+from spicelab.analysis.montecarlo import monte_carlo, NormalPct
+from spicelab.analysis.core import TRAN
 
 # mapping would be Component -> Dist (here pseudo-code)
 # mc = monte_carlo(circuit, mapping, n=100, analysis_factory=lambda: TRAN('1e-6','1e-3'))
@@ -46,7 +46,7 @@ from cat.analysis.core import TRAN
 
 # compute a metric per run (example: final Vout) and plot
 # metrics = [my_metric(r) for r in mc.runs]
-# from cat.analysis.viz.plot import plot_mc_metric_hist, plot_param_vs_metric
+# from spicelab.analysis.viz.plot import plot_mc_metric_hist, plot_param_vs_metric
 # fig_hist = plot_mc_metric_hist(metrics, title='Gain distribution')
 # fig_scatter = plot_param_vs_metric(mc.samples, metrics, param='R1')
 ```

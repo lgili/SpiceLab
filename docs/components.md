@@ -10,14 +10,14 @@ PyCircuitKit, with small runnable snippets. All examples use the same pattern:
 Minimal scaffolding used below:
 
 ```
-from cat.core.circuit import Circuit
-from cat.core.net import GND, Net
-from cat.core.components import *  # convenient in examples
-from cat.analysis import OP, TRAN, AC, DC
+from spicelab.core.circuit import Circuit
+from spicelab.core.net import GND, Net
+from spicelab.core.components import *  # convenient in examples
+from spicelab.analysis import OP, TRAN, AC, DC
 ```
 
 Tip: Run examples from docs by copying blocks into a file and using
-`PYTHONPATH=src python your_file.py`.
+`python your_file.py` (after `pip install -e .`) or `PYTHONPATH=. python your_file.py` from repo root.
 
 ### Passive Components
 
@@ -124,7 +124,7 @@ Use `AnalogMux8` to connect a single input to one of eight outputs.
 - Dynamic enable ports: `enable_ports=True` exposes `en0..en7` and emits `S...` elements; add a `.model` for the switch (or `emit_model=True`).
 
 ```
-from cat.core.components import AnalogMux8
+from spicelab.core.components import AnalogMux8
 mux = AnalogMux8(ref="MU1", r_series=100, sel=4)
 print(mux.spice_card(lambda p: p.name))
 ```
@@ -145,5 +145,5 @@ res = DC("1", 0.0, 5.0, 0.1).run(c)
 ### Notes
 
 - Ensure `ngspice` is installed and available in PATH.
-- Numeric strings with suffixes are accepted (e.g. `"1k"`, `"100n"`). See `cat.utils.units`.
+- Numeric strings with suffixes are accepted (e.g. `"1k"`, `"100n"`). See `spicelab.utils.units`.
 - Controlled sources `F/H` require the name of a (dummy) voltage source for current sensing.

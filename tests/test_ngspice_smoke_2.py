@@ -1,11 +1,10 @@
 import shutil
 
 import pytest
-
-from cat.core.circuit import Circuit
-from cat.core.components import Resistor, Vdc
-from cat.core.net import GND
-from cat.spice import ngspice_cli
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Resistor, Vdc
+from spicelab.core.net import GND
+from spicelab.spice import ngspice_cli
 
 ng = shutil.which("ngspice")
 

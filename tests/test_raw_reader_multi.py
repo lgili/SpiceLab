@@ -1,7 +1,7 @@
 import os
 import tempfile
 
-from cat.io.raw_reader import parse_ngspice_ascii_raw_multi
+from spicelab.io.raw_reader import parse_ngspice_ascii_raw_multi
 
 ASCII_MULTI = """Title:  plot1
 Date:   Thu Sep  1 12:00:00 2025

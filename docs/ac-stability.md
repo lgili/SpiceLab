@@ -10,7 +10,7 @@ for the first node voltage (output in the RC examples).
 ## Quick Bode
 
 ```python
-from cat.analysis import bode
+from spicelab.analysis import bode
 
 # Run an AC sweep and get (f, mag_db, phase_deg)
 f, mag_db, ph = bode(c, y_out="v(n1)", sweep_type="dec", n=201, fstart=10.0, fstop=1e6)
@@ -21,7 +21,7 @@ The circuit must include a small-signal AC source (e.g., `VA()` or `Iac`).
 ## Margins and bandwidth
 
 ```python
-from cat.analysis import ac_gain_phase, bandwidth_3db, crossover_freq_0db, phase_margin, gain_margin_db
+from spicelab.analysis import ac_gain_phase, bandwidth_3db, crossover_freq_0db, phase_margin, gain_margin_db
 
 res = run_ac(c, "dec", 201, 10.0, 1e6)
 f, g_db, ph = ac_gain_phase(res.traces, y_out="v(n1)")

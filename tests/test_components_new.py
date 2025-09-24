@@ -1,6 +1,6 @@
-from cat.core.circuit import Circuit
-from cat.core.components import Iac, Idc, Inductor, Vdc
-from cat.core.net import GND, Net
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Iac, Idc, Inductor, Vdc
+from spicelab.core.net import GND, Net
 
 
 def test_inductor_card_and_netlist() -> None:

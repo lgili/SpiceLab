@@ -6,10 +6,10 @@ Analyze closed-loop Bode and margins using the ideal op-amp helper.
 
 ## Inverting topology with ideal OA
 ```python
-from cat import Circuit, GND, opamp_inverting
-from cat.core.components import VA, R
-from cat.core.net import Net
-from cat.analysis import AC, ac_gain_phase, phase_margin, gain_margin_db
+from spicelab import Circuit, GND, opamp_inverting
+from spicelab.core.components import VA, R
+from spicelab.core.net import Net
+from spicelab.analysis import AC, ac_gain_phase, phase_margin, gain_margin_db
 
 c = Circuit("opamp_inv")
 

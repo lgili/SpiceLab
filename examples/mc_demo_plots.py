@@ -1,7 +1,7 @@
 """Generate demo Monte Carlo plots used in docs.
 
 This script is intentionally standalone and uses the plotting helpers from
-`cat.analysis.viz.plot`. It creates synthetic samples and metrics so docs can
+`spicelab.analysis.viz.plot`. It creates synthetic samples and metrics so docs can
 include images without running NGSpice.
 """
 
@@ -10,7 +10,7 @@ from __future__ import annotations
 import random
 from pathlib import Path
 
-from cat.analysis.viz.plot import plot_mc_kde, plot_param_vs_metric, plot_params_matrix
+from spicelab.analysis.viz.plot import plot_mc_kde, plot_param_vs_metric, plot_params_matrix
 
 OUT = Path(__file__).resolve().parents[1] / "docs" / "assets" / "examples"
 OUT.mkdir(parents=True, exist_ok=True)

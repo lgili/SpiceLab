@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from cat.core.circuit import Circuit
-from cat.core.components import Capacitor, Resistor, Vdc
-from cat.core.net import GND, Net
-from cat.io.ltspice_asc import (
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Capacitor, Resistor, Vdc
+from spicelab.core.net import GND, Net
+from spicelab.io.ltspice_asc import (
     circuit_to_asc_text,
     parse_asc,
     save_circuit_as_asc,

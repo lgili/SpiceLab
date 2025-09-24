@@ -2,8 +2,7 @@ import os
 import tempfile
 
 import pytest
-
-from cat.io.raw_reader import parse_ngspice_raw
+from spicelab.io.raw_reader import parse_ngspice_raw
 
 
 def test_parse_ngspice_raw_binary_not_supported() -> None:

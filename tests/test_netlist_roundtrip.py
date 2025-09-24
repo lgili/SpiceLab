@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from cat.core.circuit import Circuit
-from cat.core.components import R, V
-from cat.core.net import GND, Net
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import R, V
+from spicelab.core.net import GND, Net
 
 
 def test_netlist_roundtrip(tmp_path: Path) -> None:
