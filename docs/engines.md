@@ -13,7 +13,7 @@ from spicelab.engines import run_simulation
 analyses = [
     AnalysisSpec("tran", {"tstep": 1e-6, "tstop": 1e-3}),
 ]
-handle = run_simulation(circuit, analyses, engine="ngspice")  # or "ltspice" / "xyce"
+handle = run_simulation(circuit, analyses, engine="ngspice")  # or "ltspice" / "xyce" / "ngspice-cli"
 ds = handle.dataset()
 ```
 
@@ -23,9 +23,11 @@ Or obtain the simulator explicitly:
 from spicelab.core.types import AnalysisSpec
 from spicelab.engines import get_simulator
 
-sim = get_simulator("xyce")
+sim = get_simulator("xyce-cli")  # accepts "xyce" (alias) or "xyce-cli"
 handle = sim.run(circuit, [AnalysisSpec("ac", {"sweep_type": "dec", "n": 10, "fstart": 10.0, "fstop": 1e6})])
 ```
+
+Command-line examples (e.g. `python -m examples.rc_tran`) accept `--engine` and/or the `SPICELAB_ENGINE` environment variable so you can switch backends without editing the script.
 
 Result datasets are normalized to xarray.Dataset with conventional coordinates:
 - time for transient analyses
@@ -35,12 +37,12 @@ Result datasets are normalized to xarray.Dataset with conventional coordinates:
 
 The CLI adapters auto-detect engine binaries. You can override discovery with env vars:
 
-- ngspice: set CAT_SPICE_NGSPICE to the full path of the ngspice executable.
-- LTspice: set SPICELAB_LTSPICE to the LTspice executable.
+- ngspice: set CAT_SPICE_NGSPICE or SPICELAB_NGSPICE to the full path of the ngspice executable.
+- LTspice: set SPICELAB_LTSPICE (or LTSPICE_EXE on Windows) to the LTspice executable.
   - macOS default: `/Applications/LTspice.app/Contents/MacOS/LTspice` (or `LTspiceXVII`).
 - Xyce: set SPICELAB_XYCE to the Xyce executable.
 
-If a binary cannot be found, the adapters raise a clear RuntimeError explaining how to configure it.
+If a binary cannot be found, the adapters raise an `EngineBinaryNotFound` error explaining how to configure it. The `*-cli` engine names map directly to the subprocess adapters registered via `spicelab.spice.registry`.
 
 ## Installation hints (quick)
 
@@ -64,13 +66,13 @@ If a binary cannot be found, the adapters raise a clear RuntimeError explaining 
 
 | Engine     | Interface | Parallel | Callbacks (shared lib) | Noise | Output format |
 |------------|-----------|----------|------------------------|-------|----------------|
-| ngspice    | CLI       | No       | No                     | No    | RAW (ASCII)    |
-| LTspice    | CLI       | No       | No                     | No    | RAW (ASCII)    |
-| Xyce       | CLI       | Yes      | No                     | No    | PRN/CSV        |
+| ngspice    | CLI       | No       | No                     | Yes   | RAW (ASCII)    |
+| LTspice    | CLI       | No       | No                     | Yes   | RAW (ASCII)    |
+| Xyce       | CLI       | Yes      | No                     | Yes   | PRN/CSV        |
 
 Notes:
 - “Parallel” reflects whether the engine commonly supports parallel modes in CLI; the Xyce backend does not configure MPI here, but Xyce itself supports parallel execution.
-- Callback/Shared Lib support is planned for a future ngspice shared backend (M5).
+- Callback/Shared Lib support is planned for a future ngspice shared backend (M5). Xyce supports Verilog-A via ADMS; the CLI adapter surfaces this through the feature flags.
 
 ## Troubleshooting
 

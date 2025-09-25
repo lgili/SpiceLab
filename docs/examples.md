@@ -45,7 +45,7 @@ unit tests and CI. When debugging actual simulator behavior, run with
 
 This project ships runnable examples in `examples/`:
 
-- `rc_tran.py` — transient of an RC low-pass
+- `rc_tran.py` — transient of an RC low-pass using the unified `run_simulation(..., engine=...)` API
 - `ac_bode.py` — RC Bode magnitude/phase plot
 - `dc_sweep.py` — DC sweep example
 - `step_sweep_grid.py` — Python grid over parameters + DataFrame
@@ -58,13 +58,16 @@ This project ships runnable examples in `examples/`:
 - `ltspice_schematic_roundtrip.py` — export/import `.asc` schematics using `spicelab.io.ltspice_asc`
 - `analog_mux_demo.py` — example showing AnalogMux8 netlist and DOT diagram
 
-Run them as modules:
+Run them as modules (override the engine via `--engine` or by setting `SPICELAB_ENGINE` before invoking the script):
 
 ```bash
 python -m examples.rc_tran
 python -m examples.ac_bode
 python -m examples.step_sweep_grid
 python -m examples.monte_carlo_rc
+
+# change engine to LTspice
+python -m examples.rc_tran --engine ltspice
 ```
 
 See the `examples/` folder for details and more scripts.

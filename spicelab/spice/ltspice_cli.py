@@ -7,38 +7,35 @@ import tempfile
 from collections.abc import Sequence
 from pathlib import Path
 
+from ..engines.exceptions import EngineBinaryNotFound
 from .base import RunArtifacts, RunResult, SimulatorAdapter
 
 
 def _which_ltspice() -> str:
-    """Locate the LTspice CLI binary across platforms.
-
-    Tries, in order:
-      - environment variable SPICELAB_LTSPICE (explicit path)
-      - common macOS app bundle binary
-      - LTspice on PATH (Windows/Linux if available)
-    """
-
-    env_exe = os.environ.get("SPICELAB_LTSPICE")
-    if env_exe and Path(env_exe).exists():
-        return env_exe
-
-    # macOS LTspice app bundle (LTspice 24)
+    env_exe = os.environ.get("SPICELAB_LTSPICE") or os.environ.get("LTSPICE_EXE")
+    attempted: list[str] = []
+    if env_exe:
+        attempted.append(env_exe)
+        if Path(env_exe).exists():
+            return env_exe
     mac_paths = [
         "/Applications/LTspice.app/Contents/MacOS/LTspice",
         "/Applications/LTspice.app/Contents/MacOS/LTspiceXVII",
         "/Applications/LTspice.app/Contents/MacOS/LTspice64",
     ]
     for p in mac_paths:
+        attempted.append(p)
         if Path(p).exists():
             return p
-
     exe = shutil.which("ltspice") or shutil.which("LTspice") or shutil.which("XVIIx64.exe")
-    if not exe:
-        raise RuntimeError(
-            "LTspice binary not found. Set SPICELAB_LTSPICE or install LTspice and add it to PATH."
-        )
-    return exe
+    if exe:
+        return exe
+    hints = [
+        "macOS (Homebrew cask): brew install --cask ltspice",
+        "Windows: download from Analog Devices (LTspice) and add install dir to PATH",
+        "Set SPICELAB_LTSPICE env var to the LTspice executable",
+    ]
+    raise EngineBinaryNotFound("ltspice", hints=hints, attempted=attempted)
 
 
 def _write_deck(

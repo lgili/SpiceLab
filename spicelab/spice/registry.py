@@ -4,7 +4,9 @@ from collections.abc import Callable, Sequence
 from typing import cast
 
 from .base import RunResult, SimulatorAdapter
-from .ngspice_cli import DEFAULT_ADAPTER
+from .ltspice_cli import DEFAULT_ADAPTER as LTSPICE_DEFAULT_ADAPTER
+from .ngspice_cli import DEFAULT_ADAPTER as NGSPICE_DEFAULT_ADAPTER
+from .xyce_cli import DEFAULT_ADAPTER as XYCE_DEFAULT_ADAPTER
 
 Runner = Callable[[str, Sequence[str]], RunResult]
 
@@ -29,7 +31,9 @@ class _SimulatorRegistry:
         self._adapters: dict[str, SimulatorAdapter] = {}
         self._aliases: dict[str, str] = {}
         self._active_name: str | None = None
-        self._active_adapter: SimulatorAdapter = _FunctionAdapter(DEFAULT_ADAPTER.run_directives)
+        self._active_adapter: SimulatorAdapter = _FunctionAdapter(
+            NGSPICE_DEFAULT_ADAPTER.run_directives
+        )
         self._active_runner: Runner = _adapter_to_runner(self._active_adapter)
 
     # -- registration -----------------------------------------------------------------
@@ -91,9 +95,19 @@ class _SimulatorRegistry:
 _registry = _SimulatorRegistry()
 _registry.register(
     "ngspice-cli",
-    DEFAULT_ADAPTER,
+    NGSPICE_DEFAULT_ADAPTER,
     aliases=("ngspice", "default"),
     make_default=True,
+)
+_registry.register(
+    "ltspice-cli",
+    LTSPICE_DEFAULT_ADAPTER,
+    aliases=("ltspice",),
+)
+_registry.register(
+    "xyce-cli",
+    XYCE_DEFAULT_ADAPTER,
+    aliases=("xyce",),
 )
 
 

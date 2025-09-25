@@ -1,9 +1,9 @@
-"""RC transient example using the unified engine orchestrator.
-
-Run with different engines by changing the engine variable: 'ngspice', 'ltspice', or 'xyce'.
-"""
+"""RC transient example using the unified engine orchestrator."""
 
 from __future__ import annotations
+
+import argparse
+import os
 
 from spicelab.core.circuit import Circuit
 from spicelab.core.components import Capacitor, Resistor, Vdc
@@ -28,8 +28,19 @@ def build_rc() -> Circuit:
     return c
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="RC transient via unified engines")
+    parser.add_argument(
+        "--engine",
+        default=os.getenv("SPICELAB_ENGINE", "ngspice"),
+        help="Engine name (ngspice, ltspice, xyce, ...). Defaults to SPICELAB_ENGINE or 'ngspice'.",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    engine = "ngspice"  # change to 'ltspice' or 'xyce' if installed
+    args = _parse_args()
+    engine = args.engine
     circuit = build_rc()
     analyses = [AnalysisSpec("tran", {"tstep": 10e-6, "tstop": 5e-3})]
     handle = run_simulation(circuit, analyses, engine=engine)

@@ -7,18 +7,28 @@ import tempfile
 from collections.abc import Sequence
 from pathlib import Path
 
+from ..engines.exceptions import EngineBinaryNotFound
 from .base import RunArtifacts, RunResult, SimulatorAdapter
 
 
 def _which_ngspice() -> str:
-    # Permite override via variável de ambiente
-    env_exe = os.environ.get("CAT_SPICE_NGSPICE")
+    env_exe = os.environ.get("CAT_SPICE_NGSPICE") or os.environ.get("SPICELAB_NGSPICE")
+    attempted: list[str] = []
     if env_exe:
-        return env_exe
+        attempted.append(env_exe)
+        if Path(env_exe).exists():
+            return env_exe
     exe = shutil.which("ngspice")
-    if not exe:
-        raise RuntimeError("ngspice not found in PATH.")
-    return exe
+    if exe:
+        return exe
+    hints = [
+        "macOS (Homebrew): brew install ngspice",
+        "Ubuntu/Debian: sudo apt-get install ngspice",
+        "Fedora: sudo dnf install ngspice",
+        "Windows: download installer from https://sourceforge.net/projects/ngspice/files/",
+        "Or set CAT_SPICE_NGSPICE / SPICELAB_NGSPICE with the full path.",
+    ]
+    raise EngineBinaryNotFound("ngspice", hints=hints, attempted=attempted)
 
 
 def _strip_final_end(netlist: str) -> str:

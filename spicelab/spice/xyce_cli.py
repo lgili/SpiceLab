@@ -7,19 +7,26 @@ import tempfile
 from collections.abc import Sequence
 from pathlib import Path
 
+from ..engines.exceptions import EngineBinaryNotFound
 from .base import RunArtifacts, RunResult, SimulatorAdapter
 
 
 def _which_xyce() -> str:
-    env_exe = os.environ.get("SPICELAB_XYCE")
-    if env_exe and Path(env_exe).exists():
-        return env_exe
+    env_exe = os.environ.get("SPICELAB_XYCE") or os.environ.get("XYCE_EXE")
+    attempted: list[str] = []
+    if env_exe:
+        attempted.append(env_exe)
+        if Path(env_exe).exists():
+            return env_exe
     exe = shutil.which("Xyce") or shutil.which("xyce")
-    if not exe:
-        raise RuntimeError(
-            "Xyce binary not found. Set SPICELAB_XYCE or install Xyce and add it to PATH."
-        )
-    return exe
+    if exe:
+        return exe
+    hints = [
+        "Download/build from https://xyce.sandia.gov/ (prebuilt packages for some distros)",
+        "macOS (Homebrew, community tap): brew install xyce (if available)",
+        "Set SPICELAB_XYCE env var (or XYCE_EXE) to the Xyce binary path",
+    ]
+    raise EngineBinaryNotFound("xyce", hints=hints, attempted=attempted)
 
 
 def _write_deck(

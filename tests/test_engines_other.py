@@ -9,8 +9,7 @@ from spicelab.core.circuit import Circuit
 from spicelab.core.components import VA, Resistor
 from spicelab.core.net import GND
 from spicelab.core.types import AnalysisSpec
-from spicelab.engines.ltspice import LtSpiceSimulator
-from spicelab.engines.xyce import XyceSimulator
+from spicelab.engines.factory import create_simulator
 
 
 def _has_ltspice() -> bool:
@@ -26,7 +25,9 @@ def _has_xyce() -> bool:
 
 
 @pytest.mark.skipif(not _has_ltspice(), reason="LTspice not installed")
-def test_ltspice_simulator_tran_smoke() -> None:
+@pytest.mark.engine
+@pytest.mark.parametrize("engine_name", ["ltspice", "ltspice-cli"])
+def test_ltspice_simulator_tran_smoke(engine_name: str) -> None:
     try:
         xr = importlib.import_module("xarray")
     except Exception:
@@ -41,7 +42,7 @@ def test_ltspice_simulator_tran_smoke() -> None:
     c.connect(R1.ports[1], GND)
 
     spec = AnalysisSpec("tran", {"tstep": 1e-6, "tstop": 1e-3})
-    sim = LtSpiceSimulator()
+    sim = create_simulator(engine_name)
     handle = sim.run(c, [spec])
     ds = handle.dataset()
     assert isinstance(ds, xr.Dataset)
@@ -49,10 +50,16 @@ def test_ltspice_simulator_tran_smoke() -> None:
     assert "time" in keys
     assert any(k.startswith("v(") for k in keys)
     assert handle.attrs().get("engine") == "ltspice"
+    feats = sim.features()
+    assert feats.name == "ltspice-cli"
+    assert not feats.supports_parallel
+    assert feats.supports_noise is True
 
 
 @pytest.mark.skipif(not _has_xyce(), reason="Xyce not installed")
-def test_xyce_simulator_ac_smoke() -> None:
+@pytest.mark.engine
+@pytest.mark.parametrize("engine_name", ["xyce", "xyce-cli"])
+def test_xyce_simulator_ac_smoke(engine_name: str) -> None:
     try:
         xr = importlib.import_module("xarray")
     except Exception:
@@ -67,7 +74,7 @@ def test_xyce_simulator_ac_smoke() -> None:
     c.connect(R1.ports[1], GND)
 
     spec = AnalysisSpec("ac", {"sweep_type": "dec", "n": 5, "fstart": 10.0, "fstop": 1e3})
-    sim = XyceSimulator()
+    sim = create_simulator(engine_name)
     handle = sim.run(c, [spec])
     ds = handle.dataset()
     assert isinstance(ds, xr.Dataset)
@@ -75,3 +82,8 @@ def test_xyce_simulator_ac_smoke() -> None:
     assert "freq" in keys or "frequency" in keys
     assert any(k.startswith("v(") for k in keys)
     assert handle.attrs().get("engine") == "xyce"
+    feats = sim.features()
+    assert feats.name == "xyce-cli"
+    assert feats.supports_parallel
+    assert feats.supports_noise is True
+    assert feats.supports_verilog_a is True

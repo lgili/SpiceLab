@@ -56,10 +56,13 @@ include = ["spicelab*", "spicelab"]
 spicelab = ["py.typed", "library/data/opamps/*.sub"]
 
 [tool.pytest.ini_options]
-addopts = "-q --maxfail=1 --disable-warnings --cov=spicelab --cov-report=term-missing --cov-report=xml"
+    addopts = "-q --maxfail=1 --disable-warnings --cov=spicelab --cov-report=term-missing --cov-report=xml"
 testpaths = ["tests"]
 filterwarnings = [
     "ignore::DeprecationWarning",
+]
+markers = [
+    "engine: tests that require external SPICE engine executables (ngspice, ltspice, xyce)",
 ]
 
 [tool.ruff]

@@ -1,20 +1,47 @@
 from __future__ import annotations
 
+from importlib import import_module
+from typing import Any
+
 from .base import EngineFeatures, Simulator
-from .ltspice import LtSpiceSimulator
-from .ngspice import NgSpiceSimulator
-from .orchestrator import EngineName, get_simulator, run_simulation
 from .result import DatasetResultHandle
-from .xyce import XyceSimulator
 
 __all__ = [
     "EngineFeatures",
     "Simulator",
-    "NgSpiceSimulator",
-    "LtSpiceSimulator",
-    "XyceSimulator",
     "DatasetResultHandle",
+    "NgSpiceSimulator",
+    "NgSpiceProcSimulator",
+    "LtSpiceSimulator",
+    "LtSpiceCLISimulator",
+    "XyceSimulator",
+    "XyceCLISimulator",
     "get_simulator",
     "run_simulation",
     "EngineName",
 ]
+
+
+_LAZY_IMPORTS: dict[str, tuple[str, str]] = {
+    "NgSpiceSimulator": (".ngspice", "NgSpiceSimulator"),
+    "NgSpiceProcSimulator": (".ngspice_proc", "NgSpiceProcSimulator"),
+    "LtSpiceSimulator": (".ltspice", "LtSpiceSimulator"),
+    "LtSpiceCLISimulator": (".ltspice_cli", "LtSpiceCLISimulator"),
+    "XyceSimulator": (".xyce", "XyceSimulator"),
+    "XyceCLISimulator": (".xyce_cli", "XyceCLISimulator"),
+    "get_simulator": (".orchestrator", "get_simulator"),
+    "run_simulation": (".orchestrator", "run_simulation"),
+    "EngineName": (".orchestrator", "EngineName"),
+}
+
+
+def __getattr__(name: str) -> Any:
+    try:
+        module_name, attr = _LAZY_IMPORTS[name]
+    except KeyError as exc:
+        raise AttributeError(f"module 'spicelab.engines' has no attribute {name!r}") from exc
+
+    module = import_module(module_name, package=__name__)
+    value = getattr(module, attr)
+    globals()[name] = value
+    return value

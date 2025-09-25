@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import argparse
+import os
+
 from spicelab.core.circuit import Circuit
 from spicelab.core.components import VA, Resistor
 from spicelab.core.net import GND
@@ -20,8 +23,19 @@ def build_rc() -> Circuit:
     return c
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="RC AC sweep via unified engines")
+    parser.add_argument(
+        "--engine",
+        default=os.getenv("SPICELAB_ENGINE", "ngspice"),
+        help="Engine name (ngspice, ltspice, xyce, ...). Defaults to SPICELAB_ENGINE or 'ngspice'.",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    engine = "ngspice"  # or 'ltspice'/'xyce'
+    args = _parse_args()
+    engine = args.engine
     circuit = build_rc()
     analyses = [AnalysisSpec("ac", {"sweep_type": "dec", "n": 10, "fstart": 10.0, "fstop": 1e6})]
     handle = run_simulation(circuit, analyses, engine=engine)

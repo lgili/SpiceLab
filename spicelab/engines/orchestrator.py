@@ -12,21 +12,13 @@ from ..core.types import (
     ensure_sweep_spec,
 )
 from .base import Simulator
-from .ltspice import LtSpiceSimulator
-from .ngspice import NgSpiceSimulator
-from .xyce import XyceSimulator
+from .factory import create_simulator
 
-EngineName = Literal["ngspice", "ltspice", "xyce"]
+EngineName = Literal["ngspice", "ngspice-cli", "ltspice", "ltspice-cli", "xyce", "xyce-cli"]
 
 
 def get_simulator(name: EngineName = "ngspice") -> Simulator:
-    if name == "ngspice":
-        return NgSpiceSimulator()
-    if name == "ltspice":
-        return LtSpiceSimulator()
-    if name == "xyce":
-        return XyceSimulator()
-    raise NotImplementedError(f"Engine '{name}' not supported yet")
+    return create_simulator(name)
 
 
 def run_simulation(
