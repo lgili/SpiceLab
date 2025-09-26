@@ -136,9 +136,10 @@ class _SignalExtractor:
         for cand in preferred:
             if cand in coords:
                 return cand
-        if data.dims:
-            first_dim = data.dims[0]
-            return cast(str, first_dim)
+        dims = getattr(data, "dims", ())
+        if dims:
+            first_dim = dims[0]
+            return str(first_dim)
         return "index"
 
     @staticmethod

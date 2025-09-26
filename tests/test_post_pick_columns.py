@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import shutil
-from typing import Any
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
 from spicelab.analysis.sweep_grid import run_value_sweep
@@ -9,6 +9,9 @@ from spicelab.core.circuit import Circuit
 from spicelab.core.components import Resistor, Vdc
 from spicelab.core.net import GND
 from spicelab.core.types import AnalysisSpec
+
+if TYPE_CHECKING:
+    pass
 
 ng = shutil.which("ngspice")
 
@@ -27,7 +30,7 @@ def _simple() -> tuple[Circuit, Resistor]:
 def test_stack_pick_columns() -> None:
     if not ng:
         pytest.skip("ngspice not installed")
-    pd = pytest.importorskip("pandas")
+    pd = cast(Any, pytest.importorskip("pandas"))
     c, R = _simple()
     sweep = run_value_sweep(
         c,

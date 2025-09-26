@@ -538,10 +538,9 @@ def monte_carlo(
     else:
         runs_buf: list[AnalysisResult | None] = [None] * len(samples)
         with ThreadPoolExecutor(max_workers=workers) as ex:
-            fut_to_idx = {}
+            fut_to_idx: dict[Any, int] = {}
             for idx, s in enumerate(samples):
-                fut = ex.submit(_run_one, s)
-                fut_to_idx[fut] = idx
+                fut_to_idx[ex.submit(_run_one, s)] = idx
             done = 0
             for f in as_completed(list(fut_to_idx.keys())):
                 idx = fut_to_idx[f]

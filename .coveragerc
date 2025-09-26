@@ -1,0 +1,14 @@
+[run]
+omit =
+    spicelab/io/ltspice_asc.py
+    spicelab/io/ltspice_parser.py
+    spicelab/io/readers.py
+    spicelab/io/spice_parser.py
+    spicelab/spice/ltspice_cli.py
+    spicelab/spice/ngspice_cli.py
+    spicelab/spice/xyce_cli.py
+    spicelab/engines/ltspice_cli.py
+    spicelab/engines/xyce_cli.py
+    spicelab/engines/ltspice.py
+    spicelab/engines/xyce.py
+    spicelab/engines/ngspice.py

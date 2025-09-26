@@ -53,8 +53,12 @@ class JobResult:
 
 
 def _component_map(circuit: object) -> dict[str, Any]:
-    comps = getattr(circuit, "_components", [])
-    return {getattr(comp, "ref", str(idx)): comp for idx, comp in enumerate(comps)}
+    comps = cast(Sequence[Any], getattr(circuit, "_components", []))
+    mapping: dict[str, Any] = {}
+    for idx, comp in enumerate(comps):
+        ref = getattr(comp, "ref", str(idx))
+        mapping[str(ref)] = comp
+    return mapping
 
 
 def _apply_combo(circuit: object, combo: Mapping[str, str | float]) -> None:
@@ -62,10 +66,10 @@ def _apply_combo(circuit: object, combo: Mapping[str, str | float]) -> None:
     for ref, value in combo.items():
         if ref not in by_ref:
             raise KeyError(f"Component with ref '{ref}' not found in circuit")
-        comp = by_ref[ref]
+        comp = cast(Any, by_ref[ref])
         if not hasattr(comp, "value"):
             raise AttributeError(f"Component '{ref}' does not support value overrides")
-        cast(Any, comp).value = value
+        comp.value = value
 
 
 def _expand_sweep(sweep: SweepSpec | None) -> list[ComboDict]:
