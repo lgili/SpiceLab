@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/opamp-stability/">
+        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/doctor/">
       
       
-        <link rel="prev" href="../ac-stability/">
+        <link rel="prev" href="../cli-ci/">
       
       
-        <link rel="next" href="../core-contracts/">
+        <link rel="next" href="../troubleshooting/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Op-amp stability (refresh soon) - Circuit Toolkit</title>
+        <title>Environment doctor - Circuit Toolkit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#op-amp-stability-placeholder" class="md-skip">
+        <a href="#environment-doctor" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Op-amp stability (refresh soon)
+              Environment doctor
             
           </span>
         </div>
@@ -358,18 +358,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -385,7 +387,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             User guide
@@ -626,10 +628,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../doctor/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -640,6 +651,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -1112,20 +1124,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
@@ -1141,7 +1151,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Legacy & roadmap
@@ -1175,19 +1185,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../opamp-stability/" class="md-nav__link">
         
   
   
@@ -1198,7 +1199,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1268,11 +1268,26 @@
 
 
 
-<h1 id="op-amp-stability-placeholder">Op-amp stability (placeholder)</h1>
-<p>A refreshed stability guide will arrive together with the measurement helper
-examples. For now, combine the measurement specs from the
-<a href="../cookbook/">Cookbook</a> with AC sweeps produced by <code>run_simulation</code> to compute
-phase/gain margins.</p>
+<h1 id="environment-doctor">Environment Doctor</h1>
+<p><code>python -m spicelab.doctor</code> inspects your system for common Circuit Toolkit
+requirements and reports missing SPICE engines or shared libraries.</p>
+<pre><code class="language-bash">$ python -m spicelab.doctor
+Circuit Toolkit environment check
+ ✔ ngspice (/usr/local/bin/ngspice)
+ ✖ ltspice
+    hint: Download LTspice from Analog Devices
+ ⚠ libngspice
+    hint: Install libngspice (e.g. brew install libngspice or apt install libngspice0-dev)
+</code></pre>
+<p>Checks currently cover:</p>
+<ul>
+<li>CLI engines (<code>ngspice</code>, <code>ltspice</code>, <code>xyce</code>) via PATH discovery or the
+  <code>SPICELAB_*</code> overrides</li>
+<li>The <code>libngspice</code> shared library used by the co-simulation backend</li>
+</ul>
+<p>Results are colour-neutral (plain ASCII) so you can paste them into bug reports.
+The command returns a non-zero exit code when required engines are missing,
+making it suitable for CI sanity checks.</p>
 
 
 

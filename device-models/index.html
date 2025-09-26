@@ -6,19 +6,19 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Circuit simulation helpers and analysis utilities">
+        <meta name="description" content="Unified Python orchestration for SPICE simulations">
       
       
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/device-models/">
+        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/device-models/">
       
       
-        <link rel="prev" href="../opamp-stability/">
+        <link rel="prev" href="../components-quickstart/">
       
       
-        <link rel="next" href="../ltspice-import/">
+        <link rel="next" href="../components-library/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Device Models - PyCircuitKit</title>
+        <title>Device models - Circuit Toolkit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#device-models-and-model-directives" class="md-skip">
+        <a href="#device-models" class="md-skip">
           Skip to content
         </a>
       
@@ -98,10 +98,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="PyCircuitKit" class="md-header__button md-logo" aria-label="PyCircuitKit" data-md-component="logo">
+    <a href=".." title="Circuit Toolkit" class="md-header__button md-logo" aria-label="Circuit Toolkit" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -112,13 +111,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            PyCircuitKit
+            Circuit Toolkit
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Device Models
+              Device models
             
           </span>
         </div>
@@ -208,13 +207,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="PyCircuitKit" class="md-nav__button md-logo" aria-label="PyCircuitKit" data-md-component="logo">
+    <a href=".." title="Circuit Toolkit" class="md-nav__button md-logo" aria-label="Circuit Toolkit" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo.svg" alt="logo">
 
     </a>
-    PyCircuitKit
+    Circuit Toolkit
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -225,13 +223,51 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Overview
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href=".." class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Home
+    Welcome
     
   </span>
   
@@ -240,9 +276,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -262,9 +299,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -275,7 +313,7 @@
   
   
   <span class="md-ellipsis">
-    Getting Started
+    Getting started
     
   </span>
   
@@ -284,9 +322,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -298,89 +337,6 @@
   
   <span class="md-ellipsis">
     Concepts
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    Examples
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Examples
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../examples/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Overview
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../monte-carlo-example/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Monte Carlo example
     
   </span>
   
@@ -404,92 +360,24 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../examples-gallery/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Examples Gallery
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../components/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Components
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../components-quickstart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Components Quickstart
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    Guides
+    User guide
     
   </span>
   
@@ -497,10 +385,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            Guides
+            User guide
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -511,12 +399,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../preview/" class="md-nav__link">
+      <a href="../engines/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Circuit Preview
+    Engines
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unified-io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data I/O
     
   </span>
   
@@ -539,7 +450,7 @@
   
   
   <span class="md-ellipsis">
-    Sweeps and STEP
+    Sweeps & grids
     
   </span>
   
@@ -580,184 +491,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../ac-stability/" class="md-nav__link">
+      <a href="../reporting/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    AC Stability
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../opamp-stability/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Op-Amp Stability
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Device Models
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    Device Models
-    
-  </span>
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#device-models-and-model-directives" class="md-nav__link">
-    <span class="md-ellipsis">
-      Device Models and .model Directives
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Device Models and .model Directives">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#adding-a-diode-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      Adding a diode model
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#voltagecontrolled-switch-vswitch" class="md-nav__link">
-    <span class="md-ellipsis">
-      Voltage‑controlled switch (VSwitch)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#currentcontrolled-elements-fh-and-sensors" class="md-nav__link">
-    <span class="md-ellipsis">
-      Current‑controlled elements (F/H) and sensors
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ltspice-import/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    LTspice Integration
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../components-library/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Component Library
+    Reporting
     
   </span>
   
@@ -780,7 +519,122 @@
   
   
   <span class="md-ellipsis">
-    Plots
+    Plotting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Circuit preview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ltspice-import/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LTspice integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mux-enable-ports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Analog mux
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli-ci/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI & CI automation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../doctor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Environment doctor
     
   </span>
   
@@ -825,20 +679,343 @@
       
   
   
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Components
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Components
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
   
   
     <li class="md-nav__item">
-      <a href="../api-reference/" class="md-nav__link">
+      <a href="../components/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    API guidance
+    Overview
     
   </span>
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../components-quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Device models
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Device models
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding a model
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#including-external-libraries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Including external libraries
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#organising-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      Organising models
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../components-library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Library status (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running scripts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gallery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monte-carlo-example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Monte Carlo assets
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -880,15 +1057,15 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    API Reference
+    Reference
     
   </span>
   
@@ -896,12 +1073,35 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
-            API Reference
+            Reference
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API guidance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -915,7 +1115,7 @@
   
   
   <span class="md-ellipsis">
-    Core
+    Core API
     
   </span>
   
@@ -938,7 +1138,7 @@
   
   
   <span class="md-ellipsis">
-    IO
+    IO API
     
   </span>
   
@@ -961,7 +1161,121 @@
   
   
   <span class="md-ellipsis">
-    Analysis
+    Analysis API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Legacy & roadmap
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Legacy & roadmap
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ac-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AC stability (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../opamp-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Op-amp stability (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Old roadmap (M1/M2)
     
   </span>
   
@@ -996,6 +1310,8 @@
   
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1004,44 +1320,29 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#device-models-and-model-directives" class="md-nav__link">
+  <a href="#adding-a-model" class="md-nav__link">
     <span class="md-ellipsis">
-      Device Models and .model Directives
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Device Models and .model Directives">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#adding-a-diode-model" class="md-nav__link">
-    <span class="md-ellipsis">
-      Adding a diode model
+      Adding a model
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#voltagecontrolled-switch-vswitch" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#including-external-libraries" class="md-nav__link">
     <span class="md-ellipsis">
-      Voltage‑controlled switch (VSwitch)
+      Including external libraries
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#currentcontrolled-elements-fh-and-sensors" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#organising-models" class="md-nav__link">
     <span class="md-ellipsis">
-      Current‑controlled elements (F/H) and sensors
+      Organising models
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1061,113 +1362,32 @@
 
 
 
-  <h1>Device Models</h1>
+<h1 id="device-models">Device models</h1>
+<p>Many components require SPICE <code>.model</code> cards or <code>.include</code> files. Circuit Toolkit
+simply embeds the directives you provide – it does not ship vendor models.</p>
+<h2 id="adding-a-model">Adding a model</h2>
+<pre><code class="language-python">from spicelab.core.circuit import Circuit
+from spicelab.core.components import Diode
 
-<h2 id="device-models-and-model-directives">Device Models and <code>.model</code> Directives</h2>
-<p>Some components in PyCircuitKit rely on SPICE device models defined via
-<code>.model</code> lines in the netlist. This page shows how to add models and wire
-typical circuits using the high‑level API.</p>
-<p>Key points:</p>
+c = Circuit(&quot;diode_demo&quot;)
+D1 = Diode(&quot;D1&quot;, model=&quot;DFAST&quot;)
+c.add(D1)
+c.add_directive(&quot;.model DFAST D(Is=1e-14 Rs=0.5 N=1.1)&quot;)
+</code></pre>
+<p>The directive is emitted above the rest of the netlist when you call
+<code>circuit.build_netlist()</code>.</p>
+<h2 id="including-external-libraries">Including external libraries</h2>
+<pre><code class="language-python">c.add_directive('.include &quot;./models/opamp.sub&quot;')
+</code></pre>
+<p>Use <code>.lib</code>, <code>.param</code>, <code>.func</code>, etc. as needed. Directives are preserved verbatim.</p>
+<h2 id="organising-models">Organising models</h2>
 <ul>
-<li>Use <code>Circuit.add_directive(line)</code> to append raw SPICE directives.</li>
-<li>Diodes must reference a named model (e.g. <code>D1</code> → <code>.model D1 D(...)</code>).</li>
-<li>Voltage/Current‑controlled switches (<code>VSwitch</code>, <code>ISwitch</code>) require a
-  <code>.model &lt;name&gt; SW(...)</code> with thresholds and on/off resistances.</li>
-<li>Controlled sources <code>F</code>/<code>H</code> use a named voltage source as current sensor
-  (no <code>.model</code>, but a topology note).</li>
+<li>Keep vendor libraries under <code>models/</code> in your project and reference them with
+  relative paths.</li>
+<li>Version-control the model source so Monte Carlo and regression tests remain deterministic.</li>
+<li>Pair directives with <code>netlist_hash</code> metadata when caching simulations – the hash
+  should incorporate the model text to avoid stale caches.</li>
 </ul>
-<h3 id="adding-a-diode-model">Adding a diode model</h3>
-<pre><code>from spicelab.core.circuit import Circuit
-from spicelab.core.components import Vdc, Resistor, Diode
-from spicelab.core.net import GND, Net
-from spicelab.analysis import OP
-
-c = Circuit(&quot;d_fwd&quot;)
-n1 = Net(&quot;n1&quot;)
-V = Vdc(&quot;1&quot;, 1.0)
-R = Resistor(&quot;1&quot;, 1000.0)
-D = Diode(&quot;1&quot;, &quot;D1&quot;)  # references model D1
-
-# Add a diode model (Shockley params shown as an example)
-c.add_directive(&quot;.model D1 D(Is=1e-14 N=1.9 Rs=5 Cjo=2p)&quot;)
-
-c.add(V, R, D)
-c.connect(V.ports[0], R.ports[0])
-c.connect(R.ports[1], n1)
-c.connect(D.ports[0], n1)  # anode
-c.connect(D.ports[1], GND)  # cathode
-c.connect(V.ports[1], GND)
-
-res = OP().run(c)
-print(&quot;V(n1)=&quot;, float(res.traces[&quot;v(n1)&quot;].values[-1]))
-</code></pre>
-<p>Typical parameters for the SPICE diode (<code>D</code>) model include <code>Is</code>, <code>N</code>, <code>Rs</code>,
-<code>Cjo</code>, <code>Bv</code>, etc. Choose values appropriate to your target device.</p>
-<h3 id="voltagecontrolled-switch-vswitch">Voltage‑controlled switch (<code>VSwitch</code>)</h3>
-<pre><code>from spicelab.core.circuit import Circuit
-from spicelab.core.components import Vdc, Vpulse, VSwitch, Resistor
-from spicelab.core.net import GND, Net
-from spicelab.analysis import TRAN
-
-c = Circuit(&quot;vswitch_demo&quot;)
-vin = Net(&quot;vin&quot;)
-vout = Net(&quot;vout&quot;)
-en = Net(&quot;en&quot;)
-
-# Control signal: 0→1 V pulse
-EN = Vpulse(&quot;en&quot;, 0.0, 1.0, 0.0, 1e-6, 1e-6, 1e-3, 2e-3)
-V1 = Vdc(&quot;1&quot;, 5.0)
-S1 = VSwitch(&quot;1&quot;, model=&quot;SW1&quot;)
-RL = Resistor(&quot;L&quot;, 1000.0)
-
-# Recommended switch model (tune as needed)
-c.add_directive(&quot;.model SW1 SW(RON=10 ROFF=1e9 Vt=0.5 VH=0.1)&quot;)
-
-c.add(EN, V1, S1, RL)
-
-# Source side
-c.connect(V1.ports[0], vin)
-c.connect(V1.ports[1], GND)
-
-# Switch: p→vin, n→vout, control cp→en, cn→GND (active high)
-c.connect(S1.ports[0], vin)   # p
-c.connect(S1.ports[1], vout)  # n
-c.connect(S1.ports[2], en)    # cp
-c.connect(S1.ports[3], GND)   # cn
-
-# Load
-c.connect(RL.ports[0], vout)
-c.connect(RL.ports[1], GND)
-
-# Control signal wiring
-c.connect(EN.ports[0], en)
-c.connect(EN.ports[1], GND)
-
-res = TRAN(&quot;0.1ms&quot;, &quot;5ms&quot;).run(c)
-print(&quot;final V(vout)=&quot;, float(res.traces[&quot;v(vout)&quot;].values[-1]))
-</code></pre>
-<p>Notes for switches:</p>
-<ul>
-<li>The switch turns on when <code>(V(cp) − V(cn)) &gt; Vt</code>. <code>VH</code> sets hysteresis.</li>
-<li>Choose <code>RON</code> and <code>ROFF</code> appropriate to your application.</li>
-<li>For current‑controlled switches (<code>ISwitch</code>), the control is the current
-  through a named voltage source <code>Vref</code> (current sensor) provided via the
-  <code>ctrl_vsrc</code> argument.</li>
-</ul>
-<h3 id="currentcontrolled-elements-fh-and-sensors">Current‑controlled elements (<code>F</code>/<code>H</code>) and sensors</h3>
-<p><code>CCCS</code> (<code>F</code>) and <code>CCVS</code> (<code>H</code>) measure the current through an existing voltage
-source. A common pattern is to insert a 0 V source as sensor:</p>
-<pre><code>from spicelab.core.components import Vdc, Resistor, CCCS
-
-# Sensor source at the node of interest
-VSENS = Vdc(&quot;S&quot;, 0.0)
-F1 = CCCS(&quot;1&quot;, ctrl_vsrc=&quot;S&quot;, gain=2.0)  # 2× current mirror
-
-# Wire VSENS in series with the branch you want to sense
-# Then connect F1.p/n to the output branch where mirrored current flows.
-</code></pre>
-<p>This pattern avoids modifying the DC operating point (0 V across the sensor)
-while providing a reference for <code>F</code>/<code>H</code> controlled elements.</p>
 
 
 

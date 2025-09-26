@@ -6,13 +6,13 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Circuit simulation helpers and analysis utilities">
+        <meta name="description" content="Unified Python orchestration for SPICE simulations">
       
       
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/reference/io/">
+        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/reference/io/">
       
       
         <link rel="prev" href="../core/">
@@ -26,7 +26,7 @@
     
     
       
-        <title>IO - PyCircuitKit</title>
+        <title>IO API - Circuit Toolkit</title>
       
     
     
@@ -98,10 +98,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="PyCircuitKit" class="md-header__button md-logo" aria-label="PyCircuitKit" data-md-component="logo">
+    <a href="../.." title="Circuit Toolkit" class="md-header__button md-logo" aria-label="Circuit Toolkit" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -112,13 +111,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            PyCircuitKit
+            Circuit Toolkit
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              IO
+              IO API
             
           </span>
         </div>
@@ -208,13 +207,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="PyCircuitKit" class="md-nav__button md-logo" aria-label="PyCircuitKit" data-md-component="logo">
+    <a href="../.." title="Circuit Toolkit" class="md-nav__button md-logo" aria-label="Circuit Toolkit" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../../assets/logo.svg" alt="logo">
 
     </a>
-    PyCircuitKit
+    Circuit Toolkit
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -225,13 +223,51 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Overview
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Home
+    Welcome
     
   </span>
   
@@ -240,9 +276,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -262,9 +299,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -275,7 +313,7 @@
   
   
   <span class="md-ellipsis">
-    Getting Started
+    Getting started
     
   </span>
   
@@ -284,9 +322,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -298,89 +337,6 @@
   
   <span class="md-ellipsis">
     Concepts
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    Examples
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Examples
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Overview
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../monte-carlo-example/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Monte Carlo example
     
   </span>
   
@@ -404,72 +360,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../examples-gallery/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Examples Gallery
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../components/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Components
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../components-quickstart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Components Quickstart
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
     
@@ -479,15 +369,15 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    Guides
+    User guide
     
   </span>
   
@@ -495,10 +385,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            Guides
+            User guide
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -509,12 +399,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../../preview/" class="md-nav__link">
+      <a href="../../engines/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Circuit Preview
+    Engines
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../unified-io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data I/O
     
   </span>
   
@@ -537,7 +450,7 @@
   
   
   <span class="md-ellipsis">
-    Sweeps and STEP
+    Sweeps & grids
     
   </span>
   
@@ -578,104 +491,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ac-stability/" class="md-nav__link">
+      <a href="../../reporting/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    AC Stability
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../opamp-stability/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Op-Amp Stability
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../device-models/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Device Models
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../ltspice-import/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    LTspice Integration
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../components-library/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Component Library
+    Reporting
     
   </span>
   
@@ -698,7 +519,122 @@
   
   
   <span class="md-ellipsis">
-    Plots
+    Plotting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Circuit preview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ltspice-import/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LTspice integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mux-enable-ports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Analog mux
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-ci/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI & CI automation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../doctor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Environment doctor
     
   </span>
   
@@ -745,18 +681,270 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Components
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Components
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../../api-reference/" class="md-nav__link">
+      <a href="../../components/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    API guidance
+    Overview
     
   </span>
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components-quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../device-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Device models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components-library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Library status (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running scripts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gallery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../monte-carlo-example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Monte Carlo assets
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -800,15 +988,15 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    API Reference
+    Reference
     
   </span>
   
@@ -816,12 +1004,35 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
-            API Reference
+            Reference
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API guidance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -835,7 +1046,7 @@
   
   
   <span class="md-ellipsis">
-    Core
+    Core API
     
   </span>
   
@@ -867,7 +1078,7 @@
   
   
   <span class="md-ellipsis">
-    IO
+    IO API
     
   </span>
   
@@ -880,7 +1091,7 @@
   
   
   <span class="md-ellipsis">
-    IO
+    IO API
     
   </span>
   
@@ -901,6 +1112,15 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#low-level-parsers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Low-level Parsers
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#spicelab.io.raw_reader" class="md-nav__link">
@@ -926,6 +1146,21 @@
       TraceSet
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="TraceSet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spicelab.io.raw_reader.TraceSet.from_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      from_dataset
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -956,6 +1191,156 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#unified-readers-facade" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unified Readers Facade
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.load_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      load_dataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.read_waveform" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_waveform
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.read_ngspice_raw" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_ngspice_raw
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.read_ngspice_raw_multi" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_ngspice_raw_multi
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.read_xyce_prn" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_xyce_prn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.read_ltspice_raw" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_ltspice_raw
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalization-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Normalization &amp; Helpers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.normalize_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      normalize_dataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.to_pandas" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_pandas
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.to_polars" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_polars
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.dataset_to_long_polars" class="md-nav__link">
+    <span class="md-ellipsis">
+      dataset_to_long_polars
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.save_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      save_dataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.load_saved_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      load_saved_dataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.list_signals" class="md-nav__link">
+    <span class="md-ellipsis">
+      list_signals
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="list_signals">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spicelab.io.readers.list_signals--example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -977,7 +1362,121 @@
   
   
   <span class="md-ellipsis">
-    Analysis
+    Analysis API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Legacy & roadmap
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Legacy & roadmap
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ac-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AC stability (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../opamp-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Op-amp stability (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../core-contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Old roadmap (M1/M2)
     
   </span>
   
@@ -1022,6 +1521,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#low-level-parsers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Low-level Parsers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#spicelab.io.raw_reader" class="md-nav__link">
     <span class="md-ellipsis">
       raw_reader
@@ -1045,6 +1553,21 @@
       TraceSet
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="TraceSet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spicelab.io.raw_reader.TraceSet.from_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      from_dataset
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1075,6 +1598,156 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#unified-readers-facade" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unified Readers Facade
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.load_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      load_dataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.read_waveform" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_waveform
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.read_ngspice_raw" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_ngspice_raw
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.read_ngspice_raw_multi" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_ngspice_raw_multi
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.read_xyce_prn" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_xyce_prn
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.read_ltspice_raw" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_ltspice_raw
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalization-helpers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Normalization &amp; Helpers
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.normalize_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      normalize_dataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.to_pandas" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_pandas
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.to_polars" class="md-nav__link">
+    <span class="md-ellipsis">
+      to_polars
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.dataset_to_long_polars" class="md-nav__link">
+    <span class="md-ellipsis">
+      dataset_to_long_polars
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.save_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      save_dataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.load_saved_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      load_saved_dataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#spicelab.io.readers.list_signals" class="md-nav__link">
+    <span class="md-ellipsis">
+      list_signals
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="list_signals">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#spicelab.io.readers.list_signals--example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1092,7 +1765,8 @@
 
 
 <h1 id="io-api">IO API</h1>
-<p>Placeholder for IO-related API docs.</p>
+<p>Unified I/O layer: parsing waveform outputs into <code>xarray.Dataset</code> objects.</p>
+<h2 id="low-level-parsers">Low-level Parsers</h2>
 
 
 <div class="doc doc-object doc-module">
@@ -1150,8 +1824,7 @@
 
               <details class="quote">
                 <summary>Source code in <code>spicelab/io/raw_reader.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
-<span class="normal">13</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">13</span>
 <span class="normal">14</span>
 <span class="normal">15</span>
 <span class="normal">16</span>
@@ -1177,7 +1850,8 @@
 <span class="normal">36</span>
 <span class="normal">37</span>
 <span class="normal">38</span>
-<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="normal">39</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Trace</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Um traço: nome, unidade (quando existir) e vetor de valores (np.ndarray).&quot;&quot;&quot;</span>
 
@@ -1262,51 +1936,114 @@ ts.to_dataframe() -&gt; pandas.DataFrame (se pandas instalado)</p>
 
               <details class="quote">
                 <summary>Source code in <code>spicelab/io/raw_reader.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TraceSet</span><span class="p">:</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TraceSet</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Conjunto de traços indexado por nome. O primeiro traço é o eixo X (time/freq).</span>
 
@@ -1317,11 +2054,17 @@ ts.to_dataframe() -&gt; pandas.DataFrame (se pandas instalado)</p>
 <span class="sd">        ts.to_dataframe() -&gt; pandas.DataFrame (se pandas instalado)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">traces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trace</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">traces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trace</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">traces</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;TraceSet requires at least one trace&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_traces</span> <span class="o">=</span> <span class="n">traces</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_by_name</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Trace</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">traces</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">meta</span> <span class="ow">or</span> <span class="p">{}</span>
 
         <span class="c1"># valida tamanhos</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
@@ -1351,6 +2094,63 @@ ts.to_dataframe() -&gt; pandas.DataFrame (se pandas instalado)</p>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;pandas is required for to_dataframe()&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traces</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dataset</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TraceSet</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a TraceSet from an xarray.Dataset-like object.&quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pragma: no cover - numpy optional</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;numpy is required to convert dataset into TraceSet&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;data_vars&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Expected an xarray.Dataset-like object with &#39;data_vars&#39;&quot;</span><span class="p">)</span>
+
+        <span class="n">coords</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;coords&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">coord_names</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="s2">&quot;frequency&quot;</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">)</span>
+        <span class="n">coord_obj</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">coord_key</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">coord_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">:</span>
+                <span class="n">coord_obj</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">coord_key</span> <span class="o">=</span> <span class="n">name</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">coord_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x_values</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">coord_obj</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">,</span> <span class="n">coord_obj</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">x_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">coord_obj</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">coord_key</span> <span class="ow">or</span> <span class="s2">&quot;index&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;data_vars&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data_vars</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dataset has no data variables to build TraceSet&quot;</span><span class="p">)</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">data_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">first</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span>
+            <span class="n">x_values</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">x_name</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span>
+
+        <span class="n">x_values</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">axis_len</span> <span class="o">=</span> <span class="n">x_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">traces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trace</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Trace</span><span class="p">(</span><span class="n">x_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">x_values</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;data_vars&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">axis_len</span><span class="p">,),</span> <span class="nb">float</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">axis_len</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">axis_len</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pragma: no cover - defensive reshape</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Unable to align data variable &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; with independent axis&quot;</span>
+                    <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">axis_len</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">real_if_close</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+            <span class="n">traces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Trace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="kc">None</span><span class="p">,</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arr</span><span class="p">)))</span>
+
+        <span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;attrs&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">traces</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -1366,6 +2166,143 @@ ts.to_dataframe() -&gt; pandas.DataFrame (se pandas instalado)</p>
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="spicelab.io.raw_reader.TraceSet.from_dataset" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">from_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build a TraceSet from an xarray.Dataset-like object.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/raw_reader.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_dataset</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TraceSet</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a TraceSet from an xarray.Dataset-like object.&quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pragma: no cover - numpy optional</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;numpy is required to convert dataset into TraceSet&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;data_vars&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Expected an xarray.Dataset-like object with &#39;data_vars&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">coords</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;coords&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">coord_names</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="s2">&quot;frequency&quot;</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">)</span>
+    <span class="n">coord_obj</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">coord_key</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">coord_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">:</span>
+            <span class="n">coord_obj</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">coord_key</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">coord_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">x_values</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">coord_obj</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">,</span> <span class="n">coord_obj</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">x_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">coord_obj</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">coord_key</span> <span class="ow">or</span> <span class="s2">&quot;index&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;data_vars&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data_vars</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dataset has no data variables to build TraceSet&quot;</span><span class="p">)</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">data_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">first</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="n">x_values</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">x_name</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span>
+
+    <span class="n">x_values</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x_values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">axis_len</span> <span class="o">=</span> <span class="n">x_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">traces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trace</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Trace</span><span class="p">(</span><span class="n">x_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">x_values</span><span class="p">)]</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;data_vars&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">axis_len</span><span class="p">,),</span> <span class="nb">float</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">axis_len</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">axis_len</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pragma: no cover - defensive reshape</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unable to align data variable &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; with independent axis&quot;</span>
+                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">axis_len</span><span class="p">)</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">real_if_close</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">traces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Trace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="kc">None</span><span class="p">,</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arr</span><span class="p">)))</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;attrs&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">traces</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 
@@ -1393,93 +2330,7 @@ ts.to_dataframe() -&gt; pandas.DataFrame (se pandas instalado)</p>
 
             <details class="quote">
               <summary>Source code in <code>spicelab/io/raw_reader.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">226</span>
-<span class="normal">227</span>
-<span class="normal">228</span>
-<span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span>
-<span class="normal">232</span>
-<span class="normal">233</span>
-<span class="normal">234</span>
-<span class="normal">235</span>
-<span class="normal">236</span>
-<span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span>
-<span class="normal">248</span>
-<span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_ngspice_ascii_raw</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TraceSet</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parser robusto para NGSpice ASCII RAW.</span>
-
-<span class="sd">    Retorna TraceSet onde a primeira coluna é o eixo X (tipicamente &#39;time&#39; ou &#39;frequency&#39;).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
-
-    <span class="n">meta</span><span class="p">,</span> <span class="n">i0</span> <span class="o">=</span> <span class="n">_parse_header</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
-    <span class="n">nvars</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;nvars&quot;</span><span class="p">])</span>
-    <span class="n">npoints</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;npoints&quot;</span><span class="p">])</span>
-    <span class="n">vars_meta</span><span class="p">,</span> <span class="n">i1</span> <span class="o">=</span> <span class="n">_parse_variables</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">nvars</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">,</span> <span class="n">complex_cols</span> <span class="o">=</span> <span class="n">_parse_values</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">nvars</span><span class="p">,</span> <span class="n">npoints</span><span class="p">)</span>
-
-    <span class="n">traces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trace</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vars_meta</span><span class="p">):</span>
-        <span class="n">traces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">Trace</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span>
-                <span class="n">values</span><span class="o">=</span><span class="n">data</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
-                <span class="n">_complex</span><span class="o">=</span><span class="n">complex_cols</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-    <span class="k">return</span> <span class="n">TraceSet</span><span class="p">(</span><span class="n">traces</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h2 id="spicelab.io.raw_reader.parse_ngspice_ascii_raw_multi" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">parse_ngspice_ascii_raw_multi</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
-
-</h2>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Lê um arquivo ASCII com múltiplos plots (p.ex. .step nativo) e retorna
-uma lista de TraceSet (um por bloco).</p>
-
-
-            <details class="quote">
-              <summary>Source code in <code>spicelab/io/raw_reader.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">278</span>
-<span class="normal">279</span>
-<span class="normal">280</span>
-<span class="normal">281</span>
-<span class="normal">282</span>
-<span class="normal">283</span>
-<span class="normal">284</span>
-<span class="normal">285</span>
-<span class="normal">286</span>
-<span class="normal">287</span>
-<span class="normal">288</span>
-<span class="normal">289</span>
-<span class="normal">290</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">290</span>
 <span class="normal">291</span>
 <span class="normal">292</span>
 <span class="normal">293</span>
@@ -1504,11 +2355,97 @@ uma lista de TraceSet (um por bloco).</p>
 <span class="normal">312</span>
 <span class="normal">313</span>
 <span class="normal">314</span>
-<span class="normal">315</span>
-<span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span>
-<span class="normal">319</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_ngspice_ascii_raw_multi</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">TraceSet</span><span class="p">]:</span>
+<span class="normal">315</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_ngspice_ascii_raw</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TraceSet</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parser robusto para NGSpice ASCII RAW.</span>
+
+<span class="sd">    Retorna TraceSet onde a primeira coluna é o eixo X (tipicamente &#39;time&#39; ou &#39;frequency&#39;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+
+    <span class="n">meta</span><span class="p">,</span> <span class="n">i0</span> <span class="o">=</span> <span class="n">_parse_header</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+    <span class="n">nvars</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;nvars&quot;</span><span class="p">])</span>
+    <span class="n">npoints</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s2">&quot;npoints&quot;</span><span class="p">])</span>
+    <span class="n">vars_meta</span><span class="p">,</span> <span class="n">i1</span> <span class="o">=</span> <span class="n">_parse_variables</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">nvars</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">complex_cols</span> <span class="o">=</span> <span class="n">_parse_values</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">nvars</span><span class="p">,</span> <span class="n">npoints</span><span class="p">)</span>
+
+    <span class="n">traces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Trace</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vars_meta</span><span class="p">):</span>
+        <span class="n">traces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">Trace</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span>
+                <span class="n">values</span><span class="o">=</span><span class="n">data</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                <span class="n">_complex</span><span class="o">=</span><span class="n">complex_cols</span><span class="p">[</span><span class="n">j</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">TraceSet</span><span class="p">(</span><span class="n">traces</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="spicelab.io.raw_reader.parse_ngspice_ascii_raw_multi" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">parse_ngspice_ascii_raw_multi</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Lê um arquivo ASCII com múltiplos plots (p.ex. .step nativo) e retorna
+uma lista de TraceSet (um por bloco).</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/raw_reader.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">542</span>
+<span class="normal">543</span>
+<span class="normal">544</span>
+<span class="normal">545</span>
+<span class="normal">546</span>
+<span class="normal">547</span>
+<span class="normal">548</span>
+<span class="normal">549</span>
+<span class="normal">550</span>
+<span class="normal">551</span>
+<span class="normal">552</span>
+<span class="normal">553</span>
+<span class="normal">554</span>
+<span class="normal">555</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span>
+<span class="normal">560</span>
+<span class="normal">561</span>
+<span class="normal">562</span>
+<span class="normal">563</span>
+<span class="normal">564</span>
+<span class="normal">565</span>
+<span class="normal">566</span>
+<span class="normal">567</span>
+<span class="normal">568</span>
+<span class="normal">569</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span>
+<span class="normal">582</span>
+<span class="normal">583</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_ngspice_ascii_raw_multi</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">TraceSet</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Lê um arquivo ASCII com múltiplos plots (p.ex. .step nativo) e retorna</span>
 <span class="sd">    uma lista de TraceSet (um por bloco).</span>
@@ -1543,7 +2480,7 @@ uma lista de TraceSet (um por bloco).</p>
             <span class="n">traces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">Trace</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">data</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">_complex</span><span class="o">=</span><span class="n">complex_cols</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
             <span class="p">)</span>
-        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TraceSet</span><span class="p">(</span><span class="n">traces</span><span class="p">))</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TraceSet</span><span class="p">(</span><span class="n">traces</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="n">meta</span><span class="p">))</span>
         <span class="c1"># avançar: i += i1 + npoints ... mas já usamos slices; então mova i para frente</span>
         <span class="c1"># tenta achar próximo &#39;Title:&#39; após o bloco atual</span>
         <span class="c1"># heurística simples: move i até encontrar próxima &#39;Title:&#39; ou EOF</span>
@@ -1567,43 +2504,80 @@ uma lista de TraceSet (um por bloco).</p>
 
     <div class="doc doc-contents ">
 
-        <p>Dispatcher: se for ASCII, usa parse_ngspice_ascii_raw; se for 'Binary', tenta
-fallback convertendo para ASCII não invasivo (a depender da geração do arquivo).
-Por ora, detecta 'Binary' e dispara erro com mensagem clara.</p>
+        <p>Dispatcher para RAW ASCII ou binário.</p>
+<p>Suporta formato binário de linha simples (LTspice/NGSpice) para casos reais e complexos.</p>
 
 
             <details class="quote">
               <summary>Source code in <code>spicelab/io/raw_reader.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">257</span>
-<span class="normal">258</span>
-<span class="normal">259</span>
-<span class="normal">260</span>
-<span class="normal">261</span>
-<span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
-<span class="normal">267</span>
-<span class="normal">268</span>
-<span class="normal">269</span>
-<span class="normal">270</span>
-<span class="normal">271</span>
-<span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_ngspice_raw</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TraceSet</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Dispatcher: se for ASCII, usa parse_ngspice_ascii_raw; se for &#39;Binary&#39;, tenta</span>
-<span class="sd">    fallback convertendo para ASCII não invasivo (a depender da geração do arquivo).</span>
-<span class="sd">    Por ora, detecta &#39;Binary&#39; e dispara erro com mensagem clara.</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span>
+<span class="normal">524</span>
+<span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_ngspice_raw</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TraceSet</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dispatcher para RAW ASCII ou binário.</span>
+
+<span class="sd">    Suporta formato binário de linha simples (LTspice/NGSpice) para casos reais e complexos.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">head</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
-    <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;Binary:&quot;</span> <span class="ow">in</span> <span class="n">head</span> <span class="ow">or</span> <span class="sa">b</span><span class="s2">&quot;binary&quot;</span> <span class="ow">in</span> <span class="n">head</span><span class="p">:</span>
-        <span class="c1"># Implementação binária completa é extensa; orientar uso de ASCII no runner.</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;Binary RAW not supported yet. Configure NGSpice to write ASCII RAW &quot;</span>
-            <span class="s2">&quot;(set filetype=ascii).&quot;</span>
-        <span class="p">)</span>
-    <span class="c1"># ASCII</span>
+        <span class="n">blob</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="c1"># Heurísticas:</span>
+    <span class="c1"># 1. ASCII header: contém &#39;Binary:&#39; sem null interleaving.</span>
+    <span class="c1"># 2. UTF-16 (wide) header: contém padrão intercalado</span>
+    <span class="c1">#    B\x00i\x00n\x00a... ou grande densidade de nulls.</span>
+    <span class="n">head_scan</span> <span class="o">=</span> <span class="n">blob</span><span class="p">[:</span><span class="mi">8192</span><span class="p">]</span>
+    <span class="n">wide_pattern</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;B</span><span class="se">\x00</span><span class="s2">i</span><span class="se">\x00</span><span class="s2">n</span><span class="se">\x00</span><span class="s2">a</span><span class="se">\x00</span><span class="s2">r</span><span class="se">\x00</span><span class="s2">y</span><span class="se">\x00</span><span class="s2">:</span><span class="se">\x00</span><span class="s2">&quot;</span>
+    <span class="n">is_ascii_binary</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;Binary:&quot;</span> <span class="ow">in</span> <span class="n">head_scan</span> <span class="ow">or</span> <span class="sa">b</span><span class="s2">&quot;binary&quot;</span> <span class="ow">in</span> <span class="n">head_scan</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">is_wide_binary</span> <span class="o">=</span> <span class="n">wide_pattern</span> <span class="ow">in</span> <span class="n">head_scan</span>
+
+    <span class="k">if</span> <span class="n">is_ascii_binary</span><span class="p">:</span>
+        <span class="n">meta</span><span class="p">,</span> <span class="n">data_bytes</span> <span class="o">=</span> <span class="n">_parse_binary_header_and_data</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_parse_binary_payload</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">data_bytes</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_wide_binary</span><span class="p">:</span>
+        <span class="c1"># Localizar fim da linha &#39;Binary:&#39; (padrão newline UTF-16 &#39;\n\x00&#39;)</span>
+        <span class="n">marker_pos</span> <span class="o">=</span> <span class="n">head_scan</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">wide_pattern</span><span class="p">)</span>
+        <span class="n">newline_pat</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\n\x00</span><span class="s2">&quot;</span>
+        <span class="n">nl_pos</span> <span class="o">=</span> <span class="n">head_scan</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">newline_pat</span><span class="p">,</span> <span class="n">marker_pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nl_pos</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;UTF-16 binary RAW: newline after Binary: not found&quot;</span><span class="p">)</span>
+        <span class="n">header_bytes</span> <span class="o">=</span> <span class="n">blob</span><span class="p">[:</span> <span class="n">nl_pos</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="c1"># Remover nulls para obter texto ascii simplificado</span>
+        <span class="n">ascii_header</span> <span class="o">=</span> <span class="n">header_bytes</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="c1"># Reaproveitar parser ascii-binary: reconstruir bytes artificiais com ascii header e newline</span>
+        <span class="n">rebuilt</span> <span class="o">=</span> <span class="n">ascii_header</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">blob</span><span class="p">[</span><span class="n">nl_pos</span> <span class="o">+</span> <span class="mi">2</span> <span class="p">:]</span>
+        <span class="n">meta</span><span class="p">,</span> <span class="n">data_bytes</span> <span class="o">=</span> <span class="n">_parse_binary_header_and_data</span><span class="p">(</span><span class="n">rebuilt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_parse_binary_payload</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">data_bytes</span><span class="p">)</span>
+    <span class="c1"># caso contrário tratar como ASCII</span>
     <span class="k">return</span> <span class="n">parse_ngspice_ascii_raw</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -1617,7 +2591,966 @@ Por ora, detecta 'Binary' e dispara erro com mensagem clara.</p>
 
     </div>
 
+</div><h2 id="unified-readers-facade">Unified Readers Facade</h2>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.load_dataset"></a>
+    <div class="doc doc-contents first">
+
+        <p>High-level façade returning an xarray.Dataset enriched with metadata.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>path</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | <span title="pathlib.Path">Path</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>waveform file (.raw/.prn/.csv)</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>engine</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>optional explicit engine name (ngspice|ltspice|xyce)</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>log</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | <span title="pathlib.Path">Path</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>optional ngspice log path to extract version/warnings/errors</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>netlist_hash</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>deterministic hash of circuit/netlist (for provenance)</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>analysis_args</code>
+            </td>
+            <td>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="object">object</span>] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>dict of analysis parameters used in run</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>allow_binary</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>if False and RAW detected as binary, raise with guidance</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>complex_components</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span> | <span title="tuple">tuple</span>[<span title="str">str</span>, ...] | <span title="list">list</span>[<span title="str">str</span>] | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>True or iterable specifying which complex parts to expand
+(e.g. True → ("real","imag"), or ("real","imag","phase"))</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span>
+<span class="normal">493</span>
+<span class="normal">494</span>
+<span class="normal">495</span>
+<span class="normal">496</span>
+<span class="normal">497</span>
+<span class="normal">498</span>
+<span class="normal">499</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span>
+<span class="normal">524</span>
+<span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_dataset</span><span class="p">(</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">log</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">netlist_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">analysis_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">allow_binary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">complex_components</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;High-level façade returning an xarray.Dataset enriched with metadata.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        path: waveform file (.raw/.prn/.csv)</span>
+<span class="sd">        engine: optional explicit engine name (ngspice|ltspice|xyce)</span>
+<span class="sd">        log: optional ngspice log path to extract version/warnings/errors</span>
+<span class="sd">        netlist_hash: deterministic hash of circuit/netlist (for provenance)</span>
+<span class="sd">        analysis_args: dict of analysis parameters used in run</span>
+<span class="sd">        allow_binary: if False and RAW detected as binary, raise with guidance</span>
+<span class="sd">        complex_components: True or iterable specifying which complex parts to expand</span>
+<span class="sd">            (e.g. True → (&quot;real&quot;,&quot;imag&quot;), or (&quot;real&quot;,&quot;imag&quot;,&quot;phase&quot;))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">include_complex</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">complex_components</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">complex_components</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">include_complex</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;real&quot;</span><span class="p">,</span> <span class="s2">&quot;imag&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">complex_components</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">include_complex</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">complex_components</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># unexpected truthy</span>
+            <span class="n">include_complex</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;real&quot;</span><span class="p">,</span> <span class="s2">&quot;imag&quot;</span><span class="p">)</span>
+
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">read_waveform</span><span class="p">(</span>
+        <span class="n">p</span><span class="p">,</span>
+        <span class="n">engine_hint</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span>
+        <span class="n">allow_binary</span><span class="o">=</span><span class="n">allow_binary</span><span class="p">,</span>
+        <span class="n">include_complex</span><span class="o">=</span><span class="n">include_complex</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">engine</span><span class="p">:</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;engine&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">engine</span>
+    <span class="c1"># Enrich with log summary if ngspice</span>
+    <span class="k">if</span> <span class="n">log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span>
+        <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;ngspice&quot;</span> <span class="ow">or</span> <span class="p">(</span><span class="n">engine</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;engine&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;ngspice&quot;</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="n">read_ngspice_log</span><span class="p">(</span><span class="n">log</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">summary</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;engine_version&quot;</span><span class="p">,</span> <span class="n">summary</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">summary</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;log_warnings&quot;</span><span class="p">,</span> <span class="n">summary</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">summary</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;log_errors&quot;</span><span class="p">,</span> <span class="n">summary</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">netlist_hash</span><span class="p">:</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;netlist_hash&quot;</span><span class="p">,</span> <span class="n">netlist_hash</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">analysis_args</span><span class="p">:</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;analysis_args&quot;</span><span class="p">,</span> <span class="n">analysis_args</span><span class="p">)</span>
+    <span class="c1"># Infer version for other engines if not set</span>
+    <span class="n">eng</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;engine&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">eng</span> <span class="ow">and</span> <span class="s2">&quot;engine_version&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
+        <span class="n">ver</span> <span class="o">=</span> <span class="n">_infer_engine_version</span><span class="p">(</span><span class="n">eng</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ver</span><span class="p">:</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;engine_version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ver</span>
+    <span class="c1"># Additional derived metadata</span>
+    <span class="k">if</span> <span class="s2">&quot;engine&quot;</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span> <span class="ow">and</span> <span class="s2">&quot;analysis&quot;</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;provenance&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s2">&quot;loaded_at&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()}))</span>
+    <span class="c1"># Count points</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;n_points&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">normalize_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ds</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
 </div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.read_waveform"></a>
+    <div class="doc doc-contents first">
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_waveform</span><span class="p">(</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">engine_hint</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">allow_binary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">include_complex</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>  <span class="c1"># alias</span>
+    <span class="k">return</span> <span class="n">read</span><span class="p">(</span>
+        <span class="n">path</span><span class="p">,</span> <span class="n">engine_hint</span><span class="o">=</span><span class="n">engine_hint</span><span class="p">,</span> <span class="n">allow_binary</span><span class="o">=</span><span class="n">allow_binary</span><span class="p">,</span> <span class="n">include_complex</span><span class="o">=</span><span class="n">include_complex</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.read_ngspice_raw"></a>
+    <div class="doc doc-contents first">
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_ngspice_raw</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include_complex</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">ts</span> <span class="o">=</span> <span class="n">parse_ngspice_raw</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="c1"># parse single plot only; multi handled by read_ngspice_raw_multi</span>
+    <span class="c1"># meta inference only available on ascii for now</span>
+    <span class="n">analysis</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># parse header manually for plotname</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ln</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ln</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;plotname:&quot;</span><span class="p">):</span>
+                    <span class="n">analysis</span> <span class="o">=</span> <span class="n">_infer_analysis_from_plot</span><span class="p">(</span><span class="n">ln</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                    <span class="k">break</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="c1"># Fallback: if still unknown, attempt to use TraceSet meta (works for binary path)</span>
+    <span class="k">if</span> <span class="n">analysis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="s2">&quot;meta&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># defensive</span>
+            <span class="n">analysis</span> <span class="o">=</span> <span class="n">_infer_analysis_from_plot</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;plotname&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_to_xarray_from_traceset</span><span class="p">(</span>
+        <span class="n">ts</span><span class="p">,</span>
+        <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;ngspice&quot;</span><span class="p">,</span>
+        <span class="n">analysis</span><span class="o">=</span><span class="n">analysis</span><span class="p">,</span>
+        <span class="n">raw_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">),</span>
+        <span class="n">meta</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="s2">&quot;meta&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">include_complex</span><span class="o">=</span><span class="n">include_complex</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.read_ngspice_raw_multi"></a>
+    <div class="doc doc-contents first">
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_ngspice_raw_multi</span><span class="p">(</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include_complex</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">tsets</span> <span class="o">=</span> <span class="n">parse_ngspice_ascii_raw_multi</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tsets</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No plots found in RAW file&quot;</span><span class="p">)</span>
+    <span class="n">datasets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ts</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tsets</span><span class="p">):</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">_to_xarray_from_traceset</span><span class="p">(</span>
+            <span class="n">ts</span><span class="p">,</span>
+            <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;ngspice&quot;</span><span class="p">,</span>
+            <span class="n">analysis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">raw_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">),</span>
+            <span class="n">stepped</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">step_index</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+            <span class="n">total_steps</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">tsets</span><span class="p">),</span>
+            <span class="n">meta</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="s2">&quot;meta&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">include_complex</span><span class="o">=</span><span class="n">include_complex</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="n">_merge_steps</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="n">coord_name</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">)</span>
+    <span class="n">merged</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">merged</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.read_xyce_prn"></a>
+    <div class="doc doc-contents first">
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">388</span>
+<span class="normal">389</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_xyce_prn</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">read_xyce_table</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.read_ltspice_raw"></a>
+    <div class="doc doc-contents first">
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_ltspice_raw</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">include_complex</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="c1"># Reuse ngspice RAW parser (ASCII ou binário compatível simples)</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">read_ngspice_raw</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">include_complex</span><span class="o">=</span><span class="n">include_complex</span><span class="p">)</span>
+    <span class="c1"># Adjust engine attr if heuristic suggests LTspice (presence of &#39;ltspice&#39; in meta title)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;plot_title&quot;</span><span class="p">)</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;command&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">title</span> <span class="ow">and</span> <span class="s2">&quot;ltspice&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">title</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">command</span> <span class="ow">and</span> <span class="s2">&quot;ltspice&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">command</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;engine&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ltspice&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">ds</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div><h2 id="normalization-helpers">Normalization &amp; Helpers</h2>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.normalize_dataset"></a>
+    <div class="doc doc-contents first">
+
+        <p>Apply post-load normalization (idempotent).</p>
+<ul>
+<li>Ensures signal names are canonical V(...)/I(...)</li>
+<li>Re-derives time/freq coordinate if missing and an alias column exists</li>
+</ul>
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">722</span>
+<span class="normal">723</span>
+<span class="normal">724</span>
+<span class="normal">725</span>
+<span class="normal">726</span>
+<span class="normal">727</span>
+<span class="normal">728</span>
+<span class="normal">729</span>
+<span class="normal">730</span>
+<span class="normal">731</span>
+<span class="normal">732</span>
+<span class="normal">733</span>
+<span class="normal">734</span>
+<span class="normal">735</span>
+<span class="normal">736</span>
+<span class="normal">737</span>
+<span class="normal">738</span>
+<span class="normal">739</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">normalize_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply post-load normalization (idempotent).</span>
+
+<span class="sd">    - Ensures signal names are canonical V(...)/I(...)</span>
+<span class="sd">    - Re-derives time/freq coordinate if missing and an alias column exists</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If time coord absent, search for possible alias in data_vars</span>
+    <span class="k">if</span> <span class="s2">&quot;time&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">coords</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">_TIME_ALIASES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+                <span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="n">ds</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)})</span>
+                <span class="k">break</span>
+    <span class="k">if</span> <span class="s2">&quot;freq&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">coords</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">_FREQ_ALIASES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+                <span class="n">ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">({</span><span class="s2">&quot;freq&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="n">ds</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)})</span>
+                <span class="k">break</span>
+    <span class="k">return</span> <span class="n">ds</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.to_pandas"></a>
+    <div class="doc doc-contents first">
+
+        <p>Return a <code>pandas.DataFrame</code> with coords as columns (time/freq/step first).</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span>
+<span class="normal">582</span>
+<span class="normal">583</span>
+<span class="normal">584</span>
+<span class="normal">585</span>
+<span class="normal">586</span>
+<span class="normal">587</span>
+<span class="normal">588</span>
+<span class="normal">589</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_pandas</span><span class="p">(</span><span class="n">ds</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a `pandas.DataFrame` with coords as columns (time/freq/step first).&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pd</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;pandas is required for to_pandas(); pip install pandas&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+    <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">special</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">special</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">coords</span><span class="p">:</span>
+            <span class="n">order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">special</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">coords</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">order</span> <span class="ow">and</span> <span class="n">c</span> <span class="o">!=</span> <span class="s2">&quot;index&quot;</span><span class="p">:</span>
+            <span class="n">order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">order</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">):</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.to_polars"></a>
+    <div class="doc doc-contents first">
+
+        <p>Return a <code>polars.DataFrame</code> with coordinates lifted to columns.</p>
+
+
+<details class="columns-order-heuristic" open>
+  <summary>Columns order heuristic</summary>
+  <ol>
+<li>time or freq if present</li>
+<li>step (if present)</li>
+<li>remaining coords</li>
+<li>data variables (sorted)</li>
+</ol>
+</details>
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">539</span>
+<span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span>
+<span class="normal">543</span>
+<span class="normal">544</span>
+<span class="normal">545</span>
+<span class="normal">546</span>
+<span class="normal">547</span>
+<span class="normal">548</span>
+<span class="normal">549</span>
+<span class="normal">550</span>
+<span class="normal">551</span>
+<span class="normal">552</span>
+<span class="normal">553</span>
+<span class="normal">554</span>
+<span class="normal">555</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span>
+<span class="normal">560</span>
+<span class="normal">561</span>
+<span class="normal">562</span>
+<span class="normal">563</span>
+<span class="normal">564</span>
+<span class="normal">565</span>
+<span class="normal">566</span>
+<span class="normal">567</span>
+<span class="normal">568</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_polars</span><span class="p">(</span><span class="n">ds</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a `polars.DataFrame` with coordinates lifted to columns.</span>
+
+<span class="sd">    Columns order heuristic:</span>
+<span class="sd">      1. time or freq if present</span>
+<span class="sd">      2. step (if present)</span>
+<span class="sd">      3. remaining coords</span>
+<span class="sd">      4. data variables (sorted)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pl</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;polars&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;polars is required for to_polars(); pip install polars&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+    <span class="n">cols</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># Collect coordinate-like columns</span>
+    <span class="n">coord_order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">special</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">special</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">coords</span><span class="p">:</span>
+            <span class="n">coord_order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">special</span><span class="p">)</span>
+    <span class="c1"># Include other 1D coords (excluding index)</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">coords</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">coord_order</span> <span class="ow">and</span> <span class="n">c</span> <span class="o">!=</span> <span class="s2">&quot;index&quot;</span><span class="p">:</span>
+            <span class="n">coord_order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="c1"># Add coordinate values</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">coord_order</span><span class="p">:</span>
+        <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="c1"># Data variables</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">):</span>
+        <span class="n">cols</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.dataset_to_long_polars"></a>
+    <div class="doc doc-contents first">
+
+        <p>Return a melted (long form) polars DataFrame: coord columns + name/value.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">592</span>
+<span class="normal">593</span>
+<span class="normal">594</span>
+<span class="normal">595</span>
+<span class="normal">596</span>
+<span class="normal">597</span>
+<span class="normal">598</span>
+<span class="normal">599</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dataset_to_long_polars</span><span class="p">(</span><span class="n">ds</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a melted (long form) polars DataFrame: coord columns + name/value.&quot;&quot;&quot;</span>
+    <span class="n">wide</span> <span class="o">=</span> <span class="n">to_polars</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+    <span class="n">coord_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">wide</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+    <span class="n">id_vars</span> <span class="o">=</span> <span class="n">coord_cols</span>
+    <span class="n">value_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">wide</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">id_vars</span><span class="p">]</span>
+    <span class="n">long</span> <span class="o">=</span> <span class="n">wide</span><span class="o">.</span><span class="n">unpivot</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="n">value_vars</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">id_vars</span><span class="p">,</span> <span class="n">variable_name</span><span class="o">=</span><span class="s2">&quot;signal&quot;</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">long</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.save_dataset"></a>
+    <div class="doc doc-contents first">
+
+        <p>Persist dataset to disk in selected format (netcdf|zarr|parquet).</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">602</span>
+<span class="normal">603</span>
+<span class="normal">604</span>
+<span class="normal">605</span>
+<span class="normal">606</span>
+<span class="normal">607</span>
+<span class="normal">608</span>
+<span class="normal">609</span>
+<span class="normal">610</span>
+<span class="normal">611</span>
+<span class="normal">612</span>
+<span class="normal">613</span>
+<span class="normal">614</span>
+<span class="normal">615</span>
+<span class="normal">616</span>
+<span class="normal">617</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">save_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;netcdf&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Persist dataset to disk in selected format (netcdf|zarr|parquet).&quot;&quot;&quot;</span>
+    <span class="n">xr</span> <span class="o">=</span> <span class="n">_require_xarray</span><span class="p">()</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">fmt</span> <span class="o">=</span> <span class="nb">format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;netcdf&quot;</span><span class="p">:</span>
+        <span class="n">xr</span><span class="o">.</span><span class="n">decode_cf</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;zarr&quot;</span><span class="p">:</span>  <span class="c1"># pragma: no cover - optional</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">to_zarr</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;parquet&quot;</span><span class="p">:</span>
+        <span class="c1"># Use long-form for parquet friendliness</span>
+        <span class="n">long_df</span> <span class="o">=</span> <span class="n">dataset_to_long_polars</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+        <span class="n">long_df</span><span class="o">.</span><span class="n">write_parquet</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported format; choose netcdf|zarr|parquet&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.load_saved_dataset"></a>
+    <div class="doc doc-contents first">
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">620</span>
+<span class="normal">621</span>
+<span class="normal">622</span>
+<span class="normal">623</span>
+<span class="normal">624</span>
+<span class="normal">625</span>
+<span class="normal">626</span>
+<span class="normal">627</span>
+<span class="normal">628</span>
+<span class="normal">629</span>
+<span class="normal">630</span>
+<span class="normal">631</span>
+<span class="normal">632</span>
+<span class="normal">633</span>
+<span class="normal">634</span>
+<span class="normal">635</span>
+<span class="normal">636</span>
+<span class="normal">637</span>
+<span class="normal">638</span>
+<span class="normal">639</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_saved_dataset</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">xr</span> <span class="o">=</span> <span class="n">_require_xarray</span><span class="p">()</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.nc&quot;</span><span class="p">,</span> <span class="s2">&quot;.netcdf&quot;</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.zarr&quot;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;.parquet&quot;</span><span class="p">:</span>
+        <span class="n">pl</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;polars&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="c1"># reconstruct minimal dataset (wide pivot)</span>
+        <span class="k">if</span> <span class="p">{</span><span class="s2">&quot;signal&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
+            <span class="c1"># pivot back</span>
+            <span class="n">coord_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+            <span class="n">wide</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;signal&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">coord_cols</span><span class="p">)</span>
+            <span class="n">ds</span> <span class="o">=</span> <span class="n">_require_xarray</span><span class="p">()</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">wide</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">ds</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parquet file missing required columns &#39;signal&#39; and &#39;value&#39;&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported file extension for load_saved_dataset&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="spicelab.io.readers.list_signals"></a>
+    <div class="doc doc-contents first">
+
+        <p>Return a classification of signals in an xarray Dataset.</p>
+
+
+<details class="categories" open>
+  <summary>Categories</summary>
+  <ul>
+<li>voltage: names starting with 'V('</li>
+<li>current: names starting with 'I(' (including device/subckt currents)</li>
+<li>other: remaining data variables</li>
+</ul>
+</details>        <p>The returned dict maps category -&gt; sorted list of variable names.</p>
+<h3 id="spicelab.io.readers.list_signals--example">Example</h3>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>from spicelab.io import load_dataset, list_signals  # doctest: +SKIP
+ds = load_dataset("example.raw", allow_binary=True)  # doctest: +SKIP
+list_signals(ds)  # doctest: +SKIP
+{'voltage': ['V(out)'], 'current': ['I(R1)'], 'other': []}</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+
+            <details class="quote">
+              <summary>Source code in <code>spicelab/io/readers.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">663</span>
+<span class="normal">664</span>
+<span class="normal">665</span>
+<span class="normal">666</span>
+<span class="normal">667</span>
+<span class="normal">668</span>
+<span class="normal">669</span>
+<span class="normal">670</span>
+<span class="normal">671</span>
+<span class="normal">672</span>
+<span class="normal">673</span>
+<span class="normal">674</span>
+<span class="normal">675</span>
+<span class="normal">676</span>
+<span class="normal">677</span>
+<span class="normal">678</span>
+<span class="normal">679</span>
+<span class="normal">680</span>
+<span class="normal">681</span>
+<span class="normal">682</span>
+<span class="normal">683</span>
+<span class="normal">684</span>
+<span class="normal">685</span>
+<span class="normal">686</span>
+<span class="normal">687</span>
+<span class="normal">688</span>
+<span class="normal">689</span>
+<span class="normal">690</span>
+<span class="normal">691</span>
+<span class="normal">692</span>
+<span class="normal">693</span>
+<span class="normal">694</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_signals</span><span class="p">(</span><span class="n">ds</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a classification of signals in an xarray Dataset.</span>
+
+<span class="sd">    Categories:</span>
+<span class="sd">      - voltage: names starting with &#39;V(&#39;</span>
+<span class="sd">      - current: names starting with &#39;I(&#39; (including device/subckt currents)</span>
+<span class="sd">      - other: remaining data variables</span>
+
+<span class="sd">    The returned dict maps category -&gt; sorted list of variable names.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; from spicelab.io import load_dataset, list_signals  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; ds = load_dataset(&quot;example.raw&quot;, allow_binary=True)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; list_signals(ds)  # doctest: +SKIP</span>
+<span class="sd">    {&#39;voltage&#39;: [&#39;V(out)&#39;], &#39;current&#39;: [&#39;I(R1)&#39;], &#39;other&#39;: []}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">volt</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">curr</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">other</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ds</span><span class="o">.</span><span class="n">data_vars</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;V(&quot;</span><span class="p">):</span>
+            <span class="n">volt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;I(&quot;</span><span class="p">):</span>
+            <span class="n">curr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;voltage&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">volt</span><span class="p">),</span>
+        <span class="s2">&quot;current&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">curr</span><span class="p">),</span>
+        <span class="s2">&quot;other&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">other</span><span class="p">),</span>
+    <span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div><hr />
+<p>Binary RAW parsing, UTF‑16 header detection, complex AC component expansion (<code>complex_components</code>), device current normalization extensions (@R1[i] -&gt; I(R1), @M1[id] -&gt; Id(M1)), classification helpers &amp; persistence utilities are integrated; upcoming work will focus on refined engine version heuristics, noise/distortion ingestion, and coordinate indexing improvements.</p>
 
 
 

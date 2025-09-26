@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/opamp-stability/">
+        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/unified-io/">
       
       
-        <link rel="prev" href="../ac-stability/">
+        <link rel="prev" href="../engines/">
       
       
-        <link rel="next" href="../core-contracts/">
+        <link rel="next" href="../sweeps-step/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Op-amp stability (refresh soon) - Circuit Toolkit</title>
+        <title>Data I/O - Circuit Toolkit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#op-amp-stability-placeholder" class="md-skip">
+        <a href="#unified-io" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Op-amp stability (refresh soon)
+              Data I/O
             
           </span>
         </div>
@@ -358,18 +358,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -385,7 +387,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             User guide
@@ -419,10 +421,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../unified-io/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Data I/O
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -433,6 +457,191 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#goals" class="md-nav__link">
+    <span class="md-ellipsis">
+      Goals
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Public API
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Public API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#load_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      load_dataset(...)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complex-ac-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complex AC Components
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#device-current-normalization-extensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Device Current Normalization Extensions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read_waveformpath" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_waveform(path)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-step-step-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-step (.step) Handling
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalization-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Normalization Rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provenance-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provenance Metadata
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#helpers-conversions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Helpers &amp; Conversions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Helpers &amp; Conversions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metadata-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata Attributes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-end-to-end-doctest-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example End-to-End (doctest style)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#binary-raw-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Binary RAW Support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parity-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parity Tests
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#roadmap-next-enhancements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Roadmap (Next Enhancements)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      API Reference
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1112,20 +1321,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
@@ -1141,7 +1348,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Legacy & roadmap
@@ -1175,19 +1382,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../opamp-stability/" class="md-nav__link">
         
   
   
@@ -1198,7 +1396,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1254,6 +1451,179 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#goals" class="md-nav__link">
+    <span class="md-ellipsis">
+      Goals
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Public API
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Public API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#load_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      load_dataset(...)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complex-ac-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complex AC Components
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#device-current-normalization-extensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Device Current Normalization Extensions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read_waveformpath" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_waveform(path)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-step-step-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-step (.step) Handling
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalization-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Normalization Rules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provenance-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Provenance Metadata
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#helpers-conversions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Helpers &amp; Conversions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Helpers &amp; Conversions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metadata-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata Attributes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-end-to-end-doctest-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example End-to-End (doctest style)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#binary-raw-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Binary RAW Support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parity-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parity Tests
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#roadmap-next-enhancements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Roadmap (Next Enhancements)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      API Reference
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1268,11 +1638,311 @@
 
 
 
-<h1 id="op-amp-stability-placeholder">Op-amp stability (placeholder)</h1>
-<p>A refreshed stability guide will arrive together with the measurement helper
-examples. For now, combine the measurement specs from the
-<a href="../cookbook/">Cookbook</a> with AC sweeps produced by <code>run_simulation</code> to compute
-phase/gain margins.</p>
+<h1 id="unified-io">Unified I/O</h1>
+<p>Circuit Toolkit provides unified readers that normalise waveform outputs from
+<strong>NGSpice</strong>, <strong>LTspice</strong>, and <strong>Xyce</strong> into a single <code>xarray.Dataset</code> structure with
+consistent coordinates, canonical signal names, and provenance metadata.</p>
+<h2 id="goals">Goals</h2>
+<ul>
+<li>Single entrypoint to parse RAW / PRN / CSV waveforms.</li>
+<li>Canonical coordinates: <code>time</code> or <code>freq</code>, plus optional <code>step</code> dimension for multi-plot (.step) outputs.</li>
+<li>Canonical signal naming: <code>V(node)</code>, <code>I(element)</code>.</li>
+<li>Metadata for reproducibility: engine, engine_version (when available), netlist hash, analysis arguments, log warnings/errors.</li>
+</ul>
+<h2 id="public-api">Public API</h2>
+<pre><code class="language-python">from spicelab.io import load_dataset, read_waveform
+
+# High-level (recommended) with enrichment &amp; normalization
+ds = load_dataset(
+    &quot;run.raw&quot;,
+    engine=&quot;ngspice&quot;,
+    log=&quot;run.log&quot;,
+    netlist_hash=&quot;abc123&quot;,
+    analysis_args={&quot;tstop&quot;: 1e-3},
+    allow_binary=True,  # binary RAW now supported
+)
+
+# Lower-level dispatch (auto by extension, minimal enrichment)
+ds2 = read_waveform(&quot;run.prn&quot;)
+</code></pre>
+<h3 id="load_dataset"><code>load_dataset(...)</code></h3>
+<p>Parameters:
+- <code>path</code>: waveform file (.raw / .prn / .csv)
+- <code>engine</code>: optional explicit engine name (<code>ngspice|ltspice|xyce</code>)
+- <code>log</code>: ngspice log file to harvest version, warnings, errors
+- <code>netlist_hash</code>: stable hash of the netlist/circuit (see core hashing API)
+- <code>analysis_args</code>: dict of parameters (e.g. tstep, tstop, npoints)
+- <code>allow_binary</code>: if False and RAW detected as binary, raises (set True to parse)</p>
+<p>Returns: <code>xarray.Dataset</code> with:
+- Coordinates: <code>time</code> or <code>freq</code>, <code>step</code> (if multi-plot/.step)
+- Data variables: signal traces (float arrays; AC magnitude by default, optional real/imag/phase expansion)
+- Rich <code>attrs</code> metadata (see table below)</p>
+<h3 id="complex-ac-components">Complex AC Components</h3>
+<p>By default AC analyses provide magnitude-only traces (original RAW magnitude). Pass <code>complex_components</code> to expand complex parts into additional variables:</p>
+<pre><code class="language-python"># All three canonical components
+ds = load_dataset(&quot;ac_run.raw&quot;, engine=&quot;ngspice&quot;, complex_components=True, allow_binary=True)
+list(ds.data_vars)
+# ['V(out)', 'V(out)_real', 'V(out)_imag', 'V(out)_phase_deg', ...]
+
+# Only real + imag (omit phase)
+ds = load_dataset(&quot;ac_run.raw&quot;, complex_components=(&quot;real&quot;, &quot;imag&quot;))
+
+# Any subset (case-insensitive): {'real','imag','phase'}
+</code></pre>
+<p>Rules:
+- Magnitude (original value) is always preserved under the base signal name.
+- Expanded channels are suffixed with <code>_real</code>, <code>_imag</code>, <code>_phase_deg</code>.
+- Phase is in degrees; convert to radians as needed: <code>np.deg2rad(ds['V(out)_phase_deg'])</code>.
+- Applied components recorded in <code>ds.attrs['complex_components']</code>.</p>
+<h3 id="device-current-normalization-extensions">Device Current Normalization Extensions</h3>
+<p>Additional raw device quantity patterns are canonicalized:</p>
+<table>
+<thead>
+<tr>
+<th>Raw Pattern</th>
+<th>Canonical Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@R1[i]</code></td>
+<td><code>I(R1)</code></td>
+</tr>
+<tr>
+<td><code>@M1[id]</code> (drain current)</td>
+<td><code>Id(M1)</code></td>
+</tr>
+<tr>
+<td><code>Ix(U1:...)</code></td>
+<td><code>I(U1:...)</code> (existing)</td>
+</tr>
+</tbody>
+</table>
+<p>This complements existing voltage/current normalization (<code>V(node)</code>, <code>I(element)</code>). Drain currents keep the <code>Id(...)</code> form to distinguish from total element current when relevant.</p>
+<h3 id="read_waveformpath"><code>read_waveform(path)</code></h3>
+<p>Thin dispatch by extension, no metadata enrichment (use when you only need quick parsing).</p>
+<h2 id="multi-step-step-handling">Multi-step (.step) Handling</h2>
+<p>ASCII RAW files with multiple plot blocks are merged along a <code>step</code> dimension:</p>
+<pre><code class="language-python">multi = load_dataset(&quot;sweep.raw&quot;, engine=&quot;ngspice&quot;)
+assert &quot;step&quot; in multi.dims
+</code></pre>
+<p>Each original plot contributes one slice along <code>step</code>; the independent variable (<code>time</code> / <code>freq</code>) is shared.</p>
+<h2 id="normalization-rules">Normalization Rules</h2>
+<table>
+<thead>
+<tr>
+<th>Input Pattern</th>
+<th>Canonical</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>v(out)</code>, <code>V(out)</code></td>
+<td><code>V(out)</code></td>
+</tr>
+<tr>
+<td><code>i(R1)</code>, <code>I(R1)</code></td>
+<td><code>I(R1)</code></td>
+</tr>
+<tr>
+<td><code>time</code>, <code>t</code>, <code>tempo</code></td>
+<td>coord <code>time</code></td>
+</tr>
+<tr>
+<td><code>freq</code>, <code>f</code>, <code>frequency</code></td>
+<td>coord <code>freq</code></td>
+</tr>
+</tbody>
+</table>
+<p>If a coordinate alias appears only as a data variable it is lifted into a coordinate.</p>
+<h2 id="provenance-metadata">Provenance Metadata</h2>
+<p>Attach run context so artifacts are reproducible:</p>
+<pre><code class="language-python">net_hash = &quot;abc123ef45&quot;  # produced by circuit_hash(circuit)
+tran = load_dataset(&quot;rc_tran.raw&quot;, engine=&quot;ngspice&quot;, netlist_hash=net_hash, analysis_args={&quot;tstop&quot;: 2e-3})
+print(tran.attrs[&quot;netlist_hash&quot;], tran.attrs[&quot;analysis_args&quot;])  # =&gt; abc123ef45 {&quot;tstop&quot;: 0.002}
+</code></pre>
+<h2 id="helpers-conversions">Helpers &amp; Conversions</h2>
+<p>Waveforms can be converted, serialized and introspected via helper functions:</p>
+<pre><code class="language-python">from spicelab.io import (
+    to_polars, to_pandas, dataset_to_long_polars,
+    save_dataset, load_saved_dataset, list_signals
+)
+
+pl_df = to_polars(ds)                  # Wide form (one column per signal)
+pd_df = to_pandas(ds)                  # Pandas wide form
+long_df = dataset_to_long_polars(ds)   # Melted: coord columns + (signal,value)
+
+save_dataset(ds, &quot;waveform.nc&quot;)        # NetCDF
+save_dataset(ds, &quot;waveform.parquet&quot;, format=&quot;parquet&quot;)
+reloaded = load_saved_dataset(&quot;waveform.nc&quot;)
+
+sig_classes = list_signals(ds)
+print(sig_classes[&quot;voltage&quot;], sig_classes[&quot;current&quot;])  # classification
+</code></pre>
+<h3 id="metadata-attributes">Metadata Attributes</h3>
+<p>The loader enriches datasets with provenance &amp; structural metadata when available:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>engine</code></td>
+<td>Detected or provided engine (<code>ngspice</code>, <code>ltspice</code>, <code>xyce</code>)</td>
+</tr>
+<tr>
+<td><code>engine_version</code></td>
+<td>Heuristic or log-derived version string</td>
+</tr>
+<tr>
+<td><code>analysis</code></td>
+<td>Raw analysis name (e.g. <code>tran</code>, <code>ac</code>) inferred from plot header</td>
+</tr>
+<tr>
+<td><code>analysis_kind</code></td>
+<td>Canonical analysis alias (mirrors <code>analysis</code> today)</td>
+</tr>
+<tr>
+<td><code>raw_path</code></td>
+<td>Source path of waveform file</td>
+</tr>
+<tr>
+<td><code>stepped</code></td>
+<td>Boolean: multi-plot (.step) merged dataset</td>
+</tr>
+<tr>
+<td><code>steps</code></td>
+<td>Total number of steps (if stepped)</td>
+</tr>
+<tr>
+<td><code>step_index</code></td>
+<td>Index of this slice inside a multi-step set (per-plot before merge)</td>
+</tr>
+<tr>
+<td><code>netlist_hash</code></td>
+<td>Stable circuit/netlist hash provided by caller</td>
+</tr>
+<tr>
+<td><code>analysis_args</code></td>
+<td>Dict of simulation parameters (user supplied)</td>
+</tr>
+<tr>
+<td><code>log_warnings</code> / <code>log_errors</code></td>
+<td>Parsed ngspice log diagnostics</td>
+</tr>
+<tr>
+<td><code>provenance</code></td>
+<td>JSON blob with load timestamp (and future lineage)</td>
+</tr>
+<tr>
+<td><code>n_points</code></td>
+<td>Number of sample points in primary dimension</td>
+</tr>
+<tr>
+<td><code>current_signals</code></td>
+<td>List of canonical current signal names (<code>I(...)</code>)</td>
+</tr>
+<tr>
+<td><code>subckt_currents</code></td>
+<td>Subcircuit current subset (normalized <code>Ix(...) -&gt; I(...)</code>)</td>
+</tr>
+<tr>
+<td><code>time_offset</code></td>
+<td>Offset extracted from LTspice binary header (if present)</td>
+</tr>
+<tr>
+<td><code>command</code></td>
+<td>LTspice original run command (binary RAW header)</td>
+</tr>
+<tr>
+<td><code>backannotation</code></td>
+<td>Backannotation info from LTspice header (if present)</td>
+</tr>
+<tr>
+<td><code>title</code> / <code>plot_title</code></td>
+<td>Original plot title text (when provided)</td>
+</tr>
+</tbody>
+</table>
+<p>Missing keys simply mean the information was not derivable for that file.</p>
+<h3 id="example-end-to-end-doctest-style">Example End-to-End (doctest style)</h3>
+<pre><code class="language-python">&gt;&gt;&gt; from spicelab.io import load_dataset, to_pandas
+&gt;&gt;&gt; ds = load_dataset(&quot;tests/fixtures/rc_tran_ng.raw&quot;, engine=&quot;ngspice&quot;)
+&gt;&gt;&gt; &quot;time&quot; in ds.coords
+True
+&gt;&gt;&gt; sorted(v for v in ds.data_vars)  # signals
+['I(R1)', 'V(out)']
+&gt;&gt;&gt; df = to_pandas(ds)
+&gt;&gt;&gt; list(df.columns)[:3]
+['time', 'I(R1)', 'V(out)']  # order may vary slightly
+</code></pre>
+<p>(Upcoming: coords will become index columns automatically.)</p>
+<h2 id="binary-raw-support">Binary RAW Support</h2>
+<p>Both ASCII and binary LTspice/ngspice RAW formats are supported:</p>
+<ul>
+<li>UTF-8 or UTF-16 ("wide") headers auto-detected (LTspice sometimes emits UTF‑16 with NULL bytes).</li>
+<li>Binary payload layout is heuristically detected (point-major vs variable-major) and scalar size (float32 vs float64) inferred from file length.</li>
+<li>AC analyses with complex traces retain magnitude data by default; optional real/imag/phase channels via <code>complex_components</code>.</li>
+<li>Subcircuit currents <code>Ix(U1:...)</code> are normalized to canonical <code>I(U1:...)</code>.</li>
+</ul>
+<p>Set <code>allow_binary=True</code> in <code>load_dataset</code> for clarity (default is False for explicit opt-in; lower-level <code>read_waveform</code> defaults to True).</p>
+<h2 id="parity-tests">Parity Tests</h2>
+<p>Fixtures in <code>tests/fixtures</code> exercise transient &amp; AC outputs (ASCII + binary) synthesized for ngspice, LTspice and Xyce. A relaxed tolerance (2–15%) validates expected numeric proximity while allowing formatting differences.</p>
+<h2 id="roadmap-next-enhancements">Roadmap (Next Enhancements)</h2>
+<ul>
+<li>Refine engine version extraction (LTspice, Xyce) with stricter regex and caching.</li>
+<li>Promote coords as index / multi-index in <code>to_pandas</code> / <code>to_polars</code>.</li>
+<li>Noise / distortion / spectral density ingestion.</li>
+<li>Additional export formats &amp; compression knobs.</li>
+<li>Optional radians phase output (<code>_phase_rad</code>) toggle.</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NotImplementedError: Binary RAW detected</code></td>
+<td><code>allow_binary=False</code> guard triggered</td>
+<td>Re-run with <code>allow_binary=True</code> or call <code>read_waveform</code> directly</td>
+</tr>
+<tr>
+<td>Missing <code>time</code> coord</td>
+<td>Alias only present as variable (<code>t</code>, etc.)</td>
+<td>Use <code>load_dataset</code> (auto promotes)</td>
+</tr>
+<tr>
+<td>Inconsistent variable names across engines</td>
+<td>Raw headers differ</td>
+<td>Use canonical names after normalization (<code>V(node)</code>, <code>I(element)</code>)</td>
+</tr>
+<tr>
+<td>Garbled header characters</td>
+<td>UTF‑16 LTspice header</td>
+<td>Auto-detected; if persists report with sample file</td>
+</tr>
+<tr>
+<td>Unexpected small/half data length</td>
+<td>Scalar size/layout heuristic mismatch</td>
+<td>File may be truncated; open an issue with the RAW file</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>For deeper provenance link the dataset hash to your run cache using <code>netlist_hash</code> plus analysis args.</p>
+<h2 id="api-reference">API Reference</h2>
+<p>See the auto-generated API docs for details:</p>
+<ul>
+<li><a href="../reference/io/">IO Reference</a></li>
+</ul>
 
 
 

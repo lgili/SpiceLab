@@ -6,16 +6,16 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Circuit simulation helpers and analysis utilities">
+        <meta name="description" content="Unified Python orchestration for SPICE simulations">
       
       
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/sweeps-step/">
+        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/sweeps-step/">
       
       
-        <link rel="prev" href="../preview/">
+        <link rel="prev" href="../unified-io/">
       
       
         <link rel="next" href="../monte-carlo/">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Sweeps and STEP - PyCircuitKit</title>
+        <title>Sweeps & grids - Circuit Toolkit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sweeps-and-step" class="md-skip">
+        <a href="#sweeps" class="md-skip">
           Skip to content
         </a>
       
@@ -98,10 +98,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="PyCircuitKit" class="md-header__button md-logo" aria-label="PyCircuitKit" data-md-component="logo">
+    <a href=".." title="Circuit Toolkit" class="md-header__button md-logo" aria-label="Circuit Toolkit" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -112,13 +111,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            PyCircuitKit
+            Circuit Toolkit
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Sweeps and STEP
+              Sweeps & grids
             
           </span>
         </div>
@@ -208,13 +207,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="PyCircuitKit" class="md-nav__button md-logo" aria-label="PyCircuitKit" data-md-component="logo">
+    <a href=".." title="Circuit Toolkit" class="md-nav__button md-logo" aria-label="Circuit Toolkit" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo.svg" alt="logo">
 
     </a>
-    PyCircuitKit
+    Circuit Toolkit
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -225,13 +223,51 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Overview
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href=".." class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Home
+    Welcome
     
   </span>
   
@@ -240,9 +276,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -262,9 +299,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -275,7 +313,7 @@
   
   
   <span class="md-ellipsis">
-    Getting Started
+    Getting started
     
   </span>
   
@@ -284,9 +322,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -298,89 +337,6 @@
   
   <span class="md-ellipsis">
     Concepts
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    Examples
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Examples
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../examples/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Overview
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../monte-carlo-example/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Monte Carlo example
     
   </span>
   
@@ -402,72 +358,6 @@
       
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../examples-gallery/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Examples Gallery
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../components/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Components
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../components-quickstart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Components Quickstart
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -481,15 +371,15 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    Guides
+    User guide
     
   </span>
   
@@ -497,10 +387,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            Guides
+            User guide
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -511,12 +401,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../preview/" class="md-nav__link">
+      <a href="../engines/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Circuit Preview
+    Engines
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unified-io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data I/O
     
   </span>
   
@@ -548,7 +461,7 @@
   
   
   <span class="md-ellipsis">
-    Sweeps and STEP
+    Sweeps & grids
     
   </span>
   
@@ -561,7 +474,7 @@
   
   
   <span class="md-ellipsis">
-    Sweeps and STEP
+    Sweeps & grids
     
   </span>
   
@@ -584,9 +497,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#python-sweeps" class="md-nav__link">
+  <a href="#single-component-value-sweep" class="md-nav__link">
     <span class="md-ellipsis">
-      Python sweeps
+      Single-component value sweep
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-parameter-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-parameter grid
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      Native .step
     </span>
   </a>
   
@@ -631,104 +562,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../ac-stability/" class="md-nav__link">
+      <a href="../reporting/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    AC Stability
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../opamp-stability/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Op-Amp Stability
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../device-models/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Device Models
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ltspice-import/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    LTspice Integration
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../components-library/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Component Library
+    Reporting
     
   </span>
   
@@ -751,7 +590,122 @@
   
   
   <span class="md-ellipsis">
-    Plots
+    Plotting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../preview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Circuit preview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ltspice-import/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LTspice integration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mux-enable-ports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Analog mux
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli-ci/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI & CI automation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../doctor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Environment doctor
     
   </span>
   
@@ -798,18 +752,270 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Components
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Components
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../api-reference/" class="md-nav__link">
+      <a href="../components/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    API guidance
+    Overview
     
   </span>
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../components-quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../device-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Device models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../components-library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Library status (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running scripts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gallery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monte-carlo-example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Monte Carlo assets
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -851,15 +1057,15 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    API Reference
+    Reference
     
   </span>
   
@@ -867,12 +1073,35 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
-            API Reference
+            Reference
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API guidance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -886,7 +1115,7 @@
   
   
   <span class="md-ellipsis">
-    Core
+    Core API
     
   </span>
   
@@ -909,7 +1138,7 @@
   
   
   <span class="md-ellipsis">
-    IO
+    IO API
     
   </span>
   
@@ -932,7 +1161,121 @@
   
   
   <span class="md-ellipsis">
-    Analysis
+    Analysis API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Legacy & roadmap
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Legacy & roadmap
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ac-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AC stability (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../opamp-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Op-amp stability (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Old roadmap (M1/M2)
     
   </span>
   
@@ -977,9 +1320,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#python-sweeps" class="md-nav__link">
+  <a href="#single-component-value-sweep" class="md-nav__link">
     <span class="md-ellipsis">
-      Python sweeps
+      Single-component value sweep
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-parameter-grid" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multi-parameter grid
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#native-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      Native .step
     </span>
   </a>
   
@@ -1001,56 +1362,62 @@
 
 
 
-<h1 id="sweeps-and-step">Sweeps and .STEP</h1>
-<p>There are two ways to sweep parameters:</p>
+<h1 id="sweeps">Sweeps</h1>
+<p>The orchestrator API lets you sweep component values across any supported engine
+(NGSpice, LTspice CLI, Xyce) while reusing cache entries and working with typed
+result handles. Two helpers cover the common cases:</p>
 <ul>
-<li>Python-side sweeps (<code>step_param</code>, <code>step_grid</code>) — easiest to combine with Pandas.</li>
-<li>Native SPICE <code>.step</code> directives — use <code>run_step_native</code> to parse multi-plot RAW.</li>
+<li><code>run_value_sweep</code> — sweep a single component over a list of values.</li>
+<li><code>run_param_grid</code> — evaluate the Cartesian product of multiple components/values.</li>
 </ul>
-<p><img alt="STEP grid" src="../assets/examples/step_grid.png" /></p>
-<h2 id="python-sweeps">Python sweeps</h2>
-<p>Single parameter:</p>
-<pre><code class="language-python">from spicelab.analysis import step_param, TRAN
-res = step_param(
-    c,
-    name=&quot;R&quot;,
-    values=[&quot;1k&quot;,&quot;2k&quot;,&quot;5k&quot;],
-    analysis_factory=lambda: TRAN(&quot;50us&quot;,&quot;5ms&quot;),
-    progress=True,   # prints progress to stderr
+<p>Both helpers return lightweight objects containing <code>ResultHandle</code> instances. You
+can inspect datasets on demand and reuse cached results transparently.</p>
+<h2 id="single-component-value-sweep">Single-component value sweep</h2>
+<pre><code class="language-python">from spicelab.analysis.sweep_grid import run_value_sweep
+from spicelab.core.types import AnalysisSpec
+
+sweep = run_value_sweep(
+    circuit=c,
+    component=R1,
+    values=[&quot;1k&quot;, &quot;2k&quot;, &quot;5k&quot;],
+    analyses=[AnalysisSpec(&quot;tran&quot;, {&quot;tstep&quot;: &quot;50us&quot;, &quot;tstop&quot;: &quot;5ms&quot;})],
+    engine=&quot;ngspice&quot;,
+    cache_dir=&quot;.spicelab_cache&quot;,
 )
-</code></pre>
-<p>Grid of parameters:</p>
-<pre><code class="language-python">from spicelab.analysis import ParamGrid, step_grid
-grid: ParamGrid = {&quot;R&quot;: [&quot;1k&quot;,&quot;2k&quot;], &quot;C&quot;: [&quot;100n&quot;,&quot;220n&quot;]}
-step = step_grid(c, grid, analysis_factory=lambda: TRAN(&quot;50us&quot;,&quot;5ms&quot;), progress=True)
-</code></pre>
-<p>Stacking to DataFrame:</p>
-<pre><code class="language-python">from spicelab.analysis import stack_step_to_df
-df = stack_step_to_df(step, y=[&quot;v(n1)&quot;], with_x=True)
-</code></pre>
-<p>Plotting grouped curves (optional):</p>
-<pre><code class="language-python">from spicelab.analysis.viz.plot import plot_sweep_df
-fig = plot_sweep_df(df, x=&quot;time&quot;, y=&quot;v(n1)&quot;, hue=&quot;R&quot;)
 
-### Custom progress callback
-
-You can pass a function `callback(done, total)` to receive updates instead of the default bar:
-
-```python
-def cb(done: int, total: int) -&gt; None:
-    print(f&quot;{done}/{total}&quot;, end=&quot;\r&quot;)
-
-step = step_grid(c, grid, analysis_factory=lambda: TRAN(&quot;50us&quot;,&quot;5ms&quot;), progress=cb)
+for sweep_run in sweep.runs:
+    ds = sweep_run.handle.dataset()
+    print(sweep_run.value, float(ds[&quot;V(R1)&quot;][-1]))
 </code></pre>
-<pre><code>
-## Native .STEP
+<h2 id="multi-parameter-grid">Multi-parameter grid</h2>
+<pre><code class="language-python">from spicelab.analysis.sweep_grid import run_param_grid
 
-Provide directives that include `.step` and parse all plots:
-```python
-from spicelab.analysis import run_step_native
-out = run_step_native(c, directives=[&quot;.step param R list 1k 2k 5k&quot;, &quot;.tran 50us 5ms&quot;])
-sets = out.tracesets  # list[TraceSet]
+variables = [
+    (V1, [1.0, 5.0]),
+    (R1, [&quot;1k&quot;, &quot;2k&quot;]),
+    (C1, [&quot;100n&quot;, &quot;220n&quot;]),
+]
+
+result = run_param_grid(
+    circuit=c,
+    variables=variables,
+    analyses=[AnalysisSpec(&quot;op&quot;, {})],
+    engine=&quot;ngspice&quot;,
+    cache_dir=&quot;.spicelab_cache&quot;,
+    workers=4,
+)
+
+for run in result.runs:
+    print(run.combo, run.from_cache)
 </code></pre>
+<p>Each <code>run.combo</code> is a dictionary mapping component references to the value used
+for that simulation. Call <code>run.handle.dataset()</code> when you need the full
+<code>xarray.Dataset</code> and <code>run.handle.attrs()</code> for metadata (engine, netlist hash,
+paths to artifacts, etc.).</p>
+<h2 id="native-step">Native <code>.step</code></h2>
+<p>If you already have a netlist that contains a <code>.step</code> directive the orchestrator
+helpers are not required. Run the engine directly and parse the multi-plot RAW
+file with the unified readers module.</p>
 
 
 

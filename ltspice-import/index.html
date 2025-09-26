@@ -6,19 +6,19 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Circuit simulation helpers and analysis utilities">
+        <meta name="description" content="Unified Python orchestration for SPICE simulations">
       
       
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/PyCircuitKit/ltspice-import/">
+        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/ltspice-import/">
       
       
-        <link rel="prev" href="../device-models/">
+        <link rel="prev" href="../preview/">
       
       
-        <link rel="next" href="../components-library/">
+        <link rel="next" href="../mux-enable-ports/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>LTspice Integration - PyCircuitKit</title>
+        <title>LTspice integration - Circuit Toolkit</title>
       
     
     
@@ -98,10 +98,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="PyCircuitKit" class="md-header__button md-logo" aria-label="PyCircuitKit" data-md-component="logo">
+    <a href=".." title="Circuit Toolkit" class="md-header__button md-logo" aria-label="Circuit Toolkit" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -112,13 +111,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            PyCircuitKit
+            Circuit Toolkit
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              LTspice Integration
+              LTspice integration
             
           </span>
         </div>
@@ -208,13 +207,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="PyCircuitKit" class="md-nav__button md-logo" aria-label="PyCircuitKit" data-md-component="logo">
+    <a href=".." title="Circuit Toolkit" class="md-nav__button md-logo" aria-label="Circuit Toolkit" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo.svg" alt="logo">
 
     </a>
-    PyCircuitKit
+    Circuit Toolkit
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -225,13 +223,51 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Overview
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href=".." class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Home
+    Welcome
     
   </span>
   
@@ -240,9 +276,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -262,9 +299,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -275,7 +313,7 @@
   
   
   <span class="md-ellipsis">
-    Getting Started
+    Getting started
     
   </span>
   
@@ -284,9 +322,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -298,89 +337,6 @@
   
   <span class="md-ellipsis">
     Concepts
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    Examples
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Examples
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../examples/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Overview
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../monte-carlo-example/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Monte Carlo example
     
   </span>
   
@@ -402,72 +358,6 @@
       
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../examples-gallery/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Examples Gallery
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../components/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Components
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../components-quickstart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Components Quickstart
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -481,15 +371,15 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    Guides
+    User guide
     
   </span>
   
@@ -497,10 +387,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            Guides
+            User guide
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -511,12 +401,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../preview/" class="md-nav__link">
+      <a href="../engines/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Circuit Preview
+    Engines
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unified-io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data I/O
     
   </span>
   
@@ -539,7 +452,7 @@
   
   
   <span class="md-ellipsis">
-    Sweeps and STEP
+    Sweeps & grids
     
   </span>
   
@@ -580,12 +493,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../ac-stability/" class="md-nav__link">
+      <a href="../reporting/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    AC Stability
+    Reporting
     
   </span>
   
@@ -603,12 +516,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../opamp-stability/" class="md-nav__link">
+      <a href="../plots/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Op-Amp Stability
+    Plotting
     
   </span>
   
@@ -626,12 +539,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../device-models/" class="md-nav__link">
+      <a href="../preview/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Device Models
+    Circuit preview
     
   </span>
   
@@ -658,124 +571,17 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    LTspice Integration
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
-    LTspice Integration
+    LTspice integration
     
   </span>
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#netlists-cir-net" class="md-nav__link">
-    <span class="md-ellipsis">
-      Netlists (.cir / .net)
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Netlists (.cir / .net)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#supported-cards" class="md-nav__link">
-    <span class="md-ellipsis">
-      Supported cards
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#schematics-asc" class="md-nav__link">
-    <span class="md-ellipsis">
-      Schematics (.asc)
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Schematics (.asc)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#when-should-i-use-spiceline" class="md-nav__link">
-    <span class="md-ellipsis">
-      When should I use SpiceLine?
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#supported-symbols-export" class="md-nav__link">
-    <span class="md-ellipsis">
-      Supported symbols (export)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#limitations" class="md-nav__link">
-    <span class="md-ellipsis">
-      Limitations
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#converting-existing-asc" class="md-nav__link">
-    <span class="md-ellipsis">
-      Converting existing .asc
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -789,12 +595,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../components-library/" class="md-nav__link">
+      <a href="../mux-enable-ports/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Component Library
+    Analog mux
     
   </span>
   
@@ -812,12 +618,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../plots/" class="md-nav__link">
+      <a href="../cli-ci/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Plots
+    CLI & CI automation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../doctor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Environment doctor
     
   </span>
   
@@ -864,18 +693,270 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Components
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Components
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../api-reference/" class="md-nav__link">
+      <a href="../components/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    API guidance
+    Overview
     
   </span>
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../components-quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../device-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Device models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../components-library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Library status (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples-usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Running scripts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples-gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gallery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monte-carlo-example/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Monte Carlo assets
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -917,15 +998,15 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
-          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    API Reference
+    Reference
     
   </span>
   
@@ -933,12 +1014,35 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_12">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
-            API Reference
+            Reference
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API guidance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -952,7 +1056,7 @@
   
   
   <span class="md-ellipsis">
-    Core
+    Core API
     
   </span>
   
@@ -975,7 +1079,7 @@
   
   
   <span class="md-ellipsis">
-    IO
+    IO API
     
   </span>
   
@@ -998,7 +1102,121 @@
   
   
   <span class="md-ellipsis">
-    Analysis
+    Analysis API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Legacy & roadmap
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Legacy & roadmap
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ac-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AC stability (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../opamp-stability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Op-amp stability (refresh soon)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Old roadmap (M1/M2)
     
   </span>
   
@@ -1036,89 +1254,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#netlists-cir-net" class="md-nav__link">
-    <span class="md-ellipsis">
-      Netlists (.cir / .net)
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Netlists (.cir / .net)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#supported-cards" class="md-nav__link">
-    <span class="md-ellipsis">
-      Supported cards
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#schematics-asc" class="md-nav__link">
-    <span class="md-ellipsis">
-      Schematics (.asc)
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Schematics (.asc)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#when-should-i-use-spiceline" class="md-nav__link">
-    <span class="md-ellipsis">
-      When should I use SpiceLine?
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#supported-symbols-export" class="md-nav__link">
-    <span class="md-ellipsis">
-      Supported symbols (export)
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#limitations" class="md-nav__link">
-    <span class="md-ellipsis">
-      Limitations
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#converting-existing-asc" class="md-nav__link">
-    <span class="md-ellipsis">
-      Converting existing .asc
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -1133,158 +1268,25 @@
 
 
 
-<h1 id="ltspice-integration">LTspice Integration</h1>
-<p>CAT interoperates with LTspice in two complementary ways:</p>
+<h1 id="ltspice-integration">LTspice integration</h1>
+<p>LTspice schematic and netlist support is being revisited for the new Circuit Toolkit API. Until
+that is complete you can:</p>
 <ol>
-<li>Import <strong>netlists</strong> exported via <em>View → SPICE Netlist</em> (<code>.cir</code>/<code>.net</code>).</li>
-<li>Round-trip <strong>schematics</strong> (<code>.asc</code>) for a curated symbol library, generating
-   LTspice-friendly projects straight from your Python models.</li>
+<li>Export a SPICE netlist from LTspice (<code>View → SPICE netlist</code>).</li>
+<li>Load it with <code>spicelab.io.ltspice_parser.from_ltspice_file</code>.</li>
+<li>Run it through <code>run_simulation(...)</code> with the desired engine.</li>
 </ol>
-<h2 id="netlists-cir-net">Netlists (<code>.cir</code> / <code>.net</code>)</h2>
-<p>Use <code>spicelab.io.ltspice_parser.from_ltspice_file</code> to parse a netlist and obtain a
-<code>Circuit</code> object that can be analysed, modified or exported again.</p>
-<h3 id="supported-cards">Supported cards</h3>
-<ul>
-<li><code>.include</code> / <code>.param</code> expansion (recursive)</li>
-<li>Devices: R, C, L, independent V/I (DC/AC), <code>PULSE</code>, <code>SIN</code>, <code>PWL</code></li>
-<li>Controlled sources: E, G, F, H</li>
-<li>Diodes <code>D</code></li>
-<li>Voltage/current controlled switches: <code>S</code> (VSWITCH), <code>W</code> (ISWITCH)</li>
-<li>One-level <code>.SUBCKT</code> flattening with <code>{PARAM}</code> substitution</li>
-</ul>
 <pre><code class="language-python">from spicelab.io.ltspice_parser import from_ltspice_file
-from spicelab.analysis import run_tran
+from spicelab.core.types import AnalysisSpec
+from spicelab.engines import run_simulation
 
-c = from_ltspice_file(&quot;./my_filter.cir&quot;)
-tran = run_tran(c, &quot;1us&quot;, &quot;2ms&quot;, return_df=True)
-print(tran.head())
+circuit = from_ltspice_file(&quot;./my_filter.cir&quot;)
+ac = AnalysisSpec(&quot;ac&quot;, {&quot;sweep_type&quot;: &quot;dec&quot;, &quot;n&quot;: 40, &quot;fstart&quot;: 10.0, &quot;fstop&quot;: 1e6})
+handle = run_simulation(circuit, [ac], engine=&quot;ltspice&quot;)
+print(handle.dataset())
 </code></pre>
-<blockquote>
-<p>ℹ️ <strong>Tips</strong>
-- Keep <code>.model</code> statements together with the circuit or re-add them via
-  <code>circuit.add_directive(".model ...")</code>.
-- Unknown cards will raise a descriptive <code>ValueError</code>. If something critical is
-  missing, please open an issue with a minimal example.</p>
-</blockquote>
-<h2 id="schematics-asc">Schematics (<code>.asc</code>)</h2>
-<p>The module <code>spicelab.io.ltspice_asc</code> introduces helpers to load, generate and save
-schematic files:</p>
-<ul>
-<li><code>parse_asc(path_or_text)</code> → <code>AscSchematic</code></li>
-<li><code>schematic_to_circuit(AscSchematic)</code> → <code>Circuit</code></li>
-<li><code>circuit_to_schematic(Circuit, include_wires=True)</code> → <code>AscSchematic</code></li>
-<li><code>circuit_to_asc_text</code> / <code>save_circuit_as_asc</code></li>
-</ul>
-<h3 id="when-should-i-use-spiceline">When should I use <code>SpiceLine</code>?</h3>
-<p>The exporter attaches <code>SYMATTR SpiceLine ...</code> to every symbol with the exact
-SPICE card produced by spicelab. When these attributes are present the importer uses
-those directives verbatim, guaranteeing an exact round-trip.</p>
-<p>If a schematic lacks <code>SpiceLine</code>, spicelab falls back to analysing wires and symbol
-pins (union-find). This allows importing hand-drawn LTspice schematics, but the
-result may require manual clean-up if multiple nets share the same coordinates.</p>
-<h3 id="supported-symbols-export">Supported symbols (export)</h3>
-<table>
-<thead>
-<tr>
-<th>Symbol</th>
-<th>CAT component</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>res</code></td>
-<td><code>Resistor</code></td>
-</tr>
-<tr>
-<td><code>cap</code></td>
-<td><code>Capacitor</code></td>
-</tr>
-<tr>
-<td><code>ind</code></td>
-<td><code>Inductor</code></td>
-</tr>
-<tr>
-<td><code>voltage</code></td>
-<td><code>Vdc</code></td>
-</tr>
-<tr>
-<td><code>current</code></td>
-<td><code>Idc</code></td>
-</tr>
-<tr>
-<td><code>dio</code></td>
-<td><code>Diode</code></td>
-</tr>
-<tr>
-<td><code>vcvs</code></td>
-<td><code>VCVS</code></td>
-</tr>
-<tr>
-<td><code>vccs</code></td>
-<td><code>VCCS</code></td>
-</tr>
-<tr>
-<td><code>cccs</code></td>
-<td><code>CCCS</code></td>
-</tr>
-<tr>
-<td><code>ccvs</code></td>
-<td><code>CCVS</code></td>
-</tr>
-</tbody>
-</table>
-<p>Orientation is auto-selected when practical (for example, capacitors tied to
-GND are placed vertically).</p>
-<pre><code class="language-python">from spicelab.core.circuit import Circuit
-from spicelab.core.components import Capacitor, Resistor, Vdc
-from spicelab.core.net import GND, Net
-from spicelab.io.ltspice_asc import circuit_to_asc_text, parse_asc, schematic_to_circuit
-
-vin = Net(&quot;vin&quot;)
-vout = Net(&quot;vout&quot;)
-
-c = Circuit(&quot;rc&quot;)
-V1 = Vdc(&quot;1&quot;, 5.0)
-R1 = Resistor(&quot;1&quot;, &quot;1k&quot;)
-C1 = Capacitor(&quot;1&quot;, &quot;10n&quot;)
-
-c.add(V1, R1, C1)
-c.connect(V1.ports[0], vin)
-c.connect(R1.ports[0], vin)
-c.connect(R1.ports[1], vout)
-c.connect(C1.ports[0], vout)
-c.connect(C1.ports[1], GND)
-c.connect(V1.ports[1], GND)
-
-asc_text = circuit_to_asc_text(c)
-print(asc_text)
-
-round_trip = schematic_to_circuit(parse_asc(asc_text))
-print(round_trip.build_netlist())
-</code></pre>
-<h3 id="limitations">Limitations</h3>
-<ul>
-<li>Unsupported symbols raise <code>ValueError</code>. You can still edit the exported <code>.asc</code>
-  in LTspice and swap symbols manually.</li>
-<li>The geometry fallback assumes orthogonal wires; schematics using unusual
-  routing may need touch-ups before importing.</li>
-<li><code>include_wires=False</code> produces schematic stubs that rely entirely on
-  <code>SpiceLine</code>. This is convenient for programmatic generation but results in
-  schematics without conductor art.</li>
-</ul>
-<h3 id="converting-existing-asc">Converting existing <code>.asc</code></h3>
-<pre><code class="language-python">from spicelab.io.ltspice_asc import circuit_from_asc
-from spicelab.analysis import run_ac
-
-c = circuit_from_asc(&quot;./filter.asc&quot;)
-res = run_ac(c, &quot;dec&quot;, 201, 10, 1e5)
-print(res.traces.names)
-</code></pre>
-<p>If your schematic has symbols that CAT does not understand, consider exporting a
-netlist instead or filing an issue with a small reproduction.</p>
-<p>See also <a href="../components-library/">Component Library</a> if you want to register manufacturer
-specific devices (for example a diode with a recommended <code>.model</code> line) and
-re-use them across multiple projects.</p>
+<p>Round-trip schematic editing (<code>ltspice_asc</code>) and property preservation will be
+documented after the API refresh.</p>
 
 
 

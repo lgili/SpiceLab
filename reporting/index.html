@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/opamp-stability/">
+        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/reporting/">
       
       
-        <link rel="prev" href="../ac-stability/">
+        <link rel="prev" href="../monte-carlo/">
       
       
-        <link rel="next" href="../core-contracts/">
+        <link rel="next" href="../plots/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Op-amp stability (refresh soon) - Circuit Toolkit</title>
+        <title>Reporting - Circuit Toolkit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#op-amp-stability-placeholder" class="md-skip">
+        <a href="#reporting-helpers" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Op-amp stability (refresh soon)
+              Reporting
             
           </span>
         </div>
@@ -358,18 +358,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -385,7 +387,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             User guide
@@ -488,10 +490,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../reporting/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Reporting
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -502,6 +526,44 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dataset-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dataset summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output formats
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1112,20 +1174,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
@@ -1141,7 +1201,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Legacy & roadmap
@@ -1175,19 +1235,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../opamp-stability/" class="md-nav__link">
         
   
   
@@ -1198,7 +1249,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1254,6 +1304,32 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dataset-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dataset summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output formats
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1268,11 +1344,59 @@
 
 
 
-<h1 id="op-amp-stability-placeholder">Op-amp stability (placeholder)</h1>
-<p>A refreshed stability guide will arrive together with the measurement helper
-examples. For now, combine the measurement specs from the
-<a href="../cookbook/">Cookbook</a> with AC sweeps produced by <code>run_simulation</code> to compute
-phase/gain margins.</p>
+<h1 id="reporting-helpers">Reporting Helpers</h1>
+<p>Circuit Toolkit ships with a minimal reporting layer so simulation scripts can
+produce shareable artefacts (HTML or Markdown) without pulling in a full templating
+engine. The core entry point is <code>spicelab.reporting.ReportBuilder</code>.</p>
+<pre><code class="language-python">import numpy as np
+from pathlib import Path
+from spicelab.io.raw_reader import Trace, TraceSet
+from spicelab.reporting import ReportBuilder
+from spicelab.viz.plotly import time_series_view
+
+# Assume ``handle`` is a ResultHandle from run_simulation()
+ds = handle.dataset()
+time = ds.coords[&quot;time&quot;].values
+vout = ds[&quot;V(out)&quot;].values
+traces = TraceSet([
+    Trace(&quot;time&quot;, &quot;s&quot;, np.asarray(time)),
+    Trace(&quot;V(out)&quot;, &quot;V&quot;, np.asarray(vout)),
+])
+figure = time_series_view(traces, ys=[&quot;V(out)&quot;])
+
+report = ReportBuilder(&quot;RC transient&quot;, subtitle=&quot;Monte Carlo sample #12&quot;)
+summary = report.add_section(&quot;Summary&quot;)
+summary.add_markdown(&quot;Circuit converged in 1.2 ms with no warnings.&quot;)
+summary.add_table([
+    {&quot;element&quot;: &quot;R1&quot;, &quot;value&quot;: &quot;1 kOhm&quot;},
+    {&quot;element&quot;: &quot;C1&quot;, &quot;value&quot;: &quot;100 nF&quot;},
+], caption=&quot;Component values&quot;)
+summary.add_figure(figure, caption=&quot;Output voltage vs. time&quot;)
+
+outputs = report.write(Path(&quot;reports&quot;))
+print(&quot;HTML report at&quot;, outputs[&quot;html&quot;])
+</code></pre>
+<p><code>ReportBuilder</code> manages sections, tables, inline markdown, and embedded figures.
+Figure blocks accept <code>VizFigure</code> instances (from Plotly helpers) or raw HTML
+strings; assets are written under <code>reports/figures/</code> and linked from the main
+report. Tables accept <code>polars.DataFrame</code>, pandas data frames, or simple
+<code>list[dict]</code> structures.</p>
+<h2 id="dataset-summary">Dataset summary</h2>
+<p>To turn an <code>xarray.Dataset</code> into a compact table, use
+<code>spicelab.reporting.report.dataset_summary</code>:</p>
+<pre><code class="language-python">from spicelab.reporting import ReportBuilder
+from spicelab.reporting.report import dataset_summary
+
+report = ReportBuilder(&quot;AC sweep&quot;)
+section = report.add_section(&quot;Dataset&quot;)
+section.add_table(dataset_summary(handle.dataset()), caption=&quot;Variables &amp; dimensions&quot;)
+</code></pre>
+<p>The helper returns <code>(headers, rows)</code> ready to feed into <code>ReportSection.add_table</code>.</p>
+<h2 id="output-formats">Output formats</h2>
+<p><code>ReportBuilder.write()</code> accepts any combination of <code>html</code> and <code>md</code> formats.
+HTML output includes a lightweight stylesheet for readability, while the Markdown
+variant is primed for changelog attachments or quick email summaries.</p>
+<p>Set <code>include_figures=False</code> if you only need textual output.</p>
 
 
 

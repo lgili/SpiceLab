@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/opamp-stability/">
+        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/engines/">
       
       
-        <link rel="prev" href="../ac-stability/">
+        <link rel="prev" href="../concepts/">
       
       
-        <link rel="next" href="../core-contracts/">
+        <link rel="next" href="../unified-io/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Op-amp stability (refresh soon) - Circuit Toolkit</title>
+        <title>Engines - Circuit Toolkit</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#op-amp-stability-placeholder" class="md-skip">
+        <a href="#engines" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Op-amp stability (refresh soon)
+              Engines
             
           </span>
         </div>
@@ -358,18 +358,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -385,7 +387,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             User guide
@@ -396,10 +398,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../engines/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Engines
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -410,6 +434,80 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#selecting-an-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selecting an engine
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#binary-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      Binary discovery
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ngspice-shared-backend-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ngspice shared backend &amp; callbacks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output formats
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parallelism-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parallelism &amp; caching
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1112,20 +1210,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
@@ -1141,7 +1237,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Legacy & roadmap
@@ -1175,19 +1271,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../opamp-stability/" class="md-nav__link">
         
   
   
@@ -1198,7 +1285,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1254,6 +1340,68 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#selecting-an-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      Selecting an engine
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#binary-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      Binary discovery
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ngspice-shared-backend-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ngspice shared backend &amp; callbacks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Output formats
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parallelism-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parallelism &amp; caching
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1268,11 +1416,109 @@
 
 
 
-<h1 id="op-amp-stability-placeholder">Op-amp stability (placeholder)</h1>
-<p>A refreshed stability guide will arrive together with the measurement helper
-examples. For now, combine the measurement specs from the
-<a href="../cookbook/">Cookbook</a> with AC sweeps produced by <code>run_simulation</code> to compute
-phase/gain margins.</p>
+<h1 id="engines">Engines</h1>
+<p>Circuit Toolkit abstracts SPICE engines behind a small orchestrator. You provide
+a circuit plus one or more <code>AnalysisSpec</code>s; the library takes care of invoking
+the chosen engine, collecting artefacts, and normalising the output.</p>
+<h2 id="selecting-an-engine">Selecting an engine</h2>
+<pre><code class="language-python">from spicelab.core.types import AnalysisSpec
+from spicelab.engines import run_simulation
+
+tran = AnalysisSpec(&quot;tran&quot;, {&quot;tstep&quot;: 1e-6, &quot;tstop&quot;: 1e-3})
+handle = run_simulation(circuit, [tran], engine=&quot;ngspice&quot;)
+print(handle.dataset().data_vars)
+</code></pre>
+<p><code>engine</code> accepts <code>"ngspice"</code>, <code>"ltspice"</code>, <code>"xyce"</code> (or the explicit <code>*-cli</code>
+aliases). For lower-level access, call <code>get_simulator(name)</code>.</p>
+<p>Command-line examples honour the <code>--engine</code> flag and the <code>SPICELAB_ENGINE</code>
+environment variable.</p>
+<h2 id="binary-discovery">Binary discovery</h2>
+<p>The CLI adapters search the PATH and fall back to environment variables:</p>
+<table>
+<thead>
+<tr>
+<th>Engine</th>
+<th>Environment variable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NGSpice</td>
+<td><code>SPICELAB_NGSPICE</code></td>
+</tr>
+<tr>
+<td>LTspice</td>
+<td><code>SPICELAB_LTSPICE</code> or <code>LTSPICE_EXE</code></td>
+</tr>
+<tr>
+<td>Xyce</td>
+<td><code>SPICELAB_XYCE</code></td>
+</tr>
+</tbody>
+</table>
+<p>Set the variable to the absolute path of the executable when auto-discovery
+fails. Missing binaries raise <code>EngineBinaryNotFound</code> with install hints.</p>
+<h2 id="ngspice-shared-backend-callbacks">Ngspice shared backend &amp; callbacks</h2>
+<p><code>NgSpiceSharedSimulator</code> loads the <code>libngspice</code> dynamic library to stream
+transient data back into Python (<code>on_tran_point</code>) and to drive external sources
+from user code. Configure it via:</p>
+<ul>
+<li>install the shared library (e.g. <code>brew install libngspice</code> or
+  <code>sudo apt install libngspice0-dev</code>),</li>
+<li>export <code>SPICELAB_NGSPICE_SHARED</code> to the <code>.so</code>/<code>.dylib</code>/<code>.dll</code> path, and</li>
+<li>use <code>NgSpiceSharedSimulator()</code> directly or <code>run_simulation(..., engine="ngspice-shared")</code>.</li>
+</ul>
+<p>The shared adapter is optimised for per-point control loops. On an M3 Pro laptop
+the closed-loop example (<code>examples/closed_loop.py</code>) completes ~2 000 transient
+steps with callbacks in ≈32 ms (~16 µs per step); your numbers will vary with
+platform, circuit size, and callback complexity. When you need higher
+throughput—and can tolerate the lack of fine-grained feedback—fall back to the
+process adapter (<code>engine="ngspice"</code>), which still supports batching, sweeps,
+and caching but runs headless without callbacks.</p>
+<p>Tip: keep <code>AnalysisSpec.tstep</code> as large as the control loop allows and perform
+vectorised work inside the callback to reduce cross-language overhead.</p>
+<h2 id="output-formats">Output formats</h2>
+<table>
+<thead>
+<tr>
+<th>Engine</th>
+<th>Output</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NGSpice</td>
+<td>ASCII RAW</td>
+<td>Control block forces ASCII.</td>
+</tr>
+<tr>
+<td>LTspice</td>
+<td>ASCII RAW</td>
+<td>The adapter passes <code>-b</code> and discovers the generated RAW/log files.</td>
+</tr>
+<tr>
+<td>Xyce</td>
+<td>PRN / CSV</td>
+<td>Parsed into canonical xarray datasets.</td>
+</tr>
+</tbody>
+</table>
+<p><code>handle.dataset()</code> always returns an <code>xarray.Dataset</code> with canonical coordinates
+(<code>time</code>, <code>freq</code>, optional <code>step</code>) and signal names (<code>V(node)</code>, <code>I(element)</code>).</p>
+<h2 id="parallelism-caching">Parallelism &amp; caching</h2>
+<ul>
+<li>pass <code>workers&gt;1</code> to <code>run_simulation</code> (or <code>run_value_sweep</code> / <code>run_param_grid</code> /
+  <code>monte_carlo</code>) to enable thread pools.</li>
+<li>set <code>cache_dir</code> to a persistent location to reuse hashed job results across runs.</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<ul>
+<li><strong>Binary not found</strong> – install the engine and/or set the environment variable.</li>
+<li><strong>LTspice still writes binary RAW</strong> – update to the latest LTspice build; on
+  macOS the CLI always emits ASCII.</li>
+<li><strong>xarray missing</strong> – install optional dependency (<code>pip install xarray</code>).</li>
+</ul>
 
 
 

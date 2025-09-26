@@ -1,6 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="360" height="240" viewBox="0 0 360 240">
-  <rect width="360" height="240" fill="#f6f8fa" rx="8"/>
-  <text x="20" y="40" font-family="Arial" font-size="18" fill="#333">PyCircuitKit demo</text>
-  <rect x="20" y="60" width="320" height="140" fill="#fff" stroke="#e1e4e8" rx="6"/>
-  <text x="30" y="90" font-family="Arial" font-size="12" fill="#444">Netlist preview...</text>
+<svg width="380" height="220" viewBox="0 0 380 220" xmlns="http://www.w3.org/2000/svg">
+  <rect width="380" height="220" fill="#f5f8ff" rx="16"/>
+  <path d="M40 180 L120 60 L200 120 L280 80 L340 150" stroke="#0c5ed9" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="120" cy="60" r="10" fill="#0c5ed9"/>
+  <circle cx="200" cy="120" r="10" fill="#0c5ed9"/>
+  <circle cx="280" cy="80" r="10" fill="#0c5ed9"/>
+  <circle cx="40" cy="180" r="10" fill="#0c5ed9"/>
+  <circle cx="340" cy="150" r="10" fill="#0c5ed9"/>
+  <text x="24" y="40" font-family="'IBM Plex Sans', 'Segoe UI', sans-serif" font-size="28" font-weight="600" fill="#112042">Circuit Toolkit</text>
+  <text x="24" y="72" font-family="'Roboto Mono', monospace" font-size="14" fill="#54627e">Unified SPICE orchestration</text>
 </svg>
