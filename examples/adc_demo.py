@@ -1,4 +1,9 @@
-"""ADC demo: generate a sine wave and sample with ADCModel."""
+"""ADC demo: generate a sine wave and sample with `ADCModel`.
+
+Run from the project root::
+
+    uv run --active python examples/adc_demo.py
+"""
 
 from math import pi, sin
 

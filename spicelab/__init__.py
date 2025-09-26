@@ -38,7 +38,6 @@ from .analysis import (
 )
 
 # Plotting
-from .analysis.viz.plot import plot_bode, plot_sweep_df, plot_traces
 from .core.circuit import Circuit
 from .core.components import (
     CCCS,
@@ -113,6 +112,9 @@ from .viz import (
     monte_carlo_kde,
     monte_carlo_param_scatter,
     params_scatter_matrix,
+    plot_bode,
+    plot_sweep_df,
+    plot_traces,
     sweep_curve,
     time_series_view,
 )

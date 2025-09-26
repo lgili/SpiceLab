@@ -51,7 +51,7 @@ class LtSpiceCLISimulator(Simulator):
         if not res.artifacts.raw_path:
             log_hint = f"; see {res.artifacts.log_path}" if res.artifacts.log_path else ""
             raise RuntimeError(
-                "LTspice did not produce a RAW file path (ASCII may be required)" f"{log_hint}"
+                f"LTspice did not produce a RAW file path (ASCII may be required){log_hint}"
             )
 
         ds = read_ltspice_raw(res.artifacts.raw_path)

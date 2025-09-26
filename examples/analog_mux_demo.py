@@ -1,6 +1,8 @@
-"""Example: construct an AnalogMux8, print its netlist card and a DOT diagram.
+"""Example: construct an AnalogMux8, print its SPICE card, and emit a DOT graph.
 
-Run as module: python -m examples.analog_mux_demo
+Run from the project root::
+
+    uv run --active python examples/analog_mux_demo.py
 """
 
 from spicelab.core.components import AnalogMux8

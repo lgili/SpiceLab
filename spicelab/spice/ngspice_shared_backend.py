@@ -338,7 +338,7 @@ def _resolve_library_path() -> str:
             return cand
     hints = [
         "Install ngspice with shared-library support (e.g. `brew install ngspice`).",
-        "Set SPICELAB_NGSPICE_SHARED to the absolute path of libngspice " "(libngspice.dylib/.so).",
+        "Set SPICELAB_NGSPICE_SHARED to the absolute path of libngspice (libngspice.dylib/.so).",
     ]
     raise EngineSharedLibraryNotFound("ngspice-shared", hints=hints, attempted=attempted)
 

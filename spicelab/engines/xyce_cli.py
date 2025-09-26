@@ -6,7 +6,7 @@ from collections.abc import Sequence
 
 from ..core.types import AnalysisSpec, Probe, ResultHandle, ResultMeta, SweepSpec, circuit_hash
 from ..io.readers import read_xyce_table
-from ..spice.xyce_cli import DEFAULT_ADAPTER
+from ..spice.xyce_cli import DEFAULT_ADAPTER, _build_print_directives
 from .base import EngineFeatures, Simulator
 from .directives import specs_to_directives
 from .result import DatasetResultHandle
@@ -38,7 +38,8 @@ class XyceCLISimulator(Simulator):
         if sweep is not None and sweep.variables:
             raise NotImplementedError("SweepSpec is not supported yet in XyceCLISimulator.run()")
 
-        directives = specs_to_directives(analyses)
+        directives = list(specs_to_directives(analyses))
+        directives.extend(_build_print_directives(analyses, probes))
 
         if not hasattr(circuit, "build_netlist"):
             raise TypeError("circuit must provide build_netlist()")
@@ -46,11 +47,22 @@ class XyceCLISimulator(Simulator):
 
         res = DEFAULT_ADAPTER.run_directives(net, directives)
         if res.returncode != 0:
-            raise RuntimeError(f"Xyce failed, return code {res.returncode}")
+            raise RuntimeError(
+                f"Xyce failed (code {res.returncode}); inspect {res.artifacts.log_path} for details"
+            )
         if not res.artifacts.raw_path:
             raise RuntimeError("Xyce did not produce a .prn/.csv file")
 
         ds = read_xyce_table(res.artifacts.raw_path)
+        try:
+            for name in list(ds.data_vars):
+                if name.startswith("Re(") and name.endswith(")"):
+                    base = name[3:-1]
+                    imag_name = f"Im({base})"
+                    if imag_name in ds.data_vars and base not in ds.data_vars:
+                        ds[base] = ds[name] + 1j * ds[imag_name]
+        except Exception:
+            pass
         try:
             if "time" in ds:
                 ds = ds.set_coords("time")

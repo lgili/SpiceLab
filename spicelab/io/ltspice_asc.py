@@ -861,8 +861,7 @@ def dump_asc(schematic: AscSchematic) -> str:
 
     for text in schematic.texts:
         text_line = (
-            f"TEXT {text.position.x} {text.position.y} {text.orientation} "
-            f"{text.font} {text.text}"
+            f"TEXT {text.position.x} {text.position.y} {text.orientation} {text.font} {text.text}"
         ).rstrip()
         lines.append(text_line)
 

@@ -100,7 +100,7 @@ class _MiniFrame:
         return [row[key] for row in self._rows]
 
 
-from spicelab.analysis.viz import plot as plot_wrappers  # noqa: E402
+from spicelab.viz import plots as plot_wrappers  # noqa: E402
 from spicelab.viz.plotly import (  # noqa: E402
     VizFigure,
     bode_view,
@@ -108,6 +108,7 @@ from spicelab.viz.plotly import (  # noqa: E402
     monte_carlo_kde,
     monte_carlo_param_scatter,
     params_scatter_matrix,
+    step_response_view,
     sweep_curve,
     time_series_view,
 )
@@ -116,7 +117,7 @@ from spicelab.viz.plotly import (  # noqa: E402
 def _trace_set(
     values: Sequence[complex] | Sequence[float], *, complex_trace: bool = False
 ) -> TraceSet:
-    x = np.array([0.0, 1.0, 2.0])
+    x = np.arange(len(values), dtype=float)
     traces = [Trace("time", "s", x)]
     arr = np.array(values)
     if complex_trace:
@@ -146,6 +147,36 @@ def test_bode_view_complex_trace() -> None:
     assert metadata is not None
     assert metadata["kind"] == "bode"
     wrapped = plot_wrappers.plot_bode(ts, "V(out)")
+    assert isinstance(wrapped.figure, FakeFigure)
+
+
+def test_step_response_view_and_wrapper() -> None:
+    ts = _trace_set([0.0, 0.4, 0.8, 1.0])
+    fig = step_response_view(ts, "V(out)")
+    metadata = fig.metadata
+    assert metadata is not None
+    assert metadata["kind"] == "step_response"
+    assert pytest.approx(metadata["final_value"], rel=1e-6) == 1.0
+    wrapped = plot_wrappers.plot_step_response(ts, "V(out)")
+    assert isinstance(wrapped.figure, FakeFigure)
+    assert any(
+        isinstance(trace, FakeScatter) and trace.kwargs.get("name") == "steady-state"
+        for trace in wrapped.figure.data
+    )
+
+
+def test_step_response_accepts_dataset() -> None:
+    xr = pytest.importorskip("xarray")
+    time = np.array([0.0, 0.1, 0.2, 0.3], dtype=float)
+    values = np.array([0.0, 0.4, 0.8, 1.0], dtype=float)
+    ds = xr.Dataset({"V(VOUT)": ("time", values)}, coords={"time": time})
+    wrapped = plot_wrappers.plot_step_response(ds, "V(vout)")
+    assert isinstance(wrapped.figure, FakeFigure)
+
+
+def test_trace_name_resolution_case_insensitive() -> None:
+    ts = _trace_set([0.0, 0.4, 0.8, 1.0])
+    wrapped = plot_wrappers.plot_step_response(ts, "v(out)")
     assert isinstance(wrapped.figure, FakeFigure)
 
 

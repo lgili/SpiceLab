@@ -3,6 +3,9 @@ from __future__ import annotations
 import importlib
 import os
 import shutil
+import subprocess
+import tempfile
+from pathlib import Path
 
 import pytest
 from spicelab.core.circuit import Circuit
@@ -12,6 +15,38 @@ from spicelab.core.types import AnalysisSpec
 from spicelab.engines.factory import create_simulator
 
 
+def _candidate_works(exe: str) -> bool:
+    try:
+        exe_path = Path(exe)
+        if not exe_path.exists():
+            return False
+        with tempfile.TemporaryDirectory(prefix="xyce_check_") as tmp:
+            deck = Path(tmp) / "check.cir"
+            deck.write_text(
+                "\n".join(
+                    [
+                        "* spicelab xyce availability probe",
+                        "V1 1 0 AC 1",
+                        "R1 1 0 1k",
+                        ".ac dec 1 1 1",
+                        ".print ac format=csv V(1)",
+                        ".end",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            proc = subprocess.run(
+                [exe, str(deck)],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=10,
+            )
+            return proc.returncode == 0 and bool(list(Path(tmp).glob("check.cir*.csv")))
+    except Exception:
+        return False
+
+
 def _has_ltspice() -> bool:
     if os.environ.get("SPICELAB_LTSPICE"):
         return True
@@ -19,9 +54,14 @@ def _has_ltspice() -> bool:
 
 
 def _has_xyce() -> bool:
-    if os.environ.get("SPICELAB_XYCE"):
+    env_exe = os.environ.get("SPICELAB_XYCE") or os.environ.get("XYCE_EXE")
+    if env_exe and _candidate_works(env_exe):
         return True
-    return bool(shutil.which("Xyce") or shutil.which("xyce"))
+
+    for candidate in (shutil.which("Xyce"), shutil.which("xyce")):
+        if candidate and _candidate_works(candidate):
+            return True
+    return False
 
 
 @pytest.mark.skipif(not _has_ltspice(), reason="LTspice not installed")

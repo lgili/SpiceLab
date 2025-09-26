@@ -44,6 +44,7 @@ Tips:
 - Use `workers` for parallel execution and optionally point `cache_dir` to reuse results between runs.
 - Provide a metric function to compute scalar KPIs per trial, or set `y=[...]` and `sample_at` to extract trace values.
 - `mc.result_handles()` and `mc.job` expose the underlying result handles and cache metadata when you need xarray datasets or cache diagnostics.
+- When consuming results via the CLI demo (`examples/monte_carlo_demo.py`), pass `--metric-col` to enforce which dataframe column becomes the plotted metric (for example, `V(vout)`). The script exports `mc_hist`, `mc_param_scatter`, and `mc_params_matrix` HTML/PNG files when you supply `--out-html` / `--out-img`.
 
 ### Progress bar / callback
 
@@ -74,9 +75,4 @@ mc = monte_carlo(
     engine="ngspice",
     progress=cb,
 )
-```
-
-Legacy note: the older `analysis_factory` argument is still supported for
-backwards compatibility, but new code should prefer the unified engine path
-via `analyses=[AnalysisSpec(...)]` so you benefit from caching and result handles.
 ```

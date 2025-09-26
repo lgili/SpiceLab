@@ -499,7 +499,7 @@ class VsinT(Component):
             args.append(_fmt(self.theta))
         if self.phase:
             args.append(_fmt(self.phase))
-        return f"V{self.ref} {net_of(p)} {net_of(n)} SIN({ ' '.join(args) })"
+        return f"V{self.ref} {net_of(p)} {net_of(n)} SIN({' '.join(args)})"
 
 
 class IsinT(Component):
@@ -529,7 +529,7 @@ class IsinT(Component):
             args.append(_fmt(self.theta))
         if self.phase:
             args.append(_fmt(self.phase))
-        return f"I{self.ref} {net_of(p)} {net_of(n)} SIN({ ' '.join(args) })"
+        return f"I{self.ref} {net_of(p)} {net_of(n)} SIN({' '.join(args)})"
 
 
 class VpwlT(Component):
@@ -546,7 +546,7 @@ class VpwlT(Component):
         for t, v in self.points:
             flat.append(_fmt(t))
             flat.append(_fmt(v))
-        return f"V{self.ref} {net_of(p)} {net_of(n)} PWL({ ' '.join(flat) })"
+        return f"V{self.ref} {net_of(p)} {net_of(n)} PWL({' '.join(flat)})"
 
 
 class IpwlT(Component):
@@ -563,7 +563,7 @@ class IpwlT(Component):
         for t, i in self.points:
             flat.append(_fmt(t))
             flat.append(_fmt(i))
-        return f"I{self.ref} {net_of(p)} {net_of(n)} PWL({ ' '.join(flat) })"
+        return f"I{self.ref} {net_of(p)} {net_of(n)} PWL({' '.join(flat)})"
 
 
 def L(value: str | float) -> Inductor:

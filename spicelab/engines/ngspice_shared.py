@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, cast
 
 if TYPE_CHECKING:
-    import xarray as xr  # type: ignore[import-not-found]
+    import xarray as xr
 else:  # pragma: no cover - optional dependency guard
     try:
         xr = cast(Any, __import__("xarray"))

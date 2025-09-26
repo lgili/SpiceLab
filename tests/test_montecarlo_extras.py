@@ -3,7 +3,6 @@ from __future__ import annotations
 import importlib
 import math
 import random as _random
-import sys
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, cast
@@ -151,7 +150,18 @@ def test_monte_carlo_job_path(monkeypatch: pytest.MonkeyPatch) -> None:
         job=job, runs=[JobRun(combo={"R1": "1k"}, handle=handle)], cache_dir=None
     )
 
-    monkeypatch.setattr("spicelab.analysis.montecarlo.run_job", lambda job, **kwargs: job_result)
+    captured: dict[str, Any] = {}
+
+    def fake_run_job(job: Job, **kwargs: Any) -> JobResult:
+        captured["job"] = job
+        captured["kwargs"] = kwargs
+        return job_result
+
+    monkeypatch.setattr("spicelab.analysis.montecarlo.run_job", fake_run_job)
+
+    def progress_cb(done: int, total: int) -> None:
+        pass
+
     mc = monte_carlo(
         circuit,
         mapping,
@@ -159,8 +169,12 @@ def test_monte_carlo_job_path(monkeypatch: pytest.MonkeyPatch) -> None:
         analyses=[AnalysisSpec(mode="op", args={})],
         engine="ngspice",
         cache_dir=None,
+        workers=2,
+        progress=progress_cb,
     )
     assert mc.result_handles()
+    assert captured["kwargs"]["workers"] == 2
+    assert captured["kwargs"]["progress"] is progress_cb
 
 
 @pytest.mark.parametrize(
@@ -222,7 +236,7 @@ def test_monte_carlo_requires_analysis() -> None:
     r = Resistor("R1", "1k")
     circuit.add(r)
     mapping: dict[Component, Dist] = {r: UniformPct(0.1)}
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="analyses"):
         monte_carlo(circuit, mapping, n=1)
 
 
@@ -243,68 +257,3 @@ def test_monte_carlo_zero_runs_returns_empty(monkeypatch: pytest.MonkeyPatch) ->
         analyses=[AnalysisSpec(mode="op", args={})],
     )
     assert result.runs == []
-
-
-def test_monte_carlo_analysis_factory_progress(monkeypatch: pytest.MonkeyPatch) -> None:
-    circuit = Circuit("legacy")
-    r = Resistor("R1", "1k")
-    circuit.add(r)
-    mapping: dict[Component, Dist] = {r: UniformPct(0.0)}
-
-    traces = TraceSet(
-        [Trace("time", "s", np.array([0.0, 1.0])), Trace("V(out)", None, np.array([0.0, 1.0]))]
-    )
-
-    class LegacyAnalysis:
-        def run(self, circ: Circuit) -> AnalysisResult:
-            return AnalysisResult(run=_run_result_obj(), traces=traces)
-
-    def factory() -> LegacyAnalysis:
-        return LegacyAnalysis()
-
-    buffer: list[str] = []
-
-    class _FakeStderr:
-        def write(self, text: str) -> None:
-            buffer.append(text)
-
-        def flush(self) -> None:
-            pass
-
-    monkeypatch.setattr(sys, "stderr", _FakeStderr())
-    result = monte_carlo(
-        circuit,
-        mapping,
-        n=2,
-        analysis_factory=factory,
-        progress=True,
-    )
-    assert len(result.runs) == 2
-    assert any("MC:" in chunk for chunk in buffer)
-
-
-def test_monte_carlo_concurrent_workers() -> None:
-    circuit = Circuit("legacy")
-    r = Resistor("R1", "1k")
-    circuit.add(r)
-    mapping: dict[Component, Dist] = {r: UniformPct(0.0)}
-
-    traces = TraceSet(
-        [Trace("time", "s", np.array([0.0, 1.0])), Trace("V(out)", None, np.array([0.0, 1.0]))]
-    )
-
-    class LegacyAnalysis:
-        def run(self, circ: Circuit) -> AnalysisResult:
-            return AnalysisResult(run=_run_result_obj(), traces=traces)
-
-    def factory() -> LegacyAnalysis:
-        return LegacyAnalysis()
-
-    result = monte_carlo(
-        circuit,
-        mapping,
-        n=3,
-        analysis_factory=factory,
-        workers=2,
-    )
-    assert len(result.runs) == 3

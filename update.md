@@ -127,15 +127,14 @@ Objetivo
 Fechar a API estável de modelos e contratos que todo o resto vai usar.
 
 Tarefas
-	•	Finalizar spicelab/core/types.py:
-	•	Circuit, Component, Source, Probe, AnalysisSpec(mode: op|dc|ac|tran|noise, args: dict), SweepSpec, Result.
-	•	Circuit.hash() determinístico (usado em cache/logs).
-	•	Padronizar unidades e validação (pydantic + typing_extensions), mantendo “floats puros” na borda (converter para SI internamente).
-	•	Criar spicelab/engines/base.py:
-	•	Simulator.run(circuit, analysis: list[AnalysisSpec], sweep: Optional[SweepSpec]) -> Result
-	•	EngineFeatures (supports_callbacks, supports_verilog_a, supports_noise).
-	•	Definir contrato de Dataset para resultados (será entregue no M2 via I/O):
-	•	Result trará metadata + handle para dataset() (retorna xarray.Dataset) e to_polars().
+	•	✅ Finalizar spicelab/core/types.py.
+	•	✅ Circuit, Component, Source, Probe, AnalysisSpec(mode: op|dc|ac|tran|noise, args: dict), SweepSpec, Result.
+	•	✅ Circuit.hash() determinístico (usado em cache/logs).
+	•	✅ Padronizar unidades e validação (pydantic + typing_extensions), mantendo “floats puros” na borda (converter para SI internamente).
+	•	✅ Criar spicelab/engines/base.py.
+	•	✅ Simulator.run(circuit, analysis: list[AnalysisSpec], sweep: Optional[SweepSpec]) -> Result.
+	•	✅ EngineFeatures (supports_callbacks, supports_verilog_a, supports_noise).
+	•	✅ Definir contrato de Dataset para resultados (será entregue no M2 via I/O): Result trará metadata + handle para dataset() (retorna xarray.Dataset) e to_polars().
 
 Critérios de aceite
 	•	Tipos aceitos por mypy (strict) e ruff ok.
@@ -152,14 +151,14 @@ Objetivo
 Ler todos os formatos (LT .raw, ngspice .raw/.log, Xyce .prn/.csv) e padronizar em xarray.Dataset com coordenadas time/freq, step, seed, corner.
 
 Tarefas
-	•	spicelab/io/readers.py:
-	•	read_ltspice_raw(path) -> xr.Dataset
-	•	read_ngspice_raw|log(path) -> xr.Dataset
-	•	read_xyce_prn|csv(path) -> xr.Dataset
-	•	Conversão para polars/pandas via helpers.
-	•	Carregar metadados (engine, version, netlist hash, analysis args) em dataset.attrs.
-	•	Incorporar “stepped sweeps” (LTspice) como dimensão step homogênea.
-	•	Ajustar pontos onde hoje se lê diretamente arquivos — usar a façade nova.
+	•	✅ spicelab/io/readers.py.
+	•	✅ read_ltspice_raw(path) -> xr.Dataset.
+	•	✅ read_ngspice_raw|log(path) -> xr.Dataset.
+	•	✅ read_xyce_prn|csv(path) -> xr.Dataset.
+	•	✅ Conversão para polars/pandas via helpers.
+	•	✅ Carregar metadados (engine, version, netlist hash, analysis args) em dataset.attrs.
+	•	✅ Incorporar “stepped sweeps” (LTspice) como dimensão step homogênea.
+	•	✅ Ajustar pontos onde hoje se lê diretamente arquivos — usar a façade nova.
 
 Critérios de aceite
 	•	Testes de parsing (LT/Xyce/ngspice) verdes.
@@ -177,15 +176,12 @@ Objetivo
 Encapsular execução de ngspice (proc), LTspice (CLI) e Xyce (CLI) sob Simulator.run(...), usando os leitores do M2.
 
 Tarefas
-	•	spicelab/engines/ngspice_proc.py:
-	•	writer de netlist a partir de Circuit.
-	•	invocar ngspice (subprocess), gerar .raw/.log, usar I/O do M2.
-	•	spicelab/engines/ltspice_cli.py:
-	•	localizar binário (macOS/Win), rodar headless, ler .raw.
-	•	spicelab/engines/xyce_cli.py:
-	•	invocar Xyce, ler .prn/.csv.
-	•	Feature flags preenchidos por engine.
-	•	Mensagem de erro amigável quando binário não estiver instalado (com dica de instalação).
+	•	✅ spicelab/engines/ngspice_proc.py: writer de netlist a partir de Circuit.
+	•	✅ invocar ngspice (subprocess), gerar .raw/.log, usar I/O do M2.
+	•	✅ spicelab/engines/ltspice_cli.py: localizar binário (macOS/Win), rodar headless, ler .raw.
+	•	✅ spicelab/engines/xyce_cli.py: invocar Xyce, ler .prn/.csv.
+	•	✅ Feature flags preenchidos por engine.
+	•	✅ Mensagem de erro amigável quando binário não estiver instalado (com dica de instalação).
 
 Critérios de aceite
 	•	Scripts de exemplo (examples/rc_tran.py, rc_ac.py) rodam iguais mudando só engine=....
@@ -203,12 +199,12 @@ Objetivo
 Varreduras agnósticas ao backend, paralelismo e cache por hash.
 
 Tarefas
-	•	spicelab/analysis/sweep.py: Grid(variables: dict[str, list[float]]) que expande SweepSpec.
-	•	spicelab/analysis/mc.py: Monte Carlo com seeds e distribuições (normal/lognormal/uniform); aplicar variações nos params de Component.
-	•	spicelab/orchestrator.py:
-	•	Job(circuit, analysis, sweep)
-	•	Orquestrador com multiprocessing e cache (.spicelab_cache/<hash>).
-	•	spicelab/analysis/measure.py (opcional nesse marco): medidas estilo .meas (gain @freq, overshoot, settling time), gravadas em polars.DataFrame.
+	•	✅ spicelab/analysis/sweep.py: Grid(variables: dict[str, list[float]]) que expande SweepSpec.
+	•	✅ spicelab/analysis/mc.py: Monte Carlo com seeds e distribuições (normal/lognormal/uniform); aplicar variações nos params de Component.
+	•	✅ spicelab/orchestrator.py.
+	•	✅ Job(circuit, analysis, sweep).
+	•	✅ Orquestrador com multiprocessing e cache (.spicelab_cache/<hash>).
+	•	✅ spicelab/analysis/measure.py (opcional nesse marco): medidas estilo .meas (gain @freq, overshoot, settling time), gravadas em polars.DataFrame.
 
 Critérios de aceite
 	•	Reprodutibilidade de MC por seed.
@@ -226,14 +222,14 @@ Objetivo
 Habilitar libngspice (shared) para callbacks (on_tran_point) e fontes externas (controladores/ADCs em Python).
 
 Tarefas
-	•	spicelab/engines/ngspice_shared.py:
-	•	Binding FFI ao libngspice (ctypes/cffi).
-	•	Callbacks: on_init, on_output, on_exit, on_tran_point.
-	•	API para external sources (consultam estado e devolvem valor).
-	•	spicelab/extensions/adc.py e/ou control.py:
-	•	Abstrações simples para amostrar V(n), quantizar, e injetar u(t) por callback.
-	•	Benchmarks de latência e fallback “quase-tempo-real” por blocos.
-	•	Documentar instalação da lib compartilhada (docs/installation.md + README) e linha fina para uso compartilhado/ngspice proc.
+	•	✅ spicelab/engines/ngspice_shared.py.
+	•	✅ Binding FFI ao libngspice (ctypes/cffi).
+	•	✅ Callbacks: on_init, on_output, on_exit, on_tran_point.
+	•	✅ API para external sources (consultam estado e devolvem valor).
+	•	✅ spicelab/extensions/adc.py e/ou control.py.
+	•	✅ Abstrações simples para amostrar V(n), quantizar, e injetar u(t) por callback.
+	•	✅ Benchmarks de latência e fallback “quase-tempo-real” por blocos.
+	•	✅ Documentar instalação da lib compartilhada (docs/installation.md + README) e linha fina para uso compartilhado/ngspice proc.
 
 Critérios de aceite
 	•	Exemplo “RC com controlador P” fechando malha por callback rodando e validado (timestep coerente).
@@ -251,12 +247,12 @@ Final de v1: UX excelente para exploração, relatórios e depuração.
 
 Tarefas
 	•	spicelab/viz/:
-	•	Helpers matplotlib/plotly para curvas comuns (Bode, step response, Nyquist).
+	•	Helpers matplotlib/plotly para curvas comuns (Bode, step response, Nyquist). ✅ `spicelab/viz/plotly.py`, docs `docs/plots.md`
 	•	spicelab/reporting/:
-	•	Export HTML/Markdown com plots + tabelas (polars → HTML).
+	•	Export HTML/Markdown com plots + tabelas (polars → HTML). ✅ `spicelab/reporting/report.py`
 	•	Instalação assistida:
-	•	spicelab doctor (script) para checar engines no PATH/libs e sugerir instalação.
-	•	Documentação (mkdocs/sphinx) com exemplos completos.
+	•	spicelab doctor (script) para checar engines no PATH/libs e sugerir instalação. ✅ `python -m spicelab.doctor`
+	•	Documentação (mkdocs/sphinx) com exemplos completos. ✅ `docs/reporting.md`, `docs/doctor.md`
 
 Critérios de aceite
 	•	examples/ cobrindo: RC ac/tran, sweep param, Monte Carlo, co-sim P-control, leitura de .raw do LT/Linux/ngspice, Xyce .prn.

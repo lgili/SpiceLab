@@ -19,6 +19,25 @@ the results with familiar data libraries (xarray · pandas · polars).
 - **xarray-first results** – datasets carry canonical signal names (`V(node)`, `I(element)`) and rich metadata.
 - **Measurement helpers** – `.meas`-style gain/overshoot/settling specs return tidy polars DataFrames.
 - **Extensible component library** – build, preview and export netlists (including Graphviz topology previews).
+- **Reporting helpers** – turn simulation outputs into HTML/Markdown summaries with a few lines of code.
+- **Environment doctor** – `python -m spicelab.doctor` validates engine/shared-library setup before long runs.
+
+---
+
+## Engine support matrix
+
+| Feature | NGSpice | LTspice CLI | Xyce |
+| --- | --- | --- | --- |
+| Operating point / AC / Tran analyses | ✅ | ✅ | ✅ |
+| Value/grid sweeps with caching | ✅ | ✅ | ✅ |
+| Monte Carlo orchestrator | ✅ | ✅ | ✅ |
+| Co-simulation callbacks | ✅ *(libngspice shared)* | — | — |
+| HTML / Markdown reporting | ✅ | ✅ | ✅ |
+| Plot helpers (Bode / Step / Nyquist) | ✅ | ✅ | ✅ |
+
+LTspice and Xyce support rely on the respective CLI binaries being installed and discoverable.
+Set `SPICELAB_LTSPICE` or `SPICELAB_XYCE` when the executables are not on `PATH`. Co-simulation
+callbacks require the shared `libngspice` library.
 
 ---
 
@@ -114,6 +133,7 @@ Runnable demos are under [`examples/`](examples/) and can be executed with
 - Engines (any subset): NGSpice · LTspice CLI · Xyce
 - For ngspice co-simulation callbacks, also install the `libngspice` shared
   library and export `SPICELAB_NGSPICE_SHARED` (see [installation docs](https://lgili.github.io/CircuitToolkit/installation/)).
+- Quick diagnostic: `python -m spicelab.doctor`
 
 Environment overrides when binaries are not on PATH:
 

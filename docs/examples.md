@@ -13,8 +13,10 @@ All of them use the unified orchestrator (`run_simulation`,
 | `step_sweep_grid.py` | Multi-parameter sweep; exports a CSV table. |
 | `step_sweep_fig.py` | Same sweep rendered with Plotly. |
 | `mc_demo_plots.py` | Generates synthetic Monte Carlo plots for docs. |
+| `monte_carlo_demo.py` | Monte Carlo demo with orchestrator fallback and HTML/PNG exports. |
 | `analog_mux_demo.py` | Inspects the `AnalogMux8` component topology. |
 | `engine_ac_demo.py` | Minimal AC example using the orchestrator. |
+| `xyce_tran.py` | RC transient aimed at Xyce with optional Plotly exports. |
 
 Run them from the repository root:
 ```bash

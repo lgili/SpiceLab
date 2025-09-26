@@ -1,15 +1,36 @@
-"""Basic RC transient example using the unified engine orchestrator."""
+"""RC transient step response using any supported engine.
+
+Run from the project root:
+    uv run --active python examples/rc_tran.py --engine ngspice
+    uv run --active python examples/rc_tran.py --engine ltspice
+    uv run --active python examples/rc_tran.py --engine xyce
+
+If ``--engine`` is omitted the script falls back to ``ngspice`` or the value of
+``SPICELAB_ENGINE``.
+"""
 
 from __future__ import annotations
 
 import argparse
-import os
+
+try:  # pragma: no cover - executed when running as a script
+    from ._common import parser_with_engine, print_header, resolve_engine, run_or_fail
+except ImportError:  # pragma: no cover - executed when running as ``python examples/foo.py``
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from examples._common import (  # type: ignore[import-not-found]
+        parser_with_engine,
+        print_header,
+        resolve_engine,
+        run_or_fail,
+    )
 
 from spicelab.core.circuit import Circuit
 from spicelab.core.components import Capacitor, Resistor, Vdc
 from spicelab.core.net import GND, Net
 from spicelab.core.types import AnalysisSpec
-from spicelab.engines import run_simulation
 
 
 def build_circuit() -> Circuit:
@@ -29,21 +50,17 @@ def build_circuit() -> Circuit:
 
 
 def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="RC transient demo")
-    parser.add_argument(
-        "--engine",
-        default=os.getenv("SPICELAB_ENGINE", "ngspice"),
-        help="Engine name (ngspice, ltspice, xyce, ...). Defaults to SPICELAB_ENGINE or 'ngspice'.",
-    )
+    parser = parser_with_engine("RC transient demo")
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = _parse_args()
-    engine = args.engine
+    engine = resolve_engine(getattr(args, "engine", None))
+    print_header("RC transient", engine)
     circuit = build_circuit()
     analyses = [AnalysisSpec("tran", {"tstep": "10us", "tstop": "5ms"})]
-    handle = run_simulation(circuit, analyses, engine=engine)
+    handle = run_or_fail(circuit, analyses, engine=engine)
     ds = handle.dataset()
     print("engine:", handle.attrs().get("engine"))
     print("coords:", list(ds.coords))

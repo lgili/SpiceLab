@@ -35,6 +35,16 @@ def _numeric(values: Iterable[Any]) -> NDArray[np.floating[Any]]:
     return np.asarray(list(values), dtype=float)
 
 
+def _resolve_trace_name(ts: TraceSet, name: str) -> str:
+    if name in ts.names:
+        return name
+    low = name.lower()
+    for candidate in ts.names:
+        if candidate.lower() == low:
+            return candidate
+    raise KeyError(f"Trace '{name}' not found. Available: {ts.names}")
+
+
 def _pick_x(ts: TraceSet) -> tuple[NDArray[np.floating[Any]], str]:
     x_attr = getattr(ts, "x", None)
     if x_attr is not None:
@@ -51,6 +61,47 @@ def _pick_x(ts: TraceSet) -> tuple[NDArray[np.floating[Any]], str]:
 
     first = ts.names[0]
     return _numeric(ts[first].values), first
+
+
+def _first_crossing_time(
+    x: NDArray[np.floating[Any]],
+    y: NDArray[np.floating[Any]],
+    target: float,
+    *,
+    rising: bool,
+) -> float | None:
+    if x.size == 0:
+        return None
+    mask = y >= target if rising else y <= target
+    idx = np.where(mask)[0]
+    if idx.size == 0:
+        return None
+    i = int(idx[0])
+    if i == 0:
+        return float(x[0])
+    x0 = float(x[i - 1])
+    x1 = float(x[i])
+    y0 = float(y[i - 1])
+    y1 = float(y[i])
+    if y1 == y0:
+        return float(x1)
+    ratio = (target - y0) / (y1 - y0)
+    return float(x0 + ratio * (x1 - x0))
+
+
+def _settling_time(
+    x: NDArray[np.floating[Any]],
+    y: NDArray[np.floating[Any]],
+    final_value: float,
+    tolerance: float,
+) -> float | None:
+    if tolerance <= 0.0 or x.size == 0:
+        return None
+    diffs = np.abs(y - final_value)
+    for i in range(x.size):
+        if np.all(diffs[i:] <= tolerance):
+            return float(x[i])
+    return None
 
 
 @dataclass
@@ -95,10 +146,20 @@ class VizFigure:
     def show(self, **kwargs: Any) -> None:
         self.figure.show(**kwargs)
 
+    # Jupyter display hook for nicer UX in notebooks
+    def _ipython_display_(self) -> None:  # pragma: no cover - interactive hook
+        try:
+            # Prefer Plotly's HTML renderer for notebooks
+            self.figure.show()
+        except Exception:
+            # Fallback to printing a minimal representation
+            print(f"VizFigure(kind={self.metadata.get('kind') if self.metadata else 'unknown'})")
+
 
 def time_series_view(
     ts: TraceSet,
     ys: Sequence[str] | None = None,
+    x: str | None = None,
     *,
     title: str | None = None,
     xlabel: str | None = None,
@@ -108,25 +169,44 @@ def time_series_view(
     template: str | None = "plotly_white",
     markers: bool = False,
     color_map: Mapping[str, str] | None = None,
+    line_width: float | None = None,
+    marker_size: int | None = None,
 ) -> VizFigure:
     go, _, _ = _ensure_plotly()
-    x, xname = _pick_x(ts)
-    names = [n for n in ts.names if n != xname] if ys is None else list(ys)
+    # allow caller to override which column to use for x
+    if x is not None:
+        try:
+            x_name = _resolve_trace_name(ts, x)
+            x_vals = _numeric(ts[x_name].values)
+            xname = x_name
+        except Exception:  # fallback to heuristics
+            x_vals, xname = _pick_x(ts)
+    else:
+        x_vals, xname = _pick_x(ts)
+    if ys is None:
+        names = [n for n in ts.names if n != xname]
+    else:
+        names = [_resolve_trace_name(ts, n) for n in ys]
 
     fig = go.Figure()
     mode = "lines+markers" if markers else "lines"
     for name in names:
         values = ts[name].values
-        line = None
+        line: dict[str, Any] | None = {"width": line_width} if line_width is not None else None
         if color_map and name in color_map:
-            line = dict(color=color_map[name])
+            if line is None:
+                line = {"color": color_map[name]}
+            else:
+                line = {**line, "color": color_map[name]}
+        marker = dict(size=marker_size) if marker_size is not None else None
         fig.add_trace(
             go.Scatter(
-                x=x,
+                x=x_vals,
                 y=values,
                 mode=mode,
                 name=name,
                 line=line,
+                marker=marker,
             )
         )
 
@@ -145,6 +225,7 @@ def time_series_view(
 def bode_view(
     ts: TraceSet,
     y: str,
+    x: str | None = None,
     *,
     unwrap_phase: bool = True,
     title: str | None = None,
@@ -152,8 +233,17 @@ def bode_view(
     template: str | None = "plotly_white",
 ) -> VizFigure:
     go, make_subplots, _ = _ensure_plotly()
-    x, xname = _pick_x(ts)
-    z = np.asarray(ts[y].values)
+    if x is not None:
+        try:
+            x_name = _resolve_trace_name(ts, x)
+            x_vals = _numeric(ts[x_name].values)
+            xname = x_name
+        except Exception:  # fallback
+            x_vals, xname = _pick_x(ts)
+    else:
+        x_vals, xname = _pick_x(ts)
+    y_name = _resolve_trace_name(ts, y)
+    z = np.asarray(ts[y_name].values)
     if not np.iscomplexobj(z):
         raise ValueError(f"Trace '{y}' is not complex; AC analysis is required for Bode plots.")
 
@@ -164,12 +254,14 @@ def bode_view(
 
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.08)
     fig.add_trace(
-        go.Scatter(x=x, y=mag_db, mode="lines", name="Magnitude [dB]"),
+        go.Scatter(x=x_vals, y=mag_db, mode="lines", name="Magnitude [dB]"),
         row=1,
         col=1,
     )
     fig.add_trace(
-        go.Scatter(x=x, y=phase, mode="lines", name="Phase [deg]", line=dict(color="indianred")),
+        go.Scatter(
+            x=x_vals, y=phase, mode="lines", name="Phase [deg]", line=dict(color="indianred")
+        ),
         row=2,
         col=1,
     )
@@ -182,6 +274,199 @@ def bode_view(
         legend=dict(orientation="h"),
     )
     return VizFigure(fig, metadata={"kind": "bode", "trace": y})
+
+
+def nyquist_view(
+    ts: TraceSet,
+    y: str,
+    *,
+    title: str | None = None,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+    template: str | None = "plotly_white",
+    show_arrow: bool = True,
+) -> VizFigure:
+    """Plot Nyquist curve (Re vs Im) for a complex trace.
+
+    Accepts the same TraceSet used for Bode; y must be complex-valued.
+    """
+    go, _, _ = _ensure_plotly()
+    x_vals, _ = _pick_x(ts)
+    y_name = _resolve_trace_name(ts, y)
+    z = np.asarray(ts[y_name].values)
+    if not np.iscomplexobj(z):
+        raise ValueError(f"Trace '{y}' is not complex; AC analysis is required for Nyquist plots.")
+
+    re = np.real(z)
+    im = np.imag(z)
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=re, y=im, mode="lines+markers", name=y))
+    # optional arrow showing direction (last segment)
+    if show_arrow and re.size >= 2:
+        fig.add_trace(
+            go.Scatter(
+                x=[re[-2], re[-1]],
+                y=[im[-2], im[-1]],
+                mode="lines",
+                line=dict(color="black", width=1),
+                showlegend=False,
+            )
+        )
+
+    fig.update_layout(title=title or f"Nyquist plot for {y}", template=template)
+    fig.update_xaxes(title_text=xlabel or "Re")
+    fig.update_yaxes(title_text=ylabel or "Im")
+    return VizFigure(fig, metadata={"kind": "nyquist", "trace": y})
+
+
+def step_response_view(
+    ts: TraceSet,
+    y: str,
+    x: str | None = None,
+    *,
+    steady_state: float | None = None,
+    initial_value: float | None = None,
+    settle_tolerance: float = 0.02,
+    title: str | None = None,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+    template: str | None = "plotly_white",
+    show_annotations: bool = True,
+) -> VizFigure:
+    go, _, _ = _ensure_plotly()
+    if x is not None:
+        try:
+            x_name = _resolve_trace_name(ts, x)
+            x_vals = _numeric(ts[x_name].values)
+            xname = x_name
+        except Exception:
+            x_vals, xname = _pick_x(ts)
+    else:
+        x_vals, xname = _pick_x(ts)
+    y_name = _resolve_trace_name(ts, y)
+    y_vals = _numeric(ts[y_name].values)
+    if y_vals.size == 0:
+        raise ValueError("Trace is empty; cannot build step response plot")
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=x_vals, y=y_vals, mode="lines", name=y))
+
+    init_val = float(initial_value) if initial_value is not None else float(y_vals[0])
+    final_val = float(steady_state) if steady_state is not None else float(y_vals[-1])
+    delta = final_val - init_val
+    rising = delta >= 0.0
+    magnitude = abs(delta)
+
+    t10 = t90 = rise_time = None
+    overshoot_pct = None
+    settling_time = None
+
+    if magnitude > 0:
+        target10 = init_val + 0.1 * delta
+        target90 = init_val + 0.9 * delta
+        t10 = _first_crossing_time(x_vals, y_vals, target10, rising=rising)
+        t90 = _first_crossing_time(x_vals, y_vals, target90, rising=rising)
+        if t10 is not None and t90 is not None:
+            rise_time = max(0.0, t90 - t10)
+
+        if rising:
+            overshoot = float(y_vals.max()) - final_val
+        else:
+            overshoot = final_val - float(y_vals.min())
+        overshoot_pct = max(0.0, overshoot) / magnitude * 100.0
+
+        tol = abs(settle_tolerance) * magnitude
+        settling_time = _settling_time(x_vals, y_vals, final_val, tol)
+
+        band_label = f"±{settle_tolerance * 100:.1f}%"
+        if tol > 0:
+            upper = final_val + tol
+            lower = final_val - tol
+            fig.add_trace(
+                go.Scatter(
+                    x=x_vals,
+                    y=np.full_like(x_vals, upper),
+                    mode="lines",
+                    name=f"steady-state {band_label}",
+                    line=dict(color="rgba(100,100,100,0.4)", dash="dot"),
+                    hoverinfo="skip",
+                    showlegend=True,
+                )
+            )
+            fig.add_trace(
+                go.Scatter(
+                    x=x_vals,
+                    y=np.full_like(x_vals, lower),
+                    mode="lines",
+                    name=None,
+                    line=dict(color="rgba(100,100,100,0.4)", dash="dot"),
+                    hoverinfo="skip",
+                    showlegend=False,
+                )
+            )
+        fig.add_trace(
+            go.Scatter(
+                x=x_vals,
+                y=np.full_like(x_vals, final_val),
+                mode="lines",
+                name="steady-state",
+                line=dict(color="rgba(120,120,120,0.7)", dash="dash"),
+                hoverinfo="skip",
+                showlegend=True,
+            )
+        )
+
+        if show_annotations:
+            for t, _label in ((t10, "10%"), (t90, "90%"), (settling_time, "settling")):
+                if t is None:
+                    continue
+                fig.add_trace(
+                    go.Scatter(
+                        x=[t, t],
+                        y=[min(y_vals.min(), final_val), max(y_vals.max(), final_val)],
+                        mode="lines",
+                        name=None,
+                        line=dict(color="rgba(200,200,200,0.6)", dash="dot"),
+                        hoverinfo="skip",
+                        showlegend=False,
+                    )
+                )
+    else:
+        fig.add_trace(
+            go.Scatter(
+                x=x_vals,
+                y=np.full_like(x_vals, final_val),
+                mode="lines",
+                name="steady-state",
+                line=dict(color="rgba(120,120,120,0.7)", dash="dash"),
+                hoverinfo="skip",
+                showlegend=True,
+            )
+        )
+
+    fig.update_layout(
+        title=title or f"Step response for {y}",
+        template=template,
+        xaxis_title=xlabel or xname,
+        yaxis_title=ylabel or y,
+        showlegend=True,
+    )
+    fig.update_xaxes(showgrid=True, gridcolor="rgba(150,150,150,0.2)")
+    fig.update_yaxes(showgrid=True, gridcolor="rgba(150,150,150,0.2)")
+
+    metadata = {
+        "kind": "step_response",
+        "trace": y,
+        "initial_value": init_val,
+        "final_value": final_val,
+        "t10": t10,
+        "t90": t90,
+        "rise_time": rise_time,
+        "settling_time": settling_time,
+        "settle_tolerance": settle_tolerance,
+        "overshoot_pct": overshoot_pct,
+    }
+    return VizFigure(fig, metadata=metadata)
 
 
 def sweep_curve(

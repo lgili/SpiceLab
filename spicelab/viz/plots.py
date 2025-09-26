@@ -1,12 +1,12 @@
-"""Compatibility wrappers for Plotly-based visualization helpers."""
+"""High-level plotting helpers built on top of Plotly views."""
 
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from ...io.raw_reader import TraceSet
-from ...viz import (
+from ..io.raw_reader import TraceSet
+from .plotly import (
     VizFigure,
     bode_view,
     monte_carlo_histogram,
@@ -18,6 +18,18 @@ from ...viz import (
     sweep_curve,
     time_series_view,
 )
+
+__all__ = [
+    "plot_traces",
+    "plot_bode",
+    "plot_step_response",
+    "plot_nyquist",
+    "plot_sweep_df",
+    "plot_mc_metric_hist",
+    "plot_mc_kde",
+    "plot_param_vs_metric",
+    "plot_params_matrix",
+]
 
 
 def _ensure_traceset(obj: TraceSet | Any) -> TraceSet:
@@ -37,7 +49,7 @@ def plot_traces(
     ylabel: str | None = None,
     legend: bool = True,
     grid: bool = True,
-    tight: bool = True,
+    tight: bool = True,  # legacy parameter, ignored
     ax: Any | None = None,
     template: str | None = "plotly_white",
     markers: bool = False,
@@ -46,11 +58,7 @@ def plot_traces(
     line_width: float | None = None,
     marker_size: int | None = None,
 ) -> VizFigure:
-    """Render time-domain traces using the Plotly backend.
-
-    Parameters mirror the historical Matplotlib API; ``ax`` is no longer supported and
-    ``tight`` is kept for compatibility (no effect).
-    """
+    """Render time-domain traces using the Plotly backend."""
 
     if ax is not None:  # pragma: no cover - compatibility guard
         raise ValueError("plot_traces no longer accepts a Matplotlib axis; pass ax=None")
@@ -151,7 +159,7 @@ def plot_sweep_df(
     ylabel: str | None = None,
     legend: bool = True,
     grid: bool = True,
-    tight: bool = True,
+    tight: bool = True,  # legacy parameter, ignored
     ax: Any | None = None,
     template: str | None = "plotly_white",
 ) -> VizFigure:
@@ -178,19 +186,13 @@ def plot_mc_metric_hist(
     metrics: Sequence[float] | None = None,
     title: str | None = None,
     bins: int | None = 50,
-    *,
     xlabel: str | None = None,
     ylabel: str | None = None,
-    grid: bool = True,
-    tight: bool = True,
-    ax: Any | None = None,
     template: str | None = "plotly_white",
 ) -> VizFigure:
     if metrics is None:
-        raise ValueError("metrics list is required")
-    if ax is not None:  # pragma: no cover - compatibility guard
-        raise ValueError("plot_mc_metric_hist no longer accepts a Matplotlib axis; pass ax=None")
-    fig = monte_carlo_histogram(
+        raise ValueError("metrics must be provided")
+    return monte_carlo_histogram(
         metrics,
         title=title,
         bins=bins or 50,
@@ -198,28 +200,32 @@ def plot_mc_metric_hist(
         ylabel=ylabel,
         template=template,
     )
-    if not grid:
-        fig.figure.update_xaxes(showgrid=False)
-        fig.figure.update_yaxes(showgrid=False)
-    return fig
+
+
+def plot_mc_kde(
+    metrics: Sequence[float] | None = None,
+    title: str | None = None,
+    xlabel: str | None = None,
+    template: str | None = "plotly_white",
+) -> VizFigure:
+    return monte_carlo_kde(metrics or [], title=title, xlabel=xlabel, template=template)
 
 
 def plot_param_vs_metric(
     samples: Sequence[Mapping[str, float]],
     metrics: Sequence[float],
     param: str,
-    *,
     title: str | None = None,
+    *,
     xlabel: str | None = None,
     ylabel: str | None = None,
-    grid: bool = True,
-    tight: bool = True,
-    ax: Any | None = None,
     template: str | None = "plotly_white",
+    grid: bool | None = None,
+    ax: Any | None = None,
 ) -> VizFigure:
     if ax is not None:  # pragma: no cover - compatibility guard
         raise ValueError("plot_param_vs_metric no longer accepts a Matplotlib axis; pass ax=None")
-    fig = monte_carlo_param_scatter(
+    return monte_carlo_param_scatter(
         samples,
         metrics,
         param,
@@ -228,43 +234,13 @@ def plot_param_vs_metric(
         ylabel=ylabel,
         template=template,
     )
-    if not grid:
-        fig.figure.update_xaxes(showgrid=False)
-        fig.figure.update_yaxes(showgrid=False)
-    return fig
-
-
-def plot_mc_kde(
-    metrics: Sequence[float],
-    *,
-    title: str | None = None,
-    bandwidth: float | None = None,
-    xlabel: str | None = None,
-    ylabel: str | None = None,
-    grid: bool = True,
-    tight: bool = True,
-    ax: Any | None = None,
-    template: str | None = "plotly_white",
-) -> VizFigure:
-    if ax is not None:  # pragma: no cover - compatibility guard
-        raise ValueError("plot_mc_kde no longer accepts a Matplotlib axis; pass ax=None")
-    fig = monte_carlo_kde(metrics, title=title, xlabel=xlabel, template=template)
-    if ylabel is not None:
-        fig.figure.update_layout(yaxis_title=ylabel)
-    if not grid:
-        fig.figure.update_xaxes(showgrid=False)
-        fig.figure.update_yaxes(showgrid=False)
-    return fig
 
 
 def plot_params_matrix(
     samples: Sequence[Mapping[str, float]],
     params: Sequence[str] | None = None,
     *,
-    figsize: tuple[int, int] | None = None,
-    tight: bool = True,
+    title: str | None = None,
     template: str | None = "plotly_white",
 ) -> VizFigure:
-    """Create a pairwise scatter matrix for Monte Carlo samples using Plotly."""
-
-    return params_scatter_matrix(samples, params=params, template=template)
+    return params_scatter_matrix(samples, params=params, title=title, template=template)

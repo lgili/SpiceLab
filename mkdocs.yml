@@ -56,6 +56,8 @@ nav:
       - LTspice integration: ltspice-import.md
       - Analog mux: mux-enable-ports.md
       - CLI & CI: cli-ci.md
+      - Reporting: reporting.md
+      - Environment doctor: doctor.md
       - Troubleshooting: troubleshooting.md
   - Legacy notes:
       - AC stability (refresh soon): ac-stability.md

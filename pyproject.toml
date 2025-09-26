@@ -91,6 +91,27 @@ disallow_any_generics = true
 explicit_package_bases = true
 mypy_path = "."
 
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+allow_untyped_defs = true
+allow_untyped_calls = true
+allow_incomplete_defs = true
+
+[[tool.mypy.overrides]]
+module = ["examples.*"]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = [
+    "polars",
+    "polars.*",
+    "xarray",
+    "xarray.*",
+    "pandas",
+    "pandas.*",
+]
+ignore_missing_imports = true
+
 [dependency-groups]
 dev = [
     "pytest",

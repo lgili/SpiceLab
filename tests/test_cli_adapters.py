@@ -129,12 +129,33 @@ def test_xyce_run_directives_prefers_csv(tmp_path: Path, monkeypatch: pytest.Mon
 
     def fake_run(cmd: Iterable[str], cwd: str, capture_output: bool, text: bool) -> SimpleNamespace:
         workdir = Path(cwd)
+        deck_text = (workdir / "deck.cir").read_text(encoding="utf-8")
+        assert deck_text.lower().count(".end") == 1
+        assert deck_text.splitlines()[-1].strip().lower() == ".end"
+        assert ".op" in deck_text
         (workdir / "deck.cir.csv").write_text("csv", encoding="utf-8")
         return SimpleNamespace(returncode=0, stdout="stdout", stderr="err")
 
     monkeypatch.setattr("spicelab.spice.xyce_cli.subprocess.run", fake_run)
-    result = xy_run_directives("R 1 0 1k", [".op"], keep_workdir=False)
+    result = xy_run_directives("R 1 0 1k\n.end\n", [".op"], keep_workdir=False)
     assert result.artifacts.raw_path and result.artifacts.raw_path.endswith(".csv")
+
+
+def test_xyce_run_directives_detects_fd_csv(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    exe = tmp_path / "xyce"
+    exe.write_text("", encoding="utf-8")
+    monkeypatch.setenv("SPICELAB_XYCE", str(exe))
+
+    def fake_run(cmd: Iterable[str], cwd: str, capture_output: bool, text: bool) -> SimpleNamespace:
+        workdir = Path(cwd)
+        (workdir / "deck.cir.FD.csv").write_text("freq,data", encoding="utf-8")
+        return SimpleNamespace(returncode=0, stdout="stdout", stderr="err")
+
+    monkeypatch.setattr("spicelab.spice.xyce_cli.subprocess.run", fake_run)
+    result = xy_run_directives("R 1 0 1k\n.end\n", [".ac dec 5 1 10"], keep_workdir=False)
+    assert result.artifacts.raw_path and result.artifacts.raw_path.endswith(".FD.csv")
 
 
 def test_xyce_simulator_loads_dataset(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -150,6 +171,8 @@ def test_xyce_simulator_loads_dataset(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("spicelab.engines.xyce_cli.read_xyce_table", fake_read)
 
     def fake_run_directives(netlist: str, directives: list[str]) -> RunResult:
+        assert directives[0] == ".op"
+        assert any(d.startswith(".print op format=csv") for d in directives[1:])
         return RunResult(
             artifacts=RunArtifacts(
                 netlist_path="deck.cir",

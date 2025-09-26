@@ -7,8 +7,77 @@ import tempfile
 from collections.abc import Sequence
 from pathlib import Path
 
+from ..core.types import AnalysisSpec, Probe
 from ..engines.exceptions import EngineBinaryNotFound
 from .base import RunArtifacts, RunResult, SimulatorAdapter
+
+
+def _strip_final_end(netlist: str) -> str:
+    lines = netlist.splitlines()
+    while lines and not lines[-1].strip():
+        lines.pop()
+    if lines and lines[-1].strip().lower() == ".end":
+        lines.pop()
+        while lines and not lines[-1].strip():
+            lines.pop()
+    return "\n".join(lines)
+
+
+def _format_probe_signal(probe: Probe) -> str:
+    target = probe.target.strip()
+    if not target:
+        return ""
+    low = target.lower()
+    if probe.kind == "voltage":
+        if low.startswith("v("):
+            return "V" + target[1:]
+        return f"V({target})"
+    if probe.kind == "current":
+        if low.startswith("i("):
+            return "I" + target[1:]
+        return f"I({target})"
+    return target
+
+
+def _unique_preserve(seq: Sequence[str]) -> list[str]:
+    seen: set[str] = set()
+    out: list[str] = []
+    for item in seq:
+        if item and item not in seen:
+            seen.add(item)
+            out.append(item)
+    return out
+
+
+def _build_print_directives(
+    analyses: Sequence[AnalysisSpec], probes: list[Probe] | None
+) -> list[str]:
+    if not analyses:
+        return []
+
+    requested: list[str] = []
+    if probes:
+        for probe in probes:
+            sig = _format_probe_signal(probe)
+            if sig:
+                requested.append(sig)
+    signals = _unique_preserve(requested)
+    if not signals:
+        signals = ["V(*)"]
+
+    modes = {spec.mode for spec in analyses}
+    prints: list[str] = []
+    if any(mode == "tran" for mode in modes):
+        tran_signals = _unique_preserve(signals)
+        prints.append(".print tran format=csv " + " ".join(tran_signals))
+    if any(mode == "ac" for mode in modes):
+        ac_signals = _unique_preserve(signals)
+        prints.append(".print ac format=csv " + " ".join(ac_signals))
+    if any(mode == "dc" for mode in modes):
+        prints.append(".print dc format=csv " + " ".join(signals))
+    if any(mode == "op" for mode in modes):
+        prints.append(".print op format=csv " + " ".join(signals))
+    return prints
 
 
 def _which_xyce() -> str:
@@ -38,7 +107,9 @@ def _write_deck(
     deck = workdir / "deck.cir"
     with deck.open("w", encoding="utf-8") as f:
         f.write(f"* {title}\n")
-        f.write(netlist.rstrip() + "\n")
+        body = _strip_final_end(netlist)
+        if body:
+            f.write(body.rstrip() + "\n")
         for line in directives:
             f.write(line.rstrip() + "\n")
         f.write(".end\n")
@@ -56,9 +127,6 @@ def run_directives(
     workdir = Path(tempfile.mkdtemp(prefix="spicelab_xy_"))
     deck = _write_deck(workdir, title=title, netlist=netlist, directives=directives)
 
-    # Xyce writes deck.cir.prn by default
-    prn_out = workdir / (deck.name + ".prn")
-    csv_out = workdir / (deck.name + ".csv")
     cmd = [exe, str(deck)]
     proc = subprocess.run(cmd, cwd=str(workdir), capture_output=True, text=True)
 
@@ -71,11 +139,13 @@ def run_directives(
             lf.write("\n" + proc.stderr)
 
     raw_path: str | None = None
-    # Prefer CSV if produced, else PRN; we store the chosen one in raw_path field
-    if csv_out.exists():
-        raw_path = str(csv_out)
-    elif prn_out.exists():
-        raw_path = str(prn_out)
+    csv_candidates = sorted(workdir.glob(f"{deck.name}*.csv"))
+    if csv_candidates:
+        raw_path = str(csv_candidates[0])
+    else:
+        prn_candidates = sorted(workdir.glob(f"{deck.name}*.prn"))
+        if prn_candidates:
+            raw_path = str(prn_candidates[0])
 
     return RunResult(
         artifacts=RunArtifacts(

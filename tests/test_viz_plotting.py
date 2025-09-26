@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
-from spicelab.analysis.viz.plot import plot_bode, plot_traces
 from spicelab.io.raw_reader import Trace, TraceSet
+from spicelab.viz import plot_bode, plot_traces
 
 
 def _ts_real() -> TraceSet:

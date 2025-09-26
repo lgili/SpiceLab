@@ -92,6 +92,63 @@ class TraceSet:
         data = {t.name: t.values for t in self._traces}
         return pd.DataFrame(data)
 
+    @classmethod
+    def from_dataset(cls, dataset: Any) -> TraceSet:
+        """Build a TraceSet from an xarray.Dataset-like object."""
+
+        try:
+            import numpy as _np
+        except Exception as exc:  # pragma: no cover - numpy optional
+            raise RuntimeError("numpy is required to convert dataset into TraceSet") from exc
+
+        if not hasattr(dataset, "data_vars"):
+            raise TypeError("Expected an xarray.Dataset-like object with 'data_vars'")
+
+        coords = getattr(dataset, "coords", {})
+        coord_names = ("time", "freq", "frequency", "index")
+        coord_obj = None
+        coord_key = None
+        for name in coord_names:
+            if name in coords:
+                coord_obj = coords[name]
+                coord_key = name
+                break
+        if coord_obj is not None:
+            x_values = _np.asarray(getattr(coord_obj, "values", coord_obj), dtype=float)
+            x_name = str(getattr(coord_obj, "name", None) or coord_key or "index")
+        else:
+            data_vars = list(getattr(dataset, "data_vars", {}))
+            if not data_vars:
+                raise ValueError("Dataset has no data variables to build TraceSet")
+            first = _np.asarray(dataset[data_vars[0]].values)
+            length = first.shape[0] if first.ndim > 0 else 1
+            x_values = _np.arange(length, dtype=float)
+            x_name = "index"
+
+        x_values = _np.asarray(x_values, dtype=float).reshape(-1)
+        axis_len = x_values.shape[0]
+        traces: list[Trace] = [Trace(x_name, None, x_values)]
+
+        for name, data in getattr(dataset, "data_vars", {}).items():
+            arr = _np.asarray(data.values)
+            if arr.ndim == 0:
+                arr = _np.full((axis_len,), float(arr))
+            elif arr.shape[0] != axis_len:
+                try:
+                    arr = arr.reshape(axis_len, -1)
+                    arr = arr[:, 0]
+                except Exception as exc:  # pragma: no cover - defensive reshape
+                    raise ValueError(
+                        f"Unable to align data variable '{name}' with independent axis"
+                    ) from exc
+            else:
+                arr = arr.reshape(axis_len)
+            arr = _np.real_if_close(arr)
+            traces.append(Trace(str(name), None, _np.asarray(arr)))
+
+        meta = dict(getattr(dataset, "attrs", {}))
+        return cls(traces, meta=meta)
+
 
 def _strip_prefix(line: str) -> str:
     """Remove espaços/tabs à esquerda (NGSpice ASCII costuma indentar)."""

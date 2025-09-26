@@ -54,7 +54,7 @@ from spicelab.core.types import AnalysisSpec
 
 # compute a metric per run (example: final Vout) and plot
 # metrics = [my_metric(r) for r in mc.runs]
-# from spicelab.analysis.viz.plot import plot_mc_metric_hist, plot_param_vs_metric
+# from spicelab.viz import plot_mc_metric_hist, plot_param_vs_metric
 # fig_hist = plot_mc_metric_hist(metrics, title='Gain distribution')
 # fig_scatter = plot_param_vs_metric(mc.samples, metrics, param='R1')
 ```
