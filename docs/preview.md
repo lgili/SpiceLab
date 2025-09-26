@@ -1,6 +1,7 @@
 # Circuit Preview (Summary and Graphviz)
 
-Use the preview helpers to validate connectivity and generate a quick Graphviz-based diagram of nets and components (no schematic rendering).
+Use the Circuit Toolkit preview helpers to validate connectivity and generate a
+quick Graphviz-based diagram of nets and components (no schematic rendering).
 
 ## Connectivity summary
 ```python
@@ -35,10 +36,17 @@ c.print_netlist()
 ```python
 # run a Monte Carlo varying components (example only)
 from spicelab.analysis.montecarlo import monte_carlo, NormalPct
-from spicelab.analysis.core import TRAN
+from spicelab.core.types import AnalysisSpec
 
 # mapping would be Component -> Dist (here pseudo-code)
-# mc = monte_carlo(circuit, mapping, n=100, analysis_factory=lambda: TRAN('1e-6','1e-3'))
+# mc = monte_carlo(
+#     circuit,
+#     mapping,
+#     n=100,
+#     analyses=[AnalysisSpec('tran', {'tstep': '1e-6', 'tstop': '1e-3'})],
+#     engine='ngspice',
+#     cache_dir='.spicelab_cache',
+# )
 
 # export sampled parameters and the manifest
 # mc.save_samples_csv('mc_samples.csv')

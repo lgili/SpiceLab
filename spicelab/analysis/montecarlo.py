@@ -9,12 +9,18 @@ from collections.abc import Callable, Iterator, Mapping, Sequence
 from collections.abc import Mapping as TMapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Protocol, cast
 
 from ..core.circuit import Circuit
 from ..core.components import Component
+from ..core.types import AnalysisSpec, ResultHandle
+from ..engines import EngineName
+from ..io.raw_reader import Trace, TraceSet
+from ..orchestrator import Job, JobResult, run_job
+from ..spice.base import RunArtifacts, RunResult
 from ..utils.units import to_float
-from .core import AnalysisResult
+from .result import AnalysisResult
 
 
 class _RunsAnalysis(Protocol):
@@ -126,6 +132,13 @@ class MonteCarloResult:
     runs: list[AnalysisResult]
     # optional metadata about the varied parameters: list of (label, nominal, dist_repr)
     mapping_manifest: list[tuple[str, float, str]] | None = None
+    handles: list[ResultHandle] | None = None
+    job: JobResult | None = None
+
+    def result_handles(self) -> list[ResultHandle]:
+        """Return the list of ResultHandle objects backing each run (if available)."""
+
+        return list(self.handles or [])
 
     def to_dataframe(
         self,
@@ -294,19 +307,100 @@ def _as_float(value: str | float) -> float:
     return to_float(value)
 
 
+def _dataset_to_traceset(dataset: Any) -> TraceSet:
+    """Convert an xarray.Dataset returned by the engine layer into a TraceSet."""
+
+    try:
+        import numpy as _np
+    except Exception as exc:  # pragma: no cover - numpy is an optional dependency
+        raise RuntimeError("numpy is required to convert dataset results into TraceSet") from exc
+
+    coords = getattr(dataset, "coords", {})
+    coord_names = ["time", "freq", "frequency", "index"]
+    coord_obj = None
+    for name in coord_names:
+        if name in coords:
+            coord_obj = coords[name]
+            break
+    if coord_obj is not None:
+        x_values = _np.asarray(getattr(coord_obj, "values", coord_obj))
+        x_name = str(getattr(coord_obj, "name", None) or name)
+    else:
+        data_vars = list(getattr(dataset, "data_vars", {}))
+        if not data_vars:
+            raise ValueError("Dataset has no data variables to build TraceSet")
+        first = _np.asarray(dataset[data_vars[0]].values)
+        length = first.shape[0] if first.ndim > 0 else 1
+        x_values = _np.arange(length, dtype=float)
+        x_name = "index"
+
+    # Ensure 1-D axis
+    x_values = _np.asarray(x_values, dtype=float).reshape(-1)
+    axis_len = x_values.shape[0]
+    x_trace = Trace(x_name, None, x_values)
+
+    traces: list[Trace] = [x_trace]
+    for name, data in getattr(dataset, "data_vars", {}).items():
+        arr = _np.asarray(data.values)
+        if arr.ndim == 0:
+            arr = _np.full((axis_len,), float(arr))
+        elif arr.shape[0] != axis_len:
+            try:
+                arr = arr.reshape(axis_len, -1)
+                arr = arr[:, 0]
+            except Exception as exc:  # pragma: no cover - defensive reshape
+                raise ValueError(
+                    f"Unable to align data variable '{name}' with independent axis"
+                ) from exc
+        else:
+            arr = arr.reshape(axis_len)
+        arr = _np.real_if_close(arr)
+        traces.append(Trace(str(name), None, _np.asarray(arr)))
+
+    meta = dict(getattr(dataset, "attrs", {}))
+    return TraceSet(traces, meta=meta)
+
+
+def _handle_to_analysis_result(handle: ResultHandle) -> AnalysisResult:
+    ds = handle.dataset()
+    traces = _dataset_to_traceset(ds)
+    attrs = handle.attrs()
+    artifacts = RunArtifacts(
+        netlist_path=str(attrs.get("netlist_path") or ""),
+        log_path=str(attrs.get("log_path") or ""),
+        raw_path=str(attrs.get("raw_path")) if attrs.get("raw_path") else None,
+        workdir=str(attrs.get("workdir")) if attrs.get("workdir") else None,
+    )
+    run_result = RunResult(
+        artifacts=artifacts,
+        returncode=int(attrs.get("returncode", 0)),
+        stdout=str(attrs.get("stdout", "")),
+        stderr=str(attrs.get("stderr", "")),
+    )
+    return AnalysisResult(run=run_result, traces=traces)
+
+
 def monte_carlo(
     circuit: Circuit,
     mapping: Mapping[Component, Dist],
     n: int,
-    analysis_factory: Callable[[], _RunsAnalysis],
+    analysis_factory: Callable[[], _RunsAnalysis] | None = None,
     seed: int | None = None,
     label_fn: Callable[[Component], str] | None = None,
     workers: int = 1,
     progress: bool | Callable[[int, int], None] | None = None,
+    *,
+    analyses: Sequence[AnalysisSpec] | None = None,
+    engine: EngineName = "ngspice",
+    cache_dir: str | Path | None = ".spicelab_cache",
+    reuse_cache: bool = True,
 ) -> MonteCarloResult:
     """
     Executa Monte Carlo variando valores dos componentes conforme distribuições.
     """
+    if analyses is None and analysis_factory is None:
+        raise ValueError("Provide either analysis_factory or analyses for monte_carlo")
+
     rnd = _random.Random(seed)
 
     def _label(c: Component) -> str:
@@ -318,12 +412,78 @@ def monte_carlo(
     nominals: list[float] = [_as_float(c.value) for c in comps]
     dists: list[Dist] = [mapping[c] for c in comps]
 
+    ref_lookup: dict[Component, str] = {}
+    if analyses is not None:
+        for comp in comps:
+            ref = getattr(comp, "ref", None)
+            if ref is None:
+                raise ValueError(
+                    "All components in mapping must have .ref when using analyses/job API"
+                )
+            ref_lookup[comp] = str(ref)
+
     samples: list[dict[str, float]] = []
+    combos: list[dict[str, float]] = []
     for _ in range(n):
         s: dict[str, float] = {}
+        combo: dict[str, float] = {}
         for comp, nominal, dist in zip(comps, nominals, dists, strict=False):
-            s[_label(comp)] = dist.sample(nominal, rnd)
+            sampled = dist.sample(nominal, rnd)
+            s[_label(comp)] = sampled
+            if analyses is not None:
+                combo[ref_lookup[comp]] = sampled
         samples.append(s)
+        if analyses is not None:
+            combos.append(combo)
+
+    # build optional manifest: list of (label, nominal, dist_repr)
+    manifest: list[tuple[str, float, str]] = []
+    for c, nom, d in zip(comps, nominals, dists, strict=False):
+        try:
+            d_repr = repr(d)
+        except Exception:
+            d_repr = type(d).__name__
+        manifest.append((_label(c), nom, d_repr))
+
+    if analyses is not None:
+        if n <= 0:
+            return MonteCarloResult(
+                samples=samples,
+                runs=[],
+                mapping_manifest=manifest,
+                handles=[],
+                job=None,
+            )
+        job = Job(
+            circuit=circuit,
+            analyses=list(analyses),
+            engine=engine,
+            combos=tuple(dict(combo) for combo in combos),
+        )
+        job_result = run_job(
+            job,
+            cache_dir=cache_dir,
+            workers=workers,
+            progress=progress,
+            reuse_cache=reuse_cache,
+        )
+        handles: list[ResultHandle] = []
+        analysis_runs: list[AnalysisResult] = []
+        for job_run in job_result.runs:
+            handles.append(job_run.handle)
+            analysis_runs.append(_handle_to_analysis_result(job_run.handle))
+        if len(analysis_runs) != len(samples):
+            raise RuntimeError("Mismatch between Monte Carlo samples and job results")
+        return MonteCarloResult(
+            samples=samples,
+            runs=analysis_runs,
+            mapping_manifest=manifest,
+            handles=handles,
+            job=job_result,
+        )
+
+    # Legacy path using analysis_factory
+    assert analysis_factory is not None  # for type-checkers
 
     def _run_one(sample: dict[str, float]) -> AnalysisResult:
         c_copy: Circuit = copy.deepcopy(circuit)
@@ -336,7 +496,6 @@ def monte_carlo(
         analysis = analysis_factory()
         return analysis.run(c_copy)
 
-    # Progress handler (optional)
     printer = None
 
     def _notify(done: int, total: int) -> None:
@@ -348,10 +507,9 @@ def monte_carlo(
             except Exception:
                 pass
             return
-        # simple stderr bar
         nonlocal printer
         if progress is True:
-            # lazy-init
+
             class _Bar:
                 def __init__(self, total: int) -> None:
                     self.total = total
@@ -378,7 +536,6 @@ def monte_carlo(
             runs.append(_run_one(s))
             _notify(i, len(samples))
     else:
-        # Executa em paralelo preservando a ordem dos samples
         runs_buf: list[AnalysisResult | None] = [None] * len(samples)
         with ThreadPoolExecutor(max_workers=workers) as ex:
             fut_to_idx = {}
@@ -398,14 +555,5 @@ def monte_carlo(
             printer.close()
         except Exception:
             pass
-
-    # build optional manifest: list of (label, nominal, dist_repr)
-    manifest: list[tuple[str, float, str]] = []
-    for c, nom, d in zip(comps, nominals, dists, strict=False):
-        try:
-            d_repr = repr(d)
-        except Exception:
-            d_repr = type(d).__name__
-        manifest.append((_label(c), nom, d_repr))
 
     return MonteCarloResult(samples=samples, runs=runs, mapping_manifest=manifest)

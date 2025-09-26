@@ -2,11 +2,12 @@ import os
 import tempfile
 from collections.abc import Callable, Sequence
 
-from spicelab.analysis import OP, UniformAbs, monte_carlo
-from spicelab.analysis.core import AnalysisResult
+from spicelab.analysis import UniformAbs, monte_carlo
+from spicelab.analysis.result import AnalysisResult
 from spicelab.core.circuit import Circuit
 from spicelab.core.components import Resistor, Vdc
 from spicelab.core.net import GND
+from spicelab.core.types import AnalysisSpec
 from spicelab.spice.base import RunArtifacts, RunResult
 from spicelab.spice.registry import get_run_directives, set_run_directives
 
@@ -62,10 +63,16 @@ def test_montecarlo_dataframe_metrics() -> None:
         c.connect(V1.ports[1], GND)
 
         def metr(res: AnalysisResult) -> dict[str, float]:
-            return {"vout": float(res.traces["v(n1)"].values[-1])}
+            return {"vout": float(res.traces["V(n1)"].values[-1])}
 
         mc = monte_carlo(
-            c, {R1: UniformAbs(0.0)}, n=4, analysis_factory=lambda: OP(), seed=1, workers=1
+            c,
+            {R1: UniformAbs(0.0)},
+            n=4,
+            analyses=[AnalysisSpec("op", {})],
+            engine="ngspice",
+            seed=1,
+            workers=1,
         )
         df = mc.to_dataframe(metric=metr, param_prefix="param_")
 
@@ -131,10 +138,16 @@ Values:
         c.connect(V1.ports[1], GND)
 
         mc = monte_carlo(
-            c, {R1: UniformAbs(0.0)}, n=3, analysis_factory=lambda: OP(), seed=1, workers=1
+            c,
+            {R1: UniformAbs(0.0)},
+            n=3,
+            analyses=[AnalysisSpec("op", {})],
+            engine="ngspice",
+            seed=1,
+            workers=1,
         )
-        df = mc.to_dataframe(metric=None, y=["v(n1)"], sample_at=1e-3)
-        assert "v(n1)" in df.columns
-        assert list(df["v(n1)"]) == vals
+        df = mc.to_dataframe(metric=None, y=["V(n1)"], sample_at=1e-3)
+        assert "V(n1)" in df.columns
+        assert list(df["V(n1)"]) == vals
     finally:
         set_run_directives(old)

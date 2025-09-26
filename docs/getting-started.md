@@ -1,127 +1,59 @@
-## Getting started
+# Getting Started
 
-This quickstart guides a new user through installation, running a simple
-example, and best practices for CI-friendly execution. It links to example
-pages and the API reference.
+This quick tour shows how to create a circuit, run an analysis via the unified
+engine orchestrator, and inspect the results.
 
-1) Create an environment and install
-------------------------------------
-
-Use an isolated environment. Below is an example using the repository's
-helper `uv` (short for uenv). Replace it with `python -m venv` or `conda`
-if you prefer.
-
-```bash
-# from the repository root
-uv run --active pip install -e .
-uv run --active pip install -r dev-requirements.txt
-```
-
-The development requirements will pull in test and docs dependencies used for
-the examples and local site builds.
-
-2) Run the quick example
-------------------------
-
-The `examples/getting_started.py` script walks through building a small RC
-circuit and running AC, DC and transient analyses. To run it and collect
-artifacts into a dedicated folder:
-
-```bash
-cd examples
-python getting_started.py --outdir ./out/getting_started
-```
-
-Check `./out/getting_started` for PNGs and any generated model files.
-
-3) CI-friendly runs and temporary outputs
-----------------------------------------
-
-All examples that create files accept an `--outdir` flag so CI runs can
-write artifacts to a temporary path that is cleaned up or uploaded by the
-pipeline. Example test-friendly pattern using `pytest`'s `tmp_path`:
-
-```python
-# inside a pytest test
-from pathlib import Path
-import subprocess
-
-outdir: Path = tmp_path / "example_out"
-outdir.mkdir()
-subprocess.run(["python", "examples/getting_started.py", "--outdir", str(outdir)], check=True)
-```
-
-Use the fake-runner (see the Examples page) in CI so tests don't require
-`ngspice` to be installed.
-
-4) Where to go next
---------------------
-
-- Examples: `docs/examples.md` — overview and per-example links.
-- Monte Carlo: `docs/monte-carlo-example.md` — report format and flags.
-- API: `docs/api-reference.md` — how mkdocstrings is configured and which
-	modules we recommend including in the API documentation.
-
-Troubleshooting
----------------
-
-- If an example fails with simulator errors, re-run with `--real-run` to
-	confirm against `ngspice` and inspect the generated `.cir` or `.sp` file in
-	the `--outdir` directory.
-- If your CI environment cannot install `ngspice`, ensure the test uses the
-	fake-runner and that `--outdir` is set to a writable temporary directory.
-
-# Getting started
-
-Create a Circuit and build a netlist:
-
+## 1. Build a circuit
 ```python
 from spicelab.core.circuit import Circuit
-from spicelab.core.components import Vdc, Resistor, Capacitor
+from spicelab.core.components import Capacitor, Resistor, Vdc
 from spicelab.core.net import GND
 
-c = Circuit("rc_lowpass")
-V1 = Vdc("1", 5.0)
-R1 = Resistor("1", "1k")
-C1 = Capacitor("1", "100n")
-
-c.add(V1, R1, C1)
+c = Circuit("rc_demo")
+V1 = Vdc("VIN", 5.0)
+R1 = Resistor("R", "1k")
+C1 = Capacitor("C", "100n")
+for comp in (V1, R1, C1):
+    c.add(comp)
 c.connect(V1.ports[0], R1.ports[0])
 c.connect(R1.ports[1], C1.ports[0])
 c.connect(V1.ports[1], GND)
 c.connect(C1.ports[1], GND)
-
-print(c.build_netlist())
 ```
 
-This will print a SPICE netlist ready to be executed by a SPICE runner.
-
-## Run a transient in one line
-
-You can run a transient (.TRAN) analysis and get a pandas DataFrame directly:
-
+## 2. Run an analysis
 ```python
-from spicelab.analysis import run_tran
+from spicelab.core.types import AnalysisSpec
+from spicelab.engines import run_simulation
 
-df = run_tran(c, "10us", "5ms", return_df=True)
-print(df.head())
+tran = AnalysisSpec("tran", {"tstep": "10us", "tstop": "5ms"})
+handle = run_simulation(c, [tran], engine="ngspice")
 ```
 
-Or keep the full result object for advanced usage:
+`handle` is a `ResultHandle`. It keeps metadata and a lazy reference to the
+engine output; call `handle.dataset()` to get an `xarray.Dataset` when you need
+actual data.
 
+## 3. Inspect the dataset
 ```python
-res = run_tran(c, "10us", "5ms")
-print(res.traces.names)
+import pandas as pd
+
+ds = handle.dataset()
+print(ds)
+print("variables:", list(ds.data_vars))
+print("attrs:", handle.attrs())
+
+# Convert to pandas if you want tabular data
+print(ds.to_dataframe().head())
 ```
 
-Quickstart script
-------------------
+## 4. Run the bundled examples
 
-This repository includes a runnable `examples/getting_started.py` script that
-walks through building a simple RC circuit and running AC, DC and transient
-analyses, producing PNG plots. To run the tutorial:
-
+From the repository root:
 ```bash
-cd examples
-uv run --active python getting_started.py
+uv run --active python examples/rc_tran.py
+uv run --active python examples/sweep_value_unified.py
+uv run --active python examples/step_sweep_grid.py
 ```
+Each script prints basic information and (where relevant) saves artefacts next
+to the script.

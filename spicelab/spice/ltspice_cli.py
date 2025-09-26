@@ -11,6 +11,17 @@ from ..engines.exceptions import EngineBinaryNotFound
 from .base import RunArtifacts, RunResult, SimulatorAdapter
 
 
+def _strip_final_end(netlist: str) -> str:
+    lines = netlist.splitlines()
+    while lines and not lines[-1].strip():
+        lines.pop()
+    if lines and lines[-1].strip().lower() == ".end":
+        lines.pop()
+        while lines and not lines[-1].strip():
+            lines.pop()
+    return "\n".join(lines)
+
+
 def _which_ltspice() -> str:
     env_exe = os.environ.get("SPICELAB_LTSPICE") or os.environ.get("LTSPICE_EXE")
     attempted: list[str] = []
@@ -48,9 +59,11 @@ def _write_deck(
 
     deck = workdir / "deck.cir"
     log = workdir / "ltspice.log"
+    body = _strip_final_end(netlist)
     with deck.open("w", encoding="utf-8") as f:
         f.write(f"* {title}\n")
-        f.write(netlist.rstrip() + "\n")
+        if body:
+            f.write(body.rstrip() + "\n")
         for line in directives:
             f.write(line.rstrip() + "\n")
         f.write(".end\n")
@@ -77,8 +90,11 @@ def run_directives(
     # Expected RAW path: same base as deck, or as specified by LTspice default
     raw_out = workdir / "deck.raw"
 
-    # Common CLI: -b (batch), -Run, -ascii to force ASCII raw
-    cmd = [exe, "-b", "-Run", "-ascii", str(deck)]
+    # Common CLI: `-b <deck>` runs in batch/headless mode. Newer builds accept
+    # additional flags like `-Run`, but they must be ordered precisely and
+    # differ between platforms. To stay compatible we only require `-b` and put
+    # the deck path last, which works across macOS and Windows.
+    cmd = [exe, "-b", str(deck)]
     proc = subprocess.run(cmd, cwd=str(workdir), capture_output=True, text=True)
 
     # Some LTspice builds write logs to stdout/stderr only
@@ -88,7 +104,13 @@ def run_directives(
         if proc.stderr:
             lf.write("\n" + proc.stderr)
 
-    raw_path: str | None = str(raw_out) if raw_out.exists() else None
+    raw_path: str | None = None
+    if raw_out.exists():
+        raw_path = str(raw_out)
+    else:
+        raws = sorted(workdir.glob("*.raw"))
+        if raws:
+            raw_path = str(raws[0])
     return RunResult(
         artifacts=RunArtifacts(
             netlist_path=str(deck),

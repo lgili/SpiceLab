@@ -1,10 +1,11 @@
 import shutil
 
 import pytest
-from spicelab.analysis import OP, sweep_component
+from spicelab.analysis.sweep_grid import run_value_sweep
 from spicelab.core.circuit import Circuit
 from spicelab.core.components import Resistor, Vdc
 from spicelab.core.net import GND
+from spicelab.core.types import AnalysisSpec
 
 ng = shutil.which("ngspice")
 
@@ -25,8 +26,15 @@ def test_sweep_component_runs() -> None:
         pytest.skip("ngspice not installed")
 
     c, R1 = _circuit()
-    sr = sweep_component(c, R1, ["1k", "2k", "5k"], analysis_factory=lambda: OP(), param_name="R")
-    assert len(sr.values) == 3
+    sr = run_value_sweep(
+        circuit=c,
+        component=R1,
+        values=["1k", "2k", "5k"],
+        analyses=[AnalysisSpec("op", {})],
+        engine="ngspice",
+    )
     assert len(sr.runs) == 3
     # todos devem ter pelo menos algum traço além do eixo
-    assert all(len(r.traces.names) >= 1 for r in sr.runs)
+    for run in sr.runs:
+        ds = run.handle.dataset()
+        assert any(name.startswith("V(") for name in ds.data_vars)

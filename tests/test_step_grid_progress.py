@@ -2,10 +2,12 @@ import os
 import tempfile
 from collections.abc import Sequence
 
-from spicelab.analysis import OP, step_grid
+import pytest
+from spicelab.analysis.sweep_grid import run_param_grid
 from spicelab.core.circuit import Circuit
 from spicelab.core.components import Resistor, Vdc
 from spicelab.core.net import GND
+from spicelab.core.types import AnalysisSpec
 from spicelab.spice.base import RunArtifacts, RunResult
 from spicelab.spice.registry import get_run_directives, set_run_directives
 
@@ -44,9 +46,9 @@ def test_step_grid_progress_and_order_workers2() -> None:
     try:
         set_run_directives(fake_runner)
         c = Circuit("step_grid")
-        V1 = Vdc("1", 1.0)
-        R1 = Resistor("1", "{R}")
-        R2 = Resistor("2", "{K}")
+        V1 = Vdc("VIN", 1.0)
+        R1 = Resistor("R", "1k")
+        R2 = Resistor("K", 1.0)
         c.add(V1, R1, R2)
         c.connect(V1.ports[0], R1.ports[0])
         c.connect(R1.ports[1], GND)
@@ -55,20 +57,26 @@ def test_step_grid_progress_and_order_workers2() -> None:
         c.connect(R2.ports[0], GND)
         c.connect(R2.ports[1], GND)
 
-        grid: dict[str, list[str | float]] = {"R": ["1k", "2k"], "K": [1, 2]}
-        res = step_grid(
+        result = run_param_grid(
             c,
-            grid,
-            analysis_factory=lambda: OP(),
-            order=["R", "K"],
+            variables=[(R1, ["1k", "2k"]), (R2, [1, 2])],
+            analyses=[AnalysisSpec("op", {})],
+            engine="ngspice",
             workers=2,
             progress=True,
         )
         # Ordem deve preservar o grid na sequência [(1k,1), (1k,2), (2k,1), (2k,2)]
-        vals = [float(r.traces["v(n1)"].values[-1]) for r in res.runs]
+        vals = []
+        combos = []
+        for run in result.runs:
+            ds = run.handle.dataset()
+            vals.append(float(ds["V(n1)"].values[-1]))
+            combos.append(run.combo)
         assert vals == [1.0, 2.0, 3.0, 4.0]
         # params da última execução devem refletir o último ponto do grid
-        assert res.params == {"R": "2k", "K": 2}
-        assert len(res.grid) == 4
+        last = combos[-1]
+        assert pytest.approx(float(last["R"])) == 2000.0
+        assert pytest.approx(float(last["K"])) == 2.0
+        assert len(result.runs) == 4
     finally:
         set_run_directives(old)

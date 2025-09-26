@@ -2,10 +2,11 @@ import math
 import shutil
 
 import pytest
-from spicelab.analysis import OP, NormalPct, UniformAbs, monte_carlo
+from spicelab.analysis import NormalPct, UniformAbs, monte_carlo
 from spicelab.core.circuit import Circuit
 from spicelab.core.components import Idc, Resistor, Vdc
 from spicelab.core.net import GND, Net
+from spicelab.core.types import AnalysisSpec
 
 ng = shutil.which("ngspice")
 
@@ -32,14 +33,15 @@ def test_mc_identity_res_equals_v_with_1a() -> None:
         c,
         mapping={R1: UniformAbs(50.0)},  # +/- 50 ohms around 1k
         n=12,
-        analysis_factory=lambda: OP(),
+        analyses=[AnalysisSpec("op", {})],
+        engine="ngspice",
         seed=123,
     )
 
     assert len(mc.samples) == len(mc.runs) == 12
     for s, run in zip(mc.samples, mc.runs, strict=False):
         r_val = float(s["Resistor.1"])  # sampled value
-        v = float(run.traces["v(n1)"].values[-1])
+        v = float(run.traces["V(n1)"].values[-1])
         assert math.isfinite(v)
         # KCL with Idc positive from p->n: V(n1) = -I * R = -1 * R
         assert abs(v + r_val) <= 1e-6 * max(1.0, abs(r_val))
@@ -67,7 +69,8 @@ def test_mc_voltage_divider_matches_formula() -> None:
         c,
         mapping={R1: NormalPct(0.05), R2: NormalPct(0.05)},  # 5% sigma each
         n=16,
-        analysis_factory=lambda: OP(),
+        analyses=[AnalysisSpec("op", {})],
+        engine="ngspice",
         seed=321,
     )
 
@@ -77,6 +80,6 @@ def test_mc_voltage_divider_matches_formula() -> None:
         r1 = float(s["Resistor.1"])  # sampled values
         r2 = float(s["Resistor.2"])  # sampled values
         want = vin * r2 / max(r1 + r2, 1e-18)
-        got = float(run.traces["v(n1)"].values[-1])
+        got = float(run.traces["V(n1)"].values[-1])
         # allow small solver tolerance (~uV level on a few volts)
         assert abs(got - want) <= 1e-6 * max(1.0, abs(vin))

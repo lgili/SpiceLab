@@ -48,3 +48,7 @@ site/
 
 # SPICE RAW outputs and temp run dirs
 cat_ng_*/
+
+*.pkl
+*.html
+.spicelab_cache/

@@ -3,8 +3,8 @@ from pathlib import Path
 from typing import cast
 
 import pytest
-from spicelab.analysis.core import AnalysisResult
 from spicelab.analysis.montecarlo import MonteCarloResult
+from spicelab.analysis.result import AnalysisResult
 
 
 def make_sample_table() -> MonteCarloResult:

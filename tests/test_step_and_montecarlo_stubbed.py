@@ -2,10 +2,12 @@ import os
 import tempfile
 from collections.abc import Callable, Sequence
 
-from spicelab.analysis import OP, monte_carlo, step_param
+from spicelab.analysis import NormalPct, monte_carlo
+from spicelab.analysis.sweep_grid import run_value_sweep
 from spicelab.core.circuit import Circuit
 from spicelab.core.components import Resistor, Vdc
 from spicelab.core.net import GND
+from spicelab.core.types import AnalysisSpec
 from spicelab.spice.base import RunArtifacts, RunResult
 from spicelab.spice.registry import get_run_directives, set_run_directives
 
@@ -55,13 +57,23 @@ def test_step_param_preserves_order_parallel() -> None:
         set_run_directives(multiplex_runner)
         c = Circuit("step_order")
         V1 = Vdc("1", 1.0)
-        R1 = Resistor("1", "{R}")
+        R1 = Resistor("1", "1k")
         c.add(V1, R1)
         c.connect(V1.ports[0], R1.ports[0])
         c.connect(R1.ports[1], GND)
         c.connect(V1.ports[1], GND)
-        step = step_param(c, "R", ["1k", "2k", "5k"], analysis_factory=lambda: OP(), workers=2)
-        vals = [r.traces["v(n1)"].values[-1] for r in step.runs]
+        sweep = run_value_sweep(
+            c,
+            component=R1,
+            values=["1k", "2k", "5k"],
+            analyses=[AnalysisSpec("op", {})],
+            engine="ngspice",
+            workers=2,
+        )
+        vals = []
+        for run in sweep.runs:
+            ds = run.handle.dataset()
+            vals.append(float(ds["V(n1)"].values[-1]))
         assert list(vals) == [1.0, 2.0, 5.0]
     finally:
         set_run_directives(old)
@@ -88,12 +100,16 @@ def test_montecarlo_preserves_order_parallel() -> None:
         c.connect(V1.ports[0], R1.ports[0])
         c.connect(R1.ports[1], GND)
         c.connect(V1.ports[1], GND)
-        from spicelab.analysis import NormalPct
-
         mc = monte_carlo(
-            c, {R1: NormalPct(0.01)}, n=4, analysis_factory=lambda: OP(), seed=1, workers=3
+            c,
+            {R1: NormalPct(0.01)},
+            n=4,
+            analyses=[AnalysisSpec("op", {})],
+            engine="ngspice",
+            seed=1,
+            workers=3,
         )
-        vals = [r.traces["v(n1)"].values[-1] for r in mc.runs]
+        vals = [r.traces["V(n1)"].values[-1] for r in mc.runs]
         assert list(vals) == [10.0, 20.0, 30.0, 40.0]
     finally:
         set_run_directives(old)

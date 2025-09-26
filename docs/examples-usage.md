@@ -1,44 +1,26 @@
-# Examples Usage
+# Using the examples
 
-This page highlights a few runnable examples and what they demonstrate.
+Circuit Toolkit ships runnable demos under `examples/`. Execute them from the
+repository root with `uv run --active python examples/<script>.py`.
 
-Getting started (tutorial)
---------------------------
+1. Ensure an engine is available. NGSpice is the default:
+   ```bash
+   brew install ngspice           # macOS
+   sudo apt install ngspice      # Debian/Ubuntu
+   ```
 
-- `examples/getting_started.py`: a step-by-step tutorial that builds an RC circuit,
-  runs AC, DC and TRAN analyses, and saves plots. Run with:
+2. Install optional plotting dependencies if you want PNG/HTML output:
+   ```bash
+   uv run --active pip install matplotlib pandas
+   uv run --active pip install -e '.[viz]'  # for Plotly demos
+   ```
 
-```bash
-cd examples
-uv run --active python getting_started.py
-```
+3. Run any script from the repository root. Examples:
+   ```bash
+   uv run --active python examples/rc_tran.py
+   uv run --active python examples/sweep_value_unified.py
+   uv run --active python examples/step_sweep_grid.py
+   ```
 
-Monte Carlo analysis
---------------------
-
-- `examples/monte_carlo_demo.py`: demonstrates running a Monte Carlo using a
-  configurable runner. By default it uses a fast fake-runner for demos and CI.
-  To run the example and save plots and an HTML report:
-
-```bash
-cd examples
-uv run --active python monte_carlo_demo.py --n 50 --outdir ./mc_out
-```
-
-Register and metadata
----------------------
-
-- `examples/register_and_metadata.py`: shows how to register a custom component
-  with metadata that includes `.include` or `.model` directives, how to apply
-  the metadata to a `Circuit`, and run a small operating-point analysis.
-
-```bash
-cd examples
-uv run --active python register_and_metadata.py --outdir ./artifacts
-```
-
-More examples
--------------
-
-See the `examples/` directory for additional demos: AC Bode plots, DC sweeps,
-LTSpice roundtrip helpers, op-amp stability checks, and more.
+Most scripts print the engine they used, dataset coordinates/variables, and
+persist plots or CSVs next to the script.

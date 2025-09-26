@@ -1,47 +1,35 @@
 # CLI and CI guide
 
-This page documents the common CLI flags supported by examples and
-recommended patterns for running examples in CI.
+# Circuit Toolkit scripts are regular Python modules. Most of them print summary
+information and optionally write PNG/CSV files next to the script. None of them
+require custom CLI flags any more — use environment variables (`SPICELAB_ENGINE`)
+if you want to force a particular simulator.
 
-Common flags
-------------
+## Running examples in CI
 
-- `--outdir PATH` — write all generated artifacts (plots, model files,
-  reports) to PATH. Examples default to the current working directory. For CI
-  use a temporary directory (see pattern below).
-- `--real-run` — when present, the example invokes the real simulator
-  (`ngspice`) instead of the internal fake-runner used for fast CI runs.
-- `--n` or `--trials` — number of Monte Carlo trials (used by
-  `monte_carlo_demo.py`).
+- Execute scripts with `uv run --active python examples/<script>.py`. Use a
+  temporary working directory when you want to capture artefacts.
+- Cache directories created by the orchestrator (default `.spicelab_cache`) can
+  be retained between CI runs to avoid re-simulating identical sweeps.
+- If you need to guarantee that a script does not invoke a real simulator,
+  temporarily patch `spicelab.engines.factory.create_simulator` with a stub, as
+  shown in the unit tests (`tests/test_engine_multi_parity.py`).
 
-CI recommendations
-------------------
-
-1. Use a temporary output directory and pass it with `--outdir` so test
-artifacts don't leak into the repo. Example pytest pattern:
+## Example pytest snippet
 
 ```python
-def test_example_smoke(tmp_path):
-    outdir = tmp_path / "example_out"
-    outdir.mkdir()
-    subprocess.run(["python", "examples/monte_carlo_demo.py", "--outdir", str(outdir)], check=True)
-    assert any(outdir.iterdir())
+import os
+import subprocess
+
+
+def test_rc_tran_smoke(tmp_path):
+    env = {"SPICELAB_ENGINE": "ngspice", **os.environ}
+    subprocess.run(
+        ["uv", "run", "--active", "python", "examples/rc_tran.py"],
+        cwd=tmp_path,
+        env=env,
+        check=True,
+    )
 ```
 
-2. Prefer the fake-runner in automated tests. The fake-runner provides a
-deterministic, fast output that is sufficient for smoke tests and
-visualization pipelines.
-
-3. Run heavier simulations with `--real-run` only in dedicated integration
-tests or developer runs where `ngspice` is available.
-
-4. Upload the `--outdir` contents as CI artifacts when you need to inspect
-plots or the HTML report.
-
-How to enable the fake-runner in tests
---------------------------------------
-
-Examples are written to select the fake-runner by default when the real
-simulator is unavailable. If you need to force the fake-runner from code,
-most examples accept an entrypoint to pass the runner object directly. See
-the example module docstrings for details.
+Swap `examples/rc_tran.py` for any other script you need to exercise.

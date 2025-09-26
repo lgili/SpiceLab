@@ -1,4 +1,4 @@
-"""Examples package for PyCircuitKit."""
+"""Example helpers for Circuit Toolkit."""
 
 from .opamp_closed_loop import build_opamp_closed_loop
 from .rc_highpass import build_rc_highpass

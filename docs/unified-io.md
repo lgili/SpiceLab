@@ -1,6 +1,8 @@
-# Unified I/O (M2)
+# Unified I/O
 
-The unified readers layer consolidates waveform outputs from **ngspice**, **LTspice** and **Xyce** into a single `xarray.Dataset` structure with consistent coordinate naming, canonical signal names and rich provenance metadata.
+Circuit Toolkit provides unified readers that normalise waveform outputs from
+**NGSpice**, **LTspice**, and **Xyce** into a single `xarray.Dataset` structure with
+consistent coordinates, canonical signal names, and provenance metadata.
 
 ## Goals
 - Single entrypoint to parse RAW / PRN / CSV waveforms.

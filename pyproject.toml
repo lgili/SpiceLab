@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "spicelab"
 version = "0.1.0"
-description = "SpiceLab: Modern, strongly-typed Python toolkit for SPICE circuit definition, simulation and analysis."
+description = "Circuit Toolkit (package: spicelab) – typed SPICE orchestration, sweeps, and Monte Carlo."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name="Luiz Carlos Gili" }]
@@ -33,10 +33,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/lgili/spicelab"
-Repository = "https://github.com/lgili/spicelab.git"
-Issues = "https://github.com/lgili/spicelab/issues"
-Documentation = "https://lgili.github.io/spicelab/"
+Homepage = "https://github.com/lgili/circuit_toolkit"
+Repository = "https://github.com/lgili/circuit_toolkit.git"
+Issues = "https://github.com/lgili/circuit_toolkit/issues"
+Documentation = "https://lgili.github.io/CircuitToolkit/"
 
 [project.scripts]
 spicelab-doctest = "spicelab:__init__"
@@ -63,6 +63,7 @@ filterwarnings = [
 ]
 markers = [
     "engine: tests that require external SPICE engine executables (ngspice, ltspice, xyce)",
+    "local: tests meant to run only on developer machines (skipped in CI unless explicitly enabled)",
 ]
 
 [tool.ruff]

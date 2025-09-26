@@ -1,6 +1,6 @@
-"""Top-level package exports for CAT (PyCircuitKit).
+"""Top-level exports for Circuit Toolkit (Python package ``spicelab``).
 
-Exposes frequently used types and helpers, plus package version.
+Exposes the high-level helpers documented throughout the docs site.
 """
 
 from importlib.metadata import PackageNotFoundError, version
@@ -16,45 +16,25 @@ except PackageNotFoundError:  # pragma: no cover
 # Core building blocks
 # Analyses and utilities
 from .analysis import (
-    AC,
-    DC,
-    OP,
-    TRAN,
     AnalysisResult,
     Dist,
+    GainSpec,
+    GridResult,
+    GridRun,
     LogNormalPct,
     MonteCarloResult,
     NormalPct,
-    ParamGrid,
-    StepNativeResult,
-    StepResult,
+    OvershootSpec,
+    SettlingTimeSpec,
     SweepResult,
+    SweepRun,
     TriangularPct,
     UniformAbs,
     UniformPct,
-    WorstCaseResult,
-    ac_gain_phase,
-    bandwidth_3db,
-    bode,
-    crossover_freq_0db,
-    gain_db_from_traces,
-    gain_margin_db,
+    measure,
     monte_carlo,
-    overshoot_pct,
-    peak,
-    phase_crossover_freq,
-    phase_margin,
-    run_ac,
-    run_op,
-    run_step_native,
-    run_tran,
-    settling_time,
-    stack_runs_to_df,
-    stack_step_to_df,
-    step_grid,
-    step_param,
-    sweep_component,
-    worst_case,
+    run_param_grid,
+    run_value_sweep,
 )
 
 # Plotting
@@ -200,33 +180,12 @@ __all__ = [
     "create_component",
     "get_component_spec",
     "list_components",
-    # Analyses
-    "OP",
-    "TRAN",
-    "AC",
-    "DC",
+    # Analyses helpers
     "AnalysisResult",
-    # Sweeps/Steps
-    "SweepResult",
-    "sweep_component",
-    "ParamGrid",
-    "StepResult",
-    "step_param",
-    "step_grid",
-    "stack_step_to_df",
-    "stack_runs_to_df",
-    # Metrics
-    "peak",
-    "settling_time",
-    "overshoot_pct",
-    "gain_db_from_traces",
-    "bandwidth_3db",
-    "ac_gain_phase",
-    "crossover_freq_0db",
-    "phase_margin",
-    "phase_crossover_freq",
-    "gain_margin_db",
-    # Monte Carlo / Worst case
+    "measure",
+    "GainSpec",
+    "OvershootSpec",
+    "SettlingTimeSpec",
     "Dist",
     "NormalPct",
     "UniformPct",
@@ -235,10 +194,12 @@ __all__ = [
     "UniformAbs",
     "MonteCarloResult",
     "monte_carlo",
-    "WorstCaseResult",
-    "worst_case",
-    "StepNativeResult",
-    "run_step_native",
+    "SweepRun",
+    "SweepResult",
+    "GridRun",
+    "GridResult",
+    "run_value_sweep",
+    "run_param_grid",
     # Plotting
     "plot_traces",
     "plot_bode",
@@ -251,11 +212,6 @@ __all__ = [
     "monte_carlo_param_scatter",
     "monte_carlo_kde",
     "params_scatter_matrix",
-    # High-level helpers
-    "run_op",
-    "run_tran",
-    "run_ac",
-    "bode",
 ]
 
 # Typed source helpers (also export for convenience)

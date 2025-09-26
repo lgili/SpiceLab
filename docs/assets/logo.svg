@@ -1,0 +1,19 @@
+<svg width="192" height="60" viewBox="0 0 192 60" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Circuit Toolkit Logo</title>
+  <desc id="desc">Stylised node and trace icon with the words Circuit Toolkit</desc>
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3fb1ff" />
+      <stop offset="100%" stop-color="#005ad9" />
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="36" cy="30" r="22" stroke="url(#grad)" stroke-width="4" />
+    <path d="M14 18 L36 30 L58 18" stroke="#0c2e6b" stroke-width="4" />
+    <path d="M20 40 L36 30 L52 40" stroke="#3fb1ff" stroke-width="4" />
+    <circle cx="36" cy="30" r="5" fill="#0c2e6b" stroke="#ffffff" stroke-width="2" />
+  </g>
+  <text x="80" y="23" font-family="'IBM Plex Sans', 'Segoe UI', sans-serif" font-size="22" font-weight="600" fill="#0c1f3d">Circuit</text>
+  <text x="80" y="44" font-family="'IBM Plex Sans', 'Segoe UI', sans-serif" font-size="22" font-weight="600" fill="#2481ff">Toolkit</text>
+  <text x="80" y="56" font-family="'Roboto Mono', monospace" font-size="10" fill="#4c6c96">formerly spicelab</text>
+</svg>

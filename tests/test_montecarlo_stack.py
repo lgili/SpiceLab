@@ -1,10 +1,11 @@
 import shutil
 
 import pytest
-from spicelab.analysis import OP, NormalPct, monte_carlo, stack_runs_to_df
+from spicelab.analysis import NormalPct, monte_carlo
 from spicelab.core.circuit import Circuit
 from spicelab.core.components import Resistor, Vdc
 from spicelab.core.net import GND
+from spicelab.core.types import AnalysisSpec
 
 ng = shutil.which("ngspice")
 
@@ -25,8 +26,15 @@ def test_montecarlo_stack_df() -> None:
         pytest.skip("ngspice not installed")
 
     c, R1 = _circuit()
-    mc = monte_carlo(c, {R1: NormalPct(0.05)}, n=6, analysis_factory=lambda: OP(), seed=42)
-    df = stack_runs_to_df(mc.runs, mc.samples, y=None, with_x=True)
-    # deve conter coluna de amostra "Resistor.1"
-    assert "Resistor.1" in df.columns
-    assert df.shape[0] > 0
+    mc = monte_carlo(
+        c,
+        {R1: NormalPct(0.05)},
+        n=6,
+        analyses=[AnalysisSpec("op", {})],
+        engine="ngspice",
+        seed=42,
+    )
+    df = mc.to_dataframe(metric=None, param_prefix="")
+    columns = list(df.columns)
+    assert "Resistor.1" in columns
+    assert len(df) == len(mc.samples)

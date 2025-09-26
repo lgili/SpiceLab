@@ -1,6 +1,6 @@
 # Plotting
 
-CAT ships interactive Plotly helpers for common visualization tasks. Each helper
+Circuit Toolkit ships interactive Plotly helpers for common visualization tasks. Each helper
 returns a `VizFigure`, which wraps the underlying Plotly figure and exposes
 `show()`, `to_html()`, and `to_image()` convenience methods.
 
@@ -15,7 +15,8 @@ pip install spicelab[viz]
 ```python
 from spicelab.analysis.viz.plot import plot_traces
 
-fig = plot_traces(res.traces, ys=["v(n1)", "i(R1)"], title="RC response")
+ds = handle.dataset()
+fig = plot_traces(ds, ys=["V(R)", "I(R)"] , title="RC response")
 fig.to_html("rc_response.html")  # standalone HTML with embedded Plotly figure
 ```
 
@@ -24,7 +25,8 @@ fig.to_html("rc_response.html")  # standalone HTML with embedded Plotly figure
 from spicelab.analysis.viz.plot import plot_bode
 
 # 'y' must reference a complex trace (AC/Small-signal analysis)
-bode_fig = plot_bode(res.traces, y="v(vout)")
+ac_ds = ac_handle.dataset()
+bode_fig = plot_bode(ac_ds, y="V(vout)")
 bode_fig.show()  # open an interactive browser window
 ```
 

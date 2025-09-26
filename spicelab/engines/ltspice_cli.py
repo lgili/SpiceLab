@@ -46,9 +46,13 @@ class LtSpiceCLISimulator(Simulator):
 
         res = DEFAULT_ADAPTER.run_directives(net, directives)
         if res.returncode != 0:
-            raise RuntimeError(f"LTspice failed, return code {res.returncode}")
+            log_hint = f"; see {res.artifacts.log_path}" if res.artifacts.log_path else ""
+            raise RuntimeError(f"LTspice failed (return code {res.returncode}){log_hint}")
         if not res.artifacts.raw_path:
-            raise RuntimeError("LTspice did not produce a RAW file path (ASCII may be required)")
+            log_hint = f"; see {res.artifacts.log_path}" if res.artifacts.log_path else ""
+            raise RuntimeError(
+                "LTspice did not produce a RAW file path (ASCII may be required)" f"{log_hint}"
+            )
 
         ds = read_ltspice_raw(res.artifacts.raw_path)
         try:

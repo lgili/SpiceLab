@@ -1,8 +1,8 @@
-site_name: PyCircuitKit
-site_description: Circuit simulation helpers and analysis utilities
+site_name: Circuit Toolkit
+site_description: Unified Python orchestration for SPICE simulations
 site_author: lgili
-repo_name: lgili/PyCircuitKit
-site_url: https://lgili.github.io/PyCircuitKit/
+repo_name: lgili/CircuitToolkit
+site_url: https://lgili.github.io/CircuitToolkit/
 
 theme:
   name: material
@@ -14,6 +14,7 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
+  logo: assets/logo.svg
 
 plugins:
   - search
@@ -34,29 +35,34 @@ nav:
   - Installation: installation.md
   - Getting Started: getting-started.md
   - Concepts: concepts.md
+  - Components:
+      - Overview: components.md
+      - Quick reference: components-quickstart.md
+      - Device models: device-models.md
+      - Library status (refresh soon): components-library.md
+  - Engines: engines.md
+  - Data I/O: unified-io.md
+  - Sweeps: sweeps-step.md
+  - Monte Carlo: monte-carlo.md
+  - Cookbook: cookbook.md
   - Examples:
       - Overview: examples.md
-      - Monte Carlo example: monte-carlo-example.md
-  - Examples Gallery: examples-gallery.md
-  - Components: components.md
-  - Components Quickstart: components-quickstart.md
+      - Usage: examples-usage.md
+      - Gallery: examples-gallery.md
+      - Monte Carlo assets: monte-carlo-example.md
   - Guides:
-      - Circuit Preview: preview.md
-      - Core Contracts (M1): core-contracts.md
-      - Engines & Backends: engines.md
-      - Sweeps and STEP: sweeps-step.md
-      - Monte Carlo: monte-carlo.md
-      - AC Stability: ac-stability.md
-      - Op-Amp Stability: opamp-stability.md
-      - Device Models: device-models.md
-      - LTspice Integration: ltspice-import.md
-      - Component Library: components-library.md
-  - Unified I/O: unified-io.md
-      - Plots: plots.md
+      - Circuit preview: preview.md
+      - Plotting: plots.md
+      - LTspice integration: ltspice-import.md
+      - Analog mux: mux-enable-ports.md
+      - CLI & CI: cli-ci.md
       - Troubleshooting: troubleshooting.md
+  - Legacy notes:
+      - AC stability (refresh soon): ac-stability.md
+      - Op-amp stability (refresh soon): opamp-stability.md
+      - Old roadmap (M1/M2): core-contracts.md
   - API guidance: api-reference.md
-  - Cookbook: cookbook.md
-  - API Reference:
+  - API reference:
       - Core: reference/core.md
       - IO: reference/io.md
       - Analysis: reference/analysis.md

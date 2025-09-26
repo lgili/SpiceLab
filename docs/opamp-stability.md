@@ -1,39 +1,6 @@
-# Op-Amp Stability
+# Op-amp stability (placeholder)
 
-Analyze closed-loop Bode and margins using the ideal op-amp helper.
-
-![Op-Amp Bode](assets/examples/opamp_bode.png)
-
-## Inverting topology with ideal OA
-```python
-from spicelab import Circuit, GND, opamp_inverting
-from spicelab.core.components import VA, R
-from spicelab.core.net import Net
-from spicelab.analysis import AC, ac_gain_phase, phase_margin, gain_margin_db
-
-c = Circuit("opamp_inv")
-
-# Small-signal input (1 V)
-vin = VA(ac_mag=1.0); c.add(vin)
-
-# Output/load node
-vout = Net("vout"); load = R("10k"); c.add(load)
-c.connect(load.ports[0], vout); c.connect(load.ports[1], GND)
-
-# Inverting amplifier: gain = -Rf/Rin = -100k/10k = -10
-opamp_inverting(c, inp=vin.ports[0], out=vout, ref=GND, Rin="10k", Rf="100k", gain=1e6)
-c.connect(vin.ports[1], GND)
-
-res = AC("dec", 201, 10.0, 1e6).run(c)
-f, mag_db, ph = ac_gain_phase(res.traces, "v(n1)")
-pm = phase_margin(res.traces, "v(n1)")
-gm = gain_margin_db(res.traces, "v(n1)")
-print(pm, gm)
-```
-
-Notes:
-- The ideal OA is modeled as a high-gain VCVS; no power rails needed.
-- Use `plot_bode(ts, y).show()` to render interactive Bode charts (requires the ``viz`` extra).
-- `phase_margin` falls back to estimate if phase is missing; provide complex or phase info when possible.
-
-See also the runnable script under `examples/opamp_stability.py`.
+A refreshed stability guide will arrive together with the measurement helper
+examples. For now, combine the measurement specs from the
+[Cookbook](cookbook.md) with AC sweeps produced by `run_simulation` to compute
+phase/gain margins.

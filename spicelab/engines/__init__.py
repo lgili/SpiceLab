@@ -19,6 +19,9 @@ __all__ = [
     "get_simulator",
     "run_simulation",
     "EngineName",
+    "Job",
+    "JobResult",
+    "run_job",
 ]
 
 
@@ -32,6 +35,9 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "get_simulator": (".orchestrator", "get_simulator"),
     "run_simulation": (".orchestrator", "run_simulation"),
     "EngineName": (".orchestrator", "EngineName"),
+    "Job": ("..orchestrator", "Job"),
+    "JobResult": ("..orchestrator", "JobResult"),
+    "run_job": ("..orchestrator", "run_job"),
 }
 
 

@@ -1,30 +1,20 @@
 # Monte Carlo example
 
-This page documents the `examples/monte_carlo_demo.py` script and the
-options it accepts.
-
-Quick usage
------------
+`examples/mc_demo_plots.py` generates the static assets used throughout the
+Circuit Toolkit Monte Carlo documentation. It does not require a simulator: the script creates
+synthetic samples and feeds them to the plotting helpers.
 
 ```bash
-python examples/monte_carlo_demo.py --n 200 --outdir ./mc_report
+uv run --active python examples/mc_demo_plots.py
 ```
 
-CLI flags of interest
----------------------
+The script writes the following PNG files under `docs/assets/examples/`:
 
-- `--n` — number of Monte Carlo trials (default smaller number for demos).
-- `--outdir` — where to write plots and the HTML report.
-- `--real-run` — if set, the script will call `ngspice` instead of the
-  built-in fake-runner.
+- `mc_hist.png` – histogram of a synthetic metric.
+- `mc_metric_kde.png` – kernel density estimate of the same metric.
+- `mc_R1_vs_metric.png` – scatter plot correlating a parameter with the metric.
+- `mc_params_matrix.png` – pairwise parameter scatter matrix.
 
-Report contents
----------------
-
-The script writes a small HTML file that contains:
-
-- a table of summary statistics (mean, std, CV and percentiles)
-- images with the waveform, histograms, and a parameter trace matrix
-
-Use `--outdir` to collect all artifacts in one place for inspection or CI
-upload.
+Use these images directly in your docs or replace them with plots generated from
+real Monte Carlo runs (`MonteCarloResult.to_dataframe()` + Plotly, Matplotlib,
+etc.).

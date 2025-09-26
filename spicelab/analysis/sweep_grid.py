@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from itertools import product
+from pathlib import Path
 
 from ..core.components import Component
-from ..core.types import AnalysisSpec, ResultHandle
-from ..engines import EngineName, get_simulator
+from ..core.types import AnalysisSpec, ResultHandle, SweepSpec
+from ..engines import EngineName, run_simulation
+from ..orchestrator import JobResult
 
 
 @dataclass(frozen=True)
@@ -33,6 +34,9 @@ def run_value_sweep(
     *,
     engine: EngineName = "ngspice",
     progress: bool | Callable[[int, int], None] | None = None,
+    cache_dir: str | Path | None = None,
+    workers: int = 1,
+    reuse_cache: bool = True,
 ) -> SweepResult:
     """Run multiple simulations varying a single component value.
 
@@ -41,38 +45,23 @@ def run_value_sweep(
     - Returns lightweight handles; you can pull xarray datasets from each when needed.
     """
 
-    original = component.value
-
-    def _notify(done: int) -> None:
-        if not progress:
-            return
-        if callable(progress):
-            try:
-                progress(done, len(values))
-            except Exception:
-                pass
-            return
-        # simple textual progress to stderr
-        try:
-            import sys
-
-            pct = int(round(100.0 * done / max(len(values), 1)))
-            sys.stderr.write(f"\rSWEEP[{component.ref}]: {done}/{len(values)} ({pct}%)")
-            sys.stderr.flush()
-        except Exception:
-            pass
-
-    sim = get_simulator(engine)
+    sweep_spec = SweepSpec(variables={str(component.ref): list(values)})
+    result = run_simulation(
+        circuit,
+        analyses,
+        sweep=sweep_spec,
+        engine=engine,
+        progress=progress,
+        cache_dir=cache_dir,
+        workers=workers,
+        reuse_cache=reuse_cache,
+    )
+    if not isinstance(result, JobResult):
+        raise RuntimeError("Expected JobResult from run_simulation when sweep is provided")
     runs: list[SweepRun] = []
-    try:
-        for i, v in enumerate(values, start=1):
-            component.value = v
-            handle = sim.run(circuit, analyses, None)
-            runs.append(SweepRun(value=v, handle=handle))
-            _notify(i)
-    finally:
-        component.value = original
-
+    for job_run in result.runs:
+        value = job_run.combo.get(str(component.ref))
+        runs.append(SweepRun(value=value if value is not None else "", handle=job_run.handle))
     return SweepResult(component_ref=str(component.ref), values=list(values), runs=runs)
 
 
@@ -103,6 +92,9 @@ def run_param_grid(
     *,
     engine: EngineName = "ngspice",
     progress: bool | Callable[[int, int], None] | None = None,
+    cache_dir: str | Path | None = None,
+    workers: int = 1,
+    reuse_cache: bool = True,
 ) -> GridResult:
     """Run a Cartesian product of component.value assignments.
 
@@ -110,56 +102,28 @@ def run_param_grid(
     """
 
     # Prepare original values to restore later
-    originals: dict[str, str | float] = {comp.ref: comp.value for comp, _ in variables}
+    var_map: dict[str, list[str | float]] = {}
+    for comp, vals in variables:
+        var_map[str(comp.ref)] = list(vals)
 
-    def _notify(done: int, total: int) -> None:
-        if not progress:
-            return
-        if callable(progress):
-            try:
-                progress(done, total)
-            except Exception:
-                pass
-            return
-        try:
-            import sys
+    sweep_spec = SweepSpec(variables=var_map)
+    job = run_simulation(
+        circuit,
+        analyses,
+        sweep=sweep_spec,
+        engine=engine,
+        progress=progress,
+        cache_dir=cache_dir,
+        workers=workers,
+        reuse_cache=reuse_cache,
+    )
+    if not isinstance(job, JobResult):
+        raise RuntimeError("Expected JobResult from run_simulation when sweep is provided")
+    grid_runs: list[GridRun] = []
+    for job_run in job.runs:
+        grid_runs.append(GridRun(combo=dict(job_run.combo), handle=job_run.handle))
 
-            pct = int(round(100.0 * done / max(total, 1)))
-            sys.stderr.write(f"\rGRID: {done}/{total} ({pct}%)")
-            sys.stderr.flush()
-        except Exception:
-            pass
-
-    sim = get_simulator(engine)
-    runs: list[GridRun] = []
-
-    # Build product of values and iterate
-    value_lists = [vals for _, vals in variables]
-    total = 1
-    for vals in value_lists:
-        total *= max(len(vals), 1)
-
-    try:
-        done = 0
-        for combo_vals in product(*value_lists):
-            # Assign
-            combo_map: dict[str, str | float] = {}
-            for (comp, _), value in zip(variables, combo_vals, strict=False):
-                comp.value = value
-                combo_map[comp.ref] = value
-            handle = sim.run(circuit, analyses, None)
-            runs.append(GridRun(combo=combo_map, handle=handle))
-            done += 1
-            _notify(done, total)
-    finally:
-        # restore
-        for comp, _ in variables:
-            try:
-                comp.value = originals[comp.ref]
-            except Exception:
-                pass
-
-    return GridResult(runs=runs)
+    return GridResult(runs=grid_runs)
 
 
 __all__ += ["run_param_grid", "GridResult", "GridRun"]

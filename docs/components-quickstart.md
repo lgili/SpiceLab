@@ -1,46 +1,26 @@
-## Components Quickstart
+# Components quick reference
 
-A compact cheat‑sheet for the main components exposed by PyCircuitKit. The
-table shows the Python class, an optional helper function, the SPICE card that
-is generated, port names, and relevant notes.
+Short aliases for the most common Circuit Toolkit components:
 
-Import helpers used below:
+| Helper | Component | Example |
+|--------|-----------|---------|
+| `R(value)` | `Resistor` | `R("10k")` |
+| `C(value)` | `Capacitor` | `C("100n")` |
+| `L(value)` | `Inductor` | `L(1e-3)` |
+| `V(value)` | `Vdc` | `V(5.0)` |
+| `I(value)` | `Idc` | `I(1e-3)` |
+| `VP(...)` | `Vpulse` | `VP(0, 5, td=0, tr=1e-6, tf=1e-6, pw=1e-3, per=2e-3)` |
+| `VSIN(...)` | `Vsin` | `VSIN(vdc=0, vac=1, freq=1e3)` |
+| `VPWL(points)` | `Vpwl` | `VPWL([(0,0), (1e-3,5)])` |
+| `OA(gain)` | `OpAmpIdeal` | `OA(1e6)` |
+| `E(ref, gain)` | `VCVS` | `E("1", 2.0)` |
+| `G(ref, gm)` | `VCCS` | `G("1", 1e-3)` |
 
+All helpers come from `spicelab.core.components`. They return fully fledged
+component instances that you add to a `Circuit` and connect via ports.
+
+Remember to add any required `.model` directives for diodes, BJTs, switches, or
+your own subcircuits:
+```python
+c.add_directive(".model SWMOD VSWITCH(Ron=1 Roff=1Meg Vt=2 Vh=0.5)")
 ```
-from spicelab.core.circuit import Circuit
-from spicelab.core.net import GND, Net
-from spicelab.core.components import *
-```
-
-| Python (Class) | Helper | SPICE Card (shape) | Ports | Notes |
-| --- | --- | --- | --- | --- |
-| `Resistor` | `R(value)` | `Rref a b value` | `a, b` | Value accepts suffixes (`"1k"`, `"100n"`). |
-| `Capacitor` | `C(value)` | `Cref a b value` | `a, b` |  |
-| `Inductor` | `L(value)` | `Lref a b value` | `a, b` |  |
-| `Vdc` | `V(value)` | `Vref p n value` | `p, n` | DC source. |
-| `Vac` | `VA(ac_mag, ac_phase=0)` | `Vref p n AC mag [phase]` | `p, n` | Small‑signal AC. |
-| `Vpulse` | `VP(v1, v2, td, tr, tf, pw, per)` | `Vref p n PULSE(...)` | `p, n` |  |
-| `Vsin` | — | `Vref p n SIN(vdc vac freq td theta)` | `p, n` | Sine. |
-| `Vpwl` | — | `Vref p n PWL(<args_raw>)` | `p, n` | Raw args string. |
-| `Idc` | `I(value)` | `Iref p n value` | `p, n` | DC current source. |
-| `Iac` | `IA(ac_mag, ac_phase=0)` | `Iref p n AC mag [phase]` | `p, n` | Small‑signal AC. |
-| `Ipulse` | `IP(i1, i2, td, tr, tf, pw, per)` | `Iref p n PULSE(...)` | `p, n` |  |
-| `Isin` | — | `Iref p n SIN(idc iac freq td theta)` | `p, n` |  |
-| `Ipwl` | — | `Iref p n PWL(<args_raw>)` | `p, n` |  |
-| `VCVS` | `E(gain)` | `Eref p n cp cn gain` | `p, n, cp, cn` | Voltage‑controlled voltage src. |
-| `VCCS` | `G(gm)` | `Gref p n cp cn gm` | `p, n, cp, cn` | Voltage‑controlled current src. |
-| `CCCS` | `F(ctrl_vsrc, gain)` | `Fref p n Vsrc gain` | `p, n` | Current‑controlled current src. |
-| `CCVS` | `H(ctrl_vsrc, r)` | `Href p n Vsrc r` | `p, n` | Current‑controlled voltage src. |
-| `Diode` | `D(model)` | `Dref a c model` | `a, c` | Requires matching `.model` directive. |
-| `VSwitch` | `SW(model)` | `Sref p n cp cn model` | `p, n, cp, cn` | Needs `.model <name> SW(...)`. |
-| `ISwitch` | `SWI(ctrl_vsrc, model)` | `Wref p n Vsrc model` | `p, n` | Current‑controlled switch. |
-| `OpAmpIdeal` | `OA(gain=1e6)` | `Eref out 0 inp inn gain` | `inp, inn, out` | 3‑pin ideal OA, VCVS‑based. |
-| `AnalogMux8` | `MUX8(r_series, sel)` | — | `in, out0..out7, [en0..en7]` | Emits Rs (static `sel`) or `S...` + R when `enable_ports=True`. |
-
-Notes
-
-- Numeric strings accept engineering suffixes (k, m, u/µ, n, p, g, t, `meg`).
-- Controlled sources `F`/`H` use a voltage source name (`V1` etc.) as current sensor.
-- `AnalogMux8` parameters: `r_series`, `sel` (0..7), `off_resistance`, `enable_ports`,
-  `emit_model`, `sw_model`. When using switches, add a suitable `.model` line for the
-  `SW` element (or pass `emit_model=True`).

@@ -1,14 +1,18 @@
-# Core Concepts
+# Core concepts
 
-- Ports: typed terminals on components (positive/negative/node).
-- Nets: logical nodes (use `GND` for ground). A `Net` can be named for readability.
-- Components: objects with `ports` and a `spice_card(net_of)` method.
-- Circuit: container that owns components, connections, and optional SPICE directives.
+Circuit Toolkit revolves around a few simple abstractions:
+
+- **Ports** – typed terminals on components.
+- **Nets** – named nodes (use `GND` for ground). Connecting two ports creates or
+  joins a net.
+- **Components** – Python objects with `ports` and a `spice_card(...)` method.
+- **Circuit** – owns components, nets, and free-form SPICE directives.
+- **ResultHandle** – wrapper around simulation artefacts; exposes datasets and metadata.
 
 ## Wiring rules
-- Connect `Port` to `Net`, or `Port` to `Port` (auto-creates a shared Net).
+- Connect `Port` to `Net`, or `Port` to `Port` (implicit net).
 - All ports must be connected before building the netlist.
-- `GND` is reserved (node "0").
+- Ground is the reserved node `0` (use `GND`).
 
 ## Minimal RC example
 ```python
@@ -18,48 +22,46 @@ from spicelab.core.net import GND
 
 c = Circuit("rc")
 V1, R1, C1 = Vdc("1", 5.0), Resistor("1", "1k"), Capacitor("1", "100n")
-c.add(V1, R1, C1)
-c.connect(V1.ports[0], R1.ports[0])  # vin
-c.connect(R1.ports[1], C1.ports[0])  # vout
+for comp in (V1, R1, C1):
+    c.add(comp)
+
+c.connect(V1.ports[0], R1.ports[0])
+c.connect(R1.ports[1], C1.ports[0])
 c.connect(V1.ports[1], GND)
 c.connect(C1.ports[1], GND)
-
 print(c.build_netlist())
 ```
 
 ## Directives
-Use `circuit.add_directive(".model ...")` or `.param`, `.include`, etc., to embed raw SPICE lines.
-
-## Results and post-processing
-
-After running an analysis, you receive a result handle that provides multiple views of the data and metadata.
-
-### Data access
-
-- `handle.dataset()` → `xarray.Dataset`
-- `handle.to_pandas()` → `pandas.DataFrame`
-- `handle.to_polars()` → `polars.DataFrame`
-
-### Metadata
-
-Call `handle.attrs()` to obtain a dict-like structure with descriptive attributes, for example:
-
+Add raw SPICE lines directly:
+```python
+c.add_directive(".include ./models/opamp.sub")
+c.add_directive(".model SWMOD VSWITCH(Ron=1 Roff=1Meg Vt=2 Vh=0.5)")
 ```
-attrs = handle.attrs()
-print(attrs["engine"])           # "ngspice"
-print(attrs.get("engine_version"))
-print(attrs.get("netlist_hash"))
-print(attrs.get("analysis_modes"))     # ["tran"], ["ac"], ["dc"], ...
-print(attrs.get("analysis_params"))    # [{"mode": "tran", "tstep": ..., "tstop": ...}]
+Directives are emitted above the element cards in the generated netlist.
+
+## Results & metadata
+Simulations return `ResultHandle` objects. The API is intentionally small:
+
+```python
+handle.dataset()        # -> xarray.Dataset
+handle.to_pandas()      # -> pandas.DataFrame
+handle.to_polars()      # -> polars.DataFrame
+attrs = handle.attrs()  # -> Mapping[str, Any]
 ```
 
-These normalized attributes make it easy to build reports and cache results deterministically.
+Useful attributes include `engine`, `engine_version`, `netlist_hash`, and
+`analysis_params`. Handles also carry paths to the generated netlist / log / RAW
+artefacts when available.
 
-For DC sweeps, the dataset also carries convenience attributes:
+### DC sweeps
+DC datasets normalise the sweep coordinate under `sweep` and record the original
+label in `dataset.attrs['dc_sweep_label']` together with the source name.
 
-```
-ds = handle.dataset()
-print(ds.attrs.get("sweep_src"))    # e.g., "V1" (source name)
-print(ds.attrs.get("sweep_unit"))   # "V" or "A" when inferable
-print(ds.attrs.get("sweep_label"))  # original coordinate label before renaming to "sweep"
-```
+## Preview helpers
+`Circuit.summary()` prints a net connectivity report and
+`Circuit.render_svg()` produces a quick Graphviz diagram (see
+`examples/circuit_preview.py`).
+
+These primitives feed into the higher-level orchestration helpers documented in
+[Engines](engines.md), [Sweeps](sweeps-step.md) and [Monte Carlo](monte-carlo.md).

@@ -1,10 +1,11 @@
 import shutil
 
 import pytest
-from spicelab.analysis import OP, NormalPct, monte_carlo
+from spicelab.analysis import NormalPct, monte_carlo
 from spicelab.core.circuit import Circuit
 from spicelab.core.components import Resistor, Vdc
 from spicelab.core.net import GND
+from spicelab.core.types import AnalysisSpec
 
 ng = shutil.which("ngspice")
 
@@ -29,7 +30,8 @@ def test_montecarlo_parallel_runs() -> None:
         c,
         mapping={R1: NormalPct(0.05)},
         n=6,
-        analysis_factory=lambda: OP(),
+        analyses=[AnalysisSpec("op", {})],
+        engine="ngspice",
         seed=42,
         workers=2,  # paralelo
     )

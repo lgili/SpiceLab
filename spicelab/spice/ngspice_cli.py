@@ -13,11 +13,9 @@ from .base import RunArtifacts, RunResult, SimulatorAdapter
 
 def _which_ngspice() -> str:
     env_exe = os.environ.get("CAT_SPICE_NGSPICE") or os.environ.get("SPICELAB_NGSPICE")
-    attempted: list[str] = []
     if env_exe:
-        attempted.append(env_exe)
-        if Path(env_exe).exists():
-            return env_exe
+        return env_exe
+    attempted: list[str] = []
     exe = shutil.which("ngspice")
     if exe:
         return exe

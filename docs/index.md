@@ -1,37 +1,54 @@
-# PyCircuitKit
+# Circuit Toolkit
 
-PyCircuitKit is a modern Python toolkit for building circuits, generating SPICE netlists, and running analyses (Monte Carlo, AC, transient) with lightweight testing helpers.
+Circuit Toolkit (Python package `spicelab`) is a modern interface for building
+SPICE netlists, orchestrating simulations across multiple engines, and
+post-processing results with familiar scientific Python tools.
 
-### Features
+![Circuit Toolkit logo](assets/logo.svg){ width="260" }
 
-- Clean, typed APIs
-- Pluggable SPICE runners (ngspice)
-- LTspice integration (netlist import + `.asc` schematic round-trip)
-- Example-driven tutorials and automated tests
+## Why Circuit Toolkit?
+- **Unified orchestration** – drive NGSpice, LTspice CLI, and Xyce from one API.
+- **Deterministic caching** – hashed jobs avoid rerunning the same sweep or Monte Carlo trial.
+- **Typed circuits** – ports, nets, and components are Python objects, not stringly-typed blobs.
+- **First-class data access** – result handles expose xarray, pandas, and polars views with rich metadata.
+- **Docs & examples** – runnable scripts show how to wire circuits, sweeps, and metrics.
 
-### Quick start
+## Quick Preview
+```python
+from spicelab.core.circuit import Circuit
+from spicelab.core.components import Vdc, Resistor, Capacitor
+from spicelab.core.net import GND
+from spicelab.core.types import AnalysisSpec
+from spicelab.engines import run_simulation
 
-Run locally:
+c = Circuit("rc_demo")
+V1 = Vdc("VIN", 5.0)
+R1 = Resistor("R", "1k")
+C1 = Capacitor("C", "100n")
+for comp in (V1, R1, C1):
+    c.add(comp)
+c.connect(V1.ports[0], R1.ports[0])
+c.connect(R1.ports[1], C1.ports[0])
+c.connect(V1.ports[1], GND)
+c.connect(C1.ports[1], GND)
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
+tran = AnalysisSpec("tran", {"tstep": "10us", "tstop": "5ms"})
+handle = run_simulation(c, [tran], engine="ngspice")
+print(handle.dataset()["V(R)"])
 ```
 
-Try the examples in the `examples/` folder after installing the package. Many examples print SPICE cards you can save as `.cir` and run with Ngspice or LTspice.
+## Explore
+- [Installation](installation.md) – set up UV/virtualenv and optional engines.
+- [Getting Started](getting-started.md) – build a circuit, run an analysis, inspect datasets.
+- [Concepts](concepts.md) – circuits, components, ports, nets, handles.
+- [Engines](engines.md) – orchestration and caching model.
+- [Sweeps](sweeps-step.md) · [Monte Carlo](monte-carlo.md) – parametric workflows.
+- [Data I/O](unified-io.md) – ingestion of NGSpice/LTspice/Xyce RAW/PRN/CSV files.
+- [Cookbook](cookbook.md) – copy/paste snippets for metrics and data handling.
+- [Examples](examples.md) – runnable scripts with plots and figures.
 
-### Simulate analog + ADC (quick note)
-
-This repo includes an `AnalogMux8` component that emits SPICE for an 8:1 analog multiplexer and a Python `ADCModel` (in `src/spicelab/core/adc.py`) that emulates sample-and-hold, aperture/jitter and quantization. Typical workflow:
-
-1. Use components' `spice_card(net_of)` to generate a netlist (mux, sources, R/C front-end).
-2. Run Ngspice/LTspice transient simulation on the netlist.
-3. Post-process the simulated node waveform in Python using `ADCModel.sample_from_function` or `sample_sh` to obtain digital codes.
-
-### Quick links
-
-- Installation: `installation.md`
-- Getting started: `getting-started.md`
-- Examples: `examples.md`
-- Examples gallery: `examples-gallery.md`
+## Package status
+Circuit Toolkit is actively evolving. During the API freeze the package name
+remains `spicelab`; future releases will publish under the `circuit-toolkit`
+name on PyPI. Breaking changes are documented in the changelog and reflected in
+these docs.
