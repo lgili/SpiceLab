@@ -33,6 +33,28 @@ The CLI adapters search the PATH and fall back to environment variables:
 Set the variable to the absolute path of the executable when auto-discovery
 fails. Missing binaries raise `EngineBinaryNotFound` with install hints.
 
+## Ngspice shared backend & callbacks
+
+`NgSpiceSharedSimulator` loads the `libngspice` dynamic library to stream
+transient data back into Python (`on_tran_point`) and to drive external sources
+from user code. Configure it via:
+
+- install the shared library (e.g. `brew install libngspice` or
+  `sudo apt install libngspice0-dev`),
+- export `SPICELAB_NGSPICE_SHARED` to the `.so`/`.dylib`/`.dll` path, and
+- use `NgSpiceSharedSimulator()` directly or `run_simulation(..., engine="ngspice-shared")`.
+
+The shared adapter is optimised for per-point control loops. On an M3 Pro laptop
+the closed-loop example (`examples/closed_loop.py`) completes ~2 000 transient
+steps with callbacks in ≈32 ms (~16 µs per step); your numbers will vary with
+platform, circuit size, and callback complexity. When you need higher
+throughput—and can tolerate the lack of fine-grained feedback—fall back to the
+process adapter (`engine="ngspice"`), which still supports batching, sweeps,
+and caching but runs headless without callbacks.
+
+Tip: keep `AnalysisSpec.tstep` as large as the control loop allows and perform
+vectorised work inside the callback to reduce cross-language overhead.
+
 ## Output formats
 
 | Engine | Output | Notes |

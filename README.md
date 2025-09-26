@@ -100,7 +100,10 @@ Full documentation lives at **https://lgili.github.io/CircuitToolkit/**:
 - [Cookbook snippets](https://lgili.github.io/CircuitToolkit/cookbook/)
 
 Runnable demos are under [`examples/`](examples/) and can be executed with
-`uv run --active python examples/<script>.py`.
+`uv run --active python examples/<script>.py`. Highlights:
+
+- `examples/closed_loop.py` – co-simulation loop where Python adjusts a source
+  via the shared ngspice backend callbacks.
 
 ---
 
@@ -109,12 +112,15 @@ Runnable demos are under [`examples/`](examples/) and can be executed with
 - Recommended tooling: [uv](https://github.com/astral-sh/uv) or `python -m venv`
 - Optional extras: `pip install -e '.[viz]'` for Plotly output, `pip install -e '.[data]'` for xarray/polars helpers
 - Engines (any subset): NGSpice · LTspice CLI · Xyce
+- For ngspice co-simulation callbacks, also install the `libngspice` shared
+  library and export `SPICELAB_NGSPICE_SHARED` (see [installation docs](https://lgili.github.io/CircuitToolkit/installation/)).
 
 Environment overrides when binaries are not on PATH:
 
 | Variable | Purpose |
 |----------|---------|
 | `SPICELAB_NGSPICE` | Absolute path to `ngspice` |
+| `SPICELAB_NGSPICE_SHARED` | Absolute path to `libngspice` (`.so`/`.dylib`/`.dll`) |
 | `SPICELAB_LTSPICE` | Absolute path to LTspice CLI (`LTspice`/`XVIIx64.exe`) |
 | `SPICELAB_XYCE` | Absolute path to `Xyce` |
 | `SPICELAB_ENGINE` | Default engine name for examples (`ngspice`, `ltspice`, `xyce`) |

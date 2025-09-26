@@ -42,6 +42,13 @@ class AnalysisSpec(BaseModel):  # Pydantic model (breaking change M1 full)
     def _args_plain(cls, v: dict[str, Any]) -> dict[str, Any]:
         # ensure primitives or simple sequences only
         for k, val in v.items():
+            if k in {"callbacks", "external_sources"} and isinstance(val, dict):
+                for item in val.values():
+                    if item is None:
+                        continue
+                    if not callable(item):
+                        raise ValueError(f"args[{k}] requires callables or None, got {type(item)}")
+                continue
             if isinstance(val, list | tuple):
                 for item in val:
                     if not isinstance(item, str | int | float | bool) and item is not None:

@@ -16,7 +16,15 @@ from ..orchestrator import Job, JobResult, run_job
 from .base import Simulator
 from .factory import create_simulator
 
-EngineName = Literal["ngspice", "ngspice-cli", "ltspice", "ltspice-cli", "xyce", "xyce-cli"]
+EngineName = Literal[
+    "ngspice",
+    "ngspice-cli",
+    "ngspice-shared",
+    "ltspice",
+    "ltspice-cli",
+    "xyce",
+    "xyce-cli",
+]
 
 
 def get_simulator(name: EngineName = "ngspice") -> Simulator:

@@ -233,6 +233,7 @@ Tarefas
 	•	spicelab/extensions/adc.py e/ou control.py:
 	•	Abstrações simples para amostrar V(n), quantizar, e injetar u(t) por callback.
 	•	Benchmarks de latência e fallback “quase-tempo-real” por blocos.
+	•	Documentar instalação da lib compartilhada (docs/installation.md + README) e linha fina para uso compartilhado/ngspice proc.
 
 Critérios de aceite
 	•	Exemplo “RC com controlador P” fechando malha por callback rodando e validado (timestep coerente).

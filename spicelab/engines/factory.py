@@ -10,6 +10,7 @@ __all__ = ["create_simulator"]
 _SIMULATOR_MODULES = {
     "ngspice": ("spicelab.engines.ngspice", "NgSpiceSimulator"),
     "ngspice-cli": ("spicelab.engines.ngspice_proc", "NgSpiceProcSimulator"),
+    "ngspice-shared": ("spicelab.engines.ngspice_shared", "NgSpiceSharedSimulator"),
     "ltspice": ("spicelab.engines.ltspice", "LtSpiceSimulator"),
     "ltspice-cli": ("spicelab.engines.ltspice_cli", "LtSpiceCLISimulator"),
     "xyce": ("spicelab.engines.xyce", "XyceSimulator"),
@@ -20,6 +21,7 @@ _ENGINE_ALIASES = {
     "ng": "ngspice",
     "ngspice": "ngspice",
     "ngspice-cli": "ngspice-cli",
+    "ngspice-shared": "ngspice-shared",
     "lt": "ltspice",
     "ltspice": "ltspice",
     "ltspice-cli": "ltspice-cli",

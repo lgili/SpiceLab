@@ -12,6 +12,7 @@ __all__ = [
     "DatasetResultHandle",
     "NgSpiceSimulator",
     "NgSpiceProcSimulator",
+    "NgSpiceSharedSimulator",
     "LtSpiceSimulator",
     "LtSpiceCLISimulator",
     "XyceSimulator",
@@ -28,6 +29,7 @@ __all__ = [
 _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "NgSpiceSimulator": (".ngspice", "NgSpiceSimulator"),
     "NgSpiceProcSimulator": (".ngspice_proc", "NgSpiceProcSimulator"),
+    "NgSpiceSharedSimulator": (".ngspice_shared", "NgSpiceSharedSimulator"),
     "LtSpiceSimulator": (".ltspice", "LtSpiceSimulator"),
     "LtSpiceCLISimulator": (".ltspice_cli", "LtSpiceCLISimulator"),
     "XyceSimulator": (".xyce", "XyceSimulator"),
