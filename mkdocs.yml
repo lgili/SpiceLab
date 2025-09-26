@@ -31,43 +31,44 @@ plugins:
                 - .
 
 nav:
-  - Home: index.md
-  - Installation: installation.md
-  - Getting Started: getting-started.md
-  - Concepts: concepts.md
+  - Overview:
+    - Welcome: index.md
+    - Installation: installation.md
+    - Getting started: getting-started.md
+    - Concepts: concepts.md
+  - User guide:
+    - Engines: engines.md
+    - Data I/O: unified-io.md
+    - Sweeps & grids: sweeps-step.md
+    - Monte Carlo: monte-carlo.md
+    - Reporting: reporting.md
+    - Plotting: plots.md
+    - Circuit preview: preview.md
+    - LTspice integration: ltspice-import.md
+    - Analog mux: mux-enable-ports.md
+    - CLI & CI automation: cli-ci.md
+    - Environment doctor: doctor.md
+    - Troubleshooting: troubleshooting.md
   - Components:
-      - Overview: components.md
-      - Quick reference: components-quickstart.md
-      - Device models: device-models.md
-      - Library status (refresh soon): components-library.md
-  - Engines: engines.md
-  - Data I/O: unified-io.md
-  - Sweeps: sweeps-step.md
-  - Monte Carlo: monte-carlo.md
-  - Cookbook: cookbook.md
+    - Overview: components.md
+    - Quick reference: components-quickstart.md
+    - Device models: device-models.md
+    - Library status (refresh soon): components-library.md
   - Examples:
-      - Overview: examples.md
-      - Usage: examples-usage.md
-      - Gallery: examples-gallery.md
-      - Monte Carlo assets: monte-carlo-example.md
-  - Guides:
-      - Circuit preview: preview.md
-      - Plotting: plots.md
-      - LTspice integration: ltspice-import.md
-      - Analog mux: mux-enable-ports.md
-      - CLI & CI: cli-ci.md
-      - Reporting: reporting.md
-      - Environment doctor: doctor.md
-      - Troubleshooting: troubleshooting.md
-  - Legacy notes:
-      - AC stability (refresh soon): ac-stability.md
-      - Op-amp stability (refresh soon): opamp-stability.md
-      - Old roadmap (M1/M2): core-contracts.md
-  - API guidance: api-reference.md
-  - API reference:
-      - Core: reference/core.md
-      - IO: reference/io.md
-      - Analysis: reference/analysis.md
+    - Overview: examples.md
+    - Running scripts: examples-usage.md
+    - Gallery: examples-gallery.md
+    - Monte Carlo assets: monte-carlo-example.md
+  - Cookbook: cookbook.md
+  - Reference:
+    - API guidance: api-reference.md
+    - Core API: reference/core.md
+    - IO API: reference/io.md
+    - Analysis API: reference/analysis.md
+  - Legacy & roadmap:
+    - AC stability (refresh soon): ac-stability.md
+    - Op-amp stability (refresh soon): opamp-stability.md
+    - Old roadmap (M1/M2): core-contracts.md
 extra_css:
   - assets/stylesheets/extra.css
 extra: {}

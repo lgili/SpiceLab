@@ -25,13 +25,10 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
-      - name: Install uv
-        run: curl -LsSf https://astral.sh/uv/install.sh | sh
-
-      - name: Add uv to PATH
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v2
 
       - name: Set version from tag
         shell: bash
@@ -43,10 +40,10 @@ jobs:
           python .github/scripts/set_version.py
 
       - name: Sync deps
-        run: ~/.local/bin/uv sync
+        run: uv sync --frozen --group dev
 
       - name: Build distributions
-        run: ~/.local/bin/uv run python -m build
+        run: uv run python -m build
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

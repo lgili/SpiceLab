@@ -2,6 +2,9 @@
 
 [![Build](https://github.com/lgili/circuit_toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/lgili/circuit_toolkit/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://lgili.github.io/CircuitToolkit/)
+[![PyPI](https://img.shields.io/pypi/v/spicelab.svg)](https://pypi.org/project/spicelab/)
+[![Python](https://img.shields.io/pypi/pyversions/spicelab.svg)](https://pypi.org/project/spicelab/)
+[![License](https://img.shields.io/github/license/lgili/circuit_toolkit.svg)](LICENSE)
 
 Circuit Toolkit is a typed Python layer for describing SPICE circuits, running
 simulations against multiple engines (NGSpice, LTspice CLI, Xyce) and analysing
@@ -42,13 +45,18 @@ callbacks require the shared `libngspice` library.
 ---
 
 ## Quick start
+Install the package straight from PyPI:
+
 ```bash
-uv venv
-source .venv/bin/activate            # Linux/macOS
-# .\.venv\Scripts\activate.ps1       # Windows PowerShell
-uv pip install -e .
+python -m pip install --upgrade pip
+python -m pip install spicelab
 ```
-Install an engine (for example NGSpice) and run your first transient analysis:
+
+Need optional helpers? Append extras such as `spicelab[viz]` for Plotly or
+`spicelab[data]` for xarray/polars integrations.
+
+Once installed, connect an engine (NGSpice, LTspice CLI, or Xyce) and run your
+first transient analysis:
 
 ```python
 from spicelab.core.circuit import Circuit
@@ -126,10 +134,18 @@ Runnable demos are under [`examples/`](examples/) and can be executed with
 
 ---
 
+- Prefer working from source? Clone the repo and use [uv](https://github.com/astral-sh/uv):
+  ```bash
+  uv venv
+  source .venv/bin/activate            # Linux/macOS
+  # .\.venv\Scripts\activate.ps1       # Windows PowerShell
+  uv pip install -e .[viz,data]
+  ```
+
 ## Installation details
 - Python **3.10+**
-- Recommended tooling: [uv](https://github.com/astral-sh/uv) or `python -m venv`
-- Optional extras: `pip install -e '.[viz]'` for Plotly output, `pip install -e '.[data]'` for xarray/polars helpers
+- Install from PyPI with `pip install spicelab`
+- Optional extras: `spicelab[viz]` for Plotly output, `spicelab[data]` for xarray/polars helpers
 - Engines (any subset): NGSpice · LTspice CLI · Xyce
 - For ngspice co-simulation callbacks, also install the `libngspice` shared
   library and export `SPICELAB_NGSPICE_SHARED` (see [installation docs](https://lgili.github.io/CircuitToolkit/installation/)).

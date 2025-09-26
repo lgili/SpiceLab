@@ -1,33 +1,34 @@
 # Installation
 
-Circuit Toolkit is currently published under the package name `spicelab`.
-Use Python 3.10 or newer.
+Circuit Toolkit ships on PyPI under the name `spicelab`. Use Python 3.10 or newer.
 
-## Using uv (recommended)
+## Install from PyPI
+```bash
+python -m pip install --upgrade pip
+python -m pip install spicelab
+```
+
+Extras add optional dependencies:
+
+```bash
+python -m pip install "spicelab[viz]"   # Plotly + Kaleido for figure export
+python -m pip install "spicelab[data]"  # xarray / polars integrations
+```
+
+Grab the combined feature set with `python -m pip install "spicelab[viz,data]"`.
+
+## Editable installs (contributing / development)
 ```bash
 uv venv
 source .venv/bin/activate  # Linux/macOS
 # .\.venv\Scripts\activate.ps1  # Windows PowerShell
-uv pip install -e .
+uv pip install -e .[viz,data]
 ```
 
-Add extras as needed:
-```bash
-uv pip install -e '.[viz]'      # Plotly helpers
-uv pip install -e '.[data]'     # xarray / polars shortcuts
-```
+Install extra tooling when hacking on the project:
 
-## Using pip
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -U pip
-pip install -e .
-```
-
-Install optional dev tools:
-```bash
-pip install pytest pytest-cov mypy ruff
+uv pip install -r dev-requirements.txt
 ```
 
 ## SPICE engines

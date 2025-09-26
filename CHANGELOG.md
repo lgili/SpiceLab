@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 Format: Keep sections concise and scannable. Use Added / Changed / Fixed / Docs / Tests
 when it helps clarity. Dates in ISO (YYYY-MM-DD).
 
+## [Unreleased]
+### Added
+- Core Contracts doc (`docs/core-contracts.md`) descrevendo `AnalysisSpec`, `SweepSpec`, `Probe`, hashing e metadados.
+- `Probe` suporte em `run_simulation(..., probes=[])` e serialização em `ResultMeta`/`DatasetResultHandle.attrs()`.
+
+### Changed
+- Migração M1: `AnalysisSpec` e `SweepSpec` de dataclasses para modelos Pydantic v2 (validação + serialização). Construtor posicional preservado.
+
+### Tests
+- Novos testes de validação negativa de sweep e args, probes e construtor posicional.
+
+### Docs
+- README inclui nota de migração M1.
+
+### Removed
+- Legacy `spicelab/core/models.py` (dataclass-era duplicate) fully removed after Pydantic migration; import from `spicelab.core.types` instead.
+
 ## [0.1.0] - 2025-09-13
 
 ### Added
@@ -42,23 +59,6 @@ when it helps clarity. Dates in ISO (YYYY-MM-DD).
 ### Tests
 - Overall coverage raised to ~83% with ngspice installed; critical paths (core/components/step)
   are well covered.
-
-## [Unreleased]
-### Added
-- Core Contracts doc (`docs/core-contracts.md`) descrevendo `AnalysisSpec`, `SweepSpec`, `Probe`, hashing e metadados.
-- `Probe` suporte em `run_simulation(..., probes=[])` e serialização em `ResultMeta`/`DatasetResultHandle.attrs()`.
-
-### Changed
-- Migração M1: `AnalysisSpec` e `SweepSpec` de dataclasses para modelos Pydantic v2 (validação + serialização). Construtor posicional preservado.
-
-### Tests
-- Novos testes de validação negativa de sweep e args, probes e construtor posicional.
-
-### Docs
-- README inclui nota de migração M1.
-
-### Removed
-- Legacy `spicelab/core/models.py` (dataclass-era duplicate) fully removed after Pydantic migration; import from `spicelab.core.types` instead.
 
 ---
 

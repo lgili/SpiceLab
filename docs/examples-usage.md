@@ -15,7 +15,8 @@ repository root with `uv run --active python examples/<script>.py`.
 2. Install optional plotting dependencies if you want PNG/HTML output:
    ```bash
    uv run --active pip install matplotlib pandas
-   uv run --active pip install -e '.[viz]'  # for Plotly demos
+   uv run --active pip install "spicelab[viz]"   # PyPI install with Plotly extras
+   # working from a clone? alternatively: uv run --active pip install -e '.[viz]'
    ```
 
 3. Run any script from the repository root. Examples:

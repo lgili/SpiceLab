@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,46 +20,31 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-      - name: Install NGSpice (Ubuntu)
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v2
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ngspice graphviz
+          sudo apt-get install -y --no-install-recommends ngspice graphviz
           ngspice -v || true
-      - name: Install requirements
+      - name: Sync project + doc dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r docs-requirements.txt
-      - name: Install project (editable)
-        run: |
-          python -m pip install -e .[viz] --verbose
+          uv sync --frozen --group dev --extra viz --extra data
+          uv pip install -r docs-requirements.txt
 
       - name: Verify import (fail early)
         run: |
-          python -c "import importlib.util; print('find_spec spicelab ->', importlib.util.find_spec('spicelab'))"
-          python -c "import spicelab; print('spicelab imported OK:', getattr(spicelab, '__file__', None))"
-      - name: Generate example figures
+          uv run python -c "import importlib.util; print('find_spec spicelab ->', importlib.util.find_spec('spicelab'))"
+          uv run python -c "import spicelab; print('spicelab imported OK:', getattr(spicelab, '__file__', None))"
+      - name: Generate example assets
         env:
           MPLBACKEND: Agg
         run: |
-          set -e
-          echo "=== run examples to generate figures ==="
-          mkdir -p docs/assets/examples
-          pushd examples
-          python ac_bode.py
-          python opamp_stability.py
-          python monte_carlo_fig.py
-          python step_sweep_fig.py
-          popd
-          cp -v examples/ac_bode.png docs/assets/examples/ac_bode.png
-          cp -v examples/opamp_bode.png docs/assets/examples/opamp_bode.png
-          cp -v examples/mc_hist.png docs/assets/examples/mc_hist.png
-          cp -v examples/mc_traces.png docs/assets/examples/mc_traces.png
-          cp -v examples/step_grid.png docs/assets/examples/step_grid.png
+          uv run python examples/mc_demo_plots.py
+          uv run python examples/report_demo.py
 
       - name: Build site
-        run: |
-          python -m mkdocs build --strict
+        run: uv run python -m mkdocs build --strict
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4

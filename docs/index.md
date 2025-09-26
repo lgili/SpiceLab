@@ -1,10 +1,14 @@
 # Circuit Toolkit
 
-Circuit Toolkit (Python package `spicelab`) is a modern interface for building
-SPICE netlists, orchestrating simulations across multiple engines, and
+Circuit Toolkit (published on PyPI as `spicelab`) is a modern interface for
+building SPICE netlists, orchestrating simulations across multiple engines, and
 post-processing results with familiar scientific Python tools.
 
-![Circuit Toolkit logo](assets/logo.svg){ width="260" }
+![Circuit Toolkit logo](assets/logo.svg)
+
+[![PyPI](https://img.shields.io/pypi/v/spicelab.svg)](https://pypi.org/project/spicelab/)
+[![Python](https://img.shields.io/pypi/pyversions/spicelab.svg)](https://pypi.org/project/spicelab/)
+[![License](https://img.shields.io/github/license/lgili/circuit_toolkit.svg)](https://github.com/lgili/circuit_toolkit/blob/main/LICENSE)
 
 ## Why Circuit Toolkit?
 - **Unified orchestration** – drive NGSpice, LTspice CLI, and Xyce from one API.
@@ -48,7 +52,6 @@ print(handle.dataset()["V(R)"])
 - [Examples](examples.md) – runnable scripts with plots and figures.
 
 ## Package status
-Circuit Toolkit is actively evolving. During the API freeze the package name
-remains `spicelab`; future releases will publish under the `circuit-toolkit`
-name on PyPI. Breaking changes are documented in the changelog and reflected in
+Circuit Toolkit is actively evolving and currently offered as `spicelab==0.1.x`
+on PyPI. Breaking changes are documented in the changelog and reflected in
 these docs.

@@ -5,10 +5,35 @@ on:
     branches: [ main ]
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  lint-type-test:
+  lint-type:
+    name: Lint & type-check (Python 3.12)
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v2
+      - name: Sync dependencies
+        run: uv sync --frozen --group dev --extra viz --extra data
+      - name: Ruff format (check only)
+        run: uv run ruff format --check .
+      - name: Ruff lint
+        run: uv run ruff check .
+      - name: Mypy
+        run: uv run mypy spicelab tests
+
+  tests:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    needs: lint-type
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
     steps:
@@ -16,77 +41,58 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
+      - uses: astral-sh/setup-uv@v2
       - name: Install NGSpice (Ubuntu)
         run: |
           sudo apt-get update
-          sudo apt-get install -y ngspice
+          sudo apt-get install -y --no-install-recommends ngspice
           ngspice -v || true
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .
-          pip install ruff mypy pytest pytest-cov
-      - name: Ruff (format + lint)
-        run: |
-          ruff version
-          ruff format .
-          ruff check .
-      - name: Mypy (type-check)
-        run: |
-          mypy --version
-          mypy --explicit-package-bases spicelab tests
-      - name: Pytest
+      - name: Sync dependencies
+        run: uv sync --frozen --group dev --extra viz --extra data
+      - name: Pytest (unit + integration without engines)
         env:
           PYTHONWARNINGS: default
-        run: |
-          pytest -q --maxfail=1 --disable-warnings --cov=spicelab --cov-report=term-missing
+        run: uv run pytest -m "not engine"
 
-  ngspice-integration:
+  engine-tests:
+    name: Engine integration (NGSpice)
     runs-on: ubuntu-latest
+    needs: tests
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - uses: astral-sh/setup-uv@v2
       - name: Install NGSpice (Ubuntu)
         run: |
           sudo apt-get update
-          sudo apt-get install -y ngspice
+          sudo apt-get install -y --no-install-recommends ngspice
           ngspice -v || true
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .
-          pip install pytest pytest-cov
-      - name: Pytest (with ngspice)
+      - name: Sync dependencies
+        run: uv sync --frozen --group dev --extra viz --extra data
+      - name: Pytest (engine subset)
         env:
           PYTHONWARNINGS: default
-        run: |
-          pytest -q --maxfail=1 --disable-warnings --cov=spicelab --cov-report=term-missing
+        run: uv run pytest -m engine
 
-  generate-demo-images:
+  generate-demo-assets:
     runs-on: ubuntu-latest
-    needs: lint-type-test
+    needs: tests
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: 'pip'
-      - name: Install plotting dependencies
+      - uses: astral-sh/setup-uv@v2
+      - name: Sync dependencies
+        run: uv sync --frozen --group dev --extra viz
+      - name: Generate demo assets
         run: |
-          python -m pip install --upgrade pip
-          pip install -e .
-          pip install matplotlib scipy pandas
-      - name: Install project (editable)
-        run: |
-          python -m pip install -e .[viz] --verbose
-      - name: Generate demo images
-        run: |
-          python examples/mc_demo_plots.py
-      - name: Upload demo images
+          uv run python examples/mc_demo_plots.py
+          uv run python examples/report_demo.py
+      - name: Upload demo assets
         uses: actions/upload-artifact@v4
         with:
-          name: demo-doc-images
+          name: demo-doc-assets
           path: docs/assets/examples/

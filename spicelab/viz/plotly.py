@@ -26,7 +26,7 @@ def _ensure_plotly() -> tuple[Any, Any, Any]:
     except ModuleNotFoundError as exc:  # pragma: no cover - import guard
         raise _PlotlyNotAvailable(
             "Plotly is required for interactive visualization. Install the 'viz' extra:"
-            " pip install pycircuitkit[viz]"
+            " pip install spicelab[viz]"
         ) from exc
     return go, make_subplots, px
 
