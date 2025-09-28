@@ -1,6 +1,6 @@
 # Unified I/O
 
-Circuit Toolkit provides unified readers that normalise waveform outputs from
+spicelab provides unified readers that normalise waveform outputs from
 **NGSpice**, **LTspice**, and **Xyce** into a single `xarray.Dataset` structure with
 consistent coordinates, canonical signal names, and provenance metadata.
 

@@ -1,6 +1,6 @@
 # Device models
 
-Many components require SPICE `.model` cards or `.include` files. Circuit Toolkit
+Many components require SPICE `.model` cards or `.include` files. spicelab
 simply embeds the directives you provide – it does not ship vendor models.
 
 ## Adding a model

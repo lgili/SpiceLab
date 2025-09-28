@@ -1,6 +1,6 @@
 # LTspice integration
 
-LTspice schematic and netlist support is being revisited for the new Circuit Toolkit API. Until
+LTspice schematic and netlist support is being revisited for the new spicelab API. Until
 that is complete you can:
 
 1. Export a SPICE netlist from LTspice (`View → SPICE netlist`).

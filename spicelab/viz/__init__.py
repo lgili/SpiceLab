@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from .circuit import components_for_net, connectivity_table, summary_table
+from .notebook import connectivity_widget, dataset_plot_widget
 from .plotly import (
     VizFigure,
     bode_view,
@@ -46,4 +48,9 @@ __all__ = [
     "plot_mc_kde",
     "plot_param_vs_metric",
     "plot_params_matrix",
+    "connectivity_table",
+    "summary_table",
+    "components_for_net",
+    "connectivity_widget",
+    "dataset_plot_widget",
 ]

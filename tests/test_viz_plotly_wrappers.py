@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 import sys
 from collections.abc import Mapping, Sequence
 from pathlib import Path
@@ -55,6 +56,14 @@ class FakeFigure:
 
     def show(self, **kwargs: Any) -> None:  # pragma: no cover - benign
         self.layout_updates.append({"show": kwargs})
+
+
+class FailingFigure(FakeFigure):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def show(self, **kwargs: Any) -> None:
+        raise ValueError("Mime type rendering requires nbformat>=4.2.0 but it is not installed")
 
 
 class FakeScatter:
@@ -197,8 +206,15 @@ def test_monte_carlo_histogram_and_wrapper() -> None:
     metadata = fig.metadata
     assert metadata is not None
     assert metadata["kind"] == "mc_hist"
-    wrapped = plot_wrappers.plot_mc_metric_hist(metrics, bins=5)
+    assert "normal_fit" in metadata
+    assert len(fig.figure.data) == 2
+    assert any(
+        isinstance(trace, FakeScatter) and trace.name == "normal fit" for trace in fig.figure.data
+    )
+
+    wrapped = plot_wrappers.plot_mc_metric_hist(metrics, bins=5, show_normal_fit=False)
     assert isinstance(wrapped.figure, FakeFigure)
+    assert len(wrapped.figure.data) == 1
 
 
 def test_monte_carlo_param_scatter_and_wrapper_no_grid() -> None:
@@ -264,3 +280,21 @@ def test_plot_wrappers_metric_none_error() -> None:
     bad_metrics: Any = None
     with pytest.raises(ValueError):
         plot_wrappers.plot_mc_metric_hist(bad_metrics)
+
+
+def test_vizfigure_show_requires_nbformat(monkeypatch: pytest.MonkeyPatch) -> None:
+    failing = FailingFigure()
+    viz = VizFigure(failing)
+
+    original_find_spec = importlib.util.find_spec
+
+    def fake_find_spec(name: str, package: str | None = None):
+        if name == "nbformat":
+            return None
+        return original_find_spec(name, package)
+
+    monkeypatch.setattr(importlib.util, "find_spec", fake_find_spec)
+
+    with pytest.raises(RuntimeError) as exc:
+        viz.show()
+    assert "nbformat>=4.2" in str(exc.value)

@@ -1,6 +1,6 @@
 # Components quick reference
 
-Short aliases for the most common Circuit Toolkit components:
+Short aliases for the most common spicelab components:
 
 | Helper | Component | Example |
 |--------|-----------|---------|

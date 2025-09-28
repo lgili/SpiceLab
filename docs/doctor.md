@@ -1,11 +1,11 @@
 # Environment Doctor
 
-`python -m spicelab.doctor` inspects your system for common Circuit Toolkit
+`python -m spicelab.doctor` inspects your system for common spicelab
 requirements and reports missing SPICE engines or shared libraries.
 
 ```bash
 $ python -m spicelab.doctor
-Circuit Toolkit environment check
+spicelab environment check
  ✔ ngspice (/usr/local/bin/ngspice)
  ✖ ltspice
     hint: Download LTspice from Analog Devices

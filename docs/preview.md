@@ -1,6 +1,6 @@
 # Circuit Preview (Summary and Graphviz)
 
-Use the Circuit Toolkit preview helpers to validate connectivity and generate a
+Use the spicelab preview helpers to validate connectivity and generate a
 quick Graphviz-based diagram of nets and components (no schematic rendering).
 
 ## Connectivity summary

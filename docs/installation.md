@@ -1,6 +1,6 @@
 # Installation
 
-Circuit Toolkit ships on PyPI under the name `spicelab`. Use Python 3.10 or newer.
+spicelab ships on PyPI. Use Python 3.10 or newer.
 
 ## Install from PyPI
 ```bash
@@ -57,7 +57,7 @@ drive external sources. Install the shared library alongside the CLI:
 | Arch Linux | `sudo pacman -S libngspice` | `/usr/lib/libngspice.so` |
 | Windows | Extract `ngspice.dll` from the official installer and place it next to your Python project |
 
-Point Circuit Toolkit at the library with `SPICELAB_NGSPICE_SHARED`:
+Point spicelab at the library with `SPICELAB_NGSPICE_SHARED`:
 
 ```bash
 export SPICELAB_NGSPICE_SHARED="$(brew --prefix libngspice)/lib/libngspice.dylib"

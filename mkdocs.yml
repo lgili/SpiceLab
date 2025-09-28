@@ -1,7 +1,7 @@
-site_name: Circuit Toolkit
+site_name: spicelab
 site_description: Unified Python orchestration for SPICE simulations
 site_author: lgili
-repo_name: lgili/CircuitToolkit
+repo_name: lgili/spicelab
 site_url: https://lgili.github.io/CircuitToolkit/
 
 theme:
@@ -59,6 +59,7 @@ nav:
     - Running scripts: examples-usage.md
     - Gallery: examples-gallery.md
     - Monte Carlo assets: monte-carlo-example.md
+    - Notebooks: notebooks.md
   - Cookbook: cookbook.md
   - Reference:
     - API guidance: api-reference.md
@@ -69,6 +70,8 @@ nav:
     - AC stability (refresh soon): ac-stability.md
     - Op-amp stability (refresh soon): opamp-stability.md
     - Old roadmap (M1/M2): core-contracts.md
+  - Changelog:
+    - M6 Wrap-up: changelog-m6.md
 extra_css:
   - assets/stylesheets/extra.css
 extra: {}

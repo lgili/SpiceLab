@@ -1,17 +1,15 @@
-# Circuit Toolkit (`spicelab`)
+# spicelab
 
-[![Build](https://github.com/lgili/circuit_toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/lgili/circuit_toolkit/actions/workflows/ci.yml)
+[![Build](https://github.com/lgili/SpiceLab/actions/workflows/ci.yml/badge.svg)](https://github.com/lgili/SpiceLab/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://lgili.github.io/CircuitToolkit/)
 [![PyPI](https://img.shields.io/pypi/v/spicelab.svg)](https://pypi.org/project/spicelab/)
 [![Python](https://img.shields.io/pypi/pyversions/spicelab.svg)](https://pypi.org/project/spicelab/)
 [![License](https://img.shields.io/github/license/lgili/circuit_toolkit.svg)](LICENSE)
 
-Circuit Toolkit is a typed Python layer for describing SPICE circuits, running
+spicelab is a typed Python layer for describing SPICE circuits, running
 simulations against multiple engines (NGSpice, LTspice CLI, Xyce) and analysing
 the results with familiar data libraries (xarray · pandas · polars).
 
-> **Note**: the Python package is currently published as `spicelab`. The project
-> name and documentation now use the Circuit Toolkit branding.
 
 ---
 
@@ -114,6 +112,26 @@ mc = monte_carlo(
 
 print(mc.to_dataframe(metric=None, param_prefix="param_").head())
 ```
+
+## Notebook workflows
+- Build complex circuits quickly with the DSL:
+  ```python
+  from spicelab.dsl import CircuitBuilder
+
+  builder = CircuitBuilder("rc_filter")
+  builder.vdc("vin", "gnd", value="5")
+  builder.resistor("vin", "vout", value="1k")
+  builder.capacitor("vout", "gnd", value="220n")
+  circuit = builder.build()
+  circuit.connectivity_dataframe()  # pandas.DataFrame for rich display
+  ```
+- Use interactive widgets inside Jupyter/VS Code:
+  ```python
+  from spicelab.viz.notebook import connectivity_widget, dataset_plot_widget
+
+  connectivity_widget(circuit)
+  dataset_plot_widget(handle.dataset())
+  ```
 ---
 
 ## Documentation
@@ -174,6 +192,6 @@ we can discuss the design direction.
 ---
 
 ## License & acknowledgements
-MIT License © Luiz Carlos Gili. Circuit Toolkit stands on the shoulders of the
+MIT License © Luiz Carlos Gili. spicelab stands on the shoulders of the
 SPICE ecosystem (NGSpice, LTspice, Xyce) and scientific Python libraries. Many
 thanks to their authors and maintainers.

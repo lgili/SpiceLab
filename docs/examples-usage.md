@@ -1,6 +1,6 @@
 # Using the examples
 
-Circuit Toolkit ships runnable demos under `examples/`. Execute them from the
+spicelab ships runnable demos under `examples/`. Execute them from the
 repository root with `uv run --active python examples/<script>.py`.
 
 1. Ensure an engine is available. NGSpice is the default:
@@ -10,7 +10,7 @@ repository root with `uv run --active python examples/<script>.py`.
    ```
 
    Xyce users can install the binary from <https://xyce.sandia.gov> and then export
-   `SPICELAB_XYCE=/path/to/xyce` so Circuit Toolkit can find it.
+   `SPICELAB_XYCE=/path/to/xyce` so spicelab can find it.
 
 2. Install optional plotting dependencies if you want PNG/HTML output:
    ```bash
@@ -38,3 +38,17 @@ you provide via `--out-html` (`mc_hist.html`, `mc_param_scatter.html`, `mc_param
 
 Xyce transient tip: `examples/xyce_tran.py` falls back gracefully when the engine
 is missing, so you can run it even before installing Xyce to verify your setup steps.
+
+## Notebook walkthrough
+
+Prefer an interactive tour? Open `examples/notebook_circuit_builder.ipynb` in VS Code
+or JupyterLab after installing the `viz` extra. It covers:
+
+- Building a circuit with the `CircuitBuilder` DSL.
+- Inspecting connectivity tables and pandas dataframes.
+- Exploring datasets with the interactive widgets, including Monte Carlo sweeps.
+
+![Notebook widgets preview](assets/notebook-widget.svg)
+
+The Monte Carlo section mirrors the CLI demo but keeps results inside the notebook,
+ideal for design reviews or quick experiments.

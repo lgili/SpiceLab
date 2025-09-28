@@ -1,6 +1,6 @@
 # Plotting
 
-Circuit Toolkit ships interactive Plotly helpers for common visualization tasks. Each helper
+spicelab ships interactive Plotly helpers for common visualization tasks. Each helper
 returns a `VizFigure`, which wraps the underlying Plotly figure and exposes
 `show()`, `to_html()`, and `to_image()` convenience methods.
 

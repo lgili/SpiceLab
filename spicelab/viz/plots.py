@@ -189,6 +189,7 @@ def plot_mc_metric_hist(
     xlabel: str | None = None,
     ylabel: str | None = None,
     template: str | None = "plotly_white",
+    show_normal_fit: bool = True,
 ) -> VizFigure:
     if metrics is None:
         raise ValueError("metrics must be provided")
@@ -199,6 +200,7 @@ def plot_mc_metric_hist(
         xlabel=xlabel,
         ylabel=ylabel,
         template=template,
+        show_normal_fit=show_normal_fit,
     )
 
 

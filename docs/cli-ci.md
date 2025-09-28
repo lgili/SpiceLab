@@ -1,6 +1,6 @@
 # CLI and CI guide
 
-# Circuit Toolkit scripts are regular Python modules. Most of them print summary
+# spicelab scripts are regular Python modules. Most of them print summary
 information and optionally write PNG/CSV files next to the script. None of them
 require custom CLI flags any more — use environment variables (`SPICELAB_ENGINE`)
 if you want to force a particular simulator.

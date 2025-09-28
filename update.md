@@ -296,3 +296,265 @@ Entregas tangíveis por marco
 ⸻
 
 se quiser, já começo pelo M1+M2 implementando o reader unificado e conectando um engine (ngspice proc) — é onde o ganho de DX aparece mais rápido e com baixo risco.
+
+
+perfeito — com M1→M6 encaminhados, dá pra levar o SpiceLab a outro patamar. Abaixo vai um plano pós-M6 bem detalhado, dividido em marcos incrementais (M7→M12), cada um com objetivo, tarefas, critérios de aceite, riscos/mitigação e observações práticas. A ideia é priorizar desempenho, cobertura de casos reais (modelos/PDKs/Verilog-A), automação (medidas/otimização), DX (docs, widgets) e robustez (testes, CI, empacotamento).
+
+⸻
+
+M7 — Medidas, DSP e Métricas de Controle (biblioteca de meas)
+
+Objetivo
+Fornecer um kit de medidas reutilizáveis (estilo .meas) e funções de análise de sinais/controle diretamente sobre xarray.Dataset.
+
+Tarefas
+	•	spicelab/analysis/measure.py
+	•	AC: magnitude/phase @freq, ganho e fase em cruzamento, GBW, PM (phase margin), GM (gain margin), fT (BJT).
+	•	TRAN: overshoot, undershoot, rise/fall time, settling time (ε%), SNR, THD, ENOB (para ADCs).
+	•	NOISE: input-referred noise, output noise PSD (integrada em banda), NF.
+	•	spicelab/analysis/signal.py
+	•	Utilitários DSP: windowing, FFT coerente (com/sem zero-padding), decimação e filtros (FIR/IIR) para pós-processo.
+	•	API:
+	•	meas.compute(ds: xr.Dataset, specs: list[MeasureSpec]) -> pl.DataFrame
+	•	Coleção de MeasureSpec tipados (com validação).
+	•	Integração com orchestrator (Grid/MC): computar medidas por ponto (guarda em .parquet).
+
+Critérios de aceite
+	•	Conjunto de tests com fixtures de RC/RL/OpAmp e asserts de tolerância.
+	•	Exemplo “Bode + PM/GM” e “Step + settling/overshoot” reproduz resultados esperados.
+
+Riscos & mitigação
+	•	Precisão numérica em FFT/PSD → documentar janelas e unidades, fornecer helpers para normalização e densidade (V²/Hz).
+
+⸻
+
+M8 — Modelos, Bibliotecas e Verilog-A (gestão de modelos)
+
+Objetivo
+Transformar modelos em cidadãos de primeira classe: .lib, .include, .subckt, e Verilog-A (especialmente p/ Xyce e ngspice com ADMS).
+
+Tarefas
+	•	spicelab/models/registry.py
+	•	Registro de modelos por nome/versão, resolução de caminhos relativos, cache de downloads (opcional).
+	•	API: ModelRef(kind="subckt"|"model"|"veriloga", path="...", name="...", params={...})
+	•	spicelab/models/veriloga.py
+	•	Helpers para pipeline ADMS (onde aplicável): checar toolchain, compilar VA → compatível com engine.
+	•	Mapeamento de falhas com mensagens amigáveis (símbolos/disciplinas ausentes).
+	•	Netlist writer (ngspice_proc/ltspice_cli/xyce_cli):
+	•	Suportar ModelRef em Circuit (gera .include/.lib corretos por engine).
+	•	Exemplos com diodo custom e opamp VA.
+
+Critérios de aceite
+	•	Teste com .subckt custom (ex: opamp macro-model) e com VA (se engine suportar).
+	•	Falhas informativas quando o backend não suportar VA.
+
+Riscos & mitigação
+	•	Divergência de sintaxe de .lib entre engines → camada de adaptação por backend no writer.
+
+⸻
+
+M9 — Otimização, Sensitividades e DOE avançado
+
+Objetivo
+Fechar o ciclo “simular → medir → otimizar” com tooling para ajuste de parâmetros e análise de sensitividade.
+
+Tarefas
+	•	spicelab/analysis/optimize.py
+	•	Wrappers sobre SciPy optimize (Nelder-Mead, Powell, L-BFGS-B) e Nevergrad/Optuna (opcional).
+	•	API: optimize(objective: Callable[[Params], float], bounds: dict, engine_cfg, stop=...) → best_params, history.
+	•	Objective padrão que encadeia: gerar Circuit(params) → run → meas.compute → loss.
+	•	spicelab/analysis/sensitivity.py
+	•	Sensitividade local por finite differences com caching por ponto.
+	•	Quando possível, usar .sens (Xyce) → adapter para leitura e normalização (ganho/derivadas).
+	•	spicelab/analysis/doe.py
+	•	Planos DOE: Full Factorial, Latin Hypercube, Sobol (via scipy.stats.qmc).
+	•	Integração com orchestrator: enfileirar variações; salvar histórico (parâmetros + medidas + loss).
+
+Critérios de aceite
+	•	Exemplos: sintonia de compensador (PM alvo), ajuste de shaper para ENOB, matching de bode alvo.
+	•	Tests para reprodutibilidade (seed) e convergência em casos simples.
+
+Riscos & mitigação
+	•	Funções com loss não suave → oferecer algoritmos robustos (derivative-free) e restart.
+
+⸻
+
+M10 — Performance e IO “zero-copy” (arquivos grandes)
+
+Objetivo
+Acelerar leituras e reduzir footprint de memória em simulações longas/MC massivo.
+
+Tarefas
+	•	Leitores binários:
+	•	read_ltspice_raw(binary) e read_ngspice_raw(binary) com mmap e parsing lazy (coluna sob demanda).
+	•	Chunking:
+	•	Carregamento em chunks de tempo/frequência (API: window(time=(t0,t1))).
+	•	Armazenamento colunar:
+	•	Export nativo para Parquet (colunar, compressão), com metadados no footers.
+	•	Cache:
+	•	Hash do netlist + args + engine no nome do diretório/arquivo; evitar recomputo automático.
+	•	Benchmarks:
+	•	Pasta benchmarks/ com scripts de tempo/memória; perf dashboards simples (CSV + plot).
+
+Critérios de aceite
+	•	Arquivos grandes (≥ 1e7 pontos) lidos e processados com consumo de memória estável.
+	•	Ganho de pelo menos X% em velocidade vs abordagem baseline (documentado no README/benchmarks).
+
+Riscos & mitigação
+	•	Variedade de formatos RAW (LT versions) → detectar variante e fallback ASCII.
+
+⸻
+
+M11 — UX Pro, Widgets e “SpiceLab Doctor”
+
+Objetivo
+Polir a experiência em notebook/IDE e facilitar setup em qualquer OS.
+
+Tarefas
+	•	spicelab/widgets/:
+	•	Sliders para parâmetros de circuito e rerun com atualização de plots.
+	•	Visualização interativa de Bode/Nyquist/Step com tooltips e cursors (freq, fase).
+	•	spicelab/cli.py:
+	•	spicelab doctor: verifica PATH, binários, libngspice, ADMS, versões; mostra recomendações por OS.
+	•	spicelab convert: utilitário para converter RAW/PRN/CSV → Parquet com metadados padronizados.
+	•	Mensagens de erro de alto nível:
+	•	“Não encontrei LTspice no PATH. Tente: …”
+	•	“libngspice incompatível (x.y). Suporte testado: …”
+	•	Docs (mkdocs):
+	•	“Getting Started” por OS, “Cookbook” (compensação de opamp, ADC ENOB, noise integrado), “Troubleshooting”.
+
+Critérios de aceite
+	•	Widgets funcionando em Jupyter (sem dependências pesadas).
+	•	spicelab doctor detecta corretamente engines e imprime recomendações claras.
+
+Riscos & mitigação
+	•	Ambientes bloqueados (corp) → caminhos de instalação offline detalhados em docs.
+
+⸻
+
+M12 — Plugin System, Estabilidade de API e Empacotamento
+
+Objetivo
+Sustentar crescimento do ecossistema com plugins e rigor de versão/compat.
+
+Tarefas
+	•	Sistema de plugins (entry points):
+	•	spicelab.plugins.measures, spicelab.plugins.readers, spicelab.plugins.engines.
+	•	Qualquer lib terceira pode registrar novos readers/medidas/engines.
+	•	Política de versão:
+	•	SemVer rigoroso e Deprecation Policy (mín. 2 minors antes de remoção).
+	•	spicelab._compat com shims e warnings centralizados.
+	•	Build/Release:
+	•	cibuildwheel p/ gerar wheels universais (só Python puro, sem bundlar engines).
+	•	CI com matriz de Python (3.10→3.13) + OS (Linux/macOS/Windows).
+	•	Telemetria opcional (opt-in):
+	•	Somente contagem de features/usos sem dados de projeto (para guiar roadmap). OFF por padrão.
+
+Critérios de aceite
+	•	Exemplo de plugin externo de medida (instalável por pip) sendo descoberto e usado.
+	•	Releases automáticos (tag → build → upload PyPI) com changelog.
+
+Riscos & mitigação
+	•	Fragmentação de API → congelar contratos core (types/engines/io) e validar com mypy + tests de API (import smoke tests).
+
+⸻
+
+Roadmap resumido (ordem sugerida)
+	1.	M7 (measures/DSP/controle) — enorme ganho para projetos reais.
+	2.	M8 (modelos/VA) — abre portas para libs/PDKs e modelos custom.
+	3.	M9 (otimização/sensitividade/DOE) — fecha ciclo de design-space exploration.
+	4.	M10 (performance/IO) — necessário para simulações pesadas e MC massivo.
+	5.	M11 (UX/Doctor/Docs) — reduz fricção de adoção.
+	6.	M12 (plugins/API/empacotamento) — prepara ecossistema e estabilidade de longo prazo.
+
+⸻
+
+Boas práticas transversais (valem em todos os marcos)
+	•	Tests first: sempre incluir testes unit/integration para cada feature nova.
+	•	Marcação de testes por engine: @pytest.mark.engine("ngspice"), etc., e -m "not engine" por padrão no CI.
+	•	Benchmarks leves: rodar no PR com dataset pequeno, publicar números periodicamente.
+	•	Tipagem estrita (mypy --strict) + ruff (lint/format) no pre-commit.
+	•	Erros com ação: toda exceção deve sugerir o que fazer (instalar X, usar Y, checar path Z).
+	•	Exemplos vivos: notebooks em examples/ que rodam de ponta a ponta (com badge no README).
+
+⸻
+
+se quiser, eu começo já pelo M7 implementando a biblioteca de medidas (PM/GM/GBW, overshoot/settling, SNR/ENOB, PSD). É um passo com alto valor prático e sem dependências pesadas — e já te habilita a fechar laços com M9 (otimização) em seguida.
+
+
+amo que você quer ir além 😎 — depois do M7→M12, dá pra empurrar o SpiceLab pra liga “state-of-the-art”. Aqui vai um roadmap extra (M13→M20) com objetivos e tarefas-chave. Mantém incremental e sem quebradeira.
+
+M13 — IDE/Extensões & Schematic I/O
+
+Objetivo: UX nível ferramenta comercial.
+	•	VS Code / JupyterLab extensions: run/stop, painel de jobs, plots ao vivo, inspect de sinais.
+	•	Import/Export de esquemas: LTspice .asc ↔ netlist; KiCad .kicad_sch/.net ↔ Circuit.
+	•	Diff de netlists & “explain”: viewer com realce de mudanças e “por que essa linha existe”.
+	•	DSL de medidas (.meas-like): mini-linguagem declarativa compilando para MeasureSpec.
+
+M14 — Execução Distribuída & Nuvem
+
+Objetivo: varreduras e MC gigantes, baratas.
+	•	Runners remotos: Ray/Dask + backends “SSH/SLURM/K8s”.
+	•	Cache distribuído content-addressable (CAS): S3/MinIO, com dedupe por hash de netlist+args.
+	•	Orquestrador tolerante a falhas: requeues, checkpoint de progresso.
+	•	Cotas/limites: parallelism governado por política (por usuário/queue).
+
+M15 — Mixed-Signal & Co-Sim “de verdade”
+
+Objetivo: sistemas completos HW+FW.
+	•	XSPICE/CodeModels: integrar modelos comportamentais C no ngspice.
+	•	HDL co-sim (experimentos): ponte com Verilator/PyVPI para blocos digitais (AMS light).
+	•	FMI/FMU: co-sim com modelos Modelica/Simulink exportados (dinâmica térmica/mecânica).
+	•	Laço com firmware: API de stepping determinístico (amostra/atualiza) para controladores em Python/C.
+
+M16 — Modelos & PDKs “first-class”
+
+Objetivo: usar libs reais sem sofrimento.
+	•	Gestão de PDK/model libraries: registros versionados, resolução de .lib/.include, tiers (tt/ss/ff).
+	•	Corners & Temperatura: matrizes padrão (TT/SS/FF × VDD × Temp) com presets e reports.
+	•	Param Extraction: fitting automático de diodo/BJT/MOS (IV/CV) a partir de dados experimentais.
+
+M17 — Otimização de Produto & Yield
+
+Objetivo: fechar o ciclo de projeto industrial.
+	•	Yield/DFM: estimativa de yield vs tolerâncias; pareto de contribuidores de falha.
+	•	Robust Design: Taguchi/DoE avançado, worst-case determinístico.
+	•	Multi-objetivo: frentes de Pareto (ex.: ripple mínimo vs custo vs eficiência).
+	•	Experiment tracking: MLflow/Weights&Biases-like (opt-in) para runs, medidas e artefatos.
+
+M18 — Performance Hardcore & Formatos
+
+Objetivo: escalar dados e acelerar pipeline.
+	•	Leitores RAW binários otimizados: mmap + leitura sob demanda; index temporal.
+	•	Parquet/Arrow end-to-end: desde o runner até o relatório (zero-copy possível).
+	•	Compressão seletiva: colunas float64 → zstd/lz4; downcast automático (float32) com verificação de erro.
+
+M19 — Qualidade, Segurança & Reprodutibilidade
+
+Objetivo: “confio nesse resultado”.
+	•	Testes de regressão com “goldens”: suites por engine/versão; tolerâncias controladas.
+	•	Nix/Conda lock: spicelab env gera ambiente reprodutível.
+	•	SBOM & supply-chain: gerar SBOM, assinar wheels, varrer CVEs.
+	•	i18n: mensagens legíveis (EN/PT), com dicas de ação.
+
+M20 — Ecossistema & Comercial
+
+Objetivo: sustentabilidade e comunidade.
+	•	Plugins marketplace (entry points): catálogo (readers, engines, medidas).
+	•	Templates: “comece aqui” (opamp compensation, buck converter, ADC ENOB, LDO PSRR).
+	•	Licenças empresariais: Pro (suporte, runners distribuídos, recursos premium), mantendo core MIT.
+	•	Telemetria estritamente opt-in: só contagem de features/sucesso de execução, zero design data.
+
+⸻
+
+Sequência sugerida (prática)
+	1.	M13 (IDE/DSL + schematic I/O) → melhora imediato de DX.
+	2.	M14 (distribuído+CAS) → destrava MC/DOE grandes.
+	3.	M16 (PDKs/modelos) → abre portas para libs reais.
+	4.	M17 (yield/robust) → valor direto para produto.
+	5.	M18 (desempenho) → necessário conforme dados crescem.
+	6.	M15 (mixed-signal) → quando for prioridade do teu time.
+	7.	M19/M20 em paralelo a cada release.
+
+Se quiser, eu já detalho um backlog de duas sprints para o M13 (extensão VS Code mínima + import/export .asc + DSL .meas) com épicos, issues e user stories — e deixo os acceptance tests prontos para você só copiar no tracker.

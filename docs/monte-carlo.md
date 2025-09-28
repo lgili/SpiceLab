@@ -1,6 +1,6 @@
 # Monte Carlo
 
-Circuit Toolkit runs Monte Carlo jobs by mapping components to distributions and
+spicelab runs Monte Carlo jobs by mapping components to distributions and
 supplying per-trial analyses. The orchestrator handles caching,
 multithreading, and xarray/polars exports.
 

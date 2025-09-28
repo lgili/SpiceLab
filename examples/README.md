@@ -1,4 +1,4 @@
-# Circuit Toolkit examples
+# spicelab examples
 
 A handful of scripts demonstrating the unified orchestrator and helper APIs.
 Run them from the repository root with `uv run --active python examples/<script>.py`.

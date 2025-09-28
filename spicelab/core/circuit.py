@@ -39,6 +39,7 @@ class Circuit:
     # metadata captured when loading from existing netlists
     _subckt_defs: dict[str, str] = field(default_factory=dict, init=False)
     _subckt_instances: list[dict[str, object]] = field(default_factory=list, init=False)
+    _port_labels: dict[Port, str] = field(default_factory=dict, init=False)
 
     # ----------------------------------------------------------------------------------
     # Building blocks
@@ -79,8 +80,18 @@ class Circuit:
                 shared = net_a or net_b or Net()
                 self._port_to_net[a] = shared
                 self._port_to_net[b] = shared
+            self._port_labels.pop(b, None)
         else:
             self._port_to_net[a] = b
+        self._port_labels.pop(a, None)
+        return self
+
+    def connect_with_label(self, port: Port, net: Net, label: str | None = None) -> Circuit:
+        """Connect ``port`` to ``net`` while recording a display label."""
+
+        self.connect(port, net)
+        if label:
+            self._port_labels[port] = label
         return self
 
     # ----------------------------------------------------------------------------------
@@ -204,7 +215,7 @@ class Circuit:
             port_descriptions: list[str] = []
             for port in comp.ports:
                 net = self._port_to_net.get(port)
-                label = self._net_label(net)
+                label = self._port_labels.get(port) or self._net_label(net)
                 if label == "<unconnected>":
                     warnings.append(f"Port {comp.ref}.{port.name} is unconnected")
                 port_descriptions.append(f"{port.name}->{label}")
@@ -262,6 +273,77 @@ class Circuit:
 
         lines.append("}")
         return "\n".join(lines)
+
+    # ----------------------------------------------------------------------------------
+    # Notebook-friendly helpers
+    # ----------------------------------------------------------------------------------
+    def connectivity_dataframe(self, *, sort: bool = True, include_type: bool = True):
+        """Return a pandas DataFrame describing component/net connectivity.
+
+        Columns: ``component``, ``type`` (optional), ``port`` and ``net``. The
+        returned DataFrame is ideal for Jupyter notebooks where an interactive
+        table is easier to scan than the plain text summary.
+        """
+
+        try:
+            import pandas as pd
+        except Exception as exc:  # pragma: no cover - optional dependency guard
+            raise RuntimeError("pandas is required for connectivity_dataframe()") from exc
+
+        self._assign_node_ids()
+
+        rows: list[dict[str, object]] = []
+        for comp in self._components:
+            for order, port in enumerate(comp.ports):
+                net = self._port_to_net.get(port)
+                label = self._port_labels.get(port) or self._net_label(net)
+                rows.append(
+                    {
+                        "component": comp.ref,
+                        "type": type(comp).__name__,
+                        "port": port.name,
+                        "net": label,
+                        "_order": order,
+                    }
+                )
+
+        if not rows:
+            columns = ["component", "port", "net"]
+            if include_type:
+                columns.insert(1, "type")
+            return pd.DataFrame(columns=columns)
+
+        df = pd.DataFrame(rows)
+        if sort:
+            df = df.sort_values(["component", "_order", "port"]).reset_index(drop=True)
+        if not include_type:
+            df = df.drop(columns=["type"])
+        return df.drop(columns=["_order"])
+
+    def summary_table(self, *, indent: int = 2) -> str:
+        """Return a fixed-width table describing component connections."""
+
+        df = self.connectivity_dataframe()
+        if df.empty:
+            return "(circuit is empty)"
+
+        headers = list(df.columns)
+        display_names = {col: col.capitalize() for col in headers}
+        widths = {
+            col: max(len(display_names[col]), *(len(str(val)) for val in df[col]))
+            for col in headers
+        }
+
+        def fmt_row(row: dict[str, object]) -> str:
+            cells = [str(row[col]).ljust(widths[col]) for col in headers]
+            return " " * indent + "  ".join(cells)
+
+        header_line = " " * indent + "  ".join(
+            display_names[col].ljust(widths[col]) for col in headers
+        )
+        sep_line = " " * indent + "  ".join("-" * widths[col] for col in headers)
+        body = "\n".join(fmt_row(df.iloc[idx]) for idx in range(len(df)))
+        return f"{header_line}\n{sep_line}\n{body}"
 
     # ----------------------------------------------------------------------------------
     # Netlist import

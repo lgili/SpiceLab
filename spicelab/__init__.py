@@ -1,4 +1,4 @@
-"""Top-level exports for Circuit Toolkit (Python package ``spicelab``).
+"""Top-level exports for spicelab.
 
 Exposes the high-level helpers documented throughout the docs site.
 """

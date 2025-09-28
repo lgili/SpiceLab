@@ -1,4 +1,4 @@
-"""Environment diagnostic helpers for Circuit Toolkit."""
+"""Environment diagnostic helpers for spicelab."""
 
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ def collect_diagnostics() -> list[CheckResult]:
 
 
 def format_cli(results: Sequence[CheckResult]) -> str:
-    lines = ["Circuit Toolkit environment check"]
+    lines = ["spicelab environment check"]
     for item in results:
         icon = {"ok": "✔", "warn": "⚠", "missing": "✖"}.get(item.status, "•")
         detail = f" – {item.detail}" if item.detail else ""

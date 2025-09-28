@@ -29,5 +29,5 @@ def test_collect_diagnostics_honours_env(monkeypatch: pytest.MonkeyPatch, tmp_pa
     assert statuses.get("libngspice") == "ok"
 
     text = doctor.format_cli(results)
-    assert "Circuit Toolkit environment check" in text
+    assert "spicelab environment check" in text
     assert "ngspice" in text

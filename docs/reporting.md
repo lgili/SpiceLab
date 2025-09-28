@@ -1,6 +1,6 @@
 # Reporting Helpers
 
-Circuit Toolkit ships with a minimal reporting layer so simulation scripts can
+spicelab ships with a minimal reporting layer so simulation scripts can
 produce shareable artefacts (HTML or Markdown) without pulling in a full templating
 engine. The core entry point is `spicelab.reporting.ReportBuilder`.
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib
+import importlib.util
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -144,13 +145,28 @@ class VizFigure:
         return out
 
     def show(self, **kwargs: Any) -> None:
-        self.figure.show(**kwargs)
+        try:
+            self.figure.show(**kwargs)
+        except ValueError as exc:
+            message = str(exc)
+            if "nbformat" not in message.lower():
+                raise
+            if importlib.util.find_spec("nbformat") is None:
+                raise RuntimeError(
+                    "Plotly inline rendering requires nbformat>=4.2. Install it with "
+                    "'pip install nbformat'."
+                ) from exc
+            raise
+        except Exception:
+            raise
 
     # Jupyter display hook for nicer UX in notebooks
     def _ipython_display_(self) -> None:  # pragma: no cover - interactive hook
         try:
             # Prefer Plotly's HTML renderer for notebooks
-            self.figure.show()
+            self.show()
+        except RuntimeError as exc:
+            print(exc)
         except Exception:
             # Fallback to printing a minimal representation
             print(f"VizFigure(kind={self.metadata.get('kind') if self.metadata else 'unknown'})")
@@ -513,12 +529,36 @@ def monte_carlo_histogram(
     xlabel: str | None = None,
     ylabel: str | None = None,
     template: str | None = "plotly_white",
+    show_normal_fit: bool = True,
 ) -> VizFigure:
     go, _, _ = _ensure_plotly()
+    values = np.asarray(list(metrics), dtype=float)
     fig = go.Figure()
-    fig.add_trace(
-        go.Histogram(x=list(metrics), nbinsx=bins, marker=dict(color="#2E93fA"), opacity=0.85)
-    )
+    fig.add_trace(go.Histogram(x=values, nbinsx=bins, marker=dict(color="#2E93fA"), opacity=0.85))
+
+    normal_metadata: dict[str, float] | None = None
+    if show_normal_fit and values.size >= 2:
+        sigma = float(values.std(ddof=0))
+        if sigma > 0.0:
+            mu = float(values.mean())
+            edges = np.histogram_bin_edges(values, bins=bins)
+            xs = np.linspace(edges[0], edges[-1], 256)
+            bin_width = (edges[-1] - edges[0]) / max(bins, 1)
+            if bin_width > 0.0:
+                coeff = values.size * bin_width
+                ys = (1.0 / (sigma * np.sqrt(2.0 * np.pi))) * np.exp(
+                    -0.5 * ((xs - mu) / sigma) ** 2
+                )
+                fig.add_trace(
+                    go.Scatter(
+                        x=xs,
+                        y=ys * coeff,
+                        mode="lines",
+                        name="normal fit",
+                        line=dict(color="#FF9F43", width=3),
+                    )
+                )
+                normal_metadata = {"mean": mu, "std": sigma}
     fig.update_layout(
         title=title,
         xaxis_title=xlabel or "metric",
@@ -527,7 +567,10 @@ def monte_carlo_histogram(
     )
     fig.update_xaxes(showgrid=True, gridcolor="rgba(150,150,150,0.2)")
     fig.update_yaxes(showgrid=True, gridcolor="rgba(150,150,150,0.2)")
-    return VizFigure(fig, metadata={"kind": "mc_hist"})
+    metadata: dict[str, float | str | dict[str, float]] = {"kind": "mc_hist"}
+    if normal_metadata is not None:
+        metadata["normal_fit"] = normal_metadata
+    return VizFigure(fig, metadata=metadata)
 
 
 def monte_carlo_param_scatter(

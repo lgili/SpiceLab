@@ -1,6 +1,6 @@
 # Engines
 
-Circuit Toolkit abstracts SPICE engines behind a small orchestrator. You provide
+spicelab abstracts SPICE engines behind a small orchestrator. You provide
 a circuit plus one or more `AnalysisSpec`s; the library takes care of invoking
 the chosen engine, collecting artefacts, and normalising the output.
 

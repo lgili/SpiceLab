@@ -1,4 +1,4 @@
-"""Reporting helpers for Circuit Toolkit."""
+"""Reporting helpers for spicelab."""
 
 from __future__ import annotations
 

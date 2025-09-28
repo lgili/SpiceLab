@@ -1,6 +1,6 @@
 # Core concepts
 
-Circuit Toolkit revolves around a few simple abstractions:
+spicelab revolves around a few simple abstractions:
 
 - **Ports** – typed terminals on components.
 - **Nets** – named nodes (use `GND` for ground). Connecting two ports creates or

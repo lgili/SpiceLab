@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" aria-labelledby="title desc">
+  <title id="title">Circuit Toolkit notebook widgets preview</title>
+  <desc id="desc">Stylised representation of the connectivity widget and dataset plot widget.</desc>
+  <defs>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" />
+      <stop offset="1" stop-color="#f4f6fb" />
+    </linearGradient>
+    <style>
+      .panel { fill: url(#panel); stroke: #d2d7eb; stroke-width: 2; }
+      .title { font: 700 20px 'Inter', 'Segoe UI', sans-serif; fill: #1f2a44; }
+      .subtitle { font: 500 16px 'Inter', 'Segoe UI', sans-serif; fill: #4f5b7c; }
+      .label { font: 600 14px 'Inter', 'Segoe UI', sans-serif; fill: #4f5b7c; }
+      .text { font: 500 13px 'Inter', 'Segoe UI', sans-serif; fill: #5c698a; }
+      .dropdown { fill: #ffffff; stroke: #c4c9dd; stroke-width: 1.5; rx: 6; }
+      .dropdown-handle { fill: #4c76ff; }
+      .table-header { fill: #eef1fb; }
+      .table-row { fill: #ffffff; }
+      .table-row.alt { fill: #f8f9fd; }
+      .line-primary { fill: none; stroke: #4c76ff; stroke-width: 3; stroke-linecap: round; }
+      .line-secondary { fill: none; stroke: #10b981; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 10 6; }
+      .axis { stroke: #bdc5dc; stroke-width: 2; }
+      .tick { stroke: #bdc5dc; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect x="30" y="40" width="300" height="340" class="panel" />
+  <text x="48" y="78" class="title">Connectivity widget</text>
+  <text x="48" y="108" class="subtitle">Select a component and inspect pins.</text>
+  <rect x="48" y="130" width="260" height="48" class="dropdown" />
+  <polygon points="288,148 304,168 272,168" class="dropdown-handle" />
+  <text x="60" y="160" class="text">R1 • Resistor</text>
+
+  <rect x="48" y="196" width="260" height="32" class="table-header" />
+  <text x="60" y="217" class="label">Port</text>
+  <text x="140" y="217" class="label">Net</text>
+
+  <rect x="48" y="228" width="260" height="32" class="table-row" />
+  <text x="60" y="249" class="text">+</text>
+  <text x="140" y="249" class="text">VIN</text>
+
+  <rect x="48" y="260" width="260" height="32" class="table-row alt" />
+  <text x="60" y="281" class="text">-</text>
+  <text x="140" y="281" class="text">0</text>
+
+  <rect x="358" y="40" width="332" height="340" class="panel" />
+  <text x="376" y="78" class="title">Dataset plot widget</text>
+  <text x="376" y="108" class="subtitle">Switch between trials and variables.</text>
+
+  <rect x="376" y="130" width="140" height="42" class="dropdown" />
+  <text x="388" y="157" class="text">Variable: gain</text>
+  <polygon points="500,145 516,165 484,165" class="dropdown-handle" />
+
+  <rect x="528" y="130" width="140" height="42" class="dropdown" />
+  <text x="540" y="157" class="text">Trial: 7</text>
+  <polygon points="652,145 668,165 636,165" class="dropdown-handle" />
+
+  <line x1="392" y1="204" x2="660" y2="204" class="axis" />
+  <line x1="392" y1="204" x2="392" y2="340" class="axis" />
+
+  <path d="M400 320 C 430 260, 460 230, 496 220 C 532 210, 572 218, 640 236" class="line-primary" />
+  <path d="M400 300 C 430 250, 470 220, 520 212 C 580 204, 612 214, 640 228" class="line-secondary" />
+
+  <line x1="452" y1="204" x2="452" y2="340" class="tick" />
+  <line x1="512" y1="204" x2="512" y2="340" class="tick" />
+  <line x1="572" y1="204" x2="572" y2="340" class="tick" />
+
+  <text x="392" y="360" class="text">Frequency (Hz)</text>
+  <text x="348" y="286" class="text" transform="rotate(-90 348 286)">Gain (V/V)</text>
+
+  <rect x="396" y="372" width="14" height="14" fill="#4c76ff" rx="3" />
+  <text x="416" y="384" class="text">Trial 7</text>
+  <rect x="508" y="372" width="14" height="14" fill="#10b981" rx="3" />
+  <text x="528" y="384" class="text">Mean</text>
+</svg>
