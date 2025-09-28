@@ -1,0 +1,10 @@
+param_R1,measure,type,value,units,freq,numerator,denominator,tolerance_deg
+1000.0,pm,phase_margin,180.0,deg,10.0,V(out),V(vin),
+1000.0,gbw,gbw,10.0,Hz,,V(out),V(vin),
+1000.0,gm,gain_margin,inf,dB,10.0,V(out),V(vin),15.0
+2000.0,pm,phase_margin,180.0,deg,10.0,V(out),V(vin),
+2000.0,gbw,gbw,10.0,Hz,,V(out),V(vin),
+2000.0,gm,gain_margin,inf,dB,10.0,V(out),V(vin),15.0
+5000.0,pm,phase_margin,180.0,deg,10.0,V(out),V(vin),
+5000.0,gbw,gbw,10.0,Hz,,V(out),V(vin),
+5000.0,gm,gain_margin,inf,dB,10.0,V(out),V(vin),15.0

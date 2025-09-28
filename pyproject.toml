@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spicelab"
-version = "0.1.0"
+version = "0.3.1"
 description = "Circuit Toolkit (package: spicelab) – typed SPICE orchestration, sweeps, and Monte Carlo."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -40,6 +40,7 @@ Documentation = "https://lgili.github.io/CircuitToolkit/"
 
 [project.scripts]
 spicelab-doctest = "spicelab:__init__"
+spicelab-measure = "spicelab.cli.measure:main"
 
 [project.optional-dependencies]
 opt = ["scipy>=1.12"]
