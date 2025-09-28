@@ -48,7 +48,10 @@ nav:
     - Analog mux: mux-enable-ports.md
     - CLI & CI automation: cli-ci.md
     - Environment doctor: doctor.md
-    - Troubleshooting: troubleshooting.md
+    - Troubleshooting:
+      - Overview: troubleshooting.md
+      - AC measurements: ac-measurements.md
+      - TRAN measurements: tran-measurements.md
   - Components:
     - Overview: components.md
     - Quick reference: components-quickstart.md
@@ -72,6 +75,8 @@ nav:
     - Old roadmap (M1/M2): core-contracts.md
   - Changelog:
     - M6 Wrap-up: changelog-m6.md
+  - Post-M6:
+    - M7 — Measurements & DSP: m7-en.md
 extra_css:
   - assets/stylesheets/extra.css
 extra: {}

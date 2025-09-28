@@ -22,7 +22,8 @@ def infer_x_dimension(dataset: Any, x_dim: str | None = None) -> str:
             return str(candidate)
 
     for dim in dataset.dims:
-        coord = dataset.coords.get(dim)
+        # dim may be Hashable in xarray; ensure we use str keys when indexing coords
+        coord = dataset.coords.get(str(dim))
         if coord is None:
             continue
         values = getattr(coord, "values", coord)
@@ -145,9 +146,12 @@ def dataset_plot_widget(
 
     selectors: dict[str, Any] = {}
     for dim in other_dims:
-        coord_values = dataset.coords[dim].values
+        dim_str = str(dim)
+        coord_values = dataset.coords[dim_str].values
         options = [(str(v), v) for v in coord_values]
-        selectors[dim] = widgets.Dropdown(options=options, value=coord_values[0], description=dim)
+        selectors[dim_str] = widgets.Dropdown(
+            options=options, value=coord_values[0], description=dim_str
+        )
 
     signal_dropdown = widgets.Dropdown(
         options=numeric_vars, value=numeric_vars[0], description="Signal"

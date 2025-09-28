@@ -22,6 +22,31 @@ when it helps clarity. Dates in ISO (YYYY-MM-DD).
 ### Removed
 - Legacy `spicelab/core/models.py` (dataclass-era duplicate) fully removed after Pydantic migration; import from `spicelab.core.types` instead.
 
+## [0.2.0] - 2025-09-28
+
+M7 release: measurement framework, CLI UX, and pipeline refinements.
+
+### Added
+- DSP helpers (`spicelab.analysis.signal`): windowing, coherent RFFT, amplitude spectrum, PSD with ENBW.
+- AC specs: `PhaseMarginSpec`, `GainBandwidthSpec`, `GainMarginSpec` (preserves complex AC values).
+- TRAN specs: `RiseTimeSpec` (10–90% with interpolation), `THDSpec`, `ENOBSpec` (time‑domain sine fit).
+- CLI `spicelab-measure` (RAW → JSON/CSV) with flags: `--ac`, `--tran`, `--num`, `--den`, `--signal`, `--f0`, `--harmonics`, `--format {json,csv,schema}`, `--list-signals`, `--list-details`, `--warn-nonfinite`, `--fail-on-nonfinite`.
+- `--format schema`: prints header only (no measurement execution), safe for CI.
+- Orchestrator/pipeline: `run_and_measure`, `measure_job_result`; example `examples/orchestrator_ac_measurements.py` exports CSV.
+
+### Changed
+- Precision: log‑frequency interpolation for PM/GBW/GM with safe fallbacks; robust GM selection near −180°.
+- Stable column ordering in CLI and pipeline: `param_*` first, then known measurement fields; sanitized headers (no CR/LF, whitespace → `_`).
+- CLI accepts NGSpice/LTspice/Xyce via `load_dataset`.
+- CLI handles runtime exceptions (e.g., ENOB on short signals) as per‑metric `NaN`, honoring `--warn-nonfinite`/`--fail-on-nonfinite`.
+
+### Docs
+- AC/TRAN measurement pages; `docs/cli-ci.md` updated with schema/ordering/sanitization rules and examples.
+
+### Tests
+- Edge cases: RiseTime (no crossing, oscillations), AC (no unity crossing; sparse grid).
+- CLI smokes for `schema`/`list-details` across NG/LT/XY; unit tests for ordering/header sanitization.
+
 ## [0.1.0] - 2025-09-13
 
 ### Added

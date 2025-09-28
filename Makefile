@@ -1,4 +1,4 @@
-.PHONY: help install install-extras preview preview-ci ac-bode step-fig mc-fig opamp-stability pt1000 examples
+.PHONY: help install install-extras preview preview-ci ac-bode step-fig mc-fig opamp-stability pt1000 examples check
 
 VENV=.venv
 PY=$(VENV)/bin/python
@@ -11,6 +11,7 @@ help:
 	@echo "Targets:"
 	@echo "  make install     # create venv and install package in editable mode"
 	@echo "  make install-extras  # install matplotlib for plotting"
+	@echo "  make check       # run ruff, mypy (package), and pytest"
 	@echo "  make preview     # run circuit preview example (uses venv if present)"
 	@echo "  make preview-ci  # run preview without venv"
 	@echo "  make ac-bode     # run AC Bode example (requires ngspice + matplotlib)"
@@ -31,6 +32,11 @@ install-extras:
 	else \
 		pip install matplotlib; \
 	fi
+
+check:
+	uv run ruff check . --fix
+	uv run mypy spicelab
+	uv run pytest -q
 
 preview:
 	@if [ -x "$(PY)" ]; then \

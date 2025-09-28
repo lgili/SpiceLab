@@ -1,4 +1,9 @@
-"""Environment diagnostic helpers for spicelab."""
+"""Environment diagnostic and interactive helper for spicelab.
+
+The "doctor" can:
+- Run local environment checks (engines, shared libraries)
+- Optionally, answer questions or propose remediation via an LLM if configured
+"""
 
 from __future__ import annotations
 
@@ -46,9 +51,27 @@ def format_cli(results: Sequence[CheckResult]) -> str:
     return "\n".join(lines)
 
 
-def main() -> int:  # pragma: no cover - thin CLI wrapper
+def main(argv: Sequence[str] | None = None) -> int:  # pragma: no cover - thin CLI wrapper
+    import argparse
+
+    p = argparse.ArgumentParser(prog="spicelab-doctor", description="Environment checks and help")
+    p.add_argument("--ask", help="Ask the doctor for help (LLM-backed)")
+    p.add_argument(
+        "--format", choices=["text", "json"], default="text", help="Output format for checks"
+    )
+    p.add_argument("--model", help="Override OPENAI_MODEL for --ask (optional)")
+    args = p.parse_args(list(argv) if argv is not None else None)
+
+    if args.ask:
+        return _doctor_ask(args.ask, out_format=args.format, model=args.model)
+
     results = collect_diagnostics()
-    print(format_cli(results))
+    if args.format == "json":
+        import json
+
+        print(json.dumps([r.__dict__ for r in results], indent=2))
+    else:
+        print(format_cli(results))
     return 0 if all(r.status == "ok" for r in results if r.status != "warn") else 1
 
 
@@ -122,6 +145,79 @@ def _engine_hint(name: str) -> str:
     if name == "xyce":
         return "Get binaries from https://xyce.sandia.gov"
     return "Install the missing engine and set the SPICELAB_* variable if needed"
+
+
+# -------------------------- LLM-assisted help ---------------------------------
+def _doctor_ask(question: str, *, out_format: str = "text", model: str | None = None) -> int:
+    """Answer a user question using an LLM (optional).
+
+    Requires the optional AI extra (openai) and OPENAI_API_KEY env var.
+    """
+    from pydantic import BaseModel, Field
+
+    try:
+        from .ai.llm import LLMError, generate_structured_openai
+    except Exception as exc:  # pragma: no cover - optional import
+        print(f"doctor: AI support not available: {exc}")
+        return 2
+
+    class DoctorAnswer(BaseModel):
+        intent: str = Field(description="detected intent: diagnose|example|howto|other")
+        summary: str
+        steps: list[str] = Field(default_factory=list, description="concrete actions")
+        commands: list[str] = Field(default_factory=list, description="shell commands to try")
+        circuit_snippet: str | None = Field(
+            default=None, description="optional SPICE netlist or Python snippet"
+        )
+        notes: list[str] = Field(default_factory=list)
+
+    sys_prompt = (
+        "You are Spicelab Doctor. You help with EDA tooling, ngspice/ltspice/xyce,"
+        " Python errors, and small circuit examples. Be concise and give actionable steps."
+    )
+    user_prompt = (
+        "User question:\n" + question + "\n\n"
+        "If requesting an example, provide a minimal reproducible one."
+    )
+
+    try:
+        res = generate_structured_openai(DoctorAnswer, sys_prompt, user_prompt, model=model)
+    except LLMError as exc:  # pragma: no cover
+        print(f"doctor: LLM error: {exc}")
+        return 2
+
+    ans = res.parsed
+    if out_format == "json":
+        import json
+
+        if ans is not None:
+            payload = {"model": res.model, **ans.model_dump()}
+        else:
+            payload = {"model": res.model, "raw": res.content}
+        print(json.dumps(payload, indent=2))
+        return 0
+
+    if ans is None:
+        print(res.content)
+        return 0
+
+    print("Doctor (" + res.model + "):")
+    print("- " + ans.summary)
+    if ans.steps:
+        print("\nSteps:")
+        for s in ans.steps:
+            print(" • " + s)
+    if ans.commands:
+        print("\nCommands:")
+        for c in ans.commands:
+            print(" $ " + c)
+    if ans.circuit_snippet:
+        print("\nCircuit example:\n" + ans.circuit_snippet)
+    if ans.notes:
+        print("\nNotes:")
+        for n in ans.notes:
+            print(" - " + n)
+    return 0
 
 
 if __name__ == "__main__":  # pragma: no cover - CLI entry

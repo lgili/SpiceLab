@@ -16,6 +16,13 @@ Run them from the repository root with `uv run --active python examples/<script>
 | `rc_ac_tran.py` | RC transient + AC demo (uses real engine when available, otherwise synthetic) |
 | `monte_carlo_demo.py` | Monte Carlo demo (synthetic by default; can be wired to orchestrator) |
 | `read_raw_demo.py` | Demonstrates reading .raw/.prn files via readers |
+| `ac_measurements_demo.py` | Synthetic AC dataset: Phase Margin, GBW, Gain Margin; optional Bode plot |
+| `tran_measurements_demo.py` | Synthetic transient: rise time; sine with THD/ENOB; optional plots |
+| `ngspice_ac_metrics.py` | AC metrics on a simple RC using ngspice (PM/GBW/GM) |
+| `ngspice_tran_metrics.py` | RC step rise-time and sine THD/ENOB using ngspice |
+| `ngspice_opamp_loop_stability.py` | Loop stability (PM/GBW/GM) on a Gm-C unity-feedback loop using ngspice |
+| `ngspice_middlebrook_loop_stability.py` | Middlebrook series injection loop stability (PM/GBW/GM) using ngspice |
+| `orchestrator_ac_measurements.py` | Orchestrator sweep + AC metrics aggregation and CSV export |
 
 Most scripts save output data/plots next to the script. A working NGSpice
 installation on PATH is recommended for the ones that invoke an engine.
