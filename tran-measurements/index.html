@@ -12,13 +12,13 @@
         <meta name="author" content="lgili">
       
       
-        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/monte-carlo/">
+        <link rel="canonical" href="https://lgili.github.io/CircuitToolkit/tran-measurements/">
       
       
-        <link rel="prev" href="../sweeps-step/">
+        <link rel="prev" href="../ac-measurements/">
       
       
-        <link rel="next" href="../reporting/">
+        <link rel="next" href="../components/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Monte Carlo - spicelab</title>
+        <title>TRAN measurements - spicelab</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#monte-carlo" class="md-skip">
+        <a href="#transient-measurements" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Monte Carlo
+              TRAN measurements
             
           </span>
         </div>
@@ -467,32 +467,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Monte Carlo
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../monte-carlo/" class="md-nav__link">
         
   
   
@@ -503,35 +481,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#progress-bar-callback" class="md-nav__link">
-    <span class="md-ellipsis">
-      Progress bar / callback
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -702,18 +651,20 @@
                 
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_12" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_12" checked>
         
           
           <label class="md-nav__link" for="__nav_2_12" id="__nav_2_12_label" tabindex="0">
@@ -729,7 +680,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_12_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_12_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_12">
             <span class="md-nav__icon md-icon"></span>
             Troubleshooting
@@ -786,10 +737,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../tran-measurements/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    TRAN measurements
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -800,6 +773,62 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#available-specs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Available specs
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips-for-accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tips for accuracy
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#engine-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Engine example
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1553,9 +1582,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#progress-bar-callback" class="md-nav__link">
+  <a href="#available-specs" class="md-nav__link">
     <span class="md-ellipsis">
-      Progress bar / callback
+      Available specs
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips-for-accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tips for accuracy
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#engine-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Engine example
     </span>
   </a>
   
@@ -1577,72 +1633,31 @@
 
 
 
-<h1 id="monte-carlo">Monte Carlo</h1>
-<p>spicelab runs Monte Carlo jobs by mapping components to distributions and
-supplying per-trial analyses. The orchestrator handles caching,
-multithreading, and xarray/polars exports.</p>
-<p><img alt="Monte Carlo histogram" src="../assets/examples/mc_hist.png" /></p>
-<pre><code class="language-python">from spicelab.core.circuit import Circuit
-from spicelab.core.components import Vdc, Resistor, Capacitor
-from spicelab.core.net import GND
-from spicelab.analysis import monte_carlo, NormalPct
-from spicelab.core.types import AnalysisSpec
-
-c = Circuit(&quot;rc&quot;)
-V1, R1, C1 = Vdc(&quot;1&quot;, 5.0), Resistor(&quot;1&quot;, &quot;1k&quot;), Capacitor(&quot;1&quot;, &quot;100n&quot;)
-c.add(V1, R1, C1)
-c.connect(V1.ports[0], R1.ports[0])
-c.connect(R1.ports[1], C1.ports[0])
-c.connect(V1.ports[1], GND)
-c.connect(C1.ports[1], GND)
-
-mc = monte_carlo(
-    circuit=c,
-    mapping={R1: NormalPct(0.05)},
-    n=16,
-    analyses=[AnalysisSpec(&quot;op&quot;, {})],
-    engine=&quot;ngspice&quot;,
-    cache_dir=&quot;.spicelab_cache&quot;,
-    seed=123,
-)
-
-df = mc.to_dataframe(param_prefix=&quot;param_&quot;)
-print(df.head())
-
-# Access cached handles / job metadata if needed
-handles = mc.result_handles()
-if mc.job:
-    print(&quot;cache dir:&quot;, mc.job.cache_dir)
+<h1 id="transient-measurements">Transient measurements</h1>
+<p>Time-domain measurements available in <code>spicelab.analysis.measure</code> and tips to get robust results.</p>
+<h2 id="available-specs">Available specs</h2>
+<ul>
+<li>RiseTimeSpec — 10–90% rise time between threshold crossings (configurable via <code>low_pct</code>/<code>high_pct</code>).</li>
+<li>THDSpec — Total Harmonic Distortion (%) from a steady-state sine; detects fundamental or accept <code>f0</code>.</li>
+<li>ENOBSpec — Effective number of bits from time-domain sine fit and SINAD: ENOB = (SINAD_dB − 1.76)/6.02.</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<pre><code class="language-python">from spicelab.analysis.measure import measure, RiseTimeSpec, THDSpec, ENOBSpec
+rows = measure(ds, [
+  RiseTimeSpec(name=&quot;tr&quot;, signal=&quot;V(out)&quot;),
+  THDSpec(name=&quot;thd&quot;, signal=&quot;V(out)&quot;, harmonics=5, f0=1e3),
+  ENOBSpec(name=&quot;enob&quot;, signal=&quot;V(out)&quot;, harmonics=5, f0=1e3),
+], return_as=&quot;python&quot;)
 </code></pre>
-<p>Tips:
-- Use <code>workers</code> for parallel execution and optionally point <code>cache_dir</code> to reuse results between runs.
-- Provide a metric function to compute scalar KPIs per trial, or set <code>y=[...]</code> and <code>sample_at</code> to extract trace values.
-- <code>mc.result_handles()</code> and <code>mc.job</code> expose the underlying result handles and cache metadata when you need xarray datasets or cache diagnostics.
-- When consuming results via the CLI demo (<code>examples/monte_carlo_demo.py</code>), pass <code>--metric-col</code> to enforce which dataframe column becomes the plotted metric (for example, <code>V(vout)</code>). The script exports <code>mc_hist</code>, <code>mc_param_scatter</code>, and <code>mc_params_matrix</code> HTML/PNG files when you supply <code>--out-html</code> / <code>--out-img</code>.</p>
-<h3 id="progress-bar-callback">Progress bar / callback</h3>
-<p>Add a lightweight progress bar to stderr:</p>
-<pre><code class="language-python">mc = monte_carlo(
-    circuit=c,
-    mapping={R1: NormalPct(0.01)},
-    n=1000,
-    analyses=[AnalysisSpec(&quot;op&quot;, {})],
-    engine=&quot;ngspice&quot;,
-    progress=True,   # prints: &quot;MC: 317/1000 (31%)&quot;
-)
-</code></pre>
-<p>Or provide your own callback (<code>done</code>, <code>total</code>):</p>
-<pre><code class="language-python">def cb(done: int, total: int) -&gt; None:
-    print(f&quot;{done}/{total}&quot;, end=&quot;\r&quot;)
-
-mc = monte_carlo(
-    c,
-    mapping={R1: NormalPct(0.01)},
-    n=1000,
-    analyses=[AnalysisSpec(&quot;op&quot;, {})],
-    engine=&quot;ngspice&quot;,
-    progress=cb,
-)
-</code></pre>
+<h2 id="tips-for-accuracy">Tips for accuracy</h2>
+<ul>
+<li>Windowing and coherence: Internally, FFT helpers use Hann windows and a coherent RFFT when needed. For sine-based THD/ENOB, provide <code>f0</code> when possible and run for an integer number of cycles to reduce leakage.</li>
+<li>Sampling: Use sufficiently small <code>tstep</code> and simulate long enough to include multiple cycles after any initial transient. Discard startup cycles if ringing is present.</li>
+<li>ENOB method: The implementation fits a sine in time-domain (least squares) to avoid FFT scaling pitfalls, improving robustness in the presence of modest jitter and DC offsets.</li>
+<li>Edge cases: Rise time uses linear interpolation for threshold crossings; ensure the waveform crosses the defined thresholds once.</li>
+</ul>
+<h2 id="engine-example">Engine example</h2>
+<p>See <code>examples/ngspice_tran_metrics.py</code> for a minimal RC rise-time and a sine-based THD/ENOB using ngspice.</p>
 
 
 

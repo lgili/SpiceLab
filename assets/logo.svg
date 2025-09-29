@@ -1,44 +1,58 @@
-<svg width="280" height="110" viewBox="0 0 280 110" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">Circuit Toolkit brand mark</title>
-  <desc id="desc">Hexagonal circuit badge with sine waveform and python-inspired coil beside the Circuit Toolkit wordmark</desc>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="600" viewBox="0 0 1200 600" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title>SpiceLab Logo (horizontal)</title>
+  <desc>Ícone de circuito com op-amp, onda senoidal e nós; texto SpiceLab à direita.</desc>
+
   <defs>
-    <radialGradient id="bgHalo" cx="50%" cy="50%" r="75%">
-      <stop offset="0%" stop-color="#0a1630" />
-      <stop offset="85%" stop-color="#05101f" />
-      <stop offset="100%" stop-color="#00070f" stop-opacity="0" />
-    </radialGradient>
-    <linearGradient id="hexBody" x1="10%" y1="0%" x2="90%" y2="100%">
-      <stop offset="0%" stop-color="#1245c6" />
-      <stop offset="100%" stop-color="#0b2a6a" />
-    </linearGradient>
-    <linearGradient id="wave" x1="0%" y1="50%" x2="100%" y2="50%">
-      <stop offset="0%" stop-color="#47fced" />
-      <stop offset="100%" stop-color="#2cc5ff" />
-    </linearGradient>
-    <linearGradient id="pythonCoil" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffd43b" />
-      <stop offset="100%" stop-color="#3776ab" />
-    </linearGradient>
-    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%" color-interpolation-filters="sRGB">
-      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="rgba(8, 24, 64, 0.4)" />
+    <style>
+      .stroke-dark { stroke:#1F3142; stroke-width:14; stroke-linecap:round; stroke-linejoin:round; }
+      .node       { fill:#FF9E00; stroke:#1F3142; stroke-width:10; }
+      .wave       { stroke:#3776AB; stroke-width:14; fill:none; }
+      .text       { fill:#2E3440; font-family: "Montserrat", "Inter", "Segoe UI", Arial, sans-serif; font-weight: 800; }
+    </style>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="7" flood-opacity="0.20" flood-color="#000"/>
     </filter>
   </defs>
-  <rect x="10" y="10" width="120" height="120" fill="url(#bgHalo)" opacity="0.35" />
-  <g transform="translate(32 14)" filter="url(#softShadow)">
-    <polygon points="64 6 110 32 110 84 64 110 18 84 18 32" fill="url(#hexBody)" stroke="#0d1d4a" stroke-width="3" stroke-linejoin="round" />
-    <path d="M26 70 C34 48 46 46 56 60 C66 74 78 74 88 56" fill="none" stroke="url(#wave)" stroke-width="6" stroke-linecap="round" />
-    <path d="M44 44 C38 34 46 26 56 30 C66 34 76 30 84 36 C92 42 92 54 84 60 C76 66 64 62 60 52" fill="none" stroke="url(#pythonCoil)" stroke-width="7" stroke-linecap="round" />
-    <circle cx="86" cy="38" r="7" fill="#ffd43b" stroke="#173364" stroke-width="2" />
-    <circle cx="88.5" cy="36.5" r="1.8" fill="#0b1c3c" />
-    <g fill="#bde9ff" opacity="0.85">
-      <circle cx="28" cy="70" r="3.6" />
-      <circle cx="56" cy="60" r="3.6" />
-      <circle cx="86" cy="56" r="3.6" />
-    </g>
+
+  <!-- ÍCONE À ESQUERDA -->
+  <g transform="translate(60,70)" filter="url(#softShadow)">
+    <!-- op-amp -->
+    <polygon points="110,90 470,230 110,370" fill="#3776AB" stroke="#1F3142" stroke-width="14" />
+    <!-- entradas -->
+    <line x1="60" y1="170" x2="110" y2="170" class="stroke-dark"/>
+    <line x1="60" y1="290" x2="110" y2="290" class="stroke-dark"/>
+
+    <!-- saída e passivos -->
+    <line x1="470" y1="230" x2="560" y2="230" class="stroke-dark"/>
+    <!-- capacitor -->
+    <line x1="560" y1="195" x2="560" y2="265" class="stroke-dark"/>
+    <line x1="585" y1="195" x2="585" y2="265" class="stroke-dark"/>
+    <line x1="560" y1="230" x2="585" y2="230" class="stroke-dark"/>
+    <!-- resistor -->
+    <polyline points="585,230 605,230 620,200 640,260 660,200 680,260 695,230" class="stroke-dark" fill="none"/>
+    <!-- GND -->
+    <line x1="695" y1="230" x2="695" y2="275" class="stroke-dark"/>
+    <line x1="670" y1="275" x2="720" y2="275" class="stroke-dark"/>
+    <line x1="678" y1="292" x2="712" y2="292" class="stroke-dark"/>
+    <line x1="688" y1="309" x2="702" y2="309" class="stroke-dark"/>
+
+    <!-- nós -->
+    <circle class="node" cx="60" cy="170" r="14"/>
+    <circle class="node" cx="60" cy="290" r="14"/>
+    <circle class="node" cx="695" cy="230" r="14"/>
+
+    <!-- onda -->
+    <path class="wave"
+          d="M 70 420
+             C 130 380, 190 380, 250 420
+             S 370 460, 430 420
+             S 550 380, 610 420
+             S 730 460, 790 420" />
   </g>
-  <g font-family="'IBM Plex Sans', 'Segoe UI', sans-serif" font-weight="600">
-    <text x="156" y="44" font-size="32" fill="#07152b">Circuit</text>
-    <text x="156" y="78" font-size="32" fill="#1b67ff">Toolkit</text>
+
+  <!-- TEXTO À DIREITA -->
+  <g transform="translate(780,330)">
+    <text class="text" font-size="140">SpiceLab</text>
   </g>
-  <text x="156" y="92" font-family="'Roboto Mono', monospace" font-size="11" fill="#4c6c96">SPICE orchestration for Python</text>
 </svg>
