@@ -23,6 +23,14 @@ __all__ = [
     "Job",
     "JobResult",
     "run_job",
+    # Phase 3: Engine selection and discovery
+    "select_engine",
+    "discover_engines",
+    "get_default_engine",
+    "ENGINE_PREFERENCE",
+    # Phase 3.4: Lazy loading
+    "LazyResultHandle",
+    "LazyDatasetResultHandle",
 ]
 
 
@@ -40,6 +48,14 @@ _LAZY_IMPORTS: dict[str, tuple[str, str]] = {
     "Job": ("..orchestrator", "Job"),
     "JobResult": ("..orchestrator", "JobResult"),
     "run_job": ("..orchestrator", "run_job"),
+    # Phase 3: Engine selection
+    "select_engine": (".selection", "select_engine"),
+    "discover_engines": (".selection", "discover_engines"),
+    "get_default_engine": (".selection", "get_default_engine"),
+    "ENGINE_PREFERENCE": (".selection", "ENGINE_PREFERENCE"),
+    # Phase 3.4: Lazy loading
+    "LazyResultHandle": (".lazy_result", "LazyResultHandle"),
+    "LazyDatasetResultHandle": (".lazy_result", "LazyDatasetResultHandle"),
 }
 
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from .net import Port, PortRole
+from .parameter import ParameterRef
 
 # Tipo do callback usado para mapear Port -> nome de nó no netlist
 NetOf = Callable[[Port], str]
@@ -60,27 +61,59 @@ class Component:
 # Componentes passivos
 # --------------------------------------------------------------------------------------
 class Resistor(Component):
-    """Resistor de 2 terminais; portas: a (positivo), b (negativo)."""
+    """Resistor de 2 terminais; portas: a (positivo), b (negativo).
 
-    def __init__(self, ref: str, value: str | float = "") -> None:
+    Args:
+        ref: Reference designator (e.g., "1" for R1)
+        value: Legacy stringly-typed value (backward compat)
+        resistance: Typed resistance value (float or ParameterRef)
+
+    Use either `value` OR `resistance`, not both.
+    """
+
+    def __init__(
+        self,
+        ref: str,
+        value: str | float = "",
+        resistance: float | ParameterRef | None = None,
+    ) -> None:
         super().__init__(ref=ref, value=value)
+        self.resistance = resistance
         self._ports = (Port(self, "a", PortRole.POSITIVE), Port(self, "b", PortRole.NEGATIVE))
 
     def spice_card(self, net_of: NetOf) -> str:
         a, b = self.ports
-        return f"R{self.ref} {net_of(a)} {net_of(b)} {self.value}"
+        # Use typed field if present, otherwise fall back to value
+        val = str(self.resistance) if self.resistance is not None else self.value
+        return f"R{self.ref} {net_of(a)} {net_of(b)} {val}"
 
 
 class Capacitor(Component):
-    """Capacitor de 2 terminais; portas: a (positivo), b (negativo)."""
+    """Capacitor de 2 terminais; portas: a (positivo), b (negativo).
 
-    def __init__(self, ref: str, value: str | float = "") -> None:
+    Args:
+        ref: Reference designator (e.g., "1" for C1)
+        value: Legacy stringly-typed value (backward compat)
+        capacitance: Typed capacitance value (float or ParameterRef)
+
+    Use either `value` OR `capacitance`, not both.
+    """
+
+    def __init__(
+        self,
+        ref: str,
+        value: str | float = "",
+        capacitance: float | ParameterRef | None = None,
+    ) -> None:
         super().__init__(ref=ref, value=value)
+        self.capacitance = capacitance
         self._ports = (Port(self, "a", PortRole.POSITIVE), Port(self, "b", PortRole.NEGATIVE))
 
     def spice_card(self, net_of: NetOf) -> str:
         a, b = self.ports
-        return f"C{self.ref} {net_of(a)} {net_of(b)} {self.value}"
+        # Use typed field if present, otherwise fall back to value
+        val = str(self.capacitance) if self.capacitance is not None else self.value
+        return f"C{self.ref} {net_of(a)} {net_of(b)} {val}"
 
 
 # (Opcional) Se quiser adicionar Indutor no futuro:
@@ -217,15 +250,31 @@ def VP(
 
 
 class Inductor(Component):
-    """Indutor de 2 terminais; portas: a (positivo), b (negativo)."""
+    """Indutor de 2 terminais; portas: a (positivo), b (negativo).
 
-    def __init__(self, ref: str, value: str | float = "") -> None:
+    Args:
+        ref: Reference designator (e.g., "1" for L1)
+        value: Legacy stringly-typed value (backward compat)
+        inductance: Typed inductance value (float or ParameterRef)
+
+    Use either `value` OR `inductance`, not both.
+    """
+
+    def __init__(
+        self,
+        ref: str,
+        value: str | float = "",
+        inductance: float | ParameterRef | None = None,
+    ) -> None:
         super().__init__(ref=ref, value=value)
+        self.inductance = inductance
         self._ports = (Port(self, "a", PortRole.POSITIVE), Port(self, "b", PortRole.NEGATIVE))
 
     def spice_card(self, net_of: NetOf) -> str:
         a, b = self.ports
-        return f"L{self.ref} {net_of(a)} {net_of(b)} {self.value}"
+        # Use typed field if present, otherwise fall back to value
+        val = str(self.inductance) if self.inductance is not None else self.value
+        return f"L{self.ref} {net_of(a)} {net_of(b)} {val}"
 
 
 class Idc(Component):

@@ -49,6 +49,45 @@ Nets can be named, duplicated, or grouped in busses. Every shorthand accepts
 either explicit reference designators (`"R1"`) or lets the builder auto-number
 using prefixes (`builder.resistor("R", ...)`).
 
+### Circuit context DSL (parameters & directives)
+
+For scripts that lean heavily on `.param`, `.option`, and other control
+statements, try the lightweight context-based DSL:
+
+```python
+from spicelab.dsl import Circuit, Net, Param, Option, TEMP, IC, Directive, R, V
+
+with Circuit("rc_control") as ctx:
+    vin = Net("vin")
+    vout = Net("vout")
+    gnd = Net("0")
+
+    Param("Rval", "10k")                 # -> .param Rval=10k
+    Option(reltol=1e-3, abstol=1e-6)       # -> .option reltol=0.001 abstol=1e-06
+    TEMP(27, 85)                           # -> .temp 27 85
+    IC(vout="0")                          # -> .ic V(vout)=0
+    Directive(".save V(vout)")            # raw escape hatch (validated)
+
+    V("VIN", vin, gnd, 5.0)
+    R("R1", vin, vout, "Rval")
+
+circuit = ctx.circuit
+print(circuit.build_netlist())
+```
+
+All helpers validate the expressions before emitting them into the netlist. In
+particular `Param`, `Option`, `TEMP`, and `IC` use a safe expression normaliser
+that accepts numbers, engineering suffixes (`10k`, `100n`), basic math symbols,
+and references to previously declared parameters. The `Directive` helper keeps a
+“safe” mode on by default—lines must start with a dot. Pass `safe=False` to drop
+the guard when you really need arbitrary text.
+
+The context manager stores the underlying `spicelab.core.circuit.Circuit` in
+`ctx.circuit`, so you can continue using all low-level APIs. Component
+shortcuts (`R`, `C`, `L`, `V`) simply instantiate the typed components and wire
+them to the given nets (strings or `Net` objects). Use `spicelab.dsl.place(...)`
+to register any other component manually.
+
 ## Common parts
 
 | Component | Helper | Notes |

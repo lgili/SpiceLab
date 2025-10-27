@@ -145,7 +145,26 @@ def run_job(
     workers: int = 1,
     progress: bool | Callable[[int, int], None] | None = None,
     reuse_cache: bool = True,
+    use_processes: bool | None = None,
 ) -> JobResult:
+    """Execute a sweep/grid job with optional parallelism and caching.
+
+    Phase 3.5: Added process-based parallelism for CPU-bound tasks.
+
+    Args:
+        job: Job specification
+        cache_dir: Directory for cached results
+        workers: Number of parallel workers
+        progress: Progress callback
+        reuse_cache: Whether to load cached results
+        use_processes: Force process/thread pool choice.
+                       If None (default), auto-detects:
+                       - ProcessPool for CLI-based engines (ngspice, xyce)
+                       - ThreadPool for shared-lib engines (ngspice-shared)
+
+    Returns:
+        JobResult with all runs
+    """
     analyses = [ensure_analysis_spec(a) for a in job.analyses]
     sweep = ensure_sweep_spec(job.sweep)
     combos_input = [dict(combo) for combo in job.combos] if job.combos else _expand_sweep(sweep)
@@ -199,7 +218,14 @@ def run_job(
         pending_indices.append(idx)
 
     if pending_indices:
+        # Phase 3.5: Auto-detect whether to use processes or threads
+        if use_processes is None:
+            # CLI engines can use processes (bypass GIL)
+            # Shared-lib engines must use threads (can't fork with loaded lib)
+            use_processes = not job.engine.endswith("-shared")
+
         if workers <= 1:
+            # Serial execution
             for idx in pending_indices:
                 combo = combos[idx]
                 handle = _run_single(job.circuit, analyses, combo, job.engine, job.probes)
@@ -208,7 +234,33 @@ def run_job(
                     _store_cached(cache_path, handle)
                 results[idx] = JobRun(combo=combo, handle=handle, from_cache=False)
                 _notify(idx + 1)
+        elif use_processes:
+            # Phase 3.5: ProcessPoolExecutor for CPU-bound tasks
+            from concurrent.futures import ProcessPoolExecutor
+
+            with ProcessPoolExecutor(max_workers=workers) as executor:
+                future_map = {
+                    executor.submit(
+                        _run_single,
+                        job.circuit,
+                        analyses,
+                        combos[idx],
+                        job.engine,
+                        job.probes,
+                    ): idx
+                    for idx in pending_indices
+                }
+                for future in future_map:
+                    idx = future_map[future]
+                    combo = combos[idx]
+                    handle = future.result()
+                    if cache_root is not None:
+                        cache_path = _cache_path(cache_root, base_hash, idx, combo)
+                        _store_cached(cache_path, handle)
+                    results[idx] = JobRun(combo=combo, handle=handle, from_cache=False)
+                    _notify(idx + 1)
         else:
+            # ThreadPoolExecutor for shared-lib engines
             from concurrent.futures import ThreadPoolExecutor
 
             with ThreadPoolExecutor(max_workers=workers) as executor:

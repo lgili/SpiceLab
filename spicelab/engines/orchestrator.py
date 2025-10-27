@@ -42,7 +42,16 @@ def run_simulation(
     workers: int = 1,
     reuse_cache: bool = True,
     progress: bool | Callable[[int, int], None] | None = None,
+    use_processes: bool | None = None,
 ) -> ResultHandle | JobResult:
+    """Run simulation with optional sweeps and parallelism.
+
+    Phase 3.5: Added use_processes parameter for ProcessPool parallelism.
+
+    Args:
+        use_processes: Force process/thread pool choice. If None, auto-detects
+                       based on engine type (processes for CLI, threads for shared-lib).
+    """
     sim = get_simulator(engine)
     # normalize inputs (allows dict / pydantic during migration)
     analyses = [ensure_analysis_spec(a) for a in analyses]
@@ -61,6 +70,7 @@ def run_simulation(
             workers=workers,
             progress=progress,
             reuse_cache=reuse_cache,
+            use_processes=use_processes,
         )
     probes_list = list(probes) if probes else None
     return sim.run(circuit, analyses, sweep, probes_list)

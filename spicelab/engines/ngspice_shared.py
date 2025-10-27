@@ -39,7 +39,10 @@ class SharedSimulationConfig:
 
 
 class NgSpiceSharedSimulator(Simulator):
-    """Execute transient analyses through the libngspice shared library."""
+    """Execute transient analyses through the libngspice shared library.
+
+    Phase 3: Added context manager support for proper resource cleanup.
+    """
 
     def __init__(self, adapter: NgSpiceSharedAdapter | None = None) -> None:
         self._adapter = adapter or NgSpiceSharedAdapter()
@@ -51,9 +54,22 @@ class NgSpiceSharedSimulator(Simulator):
             supports_verilog_a=False,
             supports_parallel=False,
         )
+        self._initialized = False
 
     def features(self) -> EngineFeatures:
         return self._features
+
+    def __enter__(self) -> NgSpiceSharedSimulator:
+        """Initialize shared library (if needed)."""
+        self._initialized = True
+        return self
+
+    def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
+        """Cleanup shared library resources."""
+        # NgSpice shared lib cleanup would go here
+        # Currently NgSpiceSharedAdapter doesn't expose cleanup
+        # In future: self._adapter.cleanup() or similar
+        self._initialized = False
 
     def run(
         self,

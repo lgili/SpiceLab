@@ -26,7 +26,10 @@ from .result import DatasetResultHandle
 
 
 class NgSpiceProcSimulator(Simulator):
-    """Execute analyses by invoking the ``ngspice`` binary via subprocess."""
+    """Execute analyses by invoking the ``ngspice`` binary via subprocess.
+
+    Phase 3: Added context manager support (no-op for process-based engines).
+    """
 
     def __init__(self) -> None:
         self._features = EngineFeatures(
@@ -40,6 +43,14 @@ class NgSpiceProcSimulator(Simulator):
 
     def features(self) -> EngineFeatures:
         return self._features
+
+    def __enter__(self) -> NgSpiceProcSimulator:
+        """No-op for process-based simulators."""
+        return self
+
+    def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
+        """No-op for process-based simulators."""
+        pass
 
     def run(
         self,
