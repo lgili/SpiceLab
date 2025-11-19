@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-__all__ = ["Unit", "format_si_value", "parse_si_value"]
+__all__ = ["Unit", "format_si_value", "parse_si_value", "parse_value_flexible"]
 
 
 class Unit(Enum):
@@ -222,6 +222,57 @@ def normalize_spice_suffix(text: str) -> str:
         text = text.replace(wrong, right)
 
     return text
+
+
+def parse_value_flexible(value: str | int | float, unit: Unit | None = None) -> float:
+    """Parse value with maximum flexibility - accepts multiple formats.
+
+    Accepts:
+    - Plain numbers: 1000, 1e3
+    - Engineering notation: 1k, 1kohm, 1kΩ
+    - SPICE notation: 1.5Meg, 22p, 470n
+    - Common typos: 10u (suggests 10µ)
+
+    Args:
+        value: Value in any supported format
+        unit: Optional unit for validation
+
+    Returns:
+        Float value in SI base units
+
+    Raises:
+        ValueError: With helpful message if parsing fails
+
+    Example:
+        >>> parse_value_flexible("1k")
+        1000.0
+        >>> parse_value_flexible("1kohm")
+        1000.0
+        >>> parse_value_flexible(1000)
+        1000.0
+    """
+    # Already a number
+    if isinstance(value, (int, float)):
+        return float(value)
+
+    # String - normalize and parse
+    text = str(value).strip()
+    text = normalize_spice_suffix(text)
+
+    try:
+        return parse_si_value(text, unit)
+    except ValueError as exc:
+        # Provide helpful suggestions
+        suggestions = []
+        if "u" in text.lower() and "µ" not in text:
+            suggestions.append("Did you mean µ (micro)? Use '10u' or '10e-6'")
+        if "k" in text and "K" in text:
+            suggestions.append("Use lowercase 'k' for kilo: '1k' not '1K'")
+
+        if suggestions:
+            msg = f"Cannot parse '{value}'. {' '.join(suggestions)}"
+            raise ValueError(msg) from exc
+        raise
 
 
 # Backward compatibility with existing utils.units module
