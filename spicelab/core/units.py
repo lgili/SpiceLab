@@ -252,7 +252,7 @@ def parse_value_flexible(value: str | int | float, unit: Unit | None = None) -> 
         1000.0
     """
     # Already a number
-    if isinstance(value, (int, float)):
+    if isinstance(value, int | float):
         return float(value)
 
     # String - normalize and parse
