@@ -50,6 +50,14 @@ data = ["xarray>=2024.1", "polars>=1.6.0"]
 xarray = ["xarray>=2024.1"]
 polars = ["polars>=1.6.0"]
 ai = ["openai>=1.40"]
+dev = [
+    "hypothesis>=6.100.0",
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "pytest-benchmark>=4.0",
+    "mypy>=1.8",
+    "ruff>=0.3.0",
+]
 
 [tool.setuptools.packages.find]
 where = ["."]
@@ -67,7 +75,33 @@ filterwarnings = [
 markers = [
     "engine: tests that require external SPICE engine executables (ngspice, ltspice, xyce)",
     "local: tests meant to run only on developer machines (skipped in CI unless explicitly enabled)",
+    "unit: fast unit tests with no external dependencies",
+    "integration: integration tests that combine multiple components",
+    "property: property-based tests using Hypothesis",
+    "slow: tests that take more than 1 second",
+    "stress: stress tests with large circuits (1k+ components)",
+    "benchmark: performance benchmark tests",
 ]
+
+[tool.hypothesis]
+# Default profile for development
+max_examples = 100
+deadline = 200  # ms
+
+[tool.hypothesis.profiles.ci]
+# Profile for CI with more examples
+max_examples = 1000
+deadline = 1000  # ms
+
+[tool.hypothesis.profiles.dev]
+# Quick feedback during development
+max_examples = 50
+deadline = 100  # ms
+
+[tool.hypothesis.profiles.exhaustive]
+# Thorough testing before releases
+max_examples = 10000
+# No deadline for exhaustive testing
 
 [tool.ruff]
 line-length = 100
