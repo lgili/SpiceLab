@@ -870,6 +870,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="CircuitBuilder DSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#circuit-context-dsl-parameters-directives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Circuit context DSL (parameters &amp; directives)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1595,6 +1610,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="CircuitBuilder DSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#circuit-context-dsl-parameters-directives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Circuit context DSL (parameters &amp; directives)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1691,6 +1721,39 @@ print(circuit.build_netlist())
 <p>Nets can be named, duplicated, or grouped in busses. Every shorthand accepts
 either explicit reference designators (<code>"R1"</code>) or lets the builder auto-number
 using prefixes (<code>builder.resistor("R", ...)</code>).</p>
+<h3 id="circuit-context-dsl-parameters-directives">Circuit context DSL (parameters &amp; directives)</h3>
+<p>For scripts that lean heavily on <code>.param</code>, <code>.option</code>, and other control
+statements, try the lightweight context-based DSL:</p>
+<pre><code class="language-python">from spicelab.dsl import Circuit, Net, Param, Option, TEMP, IC, Directive, R, V
+
+with Circuit(&quot;rc_control&quot;) as ctx:
+    vin = Net(&quot;vin&quot;)
+    vout = Net(&quot;vout&quot;)
+    gnd = Net(&quot;0&quot;)
+
+    Param(&quot;Rval&quot;, &quot;10k&quot;)                 # -&gt; .param Rval=10k
+    Option(reltol=1e-3, abstol=1e-6)       # -&gt; .option reltol=0.001 abstol=1e-06
+    TEMP(27, 85)                           # -&gt; .temp 27 85
+    IC(vout=&quot;0&quot;)                          # -&gt; .ic V(vout)=0
+    Directive(&quot;.save V(vout)&quot;)            # raw escape hatch (validated)
+
+    V(&quot;VIN&quot;, vin, gnd, 5.0)
+    R(&quot;R1&quot;, vin, vout, &quot;Rval&quot;)
+
+circuit = ctx.circuit
+print(circuit.build_netlist())
+</code></pre>
+<p>All helpers validate the expressions before emitting them into the netlist. In
+particular <code>Param</code>, <code>Option</code>, <code>TEMP</code>, and <code>IC</code> use a safe expression normaliser
+that accepts numbers, engineering suffixes (<code>10k</code>, <code>100n</code>), basic math symbols,
+and references to previously declared parameters. The <code>Directive</code> helper keeps a
+“safe” mode on by default—lines must start with a dot. Pass <code>safe=False</code> to drop
+the guard when you really need arbitrary text.</p>
+<p>The context manager stores the underlying <code>spicelab.core.circuit.Circuit</code> in
+<code>ctx.circuit</code>, so you can continue using all low-level APIs. Component
+shortcuts (<code>R</code>, <code>C</code>, <code>L</code>, <code>V</code>) simply instantiate the typed components and wire
+them to the given nets (strings or <code>Net</code> objects). Use <code>spicelab.dsl.place(...)</code>
+to register any other component manually.</p>
 <h2 id="common-parts">Common parts</h2>
 <table>
 <thead>

@@ -2137,6 +2137,7 @@
     <div class="doc doc-contents ">
 
 
+
         <p>Lightweight container used by Monte Carlo helpers for legacy traces.</p>
 
 
@@ -2146,7 +2147,7 @@
 
 
 
-              <details class="quote">
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>spicelab/analysis/result.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
 <span class="normal">10</span>
@@ -2201,6 +2202,7 @@
     <div class="doc doc-contents ">
 
 
+
         <p>Effective number of bits estimated from SINAD of a sine wave.</p>
 <p>ENOB = (SINAD_dB - 1.76) / 6.02</p>
 
@@ -2211,7 +2213,7 @@
 
 
 
-              <details class="quote">
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>spicelab/analysis/measure.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">124</span>
 <span class="normal">125</span>
@@ -2276,6 +2278,7 @@
     <div class="doc doc-contents ">
 
 
+
         <p>Unity-gain frequency for H = numerator/denominator (GBW for open-loop A).</p>
 
 
@@ -2285,7 +2288,7 @@
 
 
 
-              <details class="quote">
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>spicelab/analysis/measure.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
 <span class="normal">70</span>
@@ -2342,6 +2345,7 @@
     <div class="doc doc-contents ">
 
 
+
         <p>Gain margin at phase = -180° (mod 360) for H = numerator/denominator.</p>
 <p>Returns the classical GM in dB: GM_dB = -20*log10(|H|) evaluated at the
 phase-crossing (closest sample to -180° modulo 360). If no sample is within
@@ -2354,7 +2358,7 @@ phase-crossing (closest sample to -180° modulo 360). If no sample is within
 
 
 
-              <details class="quote">
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>spicelab/analysis/measure.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">78</span>
 <span class="normal">79</span>
@@ -2423,6 +2427,7 @@ phase-crossing (closest sample to -180° modulo 360). If no sample is within
     <div class="doc doc-contents ">
 
 
+
         <p>Measure the small-signal gain at a given frequency.</p>
 
 
@@ -2432,7 +2437,7 @@ phase-crossing (closest sample to -180° modulo 360). If no sample is within
 
 
 
-              <details class="quote">
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>spicelab/analysis/measure.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
 <span class="normal">24</span>
@@ -2500,7 +2505,8 @@ phase-crossing (closest sample to -180° modulo 360). If no sample is within
 
 
 
-              <details class="quote">
+
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>spicelab/analysis/montecarlo.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">127</span>
 <span class="normal">128</span>
@@ -2881,7 +2887,7 @@ phase-crossing (closest sample to -180° modulo 360). If no sample is within
         <p>Return the list of ResultHandle objects backing each run (if available).</p>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/montecarlo.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">136</span>
 <span class="normal">137</span>
@@ -2912,7 +2918,7 @@ phase-crossing (closest sample to -180° modulo 360). If no sample is within
 <code>mapping_manifest</code> populated by the <code>monte_carlo</code> helper when available.</p>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/montecarlo.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">281</span>
 <span class="normal">282</span>
@@ -2979,7 +2985,7 @@ file. Columns are the sampled parameter names (optionally prefixed) and
 the trial column named 'trial'.</p>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/montecarlo.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">261</span>
 <span class="normal">262</span>
@@ -3047,7 +3053,7 @@ the trial column named 'trial'.</p>
 <p>Raises RuntimeError if pandas is not available.</p>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/montecarlo.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">217</span>
 <span class="normal">218</span>
@@ -3174,7 +3180,7 @@ the trial column named 'trial'.</p>
    otherwise, the last value in the trace is used.</p>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/montecarlo.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
 <span class="normal">142</span>
@@ -3357,6 +3363,7 @@ the trial column named 'trial'.</p>
     <div class="doc doc-contents ">
 
 
+
         <p>Measure peak overshoot relative to a target value.</p>
 
 
@@ -3366,7 +3373,7 @@ the trial column named 'trial'.</p>
 
 
 
-              <details class="quote">
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>spicelab/analysis/measure.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
 <span class="normal">35</span>
@@ -3427,6 +3434,7 @@ the trial column named 'trial'.</p>
     <div class="doc doc-contents ">
 
 
+
         <p>Phase margin at unity-gain crossover of H = numerator/denominator.</p>
 <p>Returns the classical PM = 180 + angle(H) [deg] at |H| = 1.</p>
 
@@ -3437,7 +3445,7 @@ the trial column named 'trial'.</p>
 
 
 
-              <details class="quote">
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>spicelab/analysis/measure.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">57</span>
 <span class="normal">58</span>
@@ -3500,6 +3508,7 @@ the trial column named 'trial'.</p>
     <div class="doc doc-contents ">
 
 
+
         <p>10-90 (or custom) rise time between threshold crossings.</p>
 <p>Computes the time difference between the first crossings of low and high
 thresholds, where thresholds are defined relative to baseline/reference and
@@ -3512,7 +3521,7 @@ target.</p>
 
 
 
-              <details class="quote">
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>spicelab/analysis/measure.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 93</span>
 <span class="normal"> 94</span>
@@ -3585,6 +3594,7 @@ target.</p>
     <div class="doc doc-contents ">
 
 
+
         <p>Measure when a signal stays within a tolerance band.</p>
 
 
@@ -3594,7 +3604,7 @@ target.</p>
 
 
 
-              <details class="quote">
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>spicelab/analysis/measure.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">45</span>
 <span class="normal">46</span>
@@ -3657,6 +3667,7 @@ target.</p>
     <div class="doc doc-contents ">
 
 
+
         <p>Total Harmonic Distortion of a steady-state tone.</p>
 <p>Returns THD in percent. Fundamental can be provided (f0); otherwise the
 dominant bin (ignoring DC) is used. Uses a Hann window by default via FFT helper.</p>
@@ -3668,7 +3679,7 @@ dominant bin (ignoring DC) is used. Uses a Hann window by default via FFT helper
 
 
 
-              <details class="quote">
+              <details class="mkdocstrings-source">
                 <summary>Source code in <code>spicelab/analysis/measure.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">110</span>
 <span class="normal">111</span>
@@ -3733,7 +3744,7 @@ dominant bin (ignoring DC) is used. Uses a Hann window by default via FFT helper
 <p>The magnitude is 2*|FFT|/sum(window) as in rfft_coherent().</p>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/signal.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">76</span>
 <span class="normal">77</span>
@@ -3787,7 +3798,7 @@ corresponding combo, prefixed by <code>param_prefix</code> (set to None to avoid
 The return type mirrors :func:<code>spicelab.analysis.measure.measure</code> (polars or list[dict]).</p>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/pipeline.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
 <span class="normal">19</span>
@@ -3904,7 +3915,7 @@ The return type mirrors :func:<code>spicelab.analysis.measure.measure</code> (po
         <p>Executa Monte Carlo variando valores dos componentes conforme distribuições.</p>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/montecarlo.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">338</span>
 <span class="normal">339</span>
@@ -4116,7 +4127,7 @@ The return type mirrors :func:<code>spicelab.analysis.measure.measure</code> (po
 <p>PSD here is magnitude-squared normalized by ENBW of the window to yield units ~ V^2/Hz.</p>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/signal.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 93</span>
 <span class="normal"> 94</span>
@@ -4176,7 +4187,7 @@ win: window type</p>
 </ul>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/signal.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">49</span>
 <span class="normal">50</span>
@@ -4248,7 +4259,7 @@ win: window type</p>
 <p>Convenience wrapper around :func:<code>run_job</code> + :func:<code>measure_job_result</code>.</p>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/pipeline.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
 <span class="normal">69</span>
@@ -4302,7 +4313,7 @@ win: window type</p>
 <p>variables: sequence of (component, values) pairs.</p>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/sweep_grid.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 88</span>
 <span class="normal"> 89</span>
@@ -4406,7 +4417,7 @@ win: window type</p>
 </ul>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/sweep_grid.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">29</span>
 <span class="normal">30</span>
@@ -4507,7 +4518,7 @@ win: window type</p>
 </ul>
 
 
-            <details class="quote">
+            <details class="mkdocstrings-source">
               <summary>Source code in <code>spicelab/analysis/signal.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
 <span class="normal">24</span>
