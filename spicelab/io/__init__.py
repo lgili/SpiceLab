@@ -3,6 +3,27 @@
 Keep explicit exports to avoid star-imports which trigger linter errors.
 """
 
+from .asc_parser import (
+    AnalysisCommand,
+    Arc,
+    AscParser,
+    AscParseResult,
+    BusTap,
+    Circle,
+    Flag,
+    Line,
+    Measurement,
+    Parameter,
+    Point,
+    Rectangle,
+    SymbolComponent,
+    TextElement,
+    Window,
+    Wire,
+    parse_asc_file,
+    parse_asc_string,
+    print_asc_summary,
+)
 from .raw_reader import (
     Trace,
     TraceSet,
@@ -31,11 +52,33 @@ from .readers import (
 )
 
 __all__ = [
+    # ASC Parser
+    "AscParser",
+    "AscParseResult",
+    "parse_asc_file",
+    "parse_asc_string",
+    "print_asc_summary",
+    "Point",
+    "Wire",
+    "Flag",
+    "Window",
+    "SymbolComponent",
+    "TextElement",
+    "Line",
+    "Rectangle",
+    "Circle",
+    "Arc",
+    "BusTap",
+    "Parameter",
+    "Measurement",
+    "AnalysisCommand",
+    # Raw reader
     "Trace",
     "TraceSet",
     "parse_ngspice_raw",
     "parse_ngspice_ascii_raw",
     "parse_ngspice_ascii_raw_multi",
+    # Readers
     "read_ltspice_raw",
     "read",
     "read_ltspice",
