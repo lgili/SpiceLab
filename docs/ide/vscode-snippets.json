@@ -1,0 +1,225 @@
+{
+  "SpiceLab Circuit Setup": {
+    "prefix": "spicelab-circuit",
+    "body": [
+      "from spicelab.core.circuit import Circuit",
+      "from spicelab.core.components import Resistor, Capacitor, Vdc",
+      "from spicelab.core.net import GND, Net",
+      "",
+      "circuit = Circuit(\"${1:my_circuit}\")",
+      "",
+      "# Add components",
+      "${0}"
+    ],
+    "description": "Basic SpiceLab circuit setup"
+  },
+  "SpiceLab Resistor": {
+    "prefix": "spicelab-resistor",
+    "body": [
+      "r${1:1} = Resistor(\"${1:1}\", resistance=${2:10_000})  # ${3:10k ohms}"
+    ],
+    "description": "Create a resistor component"
+  },
+  "SpiceLab Capacitor": {
+    "prefix": "spicelab-capacitor",
+    "body": [
+      "c${1:1} = Capacitor(\"${1:1}\", capacitance=${2:100e-9})  # ${3:100nF}"
+    ],
+    "description": "Create a capacitor component"
+  },
+  "SpiceLab Inductor": {
+    "prefix": "spicelab-inductor",
+    "body": [
+      "l${1:1} = Inductor(\"${1:1}\", inductance=${2:100e-6})  # ${3:100uH}"
+    ],
+    "description": "Create an inductor component"
+  },
+  "SpiceLab Vdc Source": {
+    "prefix": "spicelab-vdc",
+    "body": [
+      "v${1:1} = Vdc(\"${1:1}\", ${2:5.0})  # ${3:5V DC}"
+    ],
+    "description": "Create a DC voltage source"
+  },
+  "SpiceLab Vac Source": {
+    "prefix": "spicelab-vac",
+    "body": [
+      "v${1:1} = Vac(\"${1:1}\", ac_mag=${2:1.0})  # ${3:1V AC magnitude}"
+    ],
+    "description": "Create an AC voltage source"
+  },
+  "SpiceLab Vpulse Source": {
+    "prefix": "spicelab-vpulse",
+    "body": [
+      "v${1:1} = Vpulse(\"${1:1}\", v1=${2:0}, v2=${3:5}, td=${4:0}, tr=${5:1e-9}, tf=${6:1e-9}, pw=${7:500e-6}, per=${8:1e-3})"
+    ],
+    "description": "Create a pulse voltage source"
+  },
+  "SpiceLab Net": {
+    "prefix": "spicelab-net",
+    "body": [
+      "${1:vout} = Net(\"${1:vout}\")"
+    ],
+    "description": "Create a net"
+  },
+  "SpiceLab Connect": {
+    "prefix": "spicelab-connect",
+    "body": [
+      "circuit.connect(${1:component}.ports[${2:0}], ${3:net})"
+    ],
+    "description": "Connect component port to net"
+  },
+  "SpiceLab Voltage Divider": {
+    "prefix": "spicelab-voltage-divider",
+    "body": [
+      "# Voltage Divider: Vout = Vin * R2/(R1+R2)",
+      "vin = Vdc(\"in\", ${1:10.0})",
+      "r1 = Resistor(\"1\", resistance=${2:10_000})",
+      "r2 = Resistor(\"2\", resistance=${3:10_000})",
+      "",
+      "circuit.add(vin, r1, r2)",
+      "",
+      "v_in = Net(\"vin\")",
+      "vout = Net(\"vout\")",
+      "",
+      "circuit.connect(vin.ports[0], v_in)",
+      "circuit.connect(vin.ports[1], GND)",
+      "circuit.connect(r1.ports[0], v_in)",
+      "circuit.connect(r1.ports[1], vout)",
+      "circuit.connect(r2.ports[0], vout)",
+      "circuit.connect(r2.ports[1], GND)"
+    ],
+    "description": "Complete voltage divider circuit"
+  },
+  "SpiceLab RC Lowpass Filter": {
+    "prefix": "spicelab-rc-lowpass",
+    "body": [
+      "# RC Lowpass Filter: fc = 1/(2*pi*R*C)",
+      "import math",
+      "",
+      "fc = ${1:1000}  # Cutoff frequency in Hz",
+      "R = ${2:10_000}  # Resistance in ohms",
+      "C = 1 / (2 * math.pi * fc * R)",
+      "",
+      "v_in = Vac(\"in\", ac_mag=1.0)",
+      "r1 = Resistor(\"1\", resistance=R)",
+      "c1 = Capacitor(\"1\", capacitance=C)",
+      "",
+      "circuit.add(v_in, r1, c1)",
+      "",
+      "vin = Net(\"vin\")",
+      "vout = Net(\"vout\")",
+      "",
+      "circuit.connect(v_in.ports[0], vin)",
+      "circuit.connect(v_in.ports[1], GND)",
+      "circuit.connect(r1.ports[0], vin)",
+      "circuit.connect(r1.ports[1], vout)",
+      "circuit.connect(c1.ports[0], vout)",
+      "circuit.connect(c1.ports[1], GND)"
+    ],
+    "description": "RC lowpass filter circuit"
+  },
+  "SpiceLab Inverting Amplifier": {
+    "prefix": "spicelab-inverting-amp",
+    "body": [
+      "# Inverting Amplifier: Gain = -Rf/Rin",
+      "from spicelab.library import create_component",
+      "",
+      "gain = ${1:10}",
+      "rin = ${2:10_000}",
+      "rf = gain * rin",
+      "",
+      "v_in = Vdc(\"in\", ${3:1.0})",
+      "u1 = create_component(\"opamp.ideal\", \"1\")",
+      "r_in = Resistor(\"in\", resistance=rin)",
+      "r_f = Resistor(\"f\", resistance=rf)",
+      "",
+      "circuit.add(v_in, u1, r_in, r_f)",
+      "",
+      "vin = Net(\"vin\")",
+      "v_inv = Net(\"v_inv\")",
+      "vout = Net(\"vout\")",
+      "",
+      "circuit.connect(v_in.ports[0], vin)",
+      "circuit.connect(v_in.ports[1], GND)",
+      "circuit.connect(r_in.ports[0], vin)",
+      "circuit.connect(r_in.ports[1], v_inv)",
+      "circuit.connect(u1.ports[0], v_inv)  # Inverting input",
+      "circuit.connect(u1.ports[1], GND)    # Non-inverting input",
+      "circuit.connect(u1.ports[2], vout)   # Output",
+      "circuit.connect(r_f.ports[0], v_inv)",
+      "circuit.connect(r_f.ports[1], vout)"
+    ],
+    "description": "Inverting amplifier circuit with op-amp"
+  },
+  "SpiceLab Library Component": {
+    "prefix": "spicelab-library",
+    "body": [
+      "from spicelab.library import create_component",
+      "",
+      "${1:component} = create_component(\"${2:opamp.ideal}\", \"${3:1}\")"
+    ],
+    "description": "Create component from library"
+  },
+  "SpiceLab Template Filter": {
+    "prefix": "spicelab-template-filter",
+    "body": [
+      "from spicelab.templates import ${1|rc_lowpass,rc_highpass,rlc_bandpass,sallen_key_lowpass|}",
+      "",
+      "result = ${1}(fc=${2:1000}, ${3:impedance=10_000})",
+      "circuit = result.circuit",
+      "print(f\"Cutoff: {result.cutoff_frequency:.1f} Hz\")"
+    ],
+    "description": "Create filter using template"
+  },
+  "SpiceLab Validate Circuit": {
+    "prefix": "spicelab-validate",
+    "body": [
+      "result = circuit.validate()",
+      "if result.is_valid:",
+      "    print(\"Circuit is valid\")",
+      "else:",
+      "    for error in result.errors:",
+      "        print(f\"Error: {error}\")",
+      "    for warning in result.warnings:",
+      "        print(f\"Warning: {warning}\")"
+    ],
+    "description": "Validate circuit and print errors"
+  },
+  "SpiceLab Monte Carlo Setup": {
+    "prefix": "spicelab-monte-carlo",
+    "body": [
+      "import random",
+      "",
+      "def apply_tolerance(nominal: float, tolerance: float) -> float:",
+      "    \"\"\"Apply random tolerance (Gaussian, 3sigma = tolerance).\"\"\"",
+      "    sigma = tolerance / 3",
+      "    return nominal * (1 + random.gauss(0, sigma))",
+      "",
+      "def run_monte_carlo(nominal_value: float, tolerance: float, n_runs: int) -> list[float]:",
+      "    results = []",
+      "    for _ in range(n_runs):",
+      "        value = apply_tolerance(nominal_value, tolerance)",
+      "        # Calculate circuit output here",
+      "        results.append(value)",
+      "    return results",
+      "",
+      "# Run simulation",
+      "random.seed(42)",
+      "results = run_monte_carlo(${1:10_000}, ${2:0.05}, ${3:10000})"
+    ],
+    "description": "Monte Carlo tolerance analysis setup"
+  },
+  "SpiceLab E-Series Resistor": {
+    "prefix": "spicelab-eseries",
+    "body": [
+      "from spicelab.utils.e_series import nearest_value, E24_VALUES",
+      "",
+      "# Find nearest E24 standard resistor value",
+      "target = ${1:4700}",
+      "nearest = nearest_value(target, E24_VALUES)",
+      "print(f\"Target: {target}, Nearest E24: {nearest}\")"
+    ],
+    "description": "Find nearest E-series resistor value"
+  }
+}
