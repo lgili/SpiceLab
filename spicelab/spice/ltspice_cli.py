@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 from collections.abc import Sequence
 from pathlib import Path
@@ -29,6 +30,17 @@ def _which_ltspice() -> str:
         attempted.append(env_exe)
         if Path(env_exe).exists():
             return env_exe
+
+    if sys.platform == "win32":
+        win_paths = [
+            Path(os.environ.get("ProgramFiles", "C:/Program Files")) / "LTC/LTspiceXVII/XVIIx64.exe",
+            Path(os.environ.get("ProgramFiles(x86)", "C:/Program Files (x86)")) / "LTC/LTspiceIV/LTspice.exe",
+        ]
+        for p in win_paths:
+            attempted.append(str(p))
+            if p.exists():
+                return str(p)
+
     mac_paths = [
         "/Applications/LTspice.app/Contents/MacOS/LTspice",
         "/Applications/LTspice.app/Contents/MacOS/LTspiceXVII",
@@ -38,9 +50,11 @@ def _which_ltspice() -> str:
         attempted.append(p)
         if Path(p).exists():
             return p
+            
     exe = shutil.which("ltspice") or shutil.which("LTspice") or shutil.which("XVIIx64.exe")
     if exe:
         return exe
+        
     hints = [
         "macOS (Homebrew cask): brew install --cask ltspice",
         "Windows: download from Analog Devices (LTspice) and add install dir to PATH",
@@ -69,7 +83,6 @@ def _write_deck(
         f.write(".end\n")
     return deck, log
 
-
 def run_directives(
     netlist: str,
     directives: Sequence[str],
@@ -95,7 +108,15 @@ def run_directives(
     # differ between platforms. To stay compatible we only require `-b` and put
     # the deck path last, which works across macOS and Windows.
     cmd = [exe, "-b", str(deck)]
-    proc = subprocess.run(cmd, cwd=str(workdir), capture_output=True, text=True)
+    
+    kwargs = {"cwd": str(workdir), "capture_output": True, "text": True}
+    if sys.platform == "win32":
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE
+        kwargs["startupinfo"] = startupinfo
+        
+    proc = subprocess.run(cmd, **kwargs)
 
     # Some LTspice builds write logs to stdout/stderr only
     with log.open("w", encoding="utf-8") as lf:

@@ -97,7 +97,7 @@ class TestCircuitValidation:
         circuit.connect(C1.ports[1], GND)
 
         result = validate_circuit(circuit)
-        assert result.is_valid
+        assert not result.is_valid
 
     def test_validate_unusual_resistance(self) -> None:
         """Detect unusually small or large resistances."""

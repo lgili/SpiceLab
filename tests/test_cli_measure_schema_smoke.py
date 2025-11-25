@@ -8,7 +8,7 @@ from pathlib import Path
 def _run_cli(args: list[str]) -> str:
     cmd = [sys.executable, "-m", "spicelab.cli.measure", *args]
     out = subprocess.check_output(cmd, cwd=Path.cwd())
-    return out.decode("utf-8")
+    return out.decode("utf-8").replace("\r\n", "\n")
 
 
 def test_cli_list_details_csv_header_and_rows():

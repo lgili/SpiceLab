@@ -58,7 +58,7 @@ def test_ltspice_run_directives_creates_artifacts(
     exe.write_text("", encoding="utf-8")
     monkeypatch.setenv("SPICELAB_LTSPICE", str(exe))
 
-    def fake_run(cmd: Iterable[str], cwd: str, capture_output: bool, text: bool) -> SimpleNamespace:
+    def fake_run(cmd: Iterable[str], cwd: str, capture_output: bool, text: bool, **kwargs) -> SimpleNamespace:
         cmd_list = list(cmd)
         assert Path(cmd_list[0]) == exe
         raw = Path(cwd) / "deck.raw"
