@@ -53,3 +53,5 @@ cat_ng_*/
 *.html
 .spicelab_cache/
 .hypothesis/
+
+old/

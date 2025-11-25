@@ -1,85 +1,128 @@
 # M3: Component Library Expansion - Tasks
 
-**Status:** Proposed
-**Start Date:** TBD
+**Status:** In Progress
+**Start Date:** 2025-11-24
 **Target Completion:** TBD (6-8 weeks)
 **Dependencies:** M1 (validation framework), M2 (performance optimization)
 
 ## Task Breakdown
 
-### Phase 1: Infrastructure (Week 1)
-- [ ] Create package structure
-  - [ ] Create `spicelab/library/` package
-  - [ ] Add subdirectories: `passive/`, `active/`, `templates/`, `behavioral/`
-  - [ ] Create `spicelab/models/` package
-  - [ ] Add subdirectories: `catalog/`, `database.py`, `downloader.py`, `validator.py`
-- [ ] Setup model database
-  - [ ] Design SQLite schema (models table)
-  - [ ] Implement ModelDatabase class
-  - [ ] Add methods: add_model(), search(), get()
-  - [ ] Create database migration system
-  - [ ] Add database initialization (~/.spicelab/models.db)
-- [ ] Implement model downloader
-  - [ ] Create ModelDownloader class
-  - [ ] Add caching (~/.spicelab/cache/)
-  - [ ] Implement checksum verification (SHA256)
-  - [ ] Add progress reporting for downloads
-  - [ ] Handle network errors gracefully
-- [ ] Create model validator
-  - [ ] Implement ModelValidator class
-  - [ ] Add SPICE syntax checking
-  - [ ] Validate .MODEL and .SUBCKT
-  - [ ] Check for unmatched .ENDS
-  - [ ] Validate parameter syntax
-  - [ ] Add tests for validator
+### Phase 1: Infrastructure (Week 1) - PARTIALLY COMPLETE (Pre-existing)
+- [x] Create package structure
+  - [x] `spicelab/library/` package exists
+  - [x] Registry system with `register_component()`, `list_components()`, `create_component()`
+  - [x] Factory typing protocols for components
+  - [x] Metadata support for component specs
+  - [x] `spicelab/library/behavioral.py` added for behavioral models
+- [ ] Setup model database (Future - external vendor models)
+- [ ] Implement model downloader (Future - external vendor models)
+- [ ] Create model validator (Future - external vendor models)
 
-**Estimated Time:** 1 week
-**Assignee:** TBD
+**Completed:** 2025-11-24 (using existing infrastructure)
 
 ---
 
-### Phase 2: Basic Component Library (Week 2)
-- [ ] E-series resistors
-  - [ ] Define E12, E24, E96 value arrays
-  - [ ] Implement ESeriesResistor class
-  - [ ] Add E12(), E24(), E96() factory methods
-  - [ ] Implement nearest_E12(), nearest_E24() helpers
-  - [ ] Add convenience functions: R_E12(), R_E24()
-  - [ ] Write tests (all E-series values)
-  - [ ] Document with examples
-- [ ] Ceramic capacitor catalog
-  - [ ] Define CapacitorSpec dataclass
-  - [ ] Create CERAMIC_CAP_CATALOG dictionary (100+ values)
-  - [ ] Implement CeramicCapacitor class
-  - [ ] Add dielectric types (C0G, X7R, X5R, Y5V)
-  - [ ] Add voltage ratings (6.3V, 16V, 25V, 50V)
-  - [ ] Include common SMD packages (0402, 0603, 0805, 1206)
-  - [ ] Write tests
-  - [ ] Document catalog
-- [ ] Inductor catalog
-  - [ ] Create standard inductor values (1uH - 1mH)
-  - [ ] Add saturation current ratings
-  - [ ] Include DCR (DC resistance) specs
-  - [ ] Add common packages (0603, 0805, radial)
-  - [ ] Write tests
-- [ ] Diode catalog
-  - [ ] Add 1N4148 (switching diode)
-  - [ ] Add 1N4007 (rectifier)
-  - [ ] Add 1N5819 (Schottky)
-  - [ ] Add Zener diodes (3.3V, 5.1V, 12V)
-  - [ ] Include reverse voltage and current ratings
-- [ ] BJT catalog
-  - [ ] Add 2N2222 (NPN, general purpose)
-  - [ ] Add 2N3904 (NPN, small signal)
-  - [ ] Add 2N3906 (PNP, small signal)
-  - [ ] Add BC547/BC557 (European equivalents)
-  - [ ] Include beta, Vce(sat), and Ic(max) specs
-- [ ] MOSFET catalog
-  - [ ] Add 2N7000 (N-channel, small signal)
-  - [ ] Add IRF540 (N-channel, power)
-  - [ ] Add BSS138 (N-channel, logic level)
-  - [ ] Add IRF9540 (P-channel, power)
-  - [ ] Include Vgs(th), Rds(on), Id(max) specs
+### Phase 2: Basic Component Library (Week 2) ✅ COMPLETE
+- [x] E-series resistors
+  - [x] E12, E24, E48, E96, E192 in `spicelab/utils/e_series.py`
+  - [x] `round_to_series()`, `nearest_value()`, `find_best_match()`
+  - [x] Series/parallel combination finding
+- [x] Diode catalog - 18 diodes total
+  - [x] Signal: 1N4148, 1N914
+  - [x] Rectifier: 1N4001, 1N4004, 1N4007
+  - [x] Schottky: 1N5817, 1N5818, 1N5819, BAT54
+  - [x] Zener: 1N4728A (3.3V), 1N4733A (5.1V), 1N4742A (12V), 1N4744A (15V), BZX55C5V1
+  - [x] LEDs: Red, Green, Blue, White
+- [x] BJT catalog - 15 BJTs total
+  - [x] NPN: 2N2222, 2N2222A, 2N3904, 2N4401, BC547B, BC548, MPSA06
+  - [x] PNP: 2N2907, 2N3906, 2N4403, BC557, BC558, MPSA56
+  - [x] Darlington: TIP120 (NPN), TIP125 (PNP)
+- [x] MOSFET catalog - 11 MOSFETs total
+  - [x] N-channel small-signal: 2N7000, BSS138, BS170
+  - [x] N-channel power: IRF540N, IRFZ44N, IRF3205, IRLZ44N (logic-level)
+  - [x] P-channel small-signal: BS250
+  - [x] P-channel power: IRF9540N, AO3401A, IRF4905
+
+**Completed:** 2025-11-24
+
+---
+
+### Phase 3: Behavioral Models ✅ COMPLETE
+- [x] Ideal diode models
+  - [x] D_IDEAL (near-zero Vf)
+  - [x] D_IDEAL_SCHOTTKY (0.2V Vf)
+  - [x] D_IDEAL_Z5V1 (5.1V Zener)
+- [x] Ideal switch models
+  - [x] SW_IDEAL (Ron=1mΩ, Roff=1GΩ)
+  - [x] SW_IDEAL_FAST (narrow hysteresis)
+  - [x] SW_RELAY (relay-like thresholds)
+- [x] Transformer info (for coupled inductors)
+  - [x] 1:1 isolation
+  - [x] 10:1 step-down
+  - [x] Flyback 5:1
+- [x] Controlled sources (pre-existing in core/components.py)
+  - [x] VCVS, VCCS, CCCS, CCVS
+
+**Completed:** 2025-11-24
+
+---
+
+### Phase 4: Tests ✅ COMPLETE
+- [x] Library expansion tests
+  - [x] 37 tests in `tests/test_library_expanded.py`
+  - [x] Tests for diode catalog
+  - [x] Tests for BJT catalog
+  - [x] Tests for MOSFET catalog
+  - [x] Tests for behavioral models
+  - [x] Metadata validation tests
+
+**Completed:** 2025-11-24
+
+---
+
+### Phase 5: Vendor Model Research (Week 3) - DEFERRED
+- [ ] Research vendor model sources (TI, ADI, Infineon, etc.)
+- [ ] Select initial model set (50+ models)
+- [ ] Download and organize
+
+**Status:** Deferred to future milestone (requires infrastructure from Phase 1)
+
+---
+
+### Phase 6: Documentation - PENDING
+- [ ] Component catalog reference
+- [ ] Behavioral model guide
+- [ ] API documentation updates
+
+**Status:** Pending
+
+---
+
+## Current Library Summary
+
+**Total Components:** 68
+
+| Category    | Count | Description                                      |
+|------------|-------|--------------------------------------------------|
+| diode      | 18    | Signal, rectifier, Schottky, Zener, LEDs        |
+| bjt        | 15    | NPN/PNP general-purpose, low-noise, Darlington  |
+| mosfet     | 11    | N/P-channel, small-signal, power, logic-level   |
+| behavioral | 11    | Ideal diodes, switches, transformers            |
+| opamp      | 3     | Ideal, LM741, TL081                             |
+| capacitor  | 3     | Ceramic, electrolytic, film                     |
+| resistor   | 3     | Metal film, carbon film, shunt                  |
+| inductor   | 2     | Standard inductors                              |
+| switch     | 2     | Voltage/current controlled switches             |
+
+---
+
+### Original Phase 2: Basic Component Library (Week 2) - Reference
+- [ ] E-series resistors (existing in e_series.py)
+- [ ] Ceramic capacitor catalog (basic entries exist)
+- [ ] Inductor catalog (basic entries exist)
+- [x] Diode catalog - EXPANDED
+- [x] BJT catalog - EXPANDED
+- [x] MOSFET catalog - EXPANDED
 
 **Estimated Time:** 1 week
 **Assignee:** TBD

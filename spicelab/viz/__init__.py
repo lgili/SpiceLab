@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .circuit import components_for_net, connectivity_table, summary_table
+from .netlist_diff import DiffResult, NetlistDiff, diff_circuits
 from .notebook import connectivity_widget, dataset_plot_widget
 from .plotly import (
     VizFigure,
@@ -53,4 +54,8 @@ __all__ = [
     "components_for_net",
     "connectivity_widget",
     "dataset_plot_widget",
+    # Netlist diff
+    "NetlistDiff",
+    "DiffResult",
+    "diff_circuits",
 ]

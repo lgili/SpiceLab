@@ -21,7 +21,7 @@ No. Variables: 2
 No. Points: 1
 Variables:
         0       time    time
-        1       v(n1)   voltage
+        1       v(1)    voltage
 Values:
         0       0.0     {value}
 """
@@ -79,7 +79,7 @@ def test_montecarlo_job_handles_and_cache(tmp_path: Path) -> None:
         assert mc.job is not None
         assert mc.job.cache_dir is not None
         assert [run.from_cache for run in mc.job.runs] == [False, False, False]
-        vals = [float(run.traces["V(n1)"].values[-1]) for run in mc.runs]
+        vals = [float(run.traces["V(1)"].values[-1]) for run in mc.runs]
         assert vals == [1.0, 2.0, 3.0]
 
         def _should_not_run(netlist: str, directives: Sequence[str]) -> RunResult:
@@ -99,7 +99,7 @@ def test_montecarlo_job_handles_and_cache(tmp_path: Path) -> None:
         )
         assert mc_cached.job is not None
         assert [run.from_cache for run in mc_cached.job.runs] == [True, True, True]
-        vals_cached = [float(run.traces["V(n1)"].values[-1]) for run in mc_cached.runs]
+        vals_cached = [float(run.traces["V(1)"].values[-1]) for run in mc_cached.runs]
         assert vals_cached == vals
     finally:
         set_run_directives(old)

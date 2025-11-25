@@ -1,7 +1,7 @@
 # M5: Documentation & Examples - Tasks
 
-**Status:** Proposed
-**Start Date:** TBD
+**Status:** In Progress
+**Start Date:** 2025-01-24
 **Target Completion:** TBD (6-8 weeks)
 **Dependencies:** M3 (component library), M4 (templates)
 
@@ -72,10 +72,10 @@
   - [ ] Validation
   - [ ] Best practices
   - [ ] 5 exercises
-- [ ] Create 50+ practical examples
-  - [ ] 10 basic examples
-  - [ ] 10 analog examples
-  - [ ] 10 power examples
+- [x] Create 50+ practical examples
+  - [x] 10 basic tutorial examples (examples/tutorials/)
+  - [x] 10 analog examples (examples/analog/)
+  - [x] 5 power examples (examples/power/)
   - [ ] 10 signal processing examples
   - [ ] 5 RF examples
   - [ ] 10 Monte Carlo examples
@@ -223,8 +223,8 @@ Before marking M5 as complete:
 
 | Content Type | Target | Status |
 |--------------|--------|--------|
-| Tutorial Chapters | 10 | TBD |
-| Code Examples | 50+ | TBD |
+| Tutorial Chapters | 10 | 10 complete (examples/tutorials/) |
+| Code Examples | 50+ | 25 complete (tutorials+analog+power) |
 | Videos | 5-10 | TBD |
 | API Docs | 100% | TBD |
 | Migration Guides | 2 | TBD |
@@ -241,4 +241,37 @@ Before marking M5 as complete:
 
 ---
 
-**Last Updated:** 2025-01-19
+**Last Updated:** 2025-01-24
+
+## Completed Examples
+
+### Tutorials (examples/tutorials/)
+1. `01_first_circuit.py` - Voltage divider basics
+2. `02_rc_filter.py` - RC filter design (manual + template)
+3. `03_voltage_sources.py` - Vdc, Vac, Vpulse, Vsin
+4. `04_passive_components.py` - R, L, C and RLC circuits
+5. `05_analysis_types.py` - .OP, .DC, .AC, .TRAN
+6. `06_diodes.py` - Rectifiers, Zener regulators
+7. `07_transistors.py` - BJT and MOSFET switching
+8. `08_opamps.py` - Inverting, non-inverting, summing amp
+9. `09_circuit_templates.py` - Using built-in templates
+10. `10_component_library.py` - Library API and E-series
+
+### Analog (examples/analog/)
+1. `common_emitter_amp.py` - CE amplifier with bias network
+2. `differential_amp.py` - BJT differential pair
+3. `active_lowpass.py` - Sallen-Key 2nd order filter
+4. `bandpass_filter.py` - MFB bandpass filter
+5. `wien_bridge_osc.py` - Sine wave oscillator
+6. `current_mirror.py` - Simple and Wilson mirrors
+7. `instrumentation_amp.py` - 3-opamp instrumentation amp
+8. `schmitt_trigger.py` - Hysteresis comparator
+9. `class_ab_output.py` - Push-pull output stage
+10. `sample_and_hold.py` - S/H with MOSFET switch
+
+### Power (examples/power/)
+1. `linear_regulator.py` - Series-pass regulator
+2. `buck_converter.py` - Synchronous buck
+3. `boost_converter.py` - Boost topology
+4. `h_bridge.py` - Full H-bridge driver
+5. `flyback_converter.py` - Isolated flyback

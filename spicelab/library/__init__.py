@@ -3,7 +3,16 @@
 from __future__ import annotations
 
 # Import default libraries (diodes, etc.)
-from . import capacitors, diodes, inductors, opamps, resistors, switches, transistors  # noqa: F401
+from . import (  # noqa: F401
+    behavioral,
+    capacitors,
+    diodes,
+    inductors,
+    opamps,
+    resistors,
+    switches,
+    transistors,
+)
 from .factory_typing import (
     BjtFactory,
     CapacitorFactory,

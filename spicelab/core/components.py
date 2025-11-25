@@ -21,10 +21,14 @@ class Component:
     # As subclasses devem atribuir _ports no __init__
     _ports: tuple[Port, ...] = ()
 
+    # SPICE card cache (M2 performance optimization)
+    _spice_card_cache: dict[tuple[str, ...], str] | None = None
+
     def __init__(self, ref: str, value: str | float = "") -> None:
         self.ref = ref
         self.value = value
         self._value_si_cache: float | None = None
+        self._spice_card_cache = None
 
     @property
     def value_si(self) -> float | None:

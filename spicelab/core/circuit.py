@@ -23,6 +23,7 @@ from .components import (
     VSwitch,
 )
 from .net import GND, Net, Port
+from .union_find import UnionFind
 
 log = get_logger("spicelab.core.circuit")
 
@@ -40,6 +41,10 @@ class Circuit:
     _subckt_defs: dict[str, str] = field(default_factory=dict, init=False)
     _subckt_instances: list[dict[str, object]] = field(default_factory=list, init=False)
     _port_labels: dict[Port, str] = field(default_factory=dict, init=False)
+    # Union-Find for O(α(n)) net merging (M2 performance optimization)
+    _net_union: UnionFind[Net] = field(default_factory=UnionFind, init=False)
+    # Cache invalidation version counter
+    _cache_version: int = field(default=0, init=False)
 
     # ----------------------------------------------------------------------------------
     # Building blocks
@@ -66,25 +71,57 @@ class Circuit:
         return self.add_directive(line)
 
     def connect(self, a: Port, b: Net | Port) -> Circuit:
-        """Connect a port to another port or to a logical net."""
+        """Connect a port to another port or to a logical net.
+
+        Uses Union-Find for O(α(n)) amortized net merging (M2 optimization).
+        """
+        self._invalidate_cache()
 
         if isinstance(b, Port):
             net_a = self._port_to_net.get(a)
             net_b = self._port_to_net.get(b)
+
             if net_a and net_b and net_a is not net_b:
-                # merge: remap every port previously associated with net_b to net_a
-                for port, current in list(self._port_to_net.items()):
-                    if current is net_b:
-                        self._port_to_net[port] = net_a
+                # Merge using Union-Find: O(α(n)) instead of O(n)
+                # Ensure both nets are in union-find
+                if net_a not in self._net_union:
+                    is_named_a = getattr(net_a, "name", None) is not None
+                    self._net_union.make_set(net_a, net_a if is_named_a else None)
+                if net_b not in self._net_union:
+                    is_named_b = getattr(net_b, "name", None) is not None
+                    self._net_union.make_set(net_b, net_b if is_named_b else None)
+
+                # Prefer named net as canonical
+                prefer = None
+                if getattr(net_a, "name", None):
+                    prefer = net_a
+                elif getattr(net_b, "name", None):
+                    prefer = net_b
+
+                self._net_union.union(net_a, net_b, prefer=prefer)
             else:
                 shared = net_a or net_b or Net()
                 self._port_to_net[a] = shared
                 self._port_to_net[b] = shared
+                # Register in union-find
+                if shared not in self._net_union:
+                    is_named = getattr(shared, "name", None) is not None
+                    self._net_union.make_set(shared, shared if is_named else None)
             self._port_labels.pop(b, None)
         else:
             self._port_to_net[a] = b
+            # Register named net in union-find
+            if b not in self._net_union:
+                is_named = getattr(b, "name", None) is not None
+                self._net_union.make_set(b, b if is_named else None)
         self._port_labels.pop(a, None)
         return self
+
+    def _invalidate_cache(self) -> None:
+        """Invalidate cached properties when circuit is modified."""
+        self._cache_version += 1
+        # Clear cached net IDs
+        self._net_ids.clear()
 
     def connect_with_label(self, port: Port, net: Net, label: str | None = None) -> Circuit:
         """Connect ``port`` to ``net`` while recording a display label."""
@@ -98,20 +135,22 @@ class Circuit:
     # Net handling
     # ----------------------------------------------------------------------------------
     def _assign_node_ids(self) -> None:
+        """Assign node IDs, using Union-Find for canonical net resolution."""
         self._net_ids.clear()
         self._net_ids[GND] = 0
 
         next_id = 1
         seen: set[Net] = {GND}
 
-        def nets_from_components() -> Iterable[Net]:
+        def canonical_nets_from_components() -> Iterable[Net]:
             for comp in self._components:
                 for port in comp.ports:
                     net = self._port_to_net.get(port)
                     if net is not None:
-                        yield net
+                        # Use canonical net for proper merging
+                        yield self._get_canonical_net(net)
 
-        for net in nets_from_components():
+        for net in canonical_nets_from_components():
             if net in seen:
                 continue
             seen.add(net)
@@ -127,16 +166,25 @@ class Circuit:
         if net is None:
             raise ValueError(f"Unconnected port: {port.owner.ref}.{port.name}")
 
-        if net is GND or getattr(net, "name", None) == "0":
+        # Use Union-Find to get the canonical net (handles merged nets)
+        canonical_net = self._get_canonical_net(net)
+
+        if canonical_net is GND or getattr(canonical_net, "name", None) == "0":
             return "0"
 
-        if getattr(net, "name", None):
-            return str(net.name)
+        if getattr(canonical_net, "name", None):
+            return str(canonical_net.name)
 
-        node_id = self._net_ids.get(net)
+        node_id = self._net_ids.get(canonical_net)
         if node_id is None:
             raise RuntimeError("Node IDs not assigned")
         return str(node_id)
+
+    def _get_canonical_net(self, net: Net) -> Net:
+        """Get the canonical net for a possibly-merged net using Union-Find."""
+        if net not in self._net_union:
+            return net
+        return self._net_union.get_canonical(net)
 
     # ----------------------------------------------------------------------------------
     # Netlist helpers
@@ -185,19 +233,52 @@ class Circuit:
         return circuit_hash(self, extra=extra)
 
     # ----------------------------------------------------------------------------------
+    # Validation (M4 DX improvement)
+    # ----------------------------------------------------------------------------------
+    def validate(self, strict: bool = False) -> ValidationResult:
+        """Validate circuit topology and component values.
+
+        Performs checks:
+        - Ground reference exists
+        - No floating nodes (connected to only one component)
+        - No unusual component values
+        - No voltage source shorts (parallel voltage sources)
+
+        Args:
+            strict: If True, treat warnings as errors
+
+        Returns:
+            ValidationResult with errors and warnings
+
+        Example:
+            >>> result = circuit.validate()
+            >>> if result.has_issues():
+            ...     print(result)
+            >>> if not result.is_valid:
+            ...     raise ValueError("Circuit has errors")
+        """
+        from ..validators.circuit_validation import validate_circuit
+
+        return validate_circuit(self, strict=strict)
+
+    # ----------------------------------------------------------------------------------
     # Introspection helpers
     # ----------------------------------------------------------------------------------
     def _net_label(self, net: Net | None) -> str:
         if net is None:
             return "<unconnected>"
-        if net is GND or getattr(net, "name", None) == "0":
+
+        # Use canonical net for merged nets
+        canonical = self._get_canonical_net(net)
+
+        if canonical is GND or getattr(canonical, "name", None) == "0":
             return "0"
-        if getattr(net, "name", None):
-            return str(net.name)
-        node_id = self._net_ids.get(net)
+        if getattr(canonical, "name", None):
+            return str(canonical.name)
+        node_id = self._net_ids.get(canonical)
         if node_id is None:
             self._assign_node_ids()
-            node_id = self._net_ids.get(net)
+            node_id = self._net_ids.get(canonical)
         return f"N{node_id:03d}" if node_id is not None else "<unnamed>"
 
     def summary(self) -> str:

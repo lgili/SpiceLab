@@ -29,30 +29,109 @@ jobs:
         run: uv run mypy spicelab tests
 
   tests:
-    name: Tests (Python ${{ matrix.python-version }})
-    runs-on: ubuntu-latest
+    name: Tests (${{ matrix.os }} / Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
     needs: lint-type
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.10", "3.11", "3.12"]
+        exclude:
+          # Reduce matrix size - test only 3.11 on macOS/Windows
+          - os: macos-latest
+            python-version: "3.10"
+          - os: macos-latest
+            python-version: "3.12"
+          - os: windows-latest
+            python-version: "3.10"
+          - os: windows-latest
+            python-version: "3.12"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - uses: astral-sh/setup-uv@v2
+
       - name: Install NGSpice (Ubuntu)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends ngspice
           ngspice -v || true
+
+      - name: Install NGSpice (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install ngspice
+          ngspice -v || true
+
       - name: Sync dependencies
         run: uv sync --frozen --group dev --extra viz --extra data
+
       - name: Pytest (unit + integration without engines)
         env:
           PYTHONWARNINGS: default
-        run: uv run pytest -m "not engine"
+          HYPOTHESIS_PROFILE: ci
+        run: uv run pytest -m "not engine and not slow and not stress and not benchmark" --cov=spicelab --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  property-tests:
+    name: Property-based tests (Hypothesis)
+    runs-on: ubuntu-latest
+    needs: lint-type
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: astral-sh/setup-uv@v2
+      - name: Sync dependencies
+        run: uv sync --frozen --group dev --extra viz --extra data
+      - name: Pytest (property tests)
+        env:
+          HYPOTHESIS_PROFILE: ci
+        run: uv run pytest -m property --hypothesis-show-statistics
+
+  regression-tests:
+    name: Regression tests
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: astral-sh/setup-uv@v2
+      - name: Sync dependencies
+        run: uv sync --frozen --group dev --extra viz --extra data
+      - name: Pytest (regression tests)
+        run: uv run pytest -m regression -v
+
+  stress-tests:
+    name: Stress tests
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: astral-sh/setup-uv@v2
+      - name: Sync dependencies
+        run: uv sync --frozen --group dev --extra viz --extra data
+      - name: Pytest (stress tests)
+        run: uv run pytest -m stress --timeout=300
 
   engine-tests:
     name: Engine integration (NGSpice)
@@ -75,6 +154,26 @@ jobs:
         env:
           PYTHONWARNINGS: default
         run: uv run pytest -m engine
+
+  benchmark-tests:
+    name: Performance benchmarks
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: astral-sh/setup-uv@v2
+      - name: Sync dependencies
+        run: uv sync --frozen --group dev --extra viz --extra data
+      - name: Pytest (benchmarks)
+        run: uv run pytest -m benchmark --benchmark-only --benchmark-json=benchmark.json
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: benchmark.json
 
   generate-demo-assets:
     runs-on: ubuntu-latest

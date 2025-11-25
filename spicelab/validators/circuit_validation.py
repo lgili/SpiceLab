@@ -5,10 +5,14 @@ Checks for:
 - Missing ground reference
 - Short circuits (voltage sources in parallel)
 - Unusual component values
+
+This module provides pre-simulation validation to catch common mistakes
+that would cause simulation failures or incorrect results.
 """
 
 from __future__ import annotations
 
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -70,9 +74,9 @@ def validate_circuit(circuit: Circuit, strict: bool = False) -> ValidationResult
 
     Performs checks:
     - Ground reference exists
-    - No floating nodes
+    - No floating nodes (connected to only one component)
     - No unusual component values
-    - No voltage source shorts
+    - No voltage source shorts (parallel voltage sources)
 
     Args:
         circuit: Circuit to validate
@@ -94,15 +98,23 @@ def validate_circuit(circuit: Circuit, strict: bool = False) -> ValidationResult
     # Check 1: Ground reference exists
     has_ground = _check_ground_reference(circuit)
     if not has_ground:
-        warnings.append(
+        errors.append(
             ValidationWarning(
-                severity="warning",
+                severity="error",
                 message="No ground (node 0) reference found",
-                suggestion="Add ground connection for DC operating point",
+                suggestion="Connect at least one component to GND for DC operating point",
             )
         )
 
-    # Check 2: Unusual component values
+    # Check 2: Floating nodes (only connected to one component port)
+    floating_warnings = _check_floating_nodes(circuit)
+    errors.extend(floating_warnings)
+
+    # Check 3: Voltage source loops (parallel voltage sources)
+    vsource_warnings = _check_voltage_source_loops(circuit)
+    errors.extend(vsource_warnings)
+
+    # Check 4: Unusual component values
     value_warnings = _check_component_values(circuit)
     warnings.extend(value_warnings)
 
@@ -110,7 +122,7 @@ def validate_circuit(circuit: Circuit, strict: bool = False) -> ValidationResult
     if strict:
         for warn in warnings:
             warn.severity = "error"
-        errors = warnings
+        errors.extend(warnings)
         warnings = []
 
     is_valid = len(errors) == 0
@@ -119,10 +131,130 @@ def validate_circuit(circuit: Circuit, strict: bool = False) -> ValidationResult
 
 
 def _check_ground_reference(circuit: Circuit) -> bool:
-    """Check if circuit has ground reference (node 0 or GND)."""
-    # This is a simplified check - would need netlist analysis for complete impl
-    # For now, just return True (assume ground exists)
-    return True
+    """Check if circuit has ground reference (node 0 or GND).
+
+    A circuit needs at least one connection to ground for SPICE to
+    establish a reference voltage (node 0).
+    """
+    from ..core.net import GND
+
+    # Check if any port is connected to GND
+    for net in circuit._port_to_net.values():
+        # Get canonical net (handles Union-Find merging)
+        canonical = circuit._get_canonical_net(net)
+        if canonical is GND:
+            return True
+        # Also check if net has name "0" or "GND"
+        net_name = getattr(canonical, "name", None)
+        if net_name in ("0", "GND", "gnd"):
+            return True
+
+    return False
+
+
+def _check_floating_nodes(circuit: Circuit) -> list[ValidationWarning]:
+    """Check for floating nodes (nets connected to only one component port).
+
+    A floating node has no defined voltage because it's only connected to
+    one component terminal. This will cause simulation failures.
+
+    Returns:
+        List of ValidationWarning for each floating node found
+    """
+    from ..core.net import GND
+
+    warnings: list[ValidationWarning] = []
+
+    # Build map of canonical net -> list of (component, port)
+    net_connections: dict[object, list[tuple[str, str]]] = defaultdict(list)
+
+    for comp in circuit._components:
+        for port in comp.ports:
+            net = circuit._port_to_net.get(port)
+            if net is not None:
+                canonical = circuit._get_canonical_net(net)
+                net_connections[canonical].append((comp.ref, port.name))
+
+    # Check each net for floating (single connection)
+    for net, connections in net_connections.items():
+        # Skip ground - it's always valid
+        if net is GND:
+            continue
+        net_name = getattr(net, "name", None)
+        if net_name in ("0", "GND", "gnd"):
+            continue
+
+        # A net with only one connection is floating
+        if len(connections) == 1:
+            comp_ref, port_name = connections[0]
+            net_label = net_name if net_name else f"unnamed net at {comp_ref}.{port_name}"
+
+            warnings.append(
+                ValidationWarning(
+                    severity="error",
+                    message=f"Floating node: {net_label} (only connected to {comp_ref}.{port_name})",
+                    component_ref=comp_ref,
+                    suggestion="Connect this node to another component or to ground",
+                )
+            )
+
+    return warnings
+
+
+def _check_voltage_source_loops(circuit: Circuit) -> list[ValidationWarning]:
+    """Check for voltage source loops (parallel voltage sources).
+
+    Two voltage sources connected in parallel create a conflict that
+    SPICE cannot resolve, causing simulation failure.
+
+    Returns:
+        List of ValidationWarning for each voltage source loop found
+    """
+
+    warnings: list[ValidationWarning] = []
+
+    # Find all voltage sources
+    voltage_sources: list[tuple[str, object, object]] = []  # (ref, net+, net-)
+
+    for comp in circuit._components:
+        comp_type = type(comp).__name__
+        # Voltage sources: Vdc, Vac, Vpulse, Vsin, etc.
+        if comp_type.startswith("V") or comp_type in (
+            "Vdc",
+            "Vac",
+            "Vpulse",
+            "Vsin",
+            "VsinT",
+            "VpwlT",
+        ):
+            if len(comp.ports) >= 2:
+                net_p = circuit._port_to_net.get(comp.ports[0])
+                net_n = circuit._port_to_net.get(comp.ports[1])
+                if net_p is not None and net_n is not None:
+                    canon_p = circuit._get_canonical_net(net_p)
+                    canon_n = circuit._get_canonical_net(net_n)
+                    voltage_sources.append((comp.ref, canon_p, canon_n))
+
+    # Check for parallel voltage sources (same nodes)
+    seen_pairs: dict[tuple[object, object], str] = {}
+    for ref, net_p, net_n in voltage_sources:
+        # Normalize pair (smaller id first)
+        pair = (net_p, net_n) if id(net_p) < id(net_n) else (net_n, net_p)
+
+        if pair in seen_pairs:
+            other_ref = seen_pairs[pair]
+            warnings.append(
+                ValidationWarning(
+                    severity="error",
+                    message=f"Voltage source loop: {ref} and {other_ref} are in parallel",
+                    component_ref=ref,
+                    suggestion="Remove one voltage source or add a series resistance",
+                )
+            )
+        else:
+            seen_pairs[pair] = ref
+
+    return warnings
 
 
 def _check_component_values(circuit: Circuit) -> list[ValidationWarning]:
