@@ -3,6 +3,15 @@
 Keep explicit exports to avoid star-imports which trigger linter errors.
 """
 
+from .asc_converter import (
+    KNOWN_UNSUPPORTED,
+    SYMBOL_MAP,
+    ConversionResult,
+    ConversionWarning,
+    asc_to_circuit,
+    load_circuit_from_asc,
+    print_conversion_result,
+)
 from .asc_parser import (
     AnalysisCommand,
     Arc,
@@ -72,6 +81,14 @@ __all__ = [
     "Parameter",
     "Measurement",
     "AnalysisCommand",
+    # ASC Converter
+    "ConversionResult",
+    "ConversionWarning",
+    "asc_to_circuit",
+    "load_circuit_from_asc",
+    "print_conversion_result",
+    "SYMBOL_MAP",
+    "KNOWN_UNSUPPORTED",
     # Raw reader
     "Trace",
     "TraceSet",
