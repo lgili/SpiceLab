@@ -1,7 +1,7 @@
 # M6: Community Foundations - Tasks
 
-**Status:** Proposed
-**Start Date:** TBD
+**Status:** In Progress
+**Start Date:** 2025-01-25
 **Target Completion:** TBD (4-6 weeks)
 **Dependencies:** M5 (documentation)
 
@@ -31,21 +31,22 @@
 ---
 
 ### Phase 2: Guidelines & Templates (Week 2)
-- [ ] Write CONTRIBUTING.md
-  - [ ] Development setup instructions
-  - [ ] Code style guidelines
-  - [ ] PR process
-  - [ ] Commit message format
-  - [ ] Review process
-- [ ] Write CODE_OF_CONDUCT.md
-  - [ ] Adapt Contributor Covenant
-  - [ ] Add enforcement policy
-  - [ ] Add contact information
-- [ ] Create GitHub templates
-  - [ ] Bug report template
-  - [ ] Feature request template
-  - [ ] PR template
-  - [ ] Add to .github/ directory
+- [x] Write CONTRIBUTING.md
+  - [x] Development setup instructions
+  - [x] Code style guidelines
+  - [x] PR process
+  - [x] Commit message format
+  - [x] Review process
+- [x] Write CODE_OF_CONDUCT.md
+  - [x] Adapt Contributor Covenant
+  - [x] Add enforcement policy
+  - [x] Add contact information
+- [x] Create GitHub templates
+  - [x] Bug report template
+  - [x] Feature request template
+  - [x] Question template
+  - [x] PR template
+  - [x] Add to .github/ directory
 - [ ] Add to repository
   - [ ] Commit all files
   - [ ] Link from README
@@ -56,19 +57,19 @@
 ---
 
 ### Phase 3: Review Process & Automation (Week 3)
-- [ ] Document review process
-  - [ ] Define reviewer roles
-  - [ ] Set review SLAs (3 business days)
-  - [ ] Create review checklist
-  - [ ] Add to CONTRIBUTING.md
-- [ ] Setup release automation
-  - [ ] Create .github/workflows/release.yml
-  - [ ] Configure PyPI publishing
-  - [ ] Setup semantic versioning
+- [x] Document review process
+  - [x] Define reviewer roles
+  - [x] Set review SLAs (3 business days)
+  - [x] Create review checklist
+  - [x] Add to CONTRIBUTING.md
+- [x] Setup release automation
+  - [x] Create .github/workflows/release.yml
+  - [x] Configure PyPI publishing
+  - [x] Setup semantic versioning
   - [ ] Add conventional commits check
-- [ ] Create CHANGELOG.md
-  - [ ] Install conventional-changelog
-  - [ ] Generate initial changelog
+- [x] Create CHANGELOG.md
+  - [x] Manual changelog (Keep a Changelog format)
+  - [x] Version history documented
   - [ ] Setup auto-generation in CI
 - [ ] Test automation
   - [ ] Create test release (pre-release)
@@ -217,4 +218,23 @@ Before marking M6 as complete:
 
 ---
 
-**Last Updated:** 2025-01-19
+**Last Updated:** 2025-01-25
+
+## Completed Files
+
+### Community Guidelines
+- `CONTRIBUTING.md` - Full contributor guide with development setup, code style, testing, PR process, and commit format
+- `CODE_OF_CONDUCT.md` - Contributor Covenant v2.1
+
+### GitHub Templates
+- `.github/ISSUE_TEMPLATE/bug_report.md` - Bug report with reproducible example template
+- `.github/ISSUE_TEMPLATE/feature_request.md` - Feature request with use cases
+- `.github/ISSUE_TEMPLATE/question.md` - Question template
+- `.github/ISSUE_TEMPLATE/config.yml` - Issue template configuration
+- `.github/PULL_REQUEST_TEMPLATE.md` - PR template with checklist
+
+### CI/CD (Pre-existing)
+- `.github/workflows/ci.yml` - Full CI pipeline (lint, test, coverage)
+- `.github/workflows/release.yml` - PyPI release automation
+- `.github/workflows/docs.yml` - Documentation deployment
+- `CHANGELOG.md` - Version history
