@@ -76,10 +76,10 @@
   - [x] 10 basic tutorial examples (examples/tutorials/)
   - [x] 10 analog examples (examples/analog/)
   - [x] 5 power examples (examples/power/)
-  - [ ] 10 signal processing examples
-  - [ ] 5 RF examples
-  - [ ] 10 Monte Carlo examples
-  - [ ] 5 automation examples
+  - [x] 10 signal processing examples (examples/signal_processing/)
+  - [x] 5 RF examples (examples/rf/)
+  - [x] 10 Monte Carlo examples (examples/monte_carlo/)
+  - [x] 5 automation examples (examples/automation/)
 
 **Estimated Time:** 2 weeks
 
@@ -224,7 +224,7 @@ Before marking M5 as complete:
 | Content Type | Target | Status |
 |--------------|--------|--------|
 | Tutorial Chapters | 10 | 10 complete (examples/tutorials/) |
-| Code Examples | 50+ | 25 complete (tutorials+analog+power) |
+| Code Examples | 50+ | 55 complete (tutorials+analog+power+signal+rf+monte_carlo+automation) |
 | Videos | 5-10 | TBD |
 | API Docs | 100% | TBD |
 | Migration Guides | 2 | TBD |
@@ -275,3 +275,42 @@ Before marking M5 as complete:
 3. `boost_converter.py` - Boost topology
 4. `h_bridge.py` - Full H-bridge driver
 5. `flyback_converter.py` - Isolated flyback
+
+### Signal Processing (examples/signal_processing/)
+1. `notch_filter.py` - Twin-T notch filter
+2. `state_variable_filter.py` - SVF with LP/HP/BP outputs
+3. `allpass_filter.py` - Phase shifter
+4. `peak_detector.py` - Envelope detector
+5. `precision_rectifier.py` - Full-wave precision rectifier
+6. `integrator.py` - Miller integrator with reset
+7. `differentiator.py` - Practical differentiator
+8. `agc_circuit.py` - Automatic gain control
+9. `audio_compressor.py` - Audio dynamics processor
+10. `analog_mixer.py` - Gilbert cell mixer
+11. `pll_basics.py` - PLL building blocks
+
+### RF (examples/rf/)
+1. `lc_oscillator.py` - Colpitts, Hartley, Clapp oscillators
+2. `rf_amplifier.py` - Matched common-emitter RF amp
+3. `crystal_oscillator.py` - Pierce crystal oscillator
+4. `matching_networks.py` - L, Pi, T matching networks
+5. `lc_filter.py` - LC lowpass, highpass, bandpass filters
+
+### Monte Carlo (examples/monte_carlo/)
+1. `resistor_tolerance.py` - Basic voltage divider analysis
+2. `filter_variations.py` - RC/RLC filter tolerance effects
+3. `amplifier_gain.py` - Op-amp gain distribution
+4. `yield_analysis.py` - Manufacturing yield prediction
+5. `sensitivity.py` - Component sensitivity analysis
+6. `timing_circuit.py` - RC timing tolerance (555 timer)
+7. `worst_case_corners.py` - Corner analysis vs Monte Carlo
+8. `statistical_distributions.py` - Distribution comparison
+9. `voltage_reference.py` - Reference accuracy analysis
+10. `power_supply.py` - Adjustable regulator output analysis
+
+### Automation (examples/automation/)
+1. `batch_simulation.py` - Batch simulation runner
+2. `parameter_sweep.py` - Parameter sweep automation
+3. `design_optimizer.py` - Design optimization workflows
+4. `report_generator.py` - Report generation
+5. `circuit_database.py` - Database integration
