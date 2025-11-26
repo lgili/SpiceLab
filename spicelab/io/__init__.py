@@ -9,8 +9,15 @@ from .asc_converter import (
     ConversionResult,
     ConversionWarning,
     asc_to_circuit,
+    get_analyses_from_asc,
     load_circuit_from_asc,
+    parse_ac_args,
+    parse_analysis_command,
+    parse_dc_args,
+    parse_eng_number,
+    parse_tran_args,
     print_conversion_result,
+    run_asc_simulation,
 )
 from .asc_parser import (
     AnalysisCommand,
@@ -89,6 +96,15 @@ __all__ = [
     "print_conversion_result",
     "SYMBOL_MAP",
     "KNOWN_UNSUPPORTED",
+    # Analysis parsing
+    "parse_eng_number",
+    "parse_tran_args",
+    "parse_ac_args",
+    "parse_dc_args",
+    "parse_analysis_command",
+    "get_analyses_from_asc",
+    # High-level simulation
+    "run_asc_simulation",
     # Raw reader
     "Trace",
     "TraceSet",

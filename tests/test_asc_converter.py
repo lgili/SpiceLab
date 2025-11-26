@@ -303,12 +303,26 @@ class TestDirectives:
         netlist = result.circuit.build_netlist()
         assert ".param Rval=10k" in netlist
 
-    def test_analysis_commands_added(self):
+    def test_analysis_commands_extracted(self):
+        """Test that analysis commands are extracted but NOT added to netlist.
+
+        Analysis commands should be extracted via get_analyses_from_asc() and
+        passed to the simulator, not embedded in the netlist (which would cause
+        duplicate analysis errors in LTspice).
+        """
+        from spicelab.io.asc_converter import get_analyses_from_asc
+
         asc = parse_asc_string(WITH_PARAMETERS)
         result = asc_to_circuit(asc)
 
+        # Analysis commands should NOT be in the netlist
         netlist = result.circuit.build_netlist()
-        assert ".tran" in netlist
+        assert ".tran" not in netlist
+
+        # But they should be extractable from the ASC result
+        analyses = get_analyses_from_asc(asc)
+        assert len(analyses) == 1
+        assert analyses[0]["mode"] == "tran"
 
 
 # ---------------------------------------------------------------------------
@@ -389,6 +403,119 @@ SYMATTR Value 10k
 
         # Should still convert with auto-generated ref
         assert len(result.converted_components) == 1
+
+
+# ---------------------------------------------------------------------------
+# Tests for engineering notation and analysis parsing
+# ---------------------------------------------------------------------------
+
+
+class TestEngNumberParsing:
+    """Tests for parse_eng_number function."""
+
+    def test_plain_numbers(self):
+        from spicelab.io.asc_converter import parse_eng_number
+
+        assert parse_eng_number("100") == 100.0
+        assert parse_eng_number("1.5") == 1.5
+        assert parse_eng_number("-3.14") == -3.14
+        assert parse_eng_number("1e-3") == 1e-3
+        assert parse_eng_number("2.5e6") == 2.5e6
+
+    def test_engineering_suffixes(self):
+        from spicelab.io.asc_converter import parse_eng_number
+
+        assert parse_eng_number("5m") == pytest.approx(0.005)
+        assert parse_eng_number("10k") == pytest.approx(10000.0)
+        assert parse_eng_number("100n") == pytest.approx(100e-9)
+        assert parse_eng_number("1u") == pytest.approx(1e-6)
+        assert parse_eng_number("2.2p") == pytest.approx(2.2e-12)
+
+    def test_meg_suffix(self):
+        from spicelab.io.asc_converter import parse_eng_number
+
+        assert parse_eng_number("1meg") == 1e6
+        assert parse_eng_number("1.5MEG") == 1.5e6
+        assert parse_eng_number("2Meg") == 2e6
+
+    def test_whitespace(self):
+        from spicelab.io.asc_converter import parse_eng_number
+
+        assert parse_eng_number("  10k  ") == 10000.0
+
+
+class TestAnalysisParsing:
+    """Tests for analysis command parsing."""
+
+    def test_tran_parsing(self):
+        from spicelab.io.asc_converter import parse_tran_args
+
+        # Simple case
+        args = parse_tran_args("0 1m")
+        assert args["tstep"] == 0.0
+        assert args["tstop"] == 0.001
+
+        # With tstart
+        args = parse_tran_args("1u 10m 5m")
+        assert args["tstep"] == 1e-6
+        assert args["tstop"] == 0.01
+        assert args["tstart"] == 0.005
+
+    def test_ac_parsing(self):
+        from spicelab.io.asc_converter import parse_ac_args
+
+        args = parse_ac_args("dec 10 1 1meg")
+        assert args["variation"] == "dec"
+        assert args["npoints"] == 10
+        assert args["fstart"] == 1.0
+        assert args["fstop"] == 1e6
+
+    def test_dc_parsing(self):
+        from spicelab.io.asc_converter import parse_dc_args
+
+        args = parse_dc_args("V1 0 5 0.1")
+        assert args["src"] == "V1"
+        assert args["start"] == 0.0
+        assert args["stop"] == 5.0
+        assert args["step"] == 0.1
+
+    def test_parse_analysis_command(self):
+        from spicelab.io.asc_converter import parse_analysis_command
+
+        # Tran
+        result = parse_analysis_command("tran", "0 1m")
+        assert result["mode"] == "tran"
+        assert result["args"]["tstop"] == 0.001
+
+        # AC
+        result = parse_analysis_command("AC", "dec 20 1 100k")
+        assert result["mode"] == "ac"
+        assert result["args"]["npoints"] == 20
+
+        # OP
+        result = parse_analysis_command("op", "")
+        assert result["mode"] == "op"
+
+        # Unsupported
+        result = parse_analysis_command("noise", "params")
+        assert result is None
+
+    def test_get_analyses_from_asc(self):
+        from spicelab.io.asc_converter import get_analyses_from_asc
+
+        asc_content = """Version 4
+SHEET 1 880 680
+TEXT 50 400 Left 2 !.tran 0 5m
+TEXT 50 450 Left 2 !.ac dec 10 1 100k
+"""
+        asc = parse_asc_string(asc_content)
+        analyses = get_analyses_from_asc(asc)
+
+        assert len(analyses) == 2
+        assert analyses[0]["mode"] == "tran"
+        assert analyses[0]["args"]["tstop"] == 0.005
+        assert analyses[1]["mode"] == "ac"
+        assert analyses[1]["args"]["fstop"] == 100000.0
 
 
 if __name__ == "__main__":

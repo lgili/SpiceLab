@@ -11,6 +11,7 @@ The simulator is intentionally lightweight:
 * Delegates execution to the active adapter registered in
   :mod:`spicelab.spice.registry` (``ngspice_cli`` by default)
 * Normalises the resulting dataset via the unified readers delivered in M2
+* Automatically converts LTspice-specific syntax (e.g., IF()) to ngspice equivalents
 """
 
 from __future__ import annotations
@@ -20,9 +21,37 @@ from collections.abc import Sequence
 from ..core.types import AnalysisSpec, Probe, ResultHandle, ResultMeta, SweepSpec, circuit_hash
 from ..io.readers import read_ngspice_raw
 from ..spice.registry import get_active_adapter
+from ..utils.spice_compat import convert_param_directive
 from .base import EngineFeatures, Simulator
 from .directives import specs_to_directives
 from .result import DatasetResultHandle
+
+
+def _convert_netlist_for_ngspice(netlist: str) -> str:
+    """Convert a netlist to ngspice-compatible syntax.
+
+    This function converts LTspice-specific constructs to ngspice equivalents:
+    - IF(cond, true, false) -> (cond) ? (true) : (false)
+    - Removes spaces around operators in .param expressions (ngspice requirement)
+
+    Args:
+        netlist: The original netlist string
+
+    Returns:
+        Netlist with ngspice-compatible syntax
+    """
+    lines = netlist.splitlines()
+    converted = []
+
+    for line in lines:
+        stripped = line.strip().lower()
+        # Convert .param directives (handles IF() and space removal)
+        if stripped.startswith(".param"):
+            converted.append(convert_param_directive(line, "ngspice"))
+        else:
+            converted.append(line)
+
+    return "\n".join(converted)
 
 
 class NgSpiceProcSimulator(Simulator):
@@ -70,6 +99,10 @@ class NgSpiceProcSimulator(Simulator):
         if not hasattr(circuit, "build_netlist"):
             raise TypeError("circuit must provide build_netlist()")
         net = circuit.build_netlist()
+
+        # Convert LTspice-specific syntax to ngspice equivalents
+        net = _convert_netlist_for_ngspice(net)
+
         res = adapter.run_directives(net, directives)
         if res.returncode != 0:
             raise RuntimeError(f"ngspice failed, return code {res.returncode}")

@@ -667,3 +667,355 @@ def params_scatter_matrix(
     fig.update_xaxes(showgrid=True, gridcolor="rgba(150,150,150,0.15)")
     fig.update_yaxes(showgrid=True, gridcolor="rgba(150,150,150,0.15)")
     return VizFigure(fig, metadata={"kind": "params_matrix", "columns": list(df.columns)})
+
+
+def wca_corners_bar(
+    corner_names: Sequence[str],
+    values: Sequence[float],
+    *,
+    nominal: float | None = None,
+    title: str | None = None,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+    template: str | None = "plotly_white",
+    highlight_extremes: bool = True,
+) -> VizFigure:
+    """Plot WCA corner results as a horizontal bar chart.
+
+    Args:
+        corner_names: List of corner names (e.g., ['R1+, R2-', 'R1-, R2+']).
+        values: Corresponding metric values for each corner.
+        nominal: Optional nominal value to show as reference line.
+        title: Plot title.
+        xlabel: X-axis label (metric name).
+        ylabel: Y-axis label.
+        template: Plotly template.
+        highlight_extremes: If True, highlight min/max bars in red/green.
+
+    Returns:
+        VizFigure with the bar chart.
+    """
+    go, _, _ = _ensure_plotly()
+
+    values_arr = np.asarray(list(values), dtype=float)
+    min_val = float(values_arr.min())
+    max_val = float(values_arr.max())
+
+    # Assign colors
+    colors: list[str] | str
+    if highlight_extremes:
+        colors = []
+        for v in values_arr:
+            if v == min_val:
+                colors.append("#E74C3C")  # Red for min
+            elif v == max_val:
+                colors.append("#27AE60")  # Green for max
+            else:
+                colors.append("#3498DB")  # Blue for others
+    else:
+        colors = "#3498DB"
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Bar(
+            y=list(corner_names),
+            x=values_arr,
+            orientation="h",
+            marker=dict(color=colors, opacity=0.85),
+            text=[f"{v:.4f}" for v in values_arr],
+            textposition="auto",
+        )
+    )
+
+    if nominal is not None:
+        fig.add_vline(
+            x=nominal,
+            line=dict(color="#F39C12", width=2, dash="dash"),
+            annotation_text=f"Nominal: {nominal:.4f}",
+            annotation_position="top",
+        )
+
+    fig.update_layout(
+        title=title or "WCA Corner Analysis",
+        xaxis_title=xlabel or "Value",
+        yaxis_title=ylabel or "Corner",
+        template=template,
+        showlegend=False,
+    )
+    fig.update_xaxes(showgrid=True, gridcolor="rgba(150,150,150,0.2)")
+    fig.update_yaxes(showgrid=True, gridcolor="rgba(150,150,150,0.2)")
+
+    return VizFigure(
+        fig,
+        metadata={
+            "kind": "wca_corners",
+            "min": min_val,
+            "max": max_val,
+            "nominal": nominal,
+            "n_corners": len(corner_names),
+        },
+    )
+
+
+def monte_carlo_histogram_with_specs(
+    metrics: Sequence[float],
+    *,
+    lsl: float | None = None,
+    usl: float | None = None,
+    nominal: float | None = None,
+    title: str | None = None,
+    bins: int = 50,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+    template: str | None = "plotly_white",
+    show_normal_fit: bool = True,
+    show_stats: bool = True,
+) -> VizFigure:
+    """Plot Monte Carlo histogram with specification limits and statistics.
+
+    Args:
+        metrics: Sequence of metric values from Monte Carlo runs.
+        lsl: Lower specification limit.
+        usl: Upper specification limit.
+        nominal: Nominal/target value.
+        title: Plot title.
+        bins: Number of histogram bins.
+        xlabel: X-axis label.
+        ylabel: Y-axis label.
+        template: Plotly template.
+        show_normal_fit: Show normal distribution fit curve.
+        show_stats: Show statistics annotation (mean, std, Cpk, yield).
+
+    Returns:
+        VizFigure with the histogram.
+    """
+    go, _, _ = _ensure_plotly()
+
+    values = np.asarray(list(metrics), dtype=float)
+    mean = float(values.mean())
+    std = float(values.std(ddof=1)) if len(values) > 1 else 0.0
+    n = len(values)
+
+    fig = go.Figure()
+
+    # Histogram
+    fig.add_trace(
+        go.Histogram(
+            x=values,
+            nbinsx=bins,
+            marker=dict(color="#3498DB", line=dict(color="white", width=1)),
+            opacity=0.85,
+            name="Distribution",
+        )
+    )
+
+    # Normal fit
+    if show_normal_fit and std > 0 and n >= 2:
+        edges = np.histogram_bin_edges(values, bins=bins)
+        xs = np.linspace(edges[0], edges[-1], 256)
+        bin_width = (edges[-1] - edges[0]) / max(bins, 1)
+        if bin_width > 0.0:
+            coeff = n * bin_width
+            ys = (1.0 / (std * np.sqrt(2.0 * np.pi))) * np.exp(-0.5 * ((xs - mean) / std) ** 2)
+            fig.add_trace(
+                go.Scatter(
+                    x=xs,
+                    y=ys * coeff,
+                    mode="lines",
+                    name="Normal fit",
+                    line=dict(color="#E67E22", width=3),
+                )
+            )
+
+    # Mean line
+    fig.add_vline(
+        x=mean,
+        line=dict(color="#E74C3C", width=2, dash="dash"),
+        annotation_text=f"μ={mean:.4f}",
+        annotation_position="top",
+    )
+
+    # 3-sigma bounds
+    if std > 0:
+        fig.add_vline(
+            x=mean - 3 * std,
+            line=dict(color="#9B59B6", width=1, dash="dot"),
+        )
+        fig.add_vline(
+            x=mean + 3 * std,
+            line=dict(color="#9B59B6", width=1, dash="dot"),
+        )
+
+    # Specification limits
+    if lsl is not None:
+        fig.add_vline(
+            x=lsl,
+            line=dict(color="#27AE60", width=2),
+            annotation_text=f"LSL={lsl}",
+            annotation_position="bottom left",
+        )
+    if usl is not None:
+        fig.add_vline(
+            x=usl,
+            line=dict(color="#27AE60", width=2),
+            annotation_text=f"USL={usl}",
+            annotation_position="bottom right",
+        )
+
+    # Nominal
+    if nominal is not None:
+        fig.add_vline(
+            x=nominal,
+            line=dict(color="#F39C12", width=2, dash="dashdot"),
+            annotation_text=f"Nom={nominal}",
+            annotation_position="top right",
+        )
+
+    # Calculate Cpk and yield if spec limits provided
+    cpk = None
+    yield_pct = None
+    failures = 0
+    if lsl is not None and usl is not None and std > 0:
+        cpu = (usl - mean) / (3 * std)
+        cpl = (mean - lsl) / (3 * std)
+        cpk = min(cpu, cpl)
+
+        # Count failures
+        failures = int(np.sum((values < lsl) | (values > usl)))
+        yield_pct = (n - failures) / n * 100
+
+    # Stats annotation
+    if show_stats:
+        stats_text = f"n={n}<br>μ={mean:.4f}<br>σ={std:.4f}"
+        if cpk is not None:
+            stats_text += f"<br>Cpk={cpk:.2f}"
+        if yield_pct is not None:
+            stats_text += f"<br>Yield={yield_pct:.1f}%"
+
+        fig.add_annotation(
+            x=0.98,
+            y=0.98,
+            xref="paper",
+            yref="paper",
+            text=stats_text,
+            showarrow=False,
+            font=dict(size=11),
+            align="right",
+            bgcolor="rgba(255,255,255,0.8)",
+            bordercolor="gray",
+            borderwidth=1,
+        )
+
+    fig.update_layout(
+        title=title or "Monte Carlo Distribution",
+        xaxis_title=xlabel or "Value",
+        yaxis_title=ylabel or "Count",
+        template=template,
+        showlegend=True,
+        legend=dict(orientation="h", yanchor="bottom", y=1.02),
+    )
+    fig.update_xaxes(showgrid=True, gridcolor="rgba(150,150,150,0.2)")
+    fig.update_yaxes(showgrid=True, gridcolor="rgba(150,150,150,0.2)")
+
+    return VizFigure(
+        fig,
+        metadata={
+            "kind": "mc_hist_specs",
+            "n": n,
+            "mean": mean,
+            "std": std,
+            "cpk": cpk,
+            "yield_pct": yield_pct,
+            "failures": failures,
+            "lsl": lsl,
+            "usl": usl,
+        },
+    )
+
+
+def monte_carlo_cumulative(
+    metrics: Sequence[float],
+    *,
+    lsl: float | None = None,
+    usl: float | None = None,
+    title: str | None = None,
+    xlabel: str | None = None,
+    template: str | None = "plotly_white",
+) -> VizFigure:
+    """Plot cumulative distribution function (CDF) for Monte Carlo results.
+
+    Args:
+        metrics: Sequence of metric values from Monte Carlo runs.
+        lsl: Lower specification limit.
+        usl: Upper specification limit.
+        title: Plot title.
+        xlabel: X-axis label.
+        template: Plotly template.
+
+    Returns:
+        VizFigure with the CDF plot.
+    """
+    go, _, _ = _ensure_plotly()
+
+    values = np.asarray(list(metrics), dtype=float)
+    sorted_vals = np.sort(values)
+    cumulative = np.arange(1, len(sorted_vals) + 1) / len(sorted_vals) * 100
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=sorted_vals,
+            y=cumulative,
+            mode="lines",
+            name="CDF",
+            line=dict(color="#3498DB", width=2),
+        )
+    )
+
+    # 50% line
+    fig.add_hline(y=50, line=dict(color="gray", width=1, dash="dash"))
+
+    # Median annotation
+    median = float(np.median(values))
+    fig.add_vline(
+        x=median,
+        line=dict(color="#E74C3C", width=1, dash="dash"),
+        annotation_text=f"Median={median:.4f}",
+        annotation_position="top",
+    )
+
+    # Spec limits
+    if lsl is not None:
+        fig.add_vline(x=lsl, line=dict(color="#27AE60", width=2))
+        # Find percentile at LSL
+        pct_at_lsl = float(np.sum(values < lsl) / len(values) * 100)
+        fig.add_annotation(
+            x=lsl,
+            y=pct_at_lsl,
+            text=f"{pct_at_lsl:.1f}% below LSL",
+            showarrow=True,
+            arrowhead=2,
+        )
+
+    if usl is not None:
+        fig.add_vline(x=usl, line=dict(color="#27AE60", width=2))
+        # Find percentile at USL
+        pct_at_usl = float(np.sum(values <= usl) / len(values) * 100)
+        fig.add_annotation(
+            x=usl,
+            y=pct_at_usl,
+            text=f"{100 - pct_at_usl:.1f}% above USL",
+            showarrow=True,
+            arrowhead=2,
+        )
+
+    fig.update_layout(
+        title=title or "Cumulative Distribution",
+        xaxis_title=xlabel or "Value",
+        yaxis_title="Cumulative %",
+        template=template,
+    )
+    fig.update_xaxes(showgrid=True, gridcolor="rgba(150,150,150,0.2)")
+    fig.update_yaxes(showgrid=True, gridcolor="rgba(150,150,150,0.2)")
+
+    return VizFigure(fig, metadata={"kind": "mc_cdf", "median": median})

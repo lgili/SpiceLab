@@ -8,7 +8,9 @@ from .notebook import connectivity_widget, dataset_plot_widget
 from .plotly import (
     VizFigure,
     bode_view,
+    monte_carlo_cumulative,
     monte_carlo_histogram,
+    monte_carlo_histogram_with_specs,
     monte_carlo_kde,
     monte_carlo_param_scatter,
     nyquist_view,
@@ -16,6 +18,7 @@ from .plotly import (
     step_response_view,
     sweep_curve,
     time_series_view,
+    wca_corners_bar,
 )
 from .plots import (
     plot_bode,
@@ -36,10 +39,13 @@ __all__ = [
     "step_response_view",
     "sweep_curve",
     "monte_carlo_histogram",
+    "monte_carlo_histogram_with_specs",
+    "monte_carlo_cumulative",
     "monte_carlo_param_scatter",
     "monte_carlo_kde",
     "params_scatter_matrix",
     "nyquist_view",
+    "wca_corners_bar",
     "plot_traces",
     "plot_bode",
     "plot_step_response",

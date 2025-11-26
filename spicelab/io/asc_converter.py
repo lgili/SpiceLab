@@ -9,22 +9,21 @@ Features:
 - Handles wiring using geometric analysis (wire intersections)
 - Emits warnings for unsupported symbols/components
 - Adds SPICE directives (parameters, analysis commands) to the circuit
+- Parses analysis commands (.tran, .ac, .dc) into AnalysisSpec objects
+- Provides run_asc_simulation() for easy simulation with LTspice (default)
 
 Example
 -------
->>> from spicelab.io import parse_asc_file
->>> from spicelab.io.asc_converter import asc_to_circuit
->>> result = parse_asc_file("circuit.asc")
->>> circuit, warnings = asc_to_circuit(result)
->>> if warnings:
-...     for w in warnings:
-...         print(f"WARNING: {w}")
->>> print(circuit.build_netlist())
+>>> from spicelab.io import load_circuit_from_asc, run_asc_simulation
+>>> result = load_circuit_from_asc("circuit.asc")
+>>> sim_result = run_asc_simulation("circuit.asc")
+>>> print(sim_result.dataset())
 """
 
 from __future__ import annotations
 
 import logging
+import re
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -291,30 +290,46 @@ def _create_component(
 # Standard pin offsets for different symbols (in LTspice grid units)
 # These are relative to the symbol position, before rotation
 # LTspice uses a 16-unit grid, typical component spacing is 80-112 units
+# Offsets verified against actual LTspice ASC files (PT1000_circuit_1.asc)
 PIN_OFFSETS: dict[str, list[tuple[int, int]]] = {
     # 2-terminal passives (vertical orientation R0)
-    "res": [(0, 0), (0, 80)],
-    "cap": [(0, 0), (0, 64)],
-    "ind": [(0, 0), (0, 80)],
-    "voltage": [(0, 0), (0, 112)],
-    "current": [(0, 0), (0, 112)],
-    "diode": [(0, 0), (0, 64)],
-    "dio": [(0, 0), (0, 64)],
+    # Pin 0 = top terminal, Pin 1 = bottom terminal
+    "res": [
+        (16, 16),
+        (16, 96),
+    ],  # Verified: R1 at (-1728,-176) connects to (-1712,-160),(-1712,-80)
+    "res2": [(16, 16), (16, 96)],
+    "cap": [(16, 16), (16, 80)],  # Capacitor slightly shorter than resistor
+    "cap2": [(16, 16), (16, 80)],
+    "ind": [(16, 16), (16, 96)],  # Same as resistor
+    "ind2": [(16, 16), (16, 96)],
+    "voltage": [
+        (0, 16),
+        (0, 96),
+    ],  # Verified: V1 at (-1248,-832) connects to (-1248,-816),(-1248,-736)
+    "current": [(0, 16), (0, 96)],  # Same as voltage
+    "diode": [(16, 16), (16, 80)],  # Same as capacitor
+    "dio": [(16, 16), (16, 80)],
     # Op-amp (3 pins: inp, inn, out)
-    # Standard LTspice UniversalOpAmp pinout
-    "opamp": [(-32, -32), (-32, 32), (32, 0)],  # inp (+), inn (-), out
-    "opamp2": [(-32, -32), (-32, 32), (32, 0)],
-    "universalopamp": [(-32, -32), (-32, 32), (32, 0)],
-    "universalopamp2": [(-32, -32), (-32, 32), (32, 0)],
+    # LTspice UniversalOpAmp pinout - verified from actual ASC files
+    # Pins are relative to symbol center, rotation R0
+    # IMPORTANT: In LTspice screen coords, Y increases downward, so:
+    #   - Pin at (-32, -16) is ABOVE center = inverting input (inn, -)
+    #   - Pin at (-32, 16) is BELOW center = non-inverting input (inp, +)
+    #   - Pin at (32, 0) is RIGHT = output
+    "opamp": [(-32, 16), (-32, -16), (32, 0)],  # inp (+), inn (-), out
+    "opamp2": [(-32, 16), (-32, -16), (32, 0)],
+    "universalopamp": [(-32, 16), (-32, -16), (32, 0)],  # Verified from PT1000_circuit_1.asc
+    "universalopamp2": [(-32, 16), (-32, -16), (32, 0)],
     # 4-terminal controlled sources
-    "e": [(0, 0), (0, 80), (16, 16), (16, 64)],  # p, n, cp, cn
-    "g": [(0, 0), (0, 80), (16, 16), (16, 64)],
-    "f": [(0, 0), (0, 80)],  # 2 terminal + ctrl ref
-    "h": [(0, 0), (0, 80)],
+    "e": [(16, 16), (16, 96), (32, 32), (32, 80)],  # p, n, cp, cn
+    "g": [(16, 16), (16, 96), (32, 32), (32, 80)],
+    "f": [(16, 16), (16, 96)],  # 2 terminal + ctrl ref
+    "h": [(16, 16), (16, 96)],
 }
 
-# Default 2-terminal pin offsets
-DEFAULT_2PIN = [(0, 0), (0, 80)]
+# Default 2-terminal pin offsets (same as resistor)
+DEFAULT_2PIN = [(16, 16), (16, 96)]
 
 
 def _rotate_point(x: int, y: int, rotation: str) -> tuple[int, int]:
@@ -372,8 +387,11 @@ class _UnionFind:
     def add(self, point: tuple[int, int], label: str | None = None) -> None:
         if point not in self._parent:
             self._parent[point] = point
-        if label and point not in self._labels:
-            self._labels[point] = label
+        if label:
+            # Set label on the ROOT of the set, not just the point
+            root = self.find(point)
+            if root not in self._labels:
+                self._labels[root] = label
 
     def find(self, point: tuple[int, int]) -> tuple[int, int]:
         if point not in self._parent:
@@ -387,15 +405,18 @@ class _UnionFind:
         ra, rb = self.find(a), self.find(b)
         if ra == rb:
             return
-        # Prefer labeled root
-        if ra in self._labels:
+        # Prefer labeled root - if either has a label, make it the root
+        if ra in self._labels and rb not in self._labels:
+            self._parent[rb] = ra
+        elif rb in self._labels and ra not in self._labels:
+            self._parent[ra] = rb
+        elif ra in self._labels and rb in self._labels:
+            # Both have labels - prefer ra, but don't lose rb's label
+            # (This shouldn't happen in normal circuits)
             self._parent[rb] = ra
         else:
+            # Neither has a label - just pick one
             self._parent[ra] = rb
-            if rb in self._labels and ra not in self._labels:
-                pass  # rb stays root with label
-            elif ra in self._labels:
-                self._labels[rb] = self._labels[ra]
 
     def get_label(self, point: tuple[int, int]) -> str | None:
         root = self.find(point)
@@ -598,10 +619,12 @@ def asc_to_circuit(
     for name, param in asc_result.parameters.items():
         circuit.add_directive(f".param {name}={param.value}")
 
-    for cmd in asc_result.analysis_commands:
-        circuit.add_directive(f".{cmd.analysis_type} {cmd.parameters}")
+    # Note: Analysis commands (.tran, .ac, .dc) are NOT added here because they
+    # will be added by the simulation engine. Adding them here would cause
+    # duplicate analysis commands which LTspice rejects.
+    # Use get_analyses_from_asc() to extract analysis commands for simulation.
 
-    # Add measurements as comments (they need to be handled separately in simulation)
+    # Add measurements (these are extracted by the simulator)
     if asc_result.measurements:
         circuit.add_directive("* Measurements from ASC file:")
         for meas in asc_result.measurements:
@@ -676,6 +699,261 @@ def print_conversion_result(result: ConversionResult) -> None:
         print()
 
 
+# ---------------------------------------------------------------------------
+# Engineering Notation Parser
+# ---------------------------------------------------------------------------
+
+# Engineering notation suffixes
+_ENG_SUFFIXES = {
+    "f": 1e-15,
+    "p": 1e-12,
+    "n": 1e-9,
+    "u": 1e-6,
+    "m": 1e-3,
+    "k": 1e3,
+    "K": 1e3,
+    "meg": 1e6,
+    "MEG": 1e6,
+    "M": 1e6,
+    "g": 1e9,
+    "G": 1e9,
+    "t": 1e12,
+    "T": 1e12,
+}
+
+
+def parse_eng_number(value: str) -> float:
+    """Parse a number with optional engineering suffix.
+
+    Args:
+        value: String like "5m", "10k", "1.5meg", "100n", "1e-3", etc.
+
+    Returns:
+        The numeric value as a float
+
+    Example:
+        >>> parse_eng_number("5m")
+        0.005
+        >>> parse_eng_number("10k")
+        10000.0
+        >>> parse_eng_number("1.5meg")
+        1500000.0
+    """
+    value = value.strip()
+
+    # Try direct float conversion first
+    try:
+        return float(value)
+    except ValueError:
+        pass
+
+    # Try to extract number and suffix
+    match = re.match(r"^([+-]?\d*\.?\d+(?:[eE][+-]?\d+)?)\s*(\w+)?$", value)
+    if not match:
+        raise ValueError(f"Cannot parse number: {value}")
+
+    num_str, suffix = match.groups()
+    num = float(num_str)
+
+    if suffix:
+        suffix_lower = suffix.lower()
+        # Check for MEG first (case insensitive)
+        if suffix_lower == "meg":
+            return num * 1e6
+        # Then check single character suffixes
+        if suffix[0] in _ENG_SUFFIXES:
+            return num * _ENG_SUFFIXES[suffix[0]]
+
+    return num
+
+
+# ---------------------------------------------------------------------------
+# Analysis Command Parsing
+# ---------------------------------------------------------------------------
+
+
+def parse_tran_args(parameters: str) -> dict[str, float]:
+    """Parse .tran parameters into AnalysisSpec args.
+
+    LTspice .tran syntax: .tran <tstep> <tstop> [<tstart>] [<tmaxstep>] [<options>]
+
+    Args:
+        parameters: The parameter string after ".tran"
+
+    Returns:
+        Dictionary with tstep, tstop, and optionally tstart, tmax
+    """
+    parts = parameters.split()
+    result: dict[str, float] = {}
+
+    if len(parts) >= 1:
+        result["tstep"] = parse_eng_number(parts[0])
+    if len(parts) >= 2:
+        result["tstop"] = parse_eng_number(parts[1])
+    if len(parts) >= 3:
+        result["tstart"] = parse_eng_number(parts[2])
+    if len(parts) >= 4:
+        result["tmax"] = parse_eng_number(parts[3])
+
+    return result
+
+
+def parse_ac_args(parameters: str) -> dict[str, Any]:
+    """Parse .ac parameters into AnalysisSpec args.
+
+    LTspice .ac syntax: .ac <type> <npoints> <fstart> <fstop>
+    Types: DEC (decade), OCT (octave), LIN (linear)
+
+    Args:
+        parameters: The parameter string after ".ac"
+
+    Returns:
+        Dictionary with variation, npoints, fstart, fstop
+    """
+    parts = parameters.split()
+    result: dict[str, Any] = {}
+
+    if len(parts) >= 1:
+        result["variation"] = parts[0].lower()
+    if len(parts) >= 2:
+        result["npoints"] = int(parse_eng_number(parts[1]))
+    if len(parts) >= 3:
+        result["fstart"] = parse_eng_number(parts[2])
+    if len(parts) >= 4:
+        result["fstop"] = parse_eng_number(parts[3])
+
+    return result
+
+
+def parse_dc_args(parameters: str) -> dict[str, Any]:
+    """Parse .dc parameters into AnalysisSpec args.
+
+    LTspice .dc syntax: .dc <source> <start> <stop> <step>
+
+    Args:
+        parameters: The parameter string after ".dc"
+
+    Returns:
+        Dictionary with src, start, stop, step
+    """
+    parts = parameters.split()
+    result: dict[str, Any] = {}
+
+    if len(parts) >= 1:
+        result["src"] = parts[0]
+    if len(parts) >= 2:
+        result["start"] = parse_eng_number(parts[1])
+    if len(parts) >= 3:
+        result["stop"] = parse_eng_number(parts[2])
+    if len(parts) >= 4:
+        result["step"] = parse_eng_number(parts[3])
+
+    return result
+
+
+def parse_analysis_command(analysis_type: str, parameters: str) -> dict[str, Any] | None:
+    """Parse an analysis command into mode and args.
+
+    Args:
+        analysis_type: The type of analysis (tran, ac, dc, op)
+        parameters: The raw parameter string
+
+    Returns:
+        Dictionary with 'mode' and 'args' keys, or None if unsupported
+    """
+    analysis_type = analysis_type.lower()
+
+    if analysis_type == "tran":
+        return {"mode": "tran", "args": parse_tran_args(parameters)}
+    elif analysis_type == "ac":
+        return {"mode": "ac", "args": parse_ac_args(parameters)}
+    elif analysis_type == "dc":
+        return {"mode": "dc", "args": parse_dc_args(parameters)}
+    elif analysis_type == "op":
+        return {"mode": "op", "args": {}}
+    else:
+        return None
+
+
+def get_analyses_from_asc(asc_result: AscParseResult) -> list[dict[str, Any]]:
+    """Extract and parse all analysis commands from ASC parse result.
+
+    Args:
+        asc_result: The parsed ASC file result
+
+    Returns:
+        List of analysis specs as dictionaries with 'mode' and 'args'
+    """
+    analyses = []
+    for cmd in asc_result.analysis_commands:
+        parsed = parse_analysis_command(cmd.analysis_type, cmd.parameters)
+        if parsed:
+            analyses.append(parsed)
+    return analyses
+
+
+# ---------------------------------------------------------------------------
+# High-Level Simulation Function
+# ---------------------------------------------------------------------------
+
+
+def run_asc_simulation(
+    path: str,
+    *,
+    engine: str = "ltspice",
+) -> Any:
+    """Load an ASC file and run simulation using LTspice (default).
+
+    This is the recommended way to simulate LTspice .asc files.
+    It automatically:
+    - Parses the ASC file
+    - Converts to SpiceLab Circuit
+    - Extracts analysis commands
+    - Runs the simulation with LTspice
+
+    Args:
+        path: Path to the .asc file
+        engine: Simulation engine ("ltspice" or "ngspice"). Default is "ltspice"
+                since ASC files are LTspice native format.
+
+    Returns:
+        ResultHandle with simulation results
+
+    Example:
+        >>> result = run_asc_simulation("circuit.asc")
+        >>> ds = result.dataset()
+        >>> print(ds["V(vout)"].values)
+    """
+    from ..core.types import AnalysisSpec
+    from ..engines import run_simulation
+    from .asc_parser import parse_asc_file
+
+    # Parse and convert
+    asc_result = parse_asc_file(path)
+    conv_result = asc_to_circuit(asc_result)
+
+    if not conv_result.success:
+        log.warning(
+            "Some components were skipped during conversion: %s",
+            conv_result.skipped_components,
+        )
+
+    # Get analyses from ASC file
+    analyses_data = get_analyses_from_asc(asc_result)
+    if not analyses_data:
+        raise ValueError("No supported analysis commands found in ASC file")
+
+    # Convert to AnalysisSpec objects
+    analyses = [AnalysisSpec(mode=a["mode"], args=a["args"]) for a in analyses_data]
+
+    # Run simulation with specified engine (default: ltspice)
+    return run_simulation(
+        conv_result.circuit,
+        analyses,
+        engine=engine,
+    )
+
+
 __all__ = [
     "ConversionWarning",
     "ConversionResult",
@@ -684,4 +962,13 @@ __all__ = [
     "print_conversion_result",
     "SYMBOL_MAP",
     "KNOWN_UNSUPPORTED",
+    # Analysis parsing
+    "parse_eng_number",
+    "parse_tran_args",
+    "parse_ac_args",
+    "parse_dc_args",
+    "parse_analysis_command",
+    "get_analyses_from_asc",
+    # High-level simulation
+    "run_asc_simulation",
 ]

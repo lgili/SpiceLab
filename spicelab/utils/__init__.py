@@ -45,6 +45,12 @@ from .e_series import (
     tolerance_for_series,
 )
 from .log import get_logger
+from .spice_compat import (
+    convert_directives_for_engine,
+    convert_expression_for_engine,
+    convert_if_to_ternary,
+    convert_param_directive,
+)
 
 __all__ = [
     # Logging
@@ -91,4 +97,9 @@ __all__ = [
     "linear_to_db",
     "db_power_to_linear",
     "linear_to_db_power",
+    # SPICE compatibility
+    "convert_if_to_ternary",
+    "convert_expression_for_engine",
+    "convert_param_directive",
+    "convert_directives_for_engine",
 ]
