@@ -51,11 +51,11 @@
 - [x] 7.5 Generate API cheat sheet (PDF/HTML quick reference)
 
 ## 8. Type Hints and IDE Support
-- [ ] 8.1 Add comprehensive type hints to all public APIs
-- [ ] 8.2 Create .pyi stub files for better IDE completion
-- [ ] 8.3 Add type validation decorators
+- [x] 8.1 Add comprehensive type hints to all public APIs
+- [x] 8.2 Create .pyi stub files for better IDE completion
+- [x] 8.3 Add type validation decorators
 - [ ] 8.4 Test type checking with mypy in strict mode
-- [ ] 8.5 Add docstring examples that are type-checkable
+- [x] 8.5 Add docstring examples that are type-checkable
 
 ## 9. Common Patterns Library
 - [x] 9.1 Create `patterns/` with reusable circuit patterns
@@ -79,7 +79,7 @@
 - [ ] 11.5 Test type hints with mypy and pyright
 
 ## 12. Documentation
-- [ ] 12.1 Write `docs/usability-guide.md` with best practices
-- [ ] 12.2 Create "Common Pitfalls" guide
-- [ ] 12.3 Document all templates and presets
+- [x] 12.1 Write `docs/usability-guide.md` with best practices
+- [x] 12.2 Create "Common Pitfalls" guide
+- [x] 12.3 Document all templates and presets
 - [ ] 12.4 Create video tutorials for key workflows
