@@ -104,6 +104,47 @@ to register any other component manually.
 | `OpAmpIdeal` | `OA` | Three-port ideal op-amp (VCVS). |
 | `AnalogMux8` | – | 8:1 analog multiplexer with optional enable pins. |
 
+### Semiconductors
+
+| Component | Helper | Notes |
+|-----------|--------|-------|
+| `Bjt(ref, model)` | `Q(model)` | BJT transistor (NPN/PNP). Ports: `c`, `b`, `e`. From `spicelab.library.transistors`. |
+| `Mosfet(ref, model, params)` | `M(model)` | MOSFET (NMOS/PMOS). Ports: `d`, `g`, `s`, `b`. From `spicelab.library.transistors`. |
+| `JFET(ref, model)` | `JF(model)` | JFET (NJF/PJF). Ports: `d`, `g`, `s`. |
+| `ZenerDiode(ref, model)` | `DZ(model)` | Zener diode. Ports: `a`, `c`. |
+
+### Magnetic Components
+
+| Component | Helper | Notes |
+|-----------|--------|-------|
+| `MutualInductance(ref, l1, l2, coupling)` | `MK(l1, l2, k)` | Couples two inductors. K element. |
+| `Transformer(ref, turns_ratio, primary_l)` | `XFMR(n)` | Ideal transformer. Ports: `p1`, `p2`, `s1`, `s2`. |
+
+### Transmission Lines
+
+| Component | Helper | Notes |
+|-----------|--------|-------|
+| `TLine(ref, z0, td)` | `TLINE(z0, td)` | Lossless transmission line (T element). |
+| `TLineLossy(ref, z0, td, r, g)` | `OLINE(...)` | Lossy transmission line (O element). |
+| `TLineRC(ref, l, n, r, c)` | `ULINE(...)` | Uniform RC line (U element). |
+
+### Behavioral Sources
+
+| Component | Helper | Notes |
+|-----------|--------|-------|
+| `BVoltage(ref, expr)` | `BV(expr)` | Arbitrary voltage expression (B element). |
+| `BCurrent(ref, expr)` | `BI(expr)` | Arbitrary current expression (B element). |
+| `VCVSExpr` | `EExpr(expr)` | Alias for BVoltage (E-source with expression). |
+| `VCCSExpr` | `GExpr(expr)` | Alias for BCurrent (G-source with expression). |
+
+### Subcircuits & Probes
+
+| Component | Helper | Notes |
+|-----------|--------|-------|
+| `SubcktInstance(ref, subckt_name, port_names, params)` | `XSUB(...)` | Subcircuit instance (X element). |
+| `VoltageProbe(ref, label)` | `VPROBE(label)` | Named voltage measurement point. |
+| `CurrentProbe(ref)` | `IPROBE()` | Zero-volt source for current measurement. |
+
 All helpers live in `spicelab.core.components`. Import only what you need, or
 use the shorthand constructors (`R`, `C`, `V`, etc.) for quick sketches.
 

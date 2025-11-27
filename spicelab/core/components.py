@@ -211,7 +211,29 @@ class Vpulse(Component):
 # --------------------------------------------------------------------------------------
 # Helpers de criação com auto-ref (convenientes para notebooks/tests)
 # --------------------------------------------------------------------------------------
-_counter: dict[str, int] = {"R": 0, "C": 0, "V": 0, "L": 0, "I": 0}
+_counter: dict[str, int] = {
+    "R": 0,
+    "C": 0,
+    "V": 0,
+    "L": 0,
+    "I": 0,
+    "D": 0,
+    "E": 0,
+    "F": 0,
+    "G": 0,
+    "H": 0,
+    "J": 0,
+    "K": 0,
+    "M": 0,
+    "O": 0,
+    "Q": 0,
+    "S": 0,
+    "T": 0,
+    "U": 0,
+    "W": 0,
+    "X": 0,
+    "B": 0,
+}
 
 
 def _next(prefix: str) -> str:
@@ -874,3 +896,590 @@ class AnalogMux8(Component):
 def MUX8(r_series: str | float = 100, sel: int | None = None) -> AnalogMux8:
     """Convenience factory: create AnalogMux8 with auto-ref."""
     return AnalogMux8(ref=_next("M"), r_series=r_series, sel=sel)
+
+
+# --------------------------------------------------------------------------------------
+# JFET Transistor
+# --------------------------------------------------------------------------------------
+
+
+class JFET(Component):
+    """Junction Field-Effect Transistor (N-channel or P-channel).
+
+    SPICE card: J<ref> <drain> <gate> <source> <model>
+
+    Args:
+        ref: Reference designator (e.g., "1" for J1)
+        model: SPICE model name (e.g., "2N5457", "J2N5459")
+
+    Ports:
+        d: drain
+        g: gate
+        s: source
+    """
+
+    def __init__(self, ref: str, model: str) -> None:
+        super().__init__(ref=ref, value=model)
+        self._ports = (
+            Port(self, "d", PortRole.POSITIVE),
+            Port(self, "g", PortRole.NODE),
+            Port(self, "s", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        d, g, s = self.ports
+        return f"J{self.ref} {net_of(d)} {net_of(g)} {net_of(s)} {self.value}"
+
+
+def JF(model: str) -> JFET:
+    """Helper factory for JFET with auto-ref."""
+    return JFET(ref=_next("J"), model=model)
+
+
+# --------------------------------------------------------------------------------------
+# Zener Diode
+# --------------------------------------------------------------------------------------
+
+
+class ZenerDiode(Component):
+    """Zener diode for voltage reference/regulation.
+
+    SPICE card: D<ref> <anode> <cathode> <model>
+
+    Same as regular Diode but semantically distinct for clarity.
+
+    Args:
+        ref: Reference designator
+        model: Zener model name (e.g., "1N4733" for 5.1V Zener)
+
+    Ports:
+        a: anode
+        c: cathode (connected to reference voltage in reverse bias)
+    """
+
+    def __init__(self, ref: str, model: str) -> None:
+        super().__init__(ref=ref, value=model)
+        self._ports = (
+            Port(self, "a", PortRole.POSITIVE),
+            Port(self, "c", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        a, c = self.ports
+        return f"D{self.ref} {net_of(a)} {net_of(c)} {self.value}"
+
+
+def DZ(model: str) -> ZenerDiode:
+    """Helper factory for ZenerDiode with auto-ref."""
+    return ZenerDiode(ref=_next("D"), model=model)
+
+
+# --------------------------------------------------------------------------------------
+# Mutual Inductance (Coupled Inductors)
+# --------------------------------------------------------------------------------------
+
+
+class MutualInductance(Component):
+    """Mutual inductance coupling between two inductors.
+
+    SPICE card: K<ref> <L1_ref> <L2_ref> <coupling>
+
+    This component does not have physical ports - it references existing inductors.
+
+    Args:
+        ref: Reference designator (e.g., "1" for K1)
+        l1: Reference to first inductor (e.g., "L1")
+        l2: Reference to second inductor (e.g., "L2")
+        coupling: Coupling coefficient (0 to 1, typically 0.95-0.999)
+
+    Example:
+        # Create two inductors and couple them
+        l1 = Inductor("1", "10m")
+        l2 = Inductor("2", "10m")
+        k1 = MutualInductance("1", l1="L1", l2="L2", coupling=0.99)
+    """
+
+    def __init__(
+        self,
+        ref: str,
+        l1: str,
+        l2: str,
+        coupling: float,
+    ) -> None:
+        if not 0 <= coupling <= 1:
+            raise ValueError(f"Coupling coefficient must be 0-1, got {coupling}")
+        super().__init__(ref=ref, value=str(coupling))
+        self.l1 = l1
+        self.l2 = l2
+        self.coupling = coupling
+        # No physical ports - this references other components
+        self._ports = ()
+
+    def spice_card(self, net_of: NetOf) -> str:
+        return f"K{self.ref} {self.l1} {self.l2} {self.coupling}"
+
+
+def MK(l1: str, l2: str, coupling: float) -> MutualInductance:
+    """Helper factory for MutualInductance with auto-ref."""
+    return MutualInductance(ref=_next("K"), l1=l1, l2=l2, coupling=coupling)
+
+
+# --------------------------------------------------------------------------------------
+# Transformer (Ideal)
+# --------------------------------------------------------------------------------------
+
+
+class Transformer(Component):
+    """Ideal transformer using coupled inductors.
+
+    SPICE implementation uses two inductors coupled via K element.
+    The turns ratio determines the inductance ratio (L2/L1 = n^2).
+
+    Args:
+        ref: Reference designator (e.g., "1" for XFMR1)
+        turns_ratio: Secondary/Primary turns ratio (n = Ns/Np)
+        l_primary: Primary inductance value (default "1m")
+        coupling: Coupling coefficient (default 0.9999 for ideal)
+
+    Ports:
+        p1: Primary positive
+        p2: Primary negative
+        s1: Secondary positive
+        s2: Secondary negative
+
+    Example:
+        # Create 1:10 step-up transformer
+        xfmr = Transformer("1", turns_ratio=10)
+
+    Note:
+        The spice_card method returns multiple lines (L1, L2, K statements).
+    """
+
+    def __init__(
+        self,
+        ref: str,
+        turns_ratio: float,
+        l_primary: str = "1m",
+        coupling: float = 0.9999,
+    ) -> None:
+        if turns_ratio <= 0:
+            raise ValueError(f"Turns ratio must be positive, got {turns_ratio}")
+        if not 0 < coupling <= 1:
+            raise ValueError(f"Coupling must be 0 < k <= 1, got {coupling}")
+        super().__init__(ref=ref, value=str(turns_ratio))
+        self.turns_ratio = turns_ratio
+        self.l_primary = l_primary
+        self.coupling = coupling
+        self._ports = (
+            Port(self, "p1", PortRole.POSITIVE),
+            Port(self, "p2", PortRole.NEGATIVE),
+            Port(self, "s1", PortRole.POSITIVE),
+            Port(self, "s2", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p1, p2, s1, s2 = self.ports
+        # L2 = L1 * n^2 for ideal transformer
+        l_sec = f"{float(self.l_primary.rstrip('m')) * self.turns_ratio**2}m"
+        lines = [
+            f"L{self.ref}p {net_of(p1)} {net_of(p2)} {self.l_primary}",
+            f"L{self.ref}s {net_of(s1)} {net_of(s2)} {l_sec}",
+            f"K{self.ref} L{self.ref}p L{self.ref}s {self.coupling}",
+        ]
+        return "\n".join(lines)
+
+
+def XFMR(
+    turns_ratio: float,
+    l_primary: str = "1m",
+    coupling: float = 0.9999,
+) -> Transformer:
+    """Helper factory for Transformer with auto-ref."""
+    return Transformer(
+        ref=_next("K"), turns_ratio=turns_ratio, l_primary=l_primary, coupling=coupling
+    )
+
+
+# --------------------------------------------------------------------------------------
+# Transmission Lines
+# --------------------------------------------------------------------------------------
+
+
+class TLine(Component):
+    """Lossless transmission line (T element).
+
+    SPICE card: T<ref> <p1+> <p1-> <p2+> <p2-> Z0=<z0> TD=<td>
+
+    Args:
+        ref: Reference designator
+        z0: Characteristic impedance (ohms)
+        td: Time delay (e.g., "1n" for 1ns)
+
+    Ports:
+        p1p, p1n: Port 1 positive and negative
+        p2p, p2n: Port 2 positive and negative
+    """
+
+    def __init__(
+        self,
+        ref: str,
+        z0: str | float,
+        td: str | float,
+    ) -> None:
+        super().__init__(ref=ref, value="")
+        self.z0 = z0
+        self.td = td
+        self._ports = (
+            Port(self, "p1p", PortRole.POSITIVE),
+            Port(self, "p1n", PortRole.NEGATIVE),
+            Port(self, "p2p", PortRole.POSITIVE),
+            Port(self, "p2n", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p1p, p1n, p2p, p2n = self.ports
+        return (
+            f"T{self.ref} {net_of(p1p)} {net_of(p1n)} {net_of(p2p)} {net_of(p2n)} "
+            f"Z0={self.z0} TD={self.td}"
+        )
+
+
+def TLINE(z0: str | float, td: str | float) -> TLine:
+    """Helper factory for TLine with auto-ref."""
+    return TLine(ref=_next("T"), z0=z0, td=td)
+
+
+class TLineLossy(Component):
+    """Lossy transmission line (O element) - LTRA model.
+
+    SPICE card: O<ref> <p1+> <p1-> <p2+> <p2-> <model>
+
+    Requires a .model statement with LTRA parameters.
+
+    Args:
+        ref: Reference designator
+        model: LTRA model name
+
+    Ports:
+        p1p, p1n: Port 1 positive and negative
+        p2p, p2n: Port 2 positive and negative
+    """
+
+    def __init__(self, ref: str, model: str) -> None:
+        super().__init__(ref=ref, value=model)
+        self._ports = (
+            Port(self, "p1p", PortRole.POSITIVE),
+            Port(self, "p1n", PortRole.NEGATIVE),
+            Port(self, "p2p", PortRole.POSITIVE),
+            Port(self, "p2n", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p1p, p1n, p2p, p2n = self.ports
+        return f"O{self.ref} {net_of(p1p)} {net_of(p1n)} {net_of(p2p)} {net_of(p2n)} {self.value}"
+
+
+def OLINE(model: str) -> TLineLossy:
+    """Helper factory for TLineLossy with auto-ref."""
+    return TLineLossy(ref=_next("O"), model=model)
+
+
+class TLineRC(Component):
+    """Uniform distributed RC line (U element) - URC model.
+
+    SPICE card: U<ref> <n1> <n2> <n3> <model> L=<len>
+
+    Args:
+        ref: Reference designator
+        model: URC model name
+        length: Line length parameter
+
+    Ports:
+        n1: Node 1
+        n2: Node 2
+        n3: Node 3 (typically ground reference)
+    """
+
+    def __init__(self, ref: str, model: str, length: str | float = 1) -> None:
+        super().__init__(ref=ref, value=model)
+        self.length = length
+        self._ports = (
+            Port(self, "n1", PortRole.NODE),
+            Port(self, "n2", PortRole.NODE),
+            Port(self, "n3", PortRole.NODE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        n1, n2, n3 = self.ports
+        return f"U{self.ref} {net_of(n1)} {net_of(n2)} {net_of(n3)} {self.value} L={self.length}"
+
+
+def ULINE(model: str, length: str | float = 1) -> TLineRC:
+    """Helper factory for TLineRC with auto-ref."""
+    return TLineRC(ref=_next("U"), model=model, length=length)
+
+
+# --------------------------------------------------------------------------------------
+# Behavioral Sources (B element)
+# --------------------------------------------------------------------------------------
+
+
+class BVoltage(Component):
+    """Behavioral voltage source with arbitrary expression.
+
+    SPICE card: B<ref> <p> <n> V=<expression>
+
+    The expression is passed directly to the SPICE engine.
+
+    Args:
+        ref: Reference designator
+        expr: Voltage expression (e.g., "V(in)*2", "IF(V(ctrl)>2.5, 5, 0)")
+
+    Ports:
+        p: positive terminal
+        n: negative terminal
+
+    Example:
+        # Voltage doubler
+        b1 = BVoltage("1", expr="V(in)*2")
+
+        # Conditional output
+        b2 = BVoltage("2", expr="IF(V(ctrl)>2.5, 5, 0)")
+    """
+
+    def __init__(self, ref: str, expr: str) -> None:
+        super().__init__(ref=ref, value=expr)
+        self.expr = expr
+        self._ports = (
+            Port(self, "p", PortRole.POSITIVE),
+            Port(self, "n", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p, n = self.ports
+        return f"B{self.ref} {net_of(p)} {net_of(n)} V={self.expr}"
+
+
+def BV(expr: str) -> BVoltage:
+    """Helper factory for BVoltage with auto-ref."""
+    return BVoltage(ref=_next("B"), expr=expr)
+
+
+class BCurrent(Component):
+    """Behavioral current source with arbitrary expression.
+
+    SPICE card: B<ref> <p> <n> I=<expression>
+
+    The expression is passed directly to the SPICE engine.
+
+    Args:
+        ref: Reference designator
+        expr: Current expression (e.g., "I(Vref)*10", "V(in)/1k")
+
+    Ports:
+        p: positive terminal (current flows out)
+        n: negative terminal (current flows in)
+
+    Example:
+        # Current mirror with gain
+        b1 = BCurrent("1", expr="I(Vref)*10")
+
+        # Voltage-to-current conversion
+        b2 = BCurrent("2", expr="V(in)/1000")
+    """
+
+    def __init__(self, ref: str, expr: str) -> None:
+        super().__init__(ref=ref, value=expr)
+        self.expr = expr
+        self._ports = (
+            Port(self, "p", PortRole.POSITIVE),
+            Port(self, "n", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p, n = self.ports
+        return f"B{self.ref} {net_of(p)} {net_of(n)} I={self.expr}"
+
+
+def BI(expr: str) -> BCurrent:
+    """Helper factory for BCurrent with auto-ref."""
+    return BCurrent(ref=_next("B"), expr=expr)
+
+
+# Aliases for expression-based controlled sources
+# BVoltage with V(node) expressions acts as VCVS
+# BCurrent with V(node) expressions acts as VCCS
+VCVSExpr = BVoltage  # Voltage-Controlled Voltage Source with expression
+VCCSExpr = BCurrent  # Voltage-Controlled Current Source with expression
+
+
+def EExpr(expr: str) -> BVoltage:
+    """Create VCVS with arbitrary expression (E-source behavior via B element).
+
+    Example:
+        # Op-amp like gain stage
+        e1 = EExpr("V(inp, inn) * 1e6")
+    """
+    return BVoltage(ref=_next("B"), expr=expr)
+
+
+def GExpr(expr: str) -> BCurrent:
+    """Create VCCS with arbitrary expression (G-source behavior via B element).
+
+    Example:
+        # Transconductance amplifier
+        g1 = GExpr("V(in) * 0.001")  # gm = 1mS
+    """
+    return BCurrent(ref=_next("B"), expr=expr)
+
+
+# --------------------------------------------------------------------------------------
+# Subcircuit Instance
+# --------------------------------------------------------------------------------------
+
+
+class SubcktInstance(Component):
+    """Subcircuit instance (X element).
+
+    SPICE card: X<ref> <node1> <node2> ... <subckt_name> [param=value ...]
+
+    Args:
+        ref: Reference designator
+        subckt_name: Name of the subcircuit to instantiate
+        nodes: List of node names to connect to subcircuit ports
+        params: Optional dict of parameter overrides
+
+    Example:
+        # Instantiate an op-amp subcircuit
+        x1 = SubcktInstance("1", "LM741", ["inp", "inn", "vcc", "vee", "out"])
+
+        # With parameters
+        x2 = SubcktInstance("2", "RES_VAR", ["a", "b"], params={"R": "1k"})
+    """
+
+    def __init__(
+        self,
+        ref: str,
+        subckt_name: str,
+        nodes: list[str],
+        params: dict[str, str | float] | None = None,
+    ) -> None:
+        super().__init__(ref=ref, value=subckt_name)
+        self.subckt_name = subckt_name
+        self.nodes = nodes
+        self.params = params or {}
+        # Create ports dynamically based on nodes
+        self._ports = tuple(Port(self, f"n{i}", PortRole.NODE) for i in range(len(nodes)))
+        # Store node names for spice_card
+        self._node_names = nodes
+
+    def spice_card(self, net_of: NetOf) -> str:
+        # Use provided node names directly (they represent circuit nodes)
+        nodes_str = " ".join(self._node_names)
+        params_str = ""
+        if self.params:
+            params_str = " " + " ".join(f"{k}={v}" for k, v in self.params.items())
+        return f"X{self.ref} {nodes_str} {self.subckt_name}{params_str}"
+
+
+def XSUB(
+    subckt_name: str,
+    nodes: list[str],
+    params: dict[str, str | float] | None = None,
+) -> SubcktInstance:
+    """Helper factory for SubcktInstance with auto-ref."""
+    return SubcktInstance(ref=_next("X"), subckt_name=subckt_name, nodes=nodes, params=params)
+
+
+# --------------------------------------------------------------------------------------
+# Probe Components
+# --------------------------------------------------------------------------------------
+
+
+class CurrentProbe(Component):
+    """Zero-volt voltage source for current measurement.
+
+    SPICE card: V<ref> <p> <n> DC 0
+
+    A zero-volt source allows measuring current through a branch
+    without affecting circuit behavior. Current flows from p to n.
+
+    Args:
+        ref: Reference designator (e.g., "sense1")
+
+    Ports:
+        p: Positive terminal (current enters here)
+        n: Negative terminal (current exits here)
+
+    Example:
+        # Measure current through a resistor
+        probe = CurrentProbe("sense")
+        # Connect in series with the component to measure
+        # Access current as I(Vsense) in simulation results
+    """
+
+    def __init__(self, ref: str) -> None:
+        super().__init__(ref=ref, value="0")
+        self._ports = (
+            Port(self, "p", PortRole.POSITIVE),
+            Port(self, "n", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        p, n = self.ports
+        return f"V{self.ref} {net_of(p)} {net_of(n)} DC 0"
+
+
+def IPROBE(name: str | None = None) -> CurrentProbe:
+    """Helper factory for CurrentProbe.
+
+    Args:
+        name: Optional name for the probe. If None, auto-generates.
+    """
+    ref = name if name else f"sense{_next('V')}"
+    return CurrentProbe(ref=ref)
+
+
+class VoltageProbe(Component):
+    """Explicit voltage measurement point marker.
+
+    This is a virtual component that doesn't generate a SPICE card.
+    It serves as a marker for voltage measurement between two nodes.
+
+    In SPICE, voltages are measured directly as V(node) or V(node1, node2).
+    This class provides a semantic way to mark measurement points.
+
+    Args:
+        ref: Reference designator/name for the probe
+        differential: If True, measures voltage between p and n.
+                     If False, measures p relative to ground.
+
+    Ports:
+        p: Positive measurement point
+        n: Negative/reference measurement point
+
+    Example:
+        # Single-ended measurement (relative to ground)
+        vprobe = VoltageProbe("out")
+
+        # Differential measurement
+        vprobe_diff = VoltageProbe("diff", differential=True)
+    """
+
+    def __init__(self, ref: str, differential: bool = False) -> None:
+        super().__init__(ref=ref, value="probe")
+        self.differential = differential
+        self._ports = (
+            Port(self, "p", PortRole.POSITIVE),
+            Port(self, "n", PortRole.NEGATIVE),
+        )
+
+    def spice_card(self, net_of: NetOf) -> str:
+        # VoltageProbe is a virtual component - no SPICE element generated
+        # Voltage measurement happens via .PROBE or direct node reference
+        return f"* Voltage probe {self.ref}: V({net_of(self.ports[0])})"
+
+
+def VPROBE(name: str, differential: bool = False) -> VoltageProbe:
+    """Helper factory for VoltageProbe."""
+    return VoltageProbe(ref=name, differential=differential)

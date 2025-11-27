@@ -28,6 +28,7 @@ from ..core.circuit import Circuit
 from ..core.components import (
     CCCS,
     CCVS,
+    JFET,
     VCCS,
     VCVS,
     Capacitor,
@@ -38,8 +39,10 @@ from ..core.components import (
     OpAmpIdeal,
     Resistor,
     Vdc,
+    ZenerDiode,
 )
 from ..core.net import GND, Net, Port
+from ..library.transistors import Bjt, Mosfet
 
 _GRID_Y = 120
 _COMPONENT_ANCHOR_X = 160
@@ -289,6 +292,113 @@ def _orient_vertical_if_ground(pin_nets: list[str]) -> str:
     return "R0"
 
 
+# ---------------------------------------------------------------------------
+# Transistor builders
+# ---------------------------------------------------------------------------
+
+
+def _build_bjt_npn(comp: AscComponent) -> Bjt:
+    ref = comp.ref or comp.attributes.get("InstName") or "Q?"
+    model = comp.attributes.get("Value") or comp.attributes.get("Model") or "NPN"
+    return Bjt(ref, model)
+
+
+def _build_bjt_pnp(comp: AscComponent) -> Bjt:
+    ref = comp.ref or comp.attributes.get("InstName") or "Q?"
+    model = comp.attributes.get("Value") or comp.attributes.get("Model") or "PNP"
+    return Bjt(ref, model)
+
+
+def _build_mosfet_nmos(comp: AscComponent) -> Mosfet:
+    ref = comp.ref or comp.attributes.get("InstName") or "M?"
+    model = comp.attributes.get("Value") or comp.attributes.get("Model") or "NMOS"
+    # Extract W and L from Value2 or SpiceLine if available
+    params_parts = []
+    value2 = comp.attributes.get("Value2", "")
+    if value2:
+        params_parts.append(value2)
+    params = " ".join(params_parts) if params_parts else None
+    return Mosfet(ref, model, params)
+
+
+def _build_mosfet_pmos(comp: AscComponent) -> Mosfet:
+    ref = comp.ref or comp.attributes.get("InstName") or "M?"
+    model = comp.attributes.get("Value") or comp.attributes.get("Model") or "PMOS"
+    params_parts = []
+    value2 = comp.attributes.get("Value2", "")
+    if value2:
+        params_parts.append(value2)
+    params = " ".join(params_parts) if params_parts else None
+    return Mosfet(ref, model, params)
+
+
+def _build_jfet_njf(comp: AscComponent) -> JFET:
+    ref = comp.ref or comp.attributes.get("InstName") or "J?"
+    model = comp.attributes.get("Value") or comp.attributes.get("Model") or "NJF"
+    return JFET(ref, model)
+
+
+def _build_jfet_pjf(comp: AscComponent) -> JFET:
+    ref = comp.ref or comp.attributes.get("InstName") or "J?"
+    model = comp.attributes.get("Value") or comp.attributes.get("Model") or "PJF"
+    return JFET(ref, model)
+
+
+def _build_zener(comp: AscComponent) -> ZenerDiode:
+    ref = comp.ref or comp.attributes.get("InstName") or "D?"
+    model = comp.attributes.get("Value") or comp.attributes.get("Model") or "ZENER"
+    return ZenerDiode(ref, model)
+
+
+def _attrs_bjt(component: Component) -> dict[str, str]:
+    bjt = cast(Bjt, component)
+    return {"InstName": bjt.ref, "Value": str(bjt.value)}
+
+
+def _attrs_mosfet(component: Component) -> dict[str, str]:
+    mos = cast(Mosfet, component)
+    attrs = {"InstName": mos.ref, "Value": str(mos.value)}
+    if mos.params:
+        attrs["Value2"] = mos.params
+    return attrs
+
+
+def _attrs_jfet(component: Component) -> dict[str, str]:
+    jfet = cast(JFET, component)
+    return {"InstName": jfet.ref, "Value": str(jfet.value)}
+
+
+def _attrs_zener(component: Component) -> dict[str, str]:
+    zener = cast(ZenerDiode, component)
+    return {"InstName": zener.ref, "Value": str(zener.value)}
+
+
+def _from_spice_bjt(tokens: list[str], comp: AscComponent) -> Bjt:
+    ref = tokens[0][1:] if tokens else comp.ref or "?"
+    model = tokens[4] if len(tokens) > 4 else comp.attributes.get("Value", "NPN")
+    return Bjt(ref, model)
+
+
+def _from_spice_mosfet(tokens: list[str], comp: AscComponent) -> Mosfet:
+    ref = tokens[0][1:] if tokens else comp.ref or "?"
+    model = tokens[5] if len(tokens) > 5 else comp.attributes.get("Value", "NMOS")
+    # Extract extra params after model name
+    params = " ".join(tokens[6:]) if len(tokens) > 6 else None
+    return Mosfet(ref, model, params)
+
+
+def _from_spice_jfet(tokens: list[str], comp: AscComponent) -> JFET:
+    ref = tokens[0][1:] if tokens else comp.ref or "?"
+    model = tokens[4] if len(tokens) > 4 else comp.attributes.get("Value", "NJF")
+    return JFET(ref, model)
+
+
+def _from_spice_zener(tokens: list[str], comp: AscComponent) -> ZenerDiode:
+    ref = tokens[0][1:] if tokens else comp.ref or "?"
+    model = tokens[3] if len(tokens) > 3 else comp.attributes.get("Value", "ZENER")
+    return ZenerDiode(ref, model)
+
+
 SYMBOL_LIBRARY: dict[str, SymbolSpec] = {
     "res": SymbolSpec(
         symbol="res",
@@ -404,6 +514,118 @@ SYMBOL_LIBRARY: dict[str, SymbolSpec] = {
     # Alias symbol names used by LTspice for the generic op-amp to our spec
     "opamp2": None,  # placeholder, will be replaced below
     "OpAmps\\UniversalOpAmp": None,  # Windows path-like symbol name in some ASCs
+    # BJT transistors (3 pins: collector, base, emitter)
+    "npn": SymbolSpec(
+        symbol="npn",
+        build_component=_build_bjt_npn,
+        extract_attributes=_attrs_bjt,
+        pin_offsets=(
+            AscPoint(0, 0),  # collector
+            AscPoint(-_PIN_SPACING // 2, _PIN_SPACING // 2),  # base
+            AscPoint(0, _PIN_SPACING),  # emitter
+        ),
+        allowed_orientations=("R0", "R90", "R180", "R270", "M0", "M90", "M180", "M270"),
+        from_spice=_from_spice_bjt,
+    ),
+    "pnp": SymbolSpec(
+        symbol="pnp",
+        build_component=_build_bjt_pnp,
+        extract_attributes=_attrs_bjt,
+        pin_offsets=(
+            AscPoint(0, _PIN_SPACING),  # collector
+            AscPoint(-_PIN_SPACING // 2, _PIN_SPACING // 2),  # base
+            AscPoint(0, 0),  # emitter
+        ),
+        allowed_orientations=("R0", "R90", "R180", "R270", "M0", "M90", "M180", "M270"),
+        from_spice=_from_spice_bjt,
+    ),
+    # MOSFET transistors (4 pins: drain, gate, source, bulk)
+    "nmos": SymbolSpec(
+        symbol="nmos",
+        build_component=_build_mosfet_nmos,
+        extract_attributes=_attrs_mosfet,
+        pin_offsets=(
+            AscPoint(0, 0),  # drain
+            AscPoint(-_PIN_SPACING // 2, _PIN_SPACING // 2),  # gate
+            AscPoint(0, _PIN_SPACING),  # source
+            AscPoint(_PIN_SPACING // 2, _PIN_SPACING // 2),  # bulk
+        ),
+        allowed_orientations=("R0", "R90", "R180", "R270", "M0", "M90", "M180", "M270"),
+        from_spice=_from_spice_mosfet,
+    ),
+    "nmos4": SymbolSpec(
+        symbol="nmos4",
+        build_component=_build_mosfet_nmos,
+        extract_attributes=_attrs_mosfet,
+        pin_offsets=(
+            AscPoint(0, 0),  # drain
+            AscPoint(-_PIN_SPACING // 2, _PIN_SPACING // 2),  # gate
+            AscPoint(0, _PIN_SPACING),  # source
+            AscPoint(_PIN_SPACING // 2, _PIN_SPACING // 2),  # bulk
+        ),
+        allowed_orientations=("R0", "R90", "R180", "R270", "M0", "M90", "M180", "M270"),
+        from_spice=_from_spice_mosfet,
+    ),
+    "pmos": SymbolSpec(
+        symbol="pmos",
+        build_component=_build_mosfet_pmos,
+        extract_attributes=_attrs_mosfet,
+        pin_offsets=(
+            AscPoint(0, _PIN_SPACING),  # drain
+            AscPoint(-_PIN_SPACING // 2, _PIN_SPACING // 2),  # gate
+            AscPoint(0, 0),  # source
+            AscPoint(_PIN_SPACING // 2, _PIN_SPACING // 2),  # bulk
+        ),
+        allowed_orientations=("R0", "R90", "R180", "R270", "M0", "M90", "M180", "M270"),
+        from_spice=_from_spice_mosfet,
+    ),
+    "pmos4": SymbolSpec(
+        symbol="pmos4",
+        build_component=_build_mosfet_pmos,
+        extract_attributes=_attrs_mosfet,
+        pin_offsets=(
+            AscPoint(0, _PIN_SPACING),  # drain
+            AscPoint(-_PIN_SPACING // 2, _PIN_SPACING // 2),  # gate
+            AscPoint(0, 0),  # source
+            AscPoint(_PIN_SPACING // 2, _PIN_SPACING // 2),  # bulk
+        ),
+        allowed_orientations=("R0", "R90", "R180", "R270", "M0", "M90", "M180", "M270"),
+        from_spice=_from_spice_mosfet,
+    ),
+    # JFET transistors (3 pins: drain, gate, source)
+    "njf": SymbolSpec(
+        symbol="njf",
+        build_component=_build_jfet_njf,
+        extract_attributes=_attrs_jfet,
+        pin_offsets=(
+            AscPoint(0, 0),  # drain
+            AscPoint(-_PIN_SPACING // 2, _PIN_SPACING // 2),  # gate
+            AscPoint(0, _PIN_SPACING),  # source
+        ),
+        allowed_orientations=("R0", "R90", "R180", "R270", "M0", "M90", "M180", "M270"),
+        from_spice=_from_spice_jfet,
+    ),
+    "pjf": SymbolSpec(
+        symbol="pjf",
+        build_component=_build_jfet_pjf,
+        extract_attributes=_attrs_jfet,
+        pin_offsets=(
+            AscPoint(0, _PIN_SPACING),  # drain
+            AscPoint(-_PIN_SPACING // 2, _PIN_SPACING // 2),  # gate
+            AscPoint(0, 0),  # source
+        ),
+        allowed_orientations=("R0", "R90", "R180", "R270", "M0", "M90", "M180", "M270"),
+        from_spice=_from_spice_jfet,
+    ),
+    # Zener diode (same pin layout as regular diode)
+    "zener": SymbolSpec(
+        symbol="zener",
+        build_component=_build_zener,
+        extract_attributes=_attrs_zener,
+        pin_offsets=(AscPoint(0, 0), AscPoint(_PIN_SPACING, 0)),
+        allowed_orientations=("R0", "R90", "R180", "R270"),
+        from_spice=_from_spice_zener,
+    ),
 }
 
 # Fill in alias entries to point to the same SymbolSpec instance
@@ -440,6 +662,10 @@ COMPONENT_TO_SYMBOL: dict[type[Component], SymbolSpec] = {
     CCCS: SYMBOL_LIBRARY["cccs"],
     CCVS: SYMBOL_LIBRARY["ccvs"],
     OpAmpIdeal: SYMBOL_LIBRARY["opamp"],
+    Bjt: SYMBOL_LIBRARY["npn"],  # Default to NPN symbol
+    Mosfet: SYMBOL_LIBRARY["nmos"],  # Default to NMOS symbol
+    JFET: SYMBOL_LIBRARY["njf"],  # Default to NJF symbol
+    ZenerDiode: SYMBOL_LIBRARY["zener"],
 }
 
 
