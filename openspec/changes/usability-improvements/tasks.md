@@ -76,7 +76,7 @@
 - [ ] 11.2 Test error message clarity with user studies
 - [x] 11.3 Test shortcuts cover 80% of common workflows
 - [x] 11.4 Validate documentation examples are runnable
-- [ ] 11.5 Test type hints with mypy and pyright
+- [x] 11.5 Test type hints with mypy and pyright
 
 ## 12. Documentation
 - [x] 12.1 Write `docs/usability-guide.md` with best practices

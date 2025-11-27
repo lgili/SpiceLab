@@ -352,7 +352,7 @@ def _check_component_values(circuit: Circuit) -> list[ValidationWarning]:
         comp_type = type(comp).__name__
 
         if comp_type == "Resistor" and hasattr(comp, "resistance"):
-            R = comp.resistance
+            R = getattr(comp, "resistance")
             if isinstance(R, int | float):
                 if R < 0.001:  # < 1mΩ
                     warnings.append(
@@ -374,7 +374,7 @@ def _check_component_values(circuit: Circuit) -> list[ValidationWarning]:
                     )
 
         elif comp_type == "Capacitor" and hasattr(comp, "capacitance"):
-            C = comp.capacitance
+            C = getattr(comp, "capacitance")
             if isinstance(C, int | float):
                 if C < 1e-15:  # < 1fF
                     warnings.append(
