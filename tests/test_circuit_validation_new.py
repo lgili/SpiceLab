@@ -3,11 +3,12 @@
 Tests the new validation features:
 - Ground reference detection
 - Floating node detection
-- Voltage source loop detection
+- Voltage source loop detection (parallel voltage sources)
+- Current source loop detection (series current sources)
 """
 
 from spicelab.core.circuit import Circuit
-from spicelab.core.components import Resistor, Vdc
+from spicelab.core.components import Idc, Resistor, Vdc
 from spicelab.core.net import GND, Net
 from spicelab.validators.circuit_validation import (
     ValidationResult,
@@ -163,6 +164,92 @@ class TestVoltageSourceLoopDetection:
         result = c.validate()
         vsrc_errors = [e for e in result.errors if "voltage source loop" in e.message.lower()]
         assert len(vsrc_errors) == 0
+
+
+class TestCurrentSourceLoopDetection:
+    """Tests for series current source detection (open circuits)."""
+
+    def test_single_current_source_ok(self):
+        """Single current source with load should pass."""
+        c = Circuit("single_i")
+        i = Idc("1", "1m")
+        r = Resistor("1", "1k")
+        c.add(i, r)
+
+        n1 = Net("n1")
+        c.connect(i.ports[0], n1)
+        c.connect(r.ports[0], n1)  # Load at same node
+        c.connect(i.ports[1], GND)
+        c.connect(r.ports[1], GND)
+
+        result = c.validate()
+        isrc_errors = [e for e in result.errors if "current source loop" in e.message.lower()]
+        assert len(isrc_errors) == 0
+
+    def test_series_current_sources_detected(self):
+        """Series current sources with no load path should be detected."""
+        c = Circuit("series_i")
+        i1 = Idc("1", "1m")
+        i2 = Idc("2", "2m")
+        r = Resistor("1", "1k")
+        c.add(i1, i2, r)
+
+        # I1 and I2 share a node with no other connection -> series!
+        n1 = Net("series_node")
+        c.connect(i1.ports[0], n1)  # I1+ to series_node
+        c.connect(i2.ports[1], n1)  # I2- to series_node (only I sources here)
+        c.connect(i1.ports[1], GND)
+        c.connect(i2.ports[0], GND)
+        # R connected elsewhere to have ground
+        c.connect(r.ports[0], GND)
+        c.connect(r.ports[1], GND)
+
+        result = c.validate()
+        isrc_errors = [e for e in result.errors if "current source loop" in e.message.lower()]
+        assert len(isrc_errors) == 1
+        assert "1" in isrc_errors[0].message and "2" in isrc_errors[0].message
+
+    def test_parallel_current_sources_ok(self):
+        """Parallel current sources should pass (they add up)."""
+        c = Circuit("parallel_i")
+        i1 = Idc("1", "1m")
+        i2 = Idc("2", "1m")
+        r = Resistor("1", "1k")
+        c.add(i1, i2, r)
+
+        n1 = Net("n1")
+        # Both current sources and resistor at same nodes -> parallel
+        c.connect(i1.ports[0], n1)
+        c.connect(i2.ports[0], n1)
+        c.connect(r.ports[0], n1)  # Load provides current path
+        c.connect(i1.ports[1], GND)
+        c.connect(i2.ports[1], GND)
+        c.connect(r.ports[1], GND)
+
+        result = c.validate()
+        isrc_errors = [e for e in result.errors if "current source loop" in e.message.lower()]
+        assert len(isrc_errors) == 0
+
+    def test_current_source_with_resistor_path_ok(self):
+        """Current sources in series but with resistor load should pass."""
+        c = Circuit("series_with_load")
+        i1 = Idc("1", "1m")
+        i2 = Idc("2", "1m")
+        r = Resistor("1", "1k")
+        c.add(i1, i2, r)
+
+        n1 = Net("n1")
+        # I1 and I2 share n1, but R also connects there
+        c.connect(i1.ports[0], n1)
+        c.connect(i2.ports[1], n1)
+        c.connect(r.ports[0], n1)  # Resistor provides path!
+        c.connect(i1.ports[1], GND)
+        c.connect(i2.ports[0], GND)
+        c.connect(r.ports[1], GND)
+
+        result = c.validate()
+        isrc_errors = [e for e in result.errors if "current source loop" in e.message.lower()]
+        assert len(isrc_errors) == 0
 
 
 class TestValidationResult:
