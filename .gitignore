@@ -52,6 +52,8 @@ cat_ng_*/
 *.pkl
 *.html
 .spicelab_cache/
-.hypothesis/
+# Hypothesis - ignore generated data but keep examples (seeds) for reproducibility
+.hypothesis/constants/
+.hypothesis/unicode_data/
 
 old/

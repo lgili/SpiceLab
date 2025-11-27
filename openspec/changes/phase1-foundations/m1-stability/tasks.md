@@ -156,8 +156,8 @@
 ### Should Have
 - [x] Performance benchmarks baseline (tests/benchmarks/)
 - [x] 20+ regression tests (currently 39 tests)
-- [ ] Memory profiling for Monte Carlo
-- [ ] Hypothesis seed database committed
+- [x] Memory profiling for Monte Carlo (tests/stress/test_memory_profiling.py)
+- [x] Hypothesis seed database committed (.hypothesis/examples/)
 
 ### Nice to Have
 - [ ] AFL fuzzing for future C/Rust extensions
