@@ -87,15 +87,19 @@
 - [x] Write RAW parsing benchmarks
   - [x] `test_raw_benchmarks.py` - ASCII and binary parsing
   - [x] Test 10-100 signals x 100-1000 points
-- [ ] Write analysis benchmarks (deferred - needs engine)
-  - [ ] Transient analysis
-  - [ ] AC analysis
-  - [ ] DC sweep
-- [ ] Write Monte Carlo benchmarks (deferred - needs engine)
-  - [ ] 10, 100, 1k runs
-  - [ ] Memory usage tracking
+- [x] Write analysis benchmarks (without engine)
+  - [x] `test_analysis_benchmarks.py` - 25 benchmarks
+  - [x] AnalysisSpec creation (op, tran, ac, dc)
+  - [x] SweepSpec creation and expansion
+  - [x] Job hashing for caching
+  - [x] Probe creation
+  - [x] Netlist with analysis directives
+  - [x] Full simulation preparation workflow
+- [x] Write Monte Carlo benchmarks (preparation only)
+  - [x] 100 circuit variant preparation (~9.3ms)
+  - [x] Memory already covered in test_memory_profiling.py
 
-**Completed:** 2025-11-27 (core benchmarks)
+**Completed:** 2025-11-27
 
 ---
 
@@ -175,6 +179,7 @@
 - `tools/profile_monte_carlo.py` - Monte Carlo memory profiler
 - `docs/performance_baseline.md` - Performance baseline documentation
 - `tests/benchmarks/test_raw_benchmarks.py` - RAW parsing benchmarks
+- `tests/benchmarks/test_analysis_benchmarks.py` - Analysis preparation benchmarks
 
 ### Modified Files
 - `spicelab/core/circuit.py` - Integrated Union-Find for net merging
