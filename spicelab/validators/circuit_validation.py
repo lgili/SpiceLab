@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ..core.circuit import Circuit
@@ -171,7 +171,7 @@ def _check_floating_nodes(circuit: Circuit) -> list[ValidationWarning]:
     warnings: list[ValidationWarning] = []
 
     # Build map of canonical net -> list of (component, port)
-    net_connections: dict[object, list[tuple[str, str]]] = defaultdict(list)
+    net_connections: dict[Any, list[tuple[str, str]]] = defaultdict(list)
 
     for comp in circuit._components:
         for port in comp.ports:
@@ -221,7 +221,7 @@ def _check_voltage_source_loops(circuit: Circuit) -> list[ValidationWarning]:
     warnings: list[ValidationWarning] = []
 
     # Find all voltage sources
-    voltage_sources: list[tuple[str, object, object]] = []  # (ref, net+, net-)
+    voltage_sources: list[tuple[str, Any, Any]] = []  # (ref, net+, net-)
 
     for comp in circuit._components:
         comp_type = type(comp).__name__
@@ -243,7 +243,7 @@ def _check_voltage_source_loops(circuit: Circuit) -> list[ValidationWarning]:
                     voltage_sources.append((comp.ref, canon_p, canon_n))
 
     # Check for parallel voltage sources (same nodes)
-    seen_pairs: dict[tuple[object, object], str] = {}
+    seen_pairs: dict[tuple[Any, Any], str] = {}
     for ref, net_p, net_n in voltage_sources:
         # Normalize pair (smaller id first)
         pair = (net_p, net_n) if id(net_p) < id(net_n) else (net_n, net_p)
@@ -282,7 +282,7 @@ def _check_current_source_loops(circuit: Circuit) -> list[ValidationWarning]:
     warnings: list[ValidationWarning] = []
 
     # Build map of canonical net -> list of (component, port, is_current_source)
-    net_connections: dict[object, list[tuple[str, str, bool]]] = defaultdict(list)
+    net_connections: dict[Any, list[tuple[str, str, bool]]] = defaultdict(list)
 
     current_source_types = (
         "Idc",

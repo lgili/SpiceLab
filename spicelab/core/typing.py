@@ -210,10 +210,12 @@ def _check_type(value: Any, expected: Any) -> bool:
     if origin is dict:
         if not isinstance(value, dict):
             return False
-        args = getattr(expected, "__args__", ())
-        if len(args) == 2:
+        dict_args: tuple[Any, ...] = getattr(expected, "__args__", ())
+        if len(dict_args) >= 2:
+            key_type = dict_args[0]
+            val_type = dict_args[1]
             return all(
-                _check_type(k, args[0]) and _check_type(v, args[1])
+                _check_type(k, key_type) and _check_type(v, val_type)
                 for k, v in value.items()
             )
         return True

@@ -353,7 +353,7 @@ def run_wca(
     nominal_result: AnalysisResult | None = None
     if include_nominal:
         combos.insert(0, dict(nominals))
-        corner_signs_list.insert(0, {ref: 1 for ref in refs})  # type: ignore[misc]
+        corner_signs_list.insert(0, {ref: 1 for ref in refs})
         corner_names.insert(0, "nominal")
 
     # Run all simulations using the job system
