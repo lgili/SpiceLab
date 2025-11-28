@@ -894,6 +894,57 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Common parts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#semiconductors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Semiconductors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#magnetic-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Magnetic Components
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transmission-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transmission Lines
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioral-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      Behavioral Sources
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subcircuits-probes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subcircuits &amp; Probes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1634,6 +1685,57 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Common parts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#semiconductors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Semiconductors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#magnetic-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Magnetic Components
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transmission-lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transmission Lines
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioral-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      Behavioral Sources
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subcircuits-probes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Subcircuits &amp; Probes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1818,6 +1920,146 @@ to register any other component manually.</p>
 <td><code>AnalogMux8</code></td>
 <td>–</td>
 <td>8:1 analog multiplexer with optional enable pins.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="semiconductors">Semiconductors</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Helper</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Bjt(ref, model)</code></td>
+<td><code>Q(model)</code></td>
+<td>BJT transistor (NPN/PNP). Ports: <code>c</code>, <code>b</code>, <code>e</code>. From <code>spicelab.library.transistors</code>.</td>
+</tr>
+<tr>
+<td><code>Mosfet(ref, model, params)</code></td>
+<td><code>M(model)</code></td>
+<td>MOSFET (NMOS/PMOS). Ports: <code>d</code>, <code>g</code>, <code>s</code>, <code>b</code>. From <code>spicelab.library.transistors</code>.</td>
+</tr>
+<tr>
+<td><code>JFET(ref, model)</code></td>
+<td><code>JF(model)</code></td>
+<td>JFET (NJF/PJF). Ports: <code>d</code>, <code>g</code>, <code>s</code>.</td>
+</tr>
+<tr>
+<td><code>ZenerDiode(ref, model)</code></td>
+<td><code>DZ(model)</code></td>
+<td>Zener diode. Ports: <code>a</code>, <code>c</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="magnetic-components">Magnetic Components</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Helper</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MutualInductance(ref, l1, l2, coupling)</code></td>
+<td><code>MK(l1, l2, k)</code></td>
+<td>Couples two inductors. K element.</td>
+</tr>
+<tr>
+<td><code>Transformer(ref, turns_ratio, primary_l)</code></td>
+<td><code>XFMR(n)</code></td>
+<td>Ideal transformer. Ports: <code>p1</code>, <code>p2</code>, <code>s1</code>, <code>s2</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="transmission-lines">Transmission Lines</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Helper</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TLine(ref, z0, td)</code></td>
+<td><code>TLINE(z0, td)</code></td>
+<td>Lossless transmission line (T element).</td>
+</tr>
+<tr>
+<td><code>TLineLossy(ref, z0, td, r, g)</code></td>
+<td><code>OLINE(...)</code></td>
+<td>Lossy transmission line (O element).</td>
+</tr>
+<tr>
+<td><code>TLineRC(ref, l, n, r, c)</code></td>
+<td><code>ULINE(...)</code></td>
+<td>Uniform RC line (U element).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="behavioral-sources">Behavioral Sources</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Helper</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BVoltage(ref, expr)</code></td>
+<td><code>BV(expr)</code></td>
+<td>Arbitrary voltage expression (B element).</td>
+</tr>
+<tr>
+<td><code>BCurrent(ref, expr)</code></td>
+<td><code>BI(expr)</code></td>
+<td>Arbitrary current expression (B element).</td>
+</tr>
+<tr>
+<td><code>VCVSExpr</code></td>
+<td><code>EExpr(expr)</code></td>
+<td>Alias for BVoltage (E-source with expression).</td>
+</tr>
+<tr>
+<td><code>VCCSExpr</code></td>
+<td><code>GExpr(expr)</code></td>
+<td>Alias for BCurrent (G-source with expression).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="subcircuits-probes">Subcircuits &amp; Probes</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Helper</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SubcktInstance(ref, subckt_name, port_names, params)</code></td>
+<td><code>XSUB(...)</code></td>
+<td>Subcircuit instance (X element).</td>
+</tr>
+<tr>
+<td><code>VoltageProbe(ref, label)</code></td>
+<td><code>VPROBE(label)</code></td>
+<td>Named voltage measurement point.</td>
+</tr>
+<tr>
+<td><code>CurrentProbe(ref)</code></td>
+<td><code>IPROBE()</code></td>
+<td>Zero-volt source for current measurement.</td>
 </tr>
 </tbody>
 </table>
