@@ -38,31 +38,34 @@ Welcome to the SpiceLab tutorial series! These tutorials will guide you from bas
 
 ## Advanced Topics
 
-6. **Chapter 6: Monte Carlo Analysis** *(coming soon)*
-   - Tolerance distributions
+6. **[Chapter 6: Monte Carlo Analysis](06_monte_carlo.md)** - Statistical simulations
+   - Tolerance distributions (NormalPct, UniformPct)
    - Running Monte Carlo simulations
-   - Statistical analysis
-   - Yield estimation
+   - Yield analysis and sensitivity
+   - Histogram visualization
 
-7. **Chapter 7: Advanced Components** *(coming soon)*
-   - Vendor models (real transistors, op-amps)
+7. **[Chapter 7: Advanced Components](07_advanced_components.md)** - Real-world parts
+   - Vendor models (diodes, transistors, op-amps)
    - Custom subcircuits
    - Behavioral models
+   - E-series component selection
 
-8. **Chapter 8: Performance Optimization** *(coming soon)*
-   - Large circuit strategies
-   - Parallel execution
+8. **[Chapter 8: Performance](08_performance.md)** - Optimization
+   - Parallel execution with workers
    - Result caching
+   - Memory management
+   - Profiling simulations
 
-9. **Chapter 9: Integration & Automation** *(coming soon)*
-   - CI/CD integration
+9. **[Chapter 9: Integration](09_integration.md)** - Automation
+   - CI/CD with GitHub Actions
    - Batch processing
-   - Command-line usage
    - Jupyter notebooks
+   - Report generation
 
-10. **Chapter 10: Troubleshooting** *(coming soon)*
-    - Convergence issues
-    - Debugging techniques
+10. **[Chapter 10: Troubleshooting](10_troubleshooting.md)** - Debugging
+    - Convergence failures
+    - Validation errors
+    - Diagnostic tools
     - Best practices
 
 ## Prerequisites
