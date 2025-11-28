@@ -55,6 +55,46 @@ if TYPE_CHECKING:
     pass
 
 
+__all__ = [
+    # Error codes
+    "ErrorCode",
+    "ERROR_CATALOG",
+    # Helpers
+    "suggest_similar",
+    "format_suggestions",
+    # Base exception
+    "SpiceLabError",
+    # Circuit errors
+    "CircuitError",
+    "FloatingNodeError",
+    "ShortCircuitError",
+    "InvalidConnectionError",
+    "ComponentNotFoundError",
+    # Simulation errors
+    "SimulationError",
+    "EngineNotFoundError",
+    "ConvergenceError",
+    "SimulationFailedError",
+    "AnalysisError",
+    # Parse errors
+    "ParseError",
+    "NetlistParseError",
+    "ResultParseError",
+    "ModelParseError",
+    # Validation errors
+    "ValidationError",
+    "ComponentValidationError",
+    "ParameterValidationError",
+    "CircuitValidationError",
+    # Configuration errors
+    "ConfigurationError",
+    "EngineConfigurationError",
+    "PathNotFoundError",
+    # Attribute errors
+    "AttributeNotFoundError",
+]
+
+
 # =============================================================================
 # Error Codes
 # =============================================================================

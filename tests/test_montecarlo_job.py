@@ -64,6 +64,8 @@ def test_montecarlo_job_handles_and_cache(tmp_path: Path) -> None:
         set_run_directives(_runner_with_values([1.0, 2.0, 3.0]))
         circuit, r1 = _rc_circuit()
         analyses = [AnalysisSpec("op", {})]
+        # Use workers=1 because the mock runner uses global state that doesn't
+        # transfer to subprocess workers in multiprocessing
         mc = monte_carlo(
             circuit,
             mapping={r1: UniformAbs(0.0)},
@@ -72,7 +74,7 @@ def test_montecarlo_job_handles_and_cache(tmp_path: Path) -> None:
             analyses=analyses,
             cache_dir=tmp_path,
             engine="ngspice",
-            workers=2,
+            workers=1,
         )
         assert mc.handles is not None
         assert len(mc.handles) == 3

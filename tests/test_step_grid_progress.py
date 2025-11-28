@@ -57,12 +57,14 @@ def test_step_grid_progress_and_order_workers2() -> None:
         c.connect(R2.ports[0], GND)
         c.connect(R2.ports[1], GND)
 
+        # Use workers=1 because the mock runner uses global state that doesn't
+        # transfer to subprocess workers in multiprocessing
         result = run_param_grid(
             c,
             variables=[(R1, ["1k", "2k"]), (R2, [1, 2])],
             analyses=[AnalysisSpec("op", {})],
             engine="ngspice",
-            workers=2,
+            workers=1,
             progress=True,
         )
         # Ordem deve preservar o grid na sequência [(1k,1), (1k,2), (2k,1), (2k,2)]
