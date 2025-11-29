@@ -63,6 +63,19 @@ from .scipy_optimizers import (
     get_scipy_optimizer,
     list_scipy_optimizers,
 )
+from .doe import (
+    DoEResult,
+    ExperimentalDesign,
+    ResponseSurface,
+    box_behnken,
+    central_composite,
+    fit_response_surface,
+    fractional_factorial,
+    full_factorial,
+    latin_hypercube,
+    run_doe,
+    sobol_sequence,
+)
 from .genetic import (
     GAConfig,
     GeneticOptimizer,
@@ -118,4 +131,16 @@ __all__ = [
     "ParetoFront",
     "MultiObjectiveResult",
     "get_genetic_optimizer",
+    # Design of Experiments
+    "ExperimentalDesign",
+    "DoEResult",
+    "ResponseSurface",
+    "full_factorial",
+    "fractional_factorial",
+    "latin_hypercube",
+    "sobol_sequence",
+    "central_composite",
+    "box_behnken",
+    "fit_response_surface",
+    "run_doe",
 ]

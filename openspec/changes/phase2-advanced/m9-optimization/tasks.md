@@ -1,6 +1,6 @@
 # M9: Optimization & Design of Experiments - Tasks
 
-**Status:** In Progress (Phase 3 Complete)
+**Status:** In Progress (Phase 4 Complete)
 **Start Date:** 2025-11-29
 **Target Completion:** TBD (8-10 weeks)
 
@@ -65,14 +65,22 @@ Files created:
 
 ---
 
-### Phase 4: Design of Experiments (Week 7)
-- [ ] Implement factorial designs (2^k, 3^k)
-- [ ] Add Latin Hypercube Sampling (LHS)
-- [ ] Implement Sobol sequences
-- [ ] Create Taguchi methods (orthogonal arrays)
-- [ ] Add response surface modeling
-- [ ] Write DoE tests
-- [ ] Create example: filter optimization with DoE
+### Phase 4: Design of Experiments (Week 7) ✅ COMPLETE
+- [x] Implement factorial designs (full_factorial, fractional_factorial)
+- [x] Add Latin Hypercube Sampling (maximin, correlation criteria)
+- [x] Implement Sobol sequences (with scipy fallback)
+- [x] Create Central Composite Design (CCD)
+- [x] Add Box-Behnken design
+- [x] Add response surface modeling (linear, quadratic, interaction)
+- [x] Write DoE tests
+- [ ] Create Taguchi methods (deferred)
+- [ ] Create example: filter optimization with DoE (deferred)
+
+**Completed:** 2025-11-29
+
+Files created:
+- `spicelab/optimization/doe.py` - DoE methods (factorial, LHS, Sobol, CCD, Box-Behnken, RSM)
+- `tests/test_optimization.py` - 82 tests total (63 pass, 19 skipped without scipy)
 
 **Estimated Time:** 1 week
 

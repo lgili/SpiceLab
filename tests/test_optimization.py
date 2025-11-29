@@ -21,6 +21,19 @@ from spicelab.optimization import (
     OptimizationResult,
     ParameterBounds,
 )
+from spicelab.optimization.doe import (
+    DoEResult,
+    ExperimentalDesign,
+    ResponseSurface,
+    box_behnken,
+    central_composite,
+    fit_response_surface,
+    fractional_factorial,
+    full_factorial,
+    latin_hypercube,
+    run_doe,
+    sobol_sequence,
+)
 from spicelab.optimization.genetic import (
     GAConfig,
     GeneticOptimizer,
@@ -1016,3 +1029,308 @@ class TestGAConfig:
         assert config.crossover_prob == 0.9
         assert config.mutation_prob == 0.05
         assert config.seed == 42
+
+
+# =============================================================================
+# Test Design of Experiments
+# =============================================================================
+
+
+class TestFullFactorial:
+    """Tests for full factorial design."""
+
+    def test_two_level(self) -> None:
+        """Test 2-level full factorial."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+        design = full_factorial(bounds, levels=2)
+
+        assert design.n_runs == 4  # 2^2
+        assert design.n_factors == 2
+        assert design.design_type == "full_factorial_2^2"
+
+        # Check all corners present
+        values_x = {p["x"] for p in design.points}
+        values_y = {p["y"] for p in design.points}
+        assert values_x == {0, 10}
+        assert values_y == {0, 20}
+
+    def test_three_level(self) -> None:
+        """Test 3-level full factorial."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+        design = full_factorial(bounds, levels=3)
+
+        assert design.n_runs == 9  # 3^2
+        values_x = {p["x"] for p in design.points}
+        assert 5.0 in values_x  # Midpoint
+
+    def test_to_array(self) -> None:
+        """Test conversion to numpy array."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+        design = full_factorial(bounds, levels=2)
+
+        arr = design.to_array()
+        assert arr.shape == (4, 2)
+
+    def test_to_normalized(self) -> None:
+        """Test conversion to normalized array."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+        design = full_factorial(bounds, levels=2)
+
+        norm = design.to_normalized()
+        assert norm.min() >= 0
+        assert norm.max() <= 1
+
+
+class TestFractionalFactorial:
+    """Tests for fractional factorial design."""
+
+    def test_small_design(self) -> None:
+        """Test fractional factorial for small number of factors."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+        design = fractional_factorial(bounds, resolution=3)
+
+        # Should fall back to full factorial for 2 factors
+        assert design.n_runs == 4
+
+    def test_large_design(self) -> None:
+        """Test fractional factorial for more factors."""
+        bounds = [ParameterBounds(f"x{i}", 0, 10) for i in range(5)]
+        design = fractional_factorial(bounds, resolution=3)
+
+        # Should be less than full factorial (2^5 = 32)
+        assert design.n_runs < 32
+        assert design.n_factors == 5
+
+
+class TestLatinHypercube:
+    """Tests for Latin Hypercube Sampling."""
+
+    def test_basic_lhs(self) -> None:
+        """Test basic LHS generation."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+        design = latin_hypercube(bounds, n_samples=10, seed=42)
+
+        assert design.n_runs == 10
+        assert design.design_type == "lhs_maximin"
+
+    def test_lhs_coverage(self) -> None:
+        """Test that LHS covers the space."""
+        bounds = [ParameterBounds("x", 0, 100)]
+        design = latin_hypercube(bounds, n_samples=10, seed=42)
+
+        values = [p["x"] for p in design.points]
+        # Should have values spread across the range
+        assert min(values) < 20
+        assert max(values) > 80
+
+    def test_lhs_criteria(self) -> None:
+        """Test different LHS criteria."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+
+        for criterion in ["random", "maximin", "correlation"]:
+            design = latin_hypercube(bounds, n_samples=10, criterion=criterion, seed=42)
+            assert design.n_runs == 10
+            assert criterion in design.design_type
+
+
+class TestSobolSequence:
+    """Tests for Sobol sequence."""
+
+    def test_basic_sobol(self) -> None:
+        """Test basic Sobol sequence generation."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+        design = sobol_sequence(bounds, n_samples=16)
+
+        assert design.n_runs == 16
+        assert design.design_type == "sobol"
+
+    def test_sobol_coverage(self) -> None:
+        """Test Sobol sequence space coverage."""
+        bounds = [ParameterBounds("x", 0, 100)]
+        design = sobol_sequence(bounds, n_samples=32)
+
+        values = sorted([p["x"] for p in design.points])
+        # Sobol should give better coverage than random
+        # Check for reasonable spread
+        assert max(values) - min(values) > 50
+
+
+class TestCentralComposite:
+    """Tests for Central Composite Design."""
+
+    def test_ccd_face(self) -> None:
+        """Test face-centered CCD."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+        design = central_composite(bounds, alpha="face", center_points=3)
+
+        # 2^2 factorial + 2*2 axial + 3 center = 4 + 4 + 3 = 11
+        assert design.n_runs == 11
+
+    def test_ccd_contains_center(self) -> None:
+        """Test that CCD contains center points."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+        design = central_composite(bounds, center_points=3)
+
+        center_count = sum(1 for p in design.points if p["x"] == 5 and p["y"] == 10)
+        assert center_count == 3
+
+
+class TestBoxBehnken:
+    """Tests for Box-Behnken design."""
+
+    def test_basic_bb(self) -> None:
+        """Test basic Box-Behnken design."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+            ParameterBounds("z", 0, 30),
+        ]
+        design = box_behnken(bounds, center_points=3)
+
+        # BB for 3 factors: 12 edge points + 3 center = 15
+        assert design.n_runs == 15
+
+    def test_bb_requires_3_factors(self) -> None:
+        """Test that BB requires at least 3 factors."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+        with pytest.raises(ValueError, match="at least 3 factors"):
+            box_behnken(bounds)
+
+
+class TestResponseSurface:
+    """Tests for response surface modeling."""
+
+    def test_fit_linear(self) -> None:
+        """Test fitting linear response surface."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 20),
+        ]
+        design = full_factorial(bounds, levels=3)
+
+        # Linear response: y = 2x + 3y + 5
+        def objective(params: dict[str, float]) -> float:
+            return 2 * params["x"] + 3 * params["y"] + 5
+
+        result = run_doe(design, objective)
+        surface = fit_response_surface(result, model_type="linear")
+
+        assert surface.r_squared > 0.99  # Perfect linear fit
+        assert "intercept" in surface.coefficients
+        assert abs(surface.coefficients["x"] - 2) < 0.1
+        assert abs(surface.coefficients["y"] - 3) < 0.1
+
+    def test_fit_quadratic(self) -> None:
+        """Test fitting quadratic response surface."""
+        bounds = [
+            ParameterBounds("x", -5, 5),
+            ParameterBounds("y", -5, 5),
+        ]
+        design = central_composite(bounds, center_points=5)
+
+        # Quadratic response: f = x^2 + y^2
+        def objective(params: dict[str, float]) -> float:
+            return params["x"] ** 2 + params["y"] ** 2
+
+        result = run_doe(design, objective)
+        surface = fit_response_surface(result, model_type="quadratic")
+
+        assert surface.r_squared > 0.95
+        # Should have quadratic terms
+        assert "x^2" in surface.coefficients
+        assert "y^2" in surface.coefficients
+
+    def test_predict(self) -> None:
+        """Test response surface prediction."""
+        surface = ResponseSurface(
+            coefficients={"intercept": 5, "x": 2, "y": 3},
+            factor_names=["x", "y"],
+            model_type="linear",
+            r_squared=1.0,
+        )
+
+        pred = surface.predict({"x": 1, "y": 2})
+        assert pred == 5 + 2 * 1 + 3 * 2  # 13
+
+    def test_get_optimum(self) -> None:
+        """Test finding optimum of response surface."""
+        bounds = [
+            ParameterBounds("x", -10, 10),
+            ParameterBounds("y", -10, 10),
+        ]
+        surface = ResponseSurface(
+            coefficients={"intercept": 0, "x^2": 1, "y^2": 1},
+            factor_names=["x", "y"],
+            model_type="quadratic",
+            r_squared=1.0,
+        )
+
+        opt = surface.get_optimum(bounds, minimize=True, n_samples=1000)
+        # Optimum should be near (0, 0)
+        assert abs(opt["x"]) < 2
+        assert abs(opt["y"]) < 2
+
+
+class TestRunDoe:
+    """Tests for DoE runner."""
+
+    def test_run_doe(self) -> None:
+        """Test running DoE experiments."""
+        bounds = [ParameterBounds("x", 0, 10)]
+        design = full_factorial(bounds, levels=3)
+
+        def objective(params: dict[str, float]) -> float:
+            return params["x"] ** 2
+
+        result = run_doe(design, objective)
+
+        assert isinstance(result, DoEResult)
+        assert result.n_runs == 3
+        assert len(result.responses) == 3
+
+    def test_get_best(self) -> None:
+        """Test getting best result from DoE."""
+        bounds = [ParameterBounds("x", 0, 10)]
+        design = full_factorial(bounds, levels=3)
+
+        def objective(params: dict[str, float]) -> float:
+            return (params["x"] - 5) ** 2  # Minimum at x=5
+
+        result = run_doe(design, objective)
+        best_params, best_value = result.get_best(minimize=True)
+
+        assert best_params["x"] == 5
+        assert best_value == 0
