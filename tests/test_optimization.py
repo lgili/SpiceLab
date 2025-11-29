@@ -34,6 +34,18 @@ from spicelab.optimization.doe import (
     run_doe,
     sobol_sequence,
 )
+from spicelab.optimization.sensitivity import (
+    LocalSensitivity,
+    MorrisResult,
+    OATResult,
+    SobolResult,
+    generate_tornado_data,
+    local_sensitivity,
+    morris_analysis,
+    oat_analysis,
+    print_sensitivity_report,
+    sobol_analysis,
+)
 from spicelab.optimization.genetic import (
     GAConfig,
     GeneticOptimizer,
@@ -1334,3 +1346,365 @@ class TestRunDoe:
 
         assert best_params["x"] == 5
         assert best_value == 0
+
+
+# =============================================================================
+# Test Sensitivity Analysis
+# =============================================================================
+
+
+def linear_model_2d(params: dict[str, float]) -> float:
+    """2D Linear model: y = 2*x1 + 3*x2."""
+    return 2 * params["x1"] + 3 * params["x2"]
+
+
+def linear_model_3d(params: dict[str, float]) -> float:
+    """3D Linear model: y = 2*x1 + 3*x2 + x3."""
+    return 2 * params["x1"] + 3 * params["x2"] + params["x3"]
+
+
+def nonlinear_model(params: dict[str, float]) -> float:
+    """Nonlinear model with interaction: y = x1^2 + x1*x2 + x2."""
+    return params["x1"] ** 2 + params["x1"] * params["x2"] + params["x2"]
+
+
+class TestMorrisAnalysis:
+    """Tests for Morris sensitivity analysis."""
+
+    def test_morris_basic(self) -> None:
+        """Test basic Morris analysis."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+            ParameterBounds("x3", 0, 10),
+        ]
+
+        result = morris_analysis(linear_model_3d, bounds, n_trajectories=10, seed=42)
+
+        assert isinstance(result, MorrisResult)
+        assert len(result.factor_names) == 3
+        assert "x1" in result.mu_star
+        assert "x2" in result.mu_star
+        assert "x3" in result.mu_star
+
+    def test_morris_ranking(self) -> None:
+        """Test that Morris correctly ranks factors."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+            ParameterBounds("x3", 0, 10),
+        ]
+
+        result = morris_analysis(linear_model_3d, bounds, n_trajectories=20, seed=42)
+        ranking = result.get_ranking()
+
+        # x2 should be most important (coef=3), then x1 (coef=2), then x3 (coef=1)
+        assert ranking[0] == "x2"
+        assert ranking[1] == "x1"
+        assert ranking[2] == "x3"
+
+    def test_morris_detects_nonlinearity(self) -> None:
+        """Test that Morris detects nonlinear/interaction effects."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        result = morris_analysis(nonlinear_model, bounds, n_trajectories=20, seed=42)
+
+        # x1 has nonlinear effect (x1^2) and interaction (x1*x2)
+        # Should have higher sigma for x1
+        assert result.sigma["x1"] > 0
+
+    def test_morris_is_influential(self) -> None:
+        """Test influential factor detection."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+            ParameterBounds("x3", 0, 10),
+        ]
+
+        result = morris_analysis(linear_model_3d, bounds, n_trajectories=15, seed=42)
+
+        # All factors should be influential (all have non-zero coefficients)
+        assert result.is_influential("x1")
+        assert result.is_influential("x2")
+        assert result.is_influential("x3")
+
+    def test_morris_to_dict(self) -> None:
+        """Test conversion to dictionary."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+            ParameterBounds("x3", 0, 10),
+        ]
+
+        result = morris_analysis(linear_model_3d, bounds, n_trajectories=5, seed=42)
+        d = result.to_dict()
+
+        assert "mu" in d
+        assert "mu_star" in d
+        assert "sigma" in d
+
+
+class TestSobolAnalysis:
+    """Tests for Sobol sensitivity analysis."""
+
+    def test_sobol_basic(self) -> None:
+        """Test basic Sobol analysis."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+            ParameterBounds("x3", 0, 10),
+        ]
+
+        result = sobol_analysis(linear_model_3d, bounds, n_samples=256, seed=42)
+
+        assert isinstance(result, SobolResult)
+        assert len(result.factor_names) == 3
+        assert "x1" in result.S1
+        assert "x1" in result.ST
+
+    def test_sobol_linear_model(self) -> None:
+        """Test Sobol on linear model (no interactions)."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        result = sobol_analysis(linear_model_2d, bounds, n_samples=512, seed=42)
+
+        # For linear model, S1 should be close to ST (no interactions)
+        for name in result.factor_names:
+            interaction = result.get_interaction_strength(name)
+            assert interaction < 0.2  # Small interaction effect
+
+    def test_sobol_ranking(self) -> None:
+        """Test Sobol ranking of factors."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+            ParameterBounds("x3", 0, 10),
+        ]
+
+        result = sobol_analysis(linear_model_3d, bounds, n_samples=512, seed=42)
+        ranking = result.get_main_effects_ranking()
+
+        # x2 has highest coefficient (3), should be first
+        assert ranking[0] == "x2"
+
+    def test_sobol_indices_in_range(self) -> None:
+        """Test that Sobol indices are in valid range [0, 1]."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        result = sobol_analysis(linear_model_2d, bounds, n_samples=256, seed=42)
+
+        for name in result.factor_names:
+            assert 0 <= result.S1[name] <= 1
+            assert 0 <= result.ST[name] <= 1
+
+    def test_sobol_second_order(self) -> None:
+        """Test second-order Sobol indices."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        result = sobol_analysis(
+            nonlinear_model, bounds, n_samples=256, calc_second_order=True, seed=42
+        )
+
+        assert result.S2 is not None
+        assert ("x1", "x2") in result.S2
+
+    def test_sobol_to_dict(self) -> None:
+        """Test conversion to dictionary."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        result = sobol_analysis(linear_model_2d, bounds, n_samples=128, seed=42)
+        d = result.to_dict()
+
+        assert "S1" in d
+        assert "ST" in d
+
+
+class TestLocalSensitivity:
+    """Tests for local sensitivity analysis."""
+
+    def test_local_basic(self) -> None:
+        """Test basic local sensitivity."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+            ParameterBounds("x3", 0, 10),
+        ]
+
+        result = local_sensitivity(linear_model_3d, bounds)
+
+        assert isinstance(result, LocalSensitivity)
+        assert len(result.gradients) == 3
+
+    def test_local_gradients(self) -> None:
+        """Test that local gradients are correct for linear model."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+            ParameterBounds("x3", 0, 10),
+        ]
+
+        result = local_sensitivity(linear_model_3d, bounds)
+
+        # Gradients should match coefficients: 2, 3, 1
+        assert abs(result.gradients["x1"] - 2) < 0.1
+        assert abs(result.gradients["x2"] - 3) < 0.1
+        assert abs(result.gradients["x3"] - 1) < 0.1
+
+    def test_local_at_point(self) -> None:
+        """Test local sensitivity at specific point."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        point = {"x1": 2.0, "x2": 3.0}
+        result = local_sensitivity(linear_model_2d, bounds, point=point)
+
+        # Should evaluate at the specified point
+        assert result.point["x1"] == 2.0
+        assert result.point["x2"] == 3.0
+
+    def test_local_ranking(self) -> None:
+        """Test ranking by sensitivity."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+            ParameterBounds("x3", 0, 10),
+        ]
+
+        result = local_sensitivity(linear_model_3d, bounds)
+        ranking = result.get_ranking(normalized=False)
+
+        # x2 has highest gradient (3)
+        assert ranking[0] == "x2"
+
+
+class TestOATAnalysis:
+    """Tests for one-at-a-time analysis."""
+
+    def test_oat_basic(self) -> None:
+        """Test basic OAT analysis."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        result = oat_analysis(linear_model_2d, bounds, n_points=5)
+
+        assert isinstance(result, OATResult)
+        assert "x1" in result.sweeps
+        assert "x2" in result.sweeps
+
+    def test_oat_sweeps(self) -> None:
+        """Test OAT sweep data."""
+        bounds = [ParameterBounds("x1", 0, 10)]
+
+        # Use a simple 1D linear function for this test
+        def linear_1d(params: dict[str, float]) -> float:
+            return 2 * params["x1"]
+
+        result = oat_analysis(linear_1d, bounds, n_points=11)
+
+        params, responses = result.sweeps["x1"]
+        assert len(params) == 11
+        assert len(responses) == 11
+
+    def test_oat_sensitivity(self) -> None:
+        """Test OAT sensitivity estimation."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        result = oat_analysis(linear_model_2d, bounds, n_points=11)
+
+        # Sensitivity should approximate the coefficients
+        assert abs(result.get_sensitivity("x1") - 2) < 0.5
+        assert abs(result.get_sensitivity("x2") - 3) < 0.5
+
+    def test_oat_ranking(self) -> None:
+        """Test OAT ranking."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+            ParameterBounds("x3", 0, 10),
+        ]
+
+        result = oat_analysis(linear_model_3d, bounds, n_points=11)
+        ranking = result.get_ranking()
+
+        # x2 should have largest range (coefficient 3)
+        assert ranking[0] == "x2"
+
+
+class TestVisualizationHelpers:
+    """Tests for visualization helpers."""
+
+    def test_tornado_data_morris(self) -> None:
+        """Test tornado data generation for Morris."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        morris_result = morris_analysis(linear_model_2d, bounds, n_trajectories=5, seed=42)
+        tornado = generate_tornado_data(morris_result)
+
+        assert "data" in tornado
+        assert len(tornado["data"]) == 2
+
+    def test_tornado_data_sobol(self) -> None:
+        """Test tornado data generation for Sobol."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        sobol_result = sobol_analysis(linear_model_2d, bounds, n_samples=128, seed=42)
+        tornado = generate_tornado_data(sobol_result)
+
+        assert "data" in tornado
+        assert len(tornado["data"]) == 2
+
+    def test_print_sensitivity_report_morris(self) -> None:
+        """Test Morris report generation."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        result = morris_analysis(linear_model_2d, bounds, n_trajectories=5, seed=42)
+        report = print_sensitivity_report(result)
+
+        assert "Morris" in report
+        assert "x1" in report
+        assert "x2" in report
+
+    def test_print_sensitivity_report_sobol(self) -> None:
+        """Test Sobol report generation."""
+        bounds = [
+            ParameterBounds("x1", 0, 10),
+            ParameterBounds("x2", 0, 10),
+        ]
+
+        result = sobol_analysis(linear_model_2d, bounds, n_samples=128, seed=42)
+        report = print_sensitivity_report(result)
+
+        assert "Sobol" in report
+        assert "S1" in report
+        assert "ST" in report

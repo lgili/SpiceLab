@@ -76,6 +76,18 @@ from .doe import (
     run_doe,
     sobol_sequence,
 )
+from .sensitivity import (
+    LocalSensitivity,
+    MorrisResult,
+    OATResult,
+    SobolResult,
+    generate_tornado_data,
+    local_sensitivity,
+    morris_analysis,
+    oat_analysis,
+    print_sensitivity_report,
+    sobol_analysis,
+)
 from .genetic import (
     GAConfig,
     GeneticOptimizer,
@@ -143,4 +155,15 @@ __all__ = [
     "box_behnken",
     "fit_response_surface",
     "run_doe",
+    # Sensitivity analysis
+    "MorrisResult",
+    "SobolResult",
+    "LocalSensitivity",
+    "OATResult",
+    "morris_analysis",
+    "sobol_analysis",
+    "local_sensitivity",
+    "oat_analysis",
+    "generate_tornado_data",
+    "print_sensitivity_report",
 ]

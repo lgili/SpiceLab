@@ -1,6 +1,6 @@
 # M9: Optimization & Design of Experiments - Tasks
 
-**Status:** In Progress (Phase 4 Complete)
+**Status:** In Progress (Phase 5 Complete)
 **Start Date:** 2025-11-29
 **Target Completion:** TBD (8-10 weeks)
 
@@ -86,15 +86,23 @@ Files created:
 
 ---
 
-### Phase 5: Sensitivity Analysis (Week 8)
-- [ ] Integrate SALib
-- [ ] Implement Morris (one-at-a-time) method
-- [ ] Add Sobol variance-based method
-- [ ] Create FAST (Fourier Amplitude Sensitivity Test)
-- [ ] Implement delta moment-independent indices
-- [ ] Visualization (tornado plots, scatter plots)
-- [ ] Write sensitivity tests
-- [ ] Create example: power supply sensitivity
+### Phase 5: Sensitivity Analysis (Week 8) ✅ COMPLETE
+- [x] Implement Morris (one-at-a-time) method
+- [x] Add Sobol variance-based method (first-order S1 & total-order ST)
+- [x] Implement local gradient-based sensitivity
+- [x] Add One-at-a-Time (OAT) sweep analysis
+- [x] Visualization helpers (tornado data generation, text reports)
+- [x] Write sensitivity tests
+- [ ] Integrate SALib (deferred - native implementation sufficient)
+- [ ] Create FAST method (deferred)
+- [ ] Implement delta moment-independent indices (deferred)
+- [ ] Create example: power supply sensitivity (deferred)
+
+**Completed:** 2025-11-29
+
+Files created:
+- `spicelab/optimization/sensitivity.py` - Sensitivity analysis methods (MorrisResult, SobolResult, LocalSensitivity, OATResult, morris_analysis, sobol_analysis, local_sensitivity, oat_analysis, generate_tornado_data, print_sensitivity_report)
+- `tests/test_optimization.py` - 86 tests total (67 pass, 19 skipped without scipy)
 
 **Estimated Time:** 1 week
 
@@ -159,4 +167,4 @@ Files created:
 
 ---
 
-**Last Updated:** 2025-11-29
+**Last Updated:** 2025-11-29 (Phase 5 Complete)
