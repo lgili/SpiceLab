@@ -15,12 +15,18 @@ from unittest.mock import MagicMock
 import numpy as np
 import pytest
 import xarray as xr
-
 from spicelab.optimization import (
     CircuitObjective,
     OptimizationConfig,
     OptimizationResult,
     ParameterBounds,
+)
+from spicelab.optimization.utils import (
+    ConvergenceData,
+    ConvergenceTracker,
+    make_bound_constraint,
+    make_equality_constraint,
+    make_inequality_constraint,
 )
 
 # Check if scipy is available
@@ -37,8 +43,12 @@ if HAS_SCIPY:
         CircuitOptimizer,
         DifferentialEvolutionOptimizer,
         LBFGSBOptimizer,
+        MultiStartOptimizer,
+        MultiStartResult,
         NelderMeadOptimizer,
         PowellOptimizer,
+        analyze_sensitivity,
+        compute_hessian_diagonal,
         get_scipy_optimizer,
         list_scipy_optimizers,
     )
@@ -477,3 +487,302 @@ class TestOptimizationConfig:
         assert config.tolerance == 1e-8
         assert config.verbose is True
         assert config.seed == 42
+
+
+# =============================================================================
+# Test Constraint Builders
+# =============================================================================
+
+
+class TestConstraintBuilders:
+    """Tests for constraint builder functions."""
+
+    def test_inequality_constraint(self) -> None:
+        """Test inequality constraint creation."""
+        # R1 >= 2 * R2
+        constraint = make_inequality_constraint(
+            lambda p: p["R1"] - 2 * p["R2"],
+            "R1 >= 2*R2",
+        )
+
+        # Should be satisfied when R1 > 2*R2
+        assert constraint({"R1": 3000, "R2": 1000}) >= 0
+        # Should not be satisfied when R1 < 2*R2
+        assert constraint({"R1": 1000, "R2": 1000}) < 0
+
+    def test_equality_constraint(self) -> None:
+        """Test equality constraint creation."""
+        # R1 * C1 = 1e-6
+        constraint = make_equality_constraint(
+            lambda p: p["R1"] * p["C1"] - 1e-6,
+            tolerance=1e-9,
+            name="RC = 1us",
+        )
+
+        # Should be satisfied within tolerance
+        assert constraint({"R1": 1000, "C1": 1e-9}) >= 0  # RC = 1e-6
+        # Should not be satisfied outside tolerance
+        assert constraint({"R1": 1000, "C1": 2e-9}) < 0  # RC = 2e-6
+
+    def test_bound_constraint_lower(self) -> None:
+        """Test lower bound constraint."""
+        constraints = make_bound_constraint("R1", lower=100)
+
+        assert len(constraints) == 1
+        assert constraints[0]({"R1": 200}) >= 0
+        assert constraints[0]({"R1": 50}) < 0
+
+    def test_bound_constraint_upper(self) -> None:
+        """Test upper bound constraint."""
+        constraints = make_bound_constraint("R1", upper=10000)
+
+        assert len(constraints) == 1
+        assert constraints[0]({"R1": 5000}) >= 0
+        assert constraints[0]({"R1": 15000}) < 0
+
+    def test_bound_constraint_both(self) -> None:
+        """Test both bound constraints."""
+        constraints = make_bound_constraint("R1", lower=100, upper=10000)
+
+        assert len(constraints) == 2
+        # Within bounds
+        assert all(c({"R1": 1000}) >= 0 for c in constraints)
+        # Below lower
+        assert any(c({"R1": 50}) < 0 for c in constraints)
+        # Above upper
+        assert any(c({"R1": 20000}) < 0 for c in constraints)
+
+
+# =============================================================================
+# Test Convergence Tracking
+# =============================================================================
+
+
+class TestConvergenceData:
+    """Tests for ConvergenceData class."""
+
+    def test_empty_data(self) -> None:
+        """Test empty convergence data."""
+        data = ConvergenceData()
+        assert data.n_iterations == 0
+        assert np.isnan(data.final_value)
+        assert np.isnan(data.best_value)
+
+    def test_add_points(self) -> None:
+        """Test adding convergence points."""
+        data = ConvergenceData()
+        data.add_point(0, 10.0, {"x": 1.0})
+        data.add_point(1, 8.0, {"x": 0.8})
+        data.add_point(2, 5.0, {"x": 0.5})
+
+        assert data.n_iterations == 3
+        assert data.final_value == 5.0
+        assert data.best_value == 5.0
+        assert data.improvement == 5.0
+
+    def test_best_value_tracking(self) -> None:
+        """Test that best value is tracked correctly even with fluctuations."""
+        data = ConvergenceData()
+        data.add_point(0, 10.0, {"x": 1.0})
+        data.add_point(1, 5.0, {"x": 0.5})
+        data.add_point(2, 8.0, {"x": 0.8})  # Goes up
+        data.add_point(3, 3.0, {"x": 0.3})
+
+        # Best values should be monotonically non-increasing
+        assert data.best_values == [10.0, 5.0, 5.0, 3.0]
+        assert data.best_value == 3.0
+
+    def test_to_dict(self) -> None:
+        """Test serialization."""
+        data = ConvergenceData()
+        data.add_point(0, 10.0, {"x": 1.0})
+        data.add_point(1, 5.0, {"x": 0.5})
+
+        d = data.to_dict()
+        assert "iterations" in d
+        assert "values" in d
+        assert "best_values" in d
+
+
+class TestConvergenceTracker:
+    """Tests for ConvergenceTracker class."""
+
+    def test_record_and_check(self) -> None:
+        """Test recording iterations."""
+        tracker = ConvergenceTracker(tolerance=1e-6)
+        tracker.record(0, 10.0, {"x": 1.0})
+        tracker.record(1, 5.0, {"x": 0.5})
+        tracker.record(2, 2.0, {"x": 0.2})
+
+        assert tracker.data.n_iterations == 3
+        assert not tracker.is_stagnant()
+
+    def test_convergence_detection(self) -> None:
+        """Test convergence detection."""
+        tracker = ConvergenceTracker(tolerance=0.1)
+
+        # Add points that converge
+        for i in range(10):
+            tracker.record(i, 1.0 + 0.001 * (10 - i), {"x": 1.0})
+
+        assert tracker.is_converged()
+
+    def test_stagnation_detection(self) -> None:
+        """Test stagnation detection."""
+        tracker = ConvergenceTracker(patience=5, min_improvement=0.01)
+
+        # Add stagnant points
+        for i in range(10):
+            tracker.record(i, 1.0, {"x": 1.0})
+
+        assert tracker.is_stagnant()
+
+    def test_reset(self) -> None:
+        """Test tracker reset."""
+        tracker = ConvergenceTracker()
+        tracker.record(0, 10.0, {"x": 1.0})
+        tracker.reset()
+
+        assert tracker.data.n_iterations == 0
+
+
+# =============================================================================
+# Test Multi-Start Optimization
+# =============================================================================
+
+
+@scipy_required
+class TestMultiStartOptimizer:
+    """Tests for MultiStartOptimizer."""
+
+    def test_multi_start_sphere(self) -> None:
+        """Test multi-start on sphere function."""
+        base_optimizer = NelderMeadOptimizer()
+        multi = MultiStartOptimizer(base_optimizer, n_starts=5, sampling="random", seed=42)
+
+        bounds = [
+            ParameterBounds("x", -5, 5),
+            ParameterBounds("y", -5, 5),
+        ]
+        config = OptimizationConfig(max_iterations=50, verbose=False)
+
+        result = multi.optimize(sphere, bounds, config=config)
+
+        assert isinstance(result, MultiStartResult)
+        assert result.n_starts == 5
+        assert result.best_result.value < 0.1  # Should find near optimum
+        assert len(result.all_results) == 5
+
+    def test_multi_start_lhs_sampling(self) -> None:
+        """Test LHS sampling."""
+        base_optimizer = NelderMeadOptimizer()
+        multi = MultiStartOptimizer(base_optimizer, n_starts=8, sampling="lhs", seed=42)
+
+        bounds = [
+            ParameterBounds("x", -5, 5),
+            ParameterBounds("y", -5, 5),
+        ]
+        config = OptimizationConfig(max_iterations=30, verbose=False)
+
+        result = multi.optimize(sphere, bounds, config=config)
+
+        # LHS should provide good coverage
+        assert result.n_starts == 8
+        assert len(result.start_points) == 8
+
+    def test_multi_start_grid_sampling(self) -> None:
+        """Test grid sampling."""
+        base_optimizer = NelderMeadOptimizer()
+        multi = MultiStartOptimizer(base_optimizer, n_starts=9, sampling="grid", seed=42)
+
+        bounds = [
+            ParameterBounds("x", -5, 5),
+            ParameterBounds("y", -5, 5),
+        ]
+        config = OptimizationConfig(max_iterations=30, verbose=False)
+
+        result = multi.optimize(sphere, bounds, config=config)
+
+        assert result.n_starts == 9
+
+    def test_success_rate(self) -> None:
+        """Test success rate calculation."""
+        base_optimizer = NelderMeadOptimizer()
+        multi = MultiStartOptimizer(base_optimizer, n_starts=5, seed=42)
+
+        bounds = [
+            ParameterBounds("x", -5, 5),
+            ParameterBounds("y", -5, 5),
+        ]
+        config = OptimizationConfig(max_iterations=50, verbose=False)
+
+        result = multi.optimize(sphere, bounds, config=config)
+
+        # All should succeed for sphere
+        assert result.success_rate > 0.0
+
+    def test_unique_optima(self) -> None:
+        """Test finding unique optima."""
+        base_optimizer = NelderMeadOptimizer()
+        multi = MultiStartOptimizer(base_optimizer, n_starts=5, seed=42)
+
+        bounds = [
+            ParameterBounds("x", -5, 5),
+            ParameterBounds("y", -5, 5),
+        ]
+        config = OptimizationConfig(max_iterations=50, verbose=False)
+
+        result = multi.optimize(sphere, bounds, config=config)
+        unique = result.get_unique_optima(tolerance=0.1)
+
+        # Sphere has single optimum, so should find ~1 unique
+        assert len(unique) >= 1
+
+
+# =============================================================================
+# Test Analysis Utilities
+# =============================================================================
+
+
+@scipy_required
+class TestAnalysisUtilities:
+    """Tests for analysis utility functions."""
+
+    def test_analyze_sensitivity(self) -> None:
+        """Test sensitivity analysis at optimum."""
+        # Optimize sphere first
+        optimizer = NelderMeadOptimizer()
+        bounds = [
+            ParameterBounds("x", -5, 5, initial=1),
+            ParameterBounds("y", -5, 5, initial=1),
+        ]
+        config = OptimizationConfig(max_iterations=50)
+        result = optimizer.optimize(sphere, bounds, config=config)
+
+        # Analyze sensitivity
+        sensitivities = analyze_sensitivity(result, sphere, bounds, perturbation=0.01)
+
+        assert "x" in sensitivities
+        assert "y" in sensitivities
+        # At optimum (0, 0), sensitivities should be small
+        # But result may not be exactly at optimum
+
+    def test_compute_hessian_diagonal(self) -> None:
+        """Test Hessian diagonal computation."""
+        # Optimize sphere first
+        optimizer = NelderMeadOptimizer()
+        bounds = [
+            ParameterBounds("x", -5, 5, initial=1),
+            ParameterBounds("y", -5, 5, initial=1),
+        ]
+        config = OptimizationConfig(max_iterations=50)
+        result = optimizer.optimize(sphere, bounds, config=config)
+
+        # Compute Hessian diagonal
+        hess_diag = compute_hessian_diagonal(result, sphere, bounds, perturbation=0.01)
+
+        assert "x" in hess_diag
+        assert "y" in hess_diag
+        # For sphere (x^2 + y^2), Hessian diagonal should be ~2 for each
+        assert abs(hess_diag["x"] - 2.0) < 0.5
+        assert abs(hess_diag["y"] - 2.0) < 0.5

@@ -63,6 +63,17 @@ from .scipy_optimizers import (
     get_scipy_optimizer,
     list_scipy_optimizers,
 )
+from .utils import (
+    ConvergenceData,
+    ConvergenceTracker,
+    MultiStartOptimizer,
+    MultiStartResult,
+    analyze_sensitivity,
+    compute_hessian_diagonal,
+    make_bound_constraint,
+    make_equality_constraint,
+    make_inequality_constraint,
+)
 
 __all__ = [
     # Core classes
@@ -82,4 +93,14 @@ __all__ = [
     "DualAnnealingOptimizer",
     "get_scipy_optimizer",
     "list_scipy_optimizers",
+    # Utilities
+    "ConvergenceData",
+    "ConvergenceTracker",
+    "MultiStartOptimizer",
+    "MultiStartResult",
+    "analyze_sensitivity",
+    "compute_hessian_diagonal",
+    "make_bound_constraint",
+    "make_equality_constraint",
+    "make_inequality_constraint",
 ]
