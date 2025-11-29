@@ -21,6 +21,14 @@ from spicelab.optimization import (
     OptimizationResult,
     ParameterBounds,
 )
+from spicelab.optimization.genetic import (
+    GAConfig,
+    GeneticOptimizer,
+    MultiObjectiveResult,
+    NSGA2Optimizer,
+    ParetoFront,
+    get_genetic_optimizer,
+)
 from spicelab.optimization.utils import (
     ConvergenceData,
     ConvergenceTracker,
@@ -786,3 +794,225 @@ class TestAnalysisUtilities:
         # For sphere (x^2 + y^2), Hessian diagonal should be ~2 for each
         assert abs(hess_diag["x"] - 2.0) < 0.5
         assert abs(hess_diag["y"] - 2.0) < 0.5
+
+
+# =============================================================================
+# Test Genetic Algorithms
+# =============================================================================
+
+
+class TestGeneticOptimizer:
+    """Tests for GeneticOptimizer class."""
+
+    def test_ga_sphere(self) -> None:
+        """Test GA on sphere function."""
+        optimizer = GeneticOptimizer(
+            population_size=30,
+            n_generations=50,
+            crossover_prob=0.8,
+            mutation_prob=0.1,
+        )
+
+        bounds = [
+            ParameterBounds("x", -5, 5),
+            ParameterBounds("y", -5, 5),
+        ]
+        config = OptimizationConfig(seed=42, verbose=False)
+
+        result = optimizer.optimize(sphere, bounds, config=config)
+
+        assert result.success
+        assert result.value < 0.5  # Should find near optimum
+        assert abs(result.parameters["x"]) < 1.0
+        assert abs(result.parameters["y"]) < 1.0
+
+    def test_ga_rosenbrock(self) -> None:
+        """Test GA on Rosenbrock (harder problem)."""
+        optimizer = GeneticOptimizer(
+            population_size=50,
+            n_generations=100,
+        )
+
+        bounds = [
+            ParameterBounds("x", -2, 2),
+            ParameterBounds("y", -2, 2),
+        ]
+        config = OptimizationConfig(seed=42, verbose=False)
+
+        result = optimizer.optimize(rosenbrock, bounds, config=config)
+
+        # GA should make progress on Rosenbrock
+        assert result.n_evaluations > 0
+        assert result.value < 10  # Should improve from random
+
+    def test_ga_with_constraints(self) -> None:
+        """Test GA with constraint penalties."""
+        optimizer = GeneticOptimizer(population_size=30, n_generations=30)
+
+        bounds = [
+            ParameterBounds("x", -5, 5),
+            ParameterBounds("y", -5, 5),
+        ]
+
+        # Constraint: x + y >= 1
+        constraints = [make_inequality_constraint(lambda p: p["x"] + p["y"] - 1)]
+        config = OptimizationConfig(seed=42, verbose=False)
+
+        result = optimizer.optimize(sphere, bounds, constraints=constraints, config=config)
+
+        # Solution should satisfy constraint
+        assert result.parameters["x"] + result.parameters["y"] >= 0.9  # Allow small tolerance
+
+    def test_ga_history(self) -> None:
+        """Test that GA records history."""
+        optimizer = GeneticOptimizer(population_size=20, n_generations=20)
+
+        bounds = [
+            ParameterBounds("x", -5, 5),
+            ParameterBounds("y", -5, 5),
+        ]
+        config = OptimizationConfig(seed=42)
+
+        result = optimizer.optimize(sphere, bounds, config=config)
+
+        assert len(result.history) > 0
+        # History should show improvement
+        if len(result.history) > 1:
+            assert result.history[-1][1] <= result.history[0][1]
+
+    def test_get_genetic_optimizer(self) -> None:
+        """Test factory function."""
+        ga = get_genetic_optimizer("ga")
+        assert isinstance(ga, GeneticOptimizer)
+
+        nsga = get_genetic_optimizer("nsga2")
+        assert isinstance(nsga, NSGA2Optimizer)
+
+
+class TestNSGA2Optimizer:
+    """Tests for NSGA2Optimizer class."""
+
+    def test_nsga2_simple(self) -> None:
+        """Test NSGA-II on simple bi-objective problem."""
+        # Objectives: minimize x^2, minimize (x-2)^2
+
+        def bi_objective(params: dict[str, float]) -> tuple[float, float]:
+            x = params["x"]
+            return (x**2, (x - 2) ** 2)
+
+        optimizer = NSGA2Optimizer(
+            population_size=30,
+            n_generations=30,
+        )
+
+        bounds = [ParameterBounds("x", -1, 3)]
+        config = OptimizationConfig(seed=42, verbose=False)
+
+        result = optimizer.optimize(bi_objective, bounds, n_objectives=2, config=config)
+
+        assert isinstance(result, MultiObjectiveResult)
+        assert result.success
+        assert len(result.pareto_front) > 0
+
+    def test_nsga2_pareto_front(self) -> None:
+        """Test Pareto front properties."""
+        # 2D problem: minimize f1 = x^2 + y^2, f2 = (x-1)^2 + (y-1)^2
+
+        def two_spheres(params: dict[str, float]) -> tuple[float, float]:
+            x, y = params["x"], params["y"]
+            return (x**2 + y**2, (x - 1) ** 2 + (y - 1) ** 2)
+
+        optimizer = NSGA2Optimizer(population_size=50, n_generations=50)
+        bounds = [
+            ParameterBounds("x", -1, 2),
+            ParameterBounds("y", -1, 2),
+        ]
+        config = OptimizationConfig(seed=42, verbose=False)
+
+        result = optimizer.optimize(two_spheres, bounds, n_objectives=2, config=config)
+
+        # Should find multiple Pareto solutions
+        assert len(result.pareto_front) >= 2
+
+        # Test knee point
+        knee = result.pareto_front.get_knee_point()
+        assert "x" in knee
+        assert "y" in knee
+
+    def test_pareto_front_extremes(self) -> None:
+        """Test getting extreme solutions from Pareto front."""
+        pareto = ParetoFront(
+            solutions=[{"x": 0}, {"x": 0.5}, {"x": 1}],
+            objectives=[(0.0, 1.0), (0.25, 0.25), (1.0, 0.0)],
+            n_objectives=2,
+        )
+
+        # Get extreme for objective 0 (minimize)
+        min_obj0 = pareto.get_extreme(0, minimize=True)
+        assert min_obj0["x"] == 0  # First solution has min obj0
+
+        # Get extreme for objective 1 (minimize)
+        min_obj1 = pareto.get_extreme(1, minimize=True)
+        assert min_obj1["x"] == 1  # Third solution has min obj1
+
+    def test_pareto_front_to_dict(self) -> None:
+        """Test Pareto front serialization."""
+        pareto = ParetoFront(
+            solutions=[{"x": 1.0}, {"x": 2.0}],
+            objectives=[(1.0, 2.0), (2.0, 1.0)],
+            n_objectives=2,
+        )
+
+        d = pareto.to_dict()
+        assert "solutions" in d
+        assert "objectives" in d
+        assert d["n_objectives"] == 2
+
+    def test_multi_objective_result(self) -> None:
+        """Test MultiObjectiveResult properties."""
+        pareto = ParetoFront(
+            solutions=[{"x": 0.5}],
+            objectives=[(0.25, 0.25)],
+            n_objectives=2,
+        )
+
+        result = MultiObjectiveResult(
+            pareto_front=pareto,
+            n_generations=10,
+            n_evaluations=100,
+        )
+
+        assert result.success
+        compromise = result.get_best_compromise()
+        assert compromise["x"] == 0.5
+
+
+class TestGAConfig:
+    """Tests for GAConfig class."""
+
+    def test_default_values(self) -> None:
+        """Test default configuration values."""
+        config = GAConfig()
+        assert config.population_size == 50
+        assert config.n_generations == 100
+        assert config.crossover_prob == 0.8
+        assert config.mutation_prob == 0.1
+        assert config.tournament_size == 3
+        assert config.elitism == 2
+        assert config.seed is None
+        assert config.verbose is False
+
+    def test_custom_values(self) -> None:
+        """Test custom configuration."""
+        config = GAConfig(
+            population_size=100,
+            n_generations=200,
+            crossover_prob=0.9,
+            mutation_prob=0.05,
+            seed=42,
+        )
+        assert config.population_size == 100
+        assert config.n_generations == 200
+        assert config.crossover_prob == 0.9
+        assert config.mutation_prob == 0.05
+        assert config.seed == 42

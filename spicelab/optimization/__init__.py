@@ -63,6 +63,14 @@ from .scipy_optimizers import (
     get_scipy_optimizer,
     list_scipy_optimizers,
 )
+from .genetic import (
+    GAConfig,
+    GeneticOptimizer,
+    MultiObjectiveResult,
+    NSGA2Optimizer,
+    ParetoFront,
+    get_genetic_optimizer,
+)
 from .utils import (
     ConvergenceData,
     ConvergenceTracker,
@@ -103,4 +111,11 @@ __all__ = [
     "make_bound_constraint",
     "make_equality_constraint",
     "make_inequality_constraint",
+    # Genetic algorithms
+    "GAConfig",
+    "GeneticOptimizer",
+    "NSGA2Optimizer",
+    "ParetoFront",
+    "MultiObjectiveResult",
+    "get_genetic_optimizer",
 ]
