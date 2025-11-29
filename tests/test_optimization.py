@@ -1708,3 +1708,498 @@ class TestVisualizationHelpers:
         assert "Sobol" in report
         assert "S1" in report
         assert "ST" in report
+
+
+# =============================================================================
+# Test Corner Analysis
+# =============================================================================
+
+from spicelab.optimization.corner import (
+    Corner,
+    CornerAnalysis,
+    CornerAnalysisResult,
+    CornerDefinition,
+    CornerResult,
+    PVTCondition,
+    PVTSweep,
+    StatisticalCornerResult,
+    WorstCaseResult,
+    print_corner_report,
+    statistical_corner_analysis,
+    worst_case_analysis,
+)
+
+
+class TestCorner:
+    """Tests for Corner class."""
+
+    def test_basic_corner(self) -> None:
+        """Test basic corner creation."""
+        corner = Corner(
+            name="test_corner",
+            parameters={"R1": 1000, "C1": 1e-9},
+        )
+        assert corner.name == "test_corner"
+        assert corner.parameters["R1"] == 1000
+        assert corner.parameters["C1"] == 1e-9
+
+    def test_corner_str(self) -> None:
+        """Test corner string representation."""
+        corner = Corner(name="test", parameters={"x": 1, "y": 2})
+        s = str(corner)
+        assert "test" in s
+        assert "x=1" in s
+        assert "y=2" in s
+
+    def test_corner_to_dict(self) -> None:
+        """Test corner serialization."""
+        corner = Corner(
+            name="test",
+            parameters={"x": 1},
+            metadata={"type": "typical"},
+        )
+        d = corner.to_dict()
+        assert d["name"] == "test"
+        assert d["parameters"]["x"] == 1
+        assert d["metadata"]["type"] == "typical"
+
+
+class TestCornerDefinition:
+    """Tests for CornerDefinition class."""
+
+    def test_add_parameter(self) -> None:
+        """Test adding parameters."""
+        definition = CornerDefinition()
+        definition.add_parameter("process", ["slow", "typical", "fast"])
+        definition.add_parameter("voltage", [3.0, 3.3, 3.6])
+
+        assert definition.n_parameters == 2
+        assert "process" in definition.parameter_names
+        assert "voltage" in definition.parameter_names
+
+    def test_method_chaining(self) -> None:
+        """Test method chaining."""
+        definition = (
+            CornerDefinition()
+            .add_parameter("process", ["slow", "typical", "fast"])
+            .add_parameter("voltage", [3.0, 3.3, 3.6])
+        )
+        assert definition.n_parameters == 2
+
+    def test_n_corners(self) -> None:
+        """Test corner count calculation."""
+        definition = CornerDefinition()
+        definition.add_parameter("process", ["slow", "typical", "fast"])  # 3
+        definition.add_parameter("voltage", [3.0, 3.3, 3.6])  # 3
+        definition.add_parameter("temperature", [-40, 25, 85])  # 3
+
+        assert definition.n_corners == 27  # 3 * 3 * 3
+
+    def test_generate_all(self) -> None:
+        """Test generating all corners."""
+        definition = CornerDefinition()
+        definition.add_parameter("x", [0, 1])
+        definition.add_parameter("y", [0, 1])
+
+        corners = definition.generate_all()
+        assert len(corners) == 4  # 2 * 2
+
+        # Check all combinations present
+        params_set = {tuple(sorted(c.parameters.items())) for c in corners}
+        expected = {
+            (("x", 0), ("y", 0)),
+            (("x", 0), ("y", 1)),
+            (("x", 1), ("y", 0)),
+            (("x", 1), ("y", 1)),
+        }
+        assert params_set == expected
+
+    def test_generate_extremes(self) -> None:
+        """Test generating extreme corners only."""
+        definition = CornerDefinition()
+        definition.add_parameter("x", [0, 5, 10])
+        definition.add_parameter("y", [0, 5, 10])
+
+        extremes = definition.generate_extremes()
+        assert len(extremes) == 4  # 2^2 extremes
+
+        # Check only min/max values used
+        for corner in extremes:
+            assert corner.parameters["x"] in [0, 10]
+            assert corner.parameters["y"] in [0, 10]
+
+    def test_generate_typical(self) -> None:
+        """Test generating typical corner."""
+        definition = CornerDefinition()
+        definition.add_parameter("x", [0, 5, 10])
+        definition.add_parameter("y", [0, 50, 100])
+
+        typical = definition.generate_typical()
+        assert typical.parameters["x"] == 5
+        assert typical.parameters["y"] == 50
+
+    def test_add_pvt(self) -> None:
+        """Test adding standard PVT parameters."""
+        definition = CornerDefinition()
+        definition.add_pvt(voltage=[3.0, 3.3, 3.6])
+
+        assert "process" in definition.parameter_names
+        assert "voltage" in definition.parameter_names
+        assert "temperature" in definition.parameter_names
+
+        assert definition.n_corners == 27  # 3 * 3 * 3
+
+
+class TestCornerResult:
+    """Tests for CornerResult class."""
+
+    def test_basic_result(self) -> None:
+        """Test basic result creation."""
+        corner = Corner(name="test", parameters={"x": 1})
+        result = CornerResult(corner=corner, value=42.0, success=True)
+
+        assert result.corner.name == "test"
+        assert result.value == 42.0
+        assert result.success is True
+
+    def test_result_to_dict(self) -> None:
+        """Test result serialization."""
+        corner = Corner(name="test", parameters={"x": 1})
+        result = CornerResult(
+            corner=corner,
+            value=42.0,
+            metrics={"gain": 10.0},
+        )
+
+        d = result.to_dict()
+        assert d["value"] == 42.0
+        assert d["metrics"]["gain"] == 10.0
+
+
+class TestCornerAnalysisResult:
+    """Tests for CornerAnalysisResult class."""
+
+    def test_worst_best_case(self) -> None:
+        """Test worst/best case detection."""
+        definition = CornerDefinition()
+        definition.add_parameter("x", [0, 1])
+
+        results = [
+            CornerResult(Corner("c1", {"x": 0}), value=10.0),
+            CornerResult(Corner("c2", {"x": 1}), value=20.0),
+        ]
+        analysis_result = CornerAnalysisResult(results, definition)
+
+        assert analysis_result.worst_case is not None
+        assert analysis_result.worst_case.value == 20.0
+        assert analysis_result.best_case is not None
+        assert analysis_result.best_case.value == 10.0
+
+    def test_statistics(self) -> None:
+        """Test statistical summary."""
+        definition = CornerDefinition()
+        definition.add_parameter("x", [0, 1, 2])
+
+        results = [
+            CornerResult(Corner("c1", {"x": 0}), value=10.0),
+            CornerResult(Corner("c2", {"x": 1}), value=20.0),
+            CornerResult(Corner("c3", {"x": 2}), value=30.0),
+        ]
+        analysis_result = CornerAnalysisResult(results, definition)
+
+        stats = analysis_result.get_statistics()
+        assert stats["min"] == 10.0
+        assert stats["max"] == 30.0
+        assert stats["mean"] == 20.0
+        assert stats["range"] == 20.0
+
+    def test_success_rate(self) -> None:
+        """Test success rate calculation."""
+        definition = CornerDefinition()
+        definition.add_parameter("x", [0, 1])
+
+        results = [
+            CornerResult(Corner("c1", {"x": 0}), value=10.0, success=True),
+            CornerResult(Corner("c2", {"x": 1}), value=float("nan"), success=False),
+        ]
+        analysis_result = CornerAnalysisResult(results, definition)
+
+        assert analysis_result.success_rate == 0.5
+
+    def test_get_by_parameter(self) -> None:
+        """Test filtering by parameter value."""
+        definition = CornerDefinition()
+        definition.add_parameter("process", ["slow", "fast"])
+        definition.add_parameter("temp", [-40, 85])
+
+        results = [
+            CornerResult(Corner("c1", {"process": "slow", "temp": -40}), value=10.0),
+            CornerResult(Corner("c2", {"process": "slow", "temp": 85}), value=15.0),
+            CornerResult(Corner("c3", {"process": "fast", "temp": -40}), value=20.0),
+            CornerResult(Corner("c4", {"process": "fast", "temp": 85}), value=25.0),
+        ]
+        analysis_result = CornerAnalysisResult(results, definition)
+
+        slow_results = analysis_result.get_by_parameter("process", "slow")
+        assert len(slow_results) == 2
+
+    def test_sensitivity_to_parameter(self) -> None:
+        """Test parameter sensitivity calculation."""
+        definition = CornerDefinition()
+        definition.add_parameter("process", ["slow", "fast"])
+
+        results = [
+            CornerResult(Corner("c1", {"process": "slow"}), value=10.0),
+            CornerResult(Corner("c2", {"process": "fast"}), value=20.0),
+        ]
+        analysis_result = CornerAnalysisResult(results, definition)
+
+        sens = analysis_result.sensitivity_to_parameter("process")
+        assert sens["slow"] == 10.0
+        assert sens["fast"] == 20.0
+
+
+class TestPVTSweep:
+    """Tests for PVTSweep class."""
+
+    def test_basic_pvt(self) -> None:
+        """Test basic PVT setup."""
+        pvt = PVTSweep()
+        pvt.set_process(["slow", "typical", "fast"])
+        pvt.set_voltage(3.3, tolerance=0.1, n_points=3)
+        pvt.set_temperature("military")
+
+        assert pvt.n_conditions == 27  # 3 * 3 * 3
+
+    def test_generate_all(self) -> None:
+        """Test generating all PVT conditions."""
+        pvt = PVTSweep()
+        pvt.set_process(["slow", "fast"])
+        pvt.set_voltage_values([3.0, 3.6])
+        pvt.set_temperature([-40, 85])
+
+        conditions = pvt.generate_all()
+        assert len(conditions) == 8  # 2 * 2 * 2
+
+    def test_generate_extremes(self) -> None:
+        """Test generating extreme PVT conditions."""
+        pvt = PVTSweep()
+        pvt.set_process(["slow", "typical", "fast"])
+        pvt.set_voltage_values([3.0, 3.3, 3.6])
+        pvt.set_temperature([-40, 25, 85])
+
+        extremes = pvt.generate_extremes()
+        assert len(extremes) == 8  # 2^3 extremes
+
+    def test_temp_presets(self) -> None:
+        """Test temperature presets."""
+        pvt = PVTSweep()
+
+        pvt.set_temperature("military")
+        assert -40 in pvt._temperature
+        assert 85 in pvt._temperature
+
+        pvt.set_temperature("commercial")
+        assert 0 in pvt._temperature
+        assert 70 in pvt._temperature
+
+    def test_to_corner_definition(self) -> None:
+        """Test conversion to CornerDefinition."""
+        pvt = PVTSweep()
+        pvt.set_process(["slow", "fast"])
+        pvt.set_voltage_values([3.0, 3.6])
+        pvt.set_temperature([-40, 85])
+
+        definition = pvt.to_corner_definition()
+        assert definition.n_corners == 8
+
+
+class TestPVTCondition:
+    """Tests for PVTCondition class."""
+
+    def test_basic_condition(self) -> None:
+        """Test basic PVT condition."""
+        cond = PVTCondition("slow", 3.3, 25)
+        assert cond.process == "slow"
+        assert cond.voltage == 3.3
+        assert cond.temperature == 25
+        assert "slow" in cond.name
+
+    def test_to_corner(self) -> None:
+        """Test conversion to Corner."""
+        cond = PVTCondition("fast", 3.6, 85)
+        corner = cond.to_corner()
+
+        assert corner.parameters["process"] == "fast"
+        assert corner.parameters["voltage"] == 3.6
+        assert corner.parameters["temperature"] == 85
+
+
+class TestStatisticalCornerAnalysis:
+    """Tests for statistical corner analysis."""
+
+    def test_basic_statistical(self) -> None:
+        """Test basic statistical analysis."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 10),
+        ]
+
+        def objective(params: dict[str, float]) -> float:
+            return params["x"] + params["y"]
+
+        result = statistical_corner_analysis(
+            objective, bounds, n_samples=100, seed=42
+        )
+
+        assert isinstance(result, StatisticalCornerResult)
+        assert result.n_samples == 100
+        assert 0 <= result.mean <= 20
+        assert result.std > 0
+
+    def test_percentiles(self) -> None:
+        """Test percentile calculation."""
+        bounds = [ParameterBounds("x", 0, 100)]
+
+        def objective(params: dict[str, float]) -> float:
+            return params["x"]
+
+        result = statistical_corner_analysis(
+            objective, bounds, n_samples=1000, seed=42, percentiles=(5, 50, 95)
+        )
+
+        assert 5 in result.percentiles
+        assert 50 in result.percentiles
+        assert 95 in result.percentiles
+
+        # For uniform, 50th percentile should be near 50
+        assert 40 < result.percentiles[50] < 60
+
+    def test_yield_calculation(self) -> None:
+        """Test yield calculation."""
+        bounds = [ParameterBounds("x", 0, 100)]
+
+        def objective(params: dict[str, float]) -> float:
+            return params["x"]
+
+        result = statistical_corner_analysis(
+            objective, bounds, n_samples=1000, seed=42
+        )
+
+        # Yield within [25, 75] should be about 50%
+        yield_val = result.get_yield(spec_min=25, spec_max=75)
+        assert 0.4 < yield_val < 0.6
+
+    def test_cpk_calculation(self) -> None:
+        """Test Cpk calculation."""
+        bounds = [ParameterBounds("x", 0, 100)]
+
+        def objective(params: dict[str, float]) -> float:
+            return params["x"]
+
+        result = statistical_corner_analysis(
+            objective, bounds, n_samples=1000, seed=42
+        )
+
+        cpk = result.get_cpk(spec_min=0, spec_max=100)
+        assert cpk > 0
+
+
+class TestWorstCaseAnalysis:
+    """Tests for worst-case analysis."""
+
+    def test_extremes_method(self) -> None:
+        """Test worst-case with extremes method."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 10),
+        ]
+
+        # Maximize x + y
+        def objective(params: dict[str, float]) -> float:
+            return params["x"] + params["y"]
+
+        result = worst_case_analysis(
+            objective, bounds, maximize=True, method="extremes"
+        )
+
+        assert isinstance(result, WorstCaseResult)
+        assert result.worst_value == 20.0  # max = 10 + 10
+        assert result.worst_params["x"] == 10
+        assert result.worst_params["y"] == 10
+
+    def test_minimize(self) -> None:
+        """Test worst-case minimization."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 10),
+        ]
+
+        def objective(params: dict[str, float]) -> float:
+            return params["x"] + params["y"]
+
+        result = worst_case_analysis(
+            objective, bounds, maximize=False, method="extremes"
+        )
+
+        assert result.worst_value == 0.0  # min = 0 + 0
+        assert result.worst_params["x"] == 0
+        assert result.worst_params["y"] == 0
+
+    def test_statistical_method(self) -> None:
+        """Test worst-case with statistical method."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 10),
+        ]
+
+        def objective(params: dict[str, float]) -> float:
+            return params["x"] + params["y"]
+
+        result = worst_case_analysis(
+            objective, bounds, maximize=True, method="statistical", n_samples=500, seed=42
+        )
+
+        # Should find a value close to maximum
+        assert result.worst_value > 15.0
+
+    def test_sensitivity_at_worst(self) -> None:
+        """Test sensitivity calculation at worst case."""
+        bounds = [
+            ParameterBounds("x", 0, 10),
+            ParameterBounds("y", 0, 10),
+        ]
+
+        def objective(params: dict[str, float]) -> float:
+            return 2 * params["x"] + 3 * params["y"]
+
+        # Use minimize=True so worst case is at (0, 0), allowing positive perturbation
+        result = worst_case_analysis(
+            objective, bounds, maximize=False, method="extremes"
+        )
+
+        # Sensitivities should approximate coefficients
+        assert abs(result.sensitivity["x"] - 2) < 1
+        assert abs(result.sensitivity["y"] - 3) < 1
+
+
+class TestPrintCornerReport:
+    """Tests for corner report generation."""
+
+    def test_basic_report(self) -> None:
+        """Test basic report generation."""
+        definition = CornerDefinition()
+        definition.add_parameter("x", [0, 1])
+
+        results = [
+            CornerResult(Corner("c1", {"x": 0}), value=10.0),
+            CornerResult(Corner("c2", {"x": 1}), value=20.0),
+        ]
+        analysis_result = CornerAnalysisResult(results, definition)
+
+        report = print_corner_report(analysis_result)
+
+        assert "CORNER ANALYSIS REPORT" in report
+        assert "Corners evaluated: 2" in report
+        assert "Worst case" in report
+        assert "Best case" in report

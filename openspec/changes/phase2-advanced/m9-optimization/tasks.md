@@ -1,6 +1,6 @@
 # M9: Optimization & Design of Experiments - Tasks
 
-**Status:** In Progress (Phase 5 Complete)
+**Status:** In Progress (Phase 6 Complete)
 **Start Date:** 2025-11-29
 **Target Completion:** TBD (8-10 weeks)
 
@@ -108,14 +108,20 @@ Files created:
 
 ---
 
-### Phase 6: Corner Analysis & PVT (Week 9)
-- [ ] Implement corner generation (all combinations)
-- [ ] Add PVT sweep framework
-- [ ] Create statistical corner analysis
-- [ ] Implement worst-case analysis
-- [ ] Add yield estimation
-- [ ] Write corner analysis tests
-- [ ] Create example: LDO corner analysis
+### Phase 6: Corner Analysis & PVT (Week 9) ✅ COMPLETE
+- [x] Implement corner generation (all combinations)
+- [x] Add PVT sweep framework (process/voltage/temperature)
+- [x] Create statistical corner analysis (Monte Carlo)
+- [x] Implement worst-case analysis (extremes & statistical methods)
+- [x] Add yield estimation (get_yield, get_cpk)
+- [x] Write corner analysis tests
+- [ ] Create example: LDO corner analysis (deferred)
+
+**Completed:** 2025-11-29
+
+Files created:
+- `spicelab/optimization/corner.py` - Corner analysis classes (Corner, CornerDefinition, CornerAnalysis, PVTSweep, PVTCondition, StatisticalCornerResult, WorstCaseResult, statistical_corner_analysis, worst_case_analysis, print_corner_report)
+- `tests/test_optimization.py` - 119 tests total (100 pass, 19 skipped without scipy)
 
 **Estimated Time:** 1 week
 
@@ -167,4 +173,4 @@ Files created:
 
 ---
 
-**Last Updated:** 2025-11-29 (Phase 5 Complete)
+**Last Updated:** 2025-11-29 (Phase 6 Complete)
