@@ -16,6 +16,7 @@ Available Measurements:
         - phase_margin: Phase margin at unity gain
         - gain_margin: Gain margin at -180° phase
         - psrr: Power supply rejection ratio
+        - cmrr: Common-mode rejection ratio
         - input_impedance: Input impedance vs frequency
 
     Transient Analysis:
@@ -28,6 +29,7 @@ Available Measurements:
 
     Spectrum Analysis:
         - thd: Total harmonic distortion
+        - thd_n: Total harmonic distortion plus noise
         - snr: Signal-to-noise ratio
         - sinad: Signal-to-noise-and-distortion
         - sfdr: Spurious-free dynamic range
@@ -42,6 +44,7 @@ Available Measurements:
         - ripple: Supply ripple voltage
         - pdn_impedance: PDN impedance vs frequency
         - load_transient: Load transient droop/recovery
+        - voltage_droop: Maximum voltage droop from nominal
         - efficiency: Power conversion efficiency
 
 Example:
@@ -63,15 +66,16 @@ Example:
 
 from __future__ import annotations
 
+# Import all measurement modules to register them
+from . import (
+    ac,  # noqa: F401
+    digital,  # noqa: F401
+    power,  # noqa: F401
+    spectrum,  # noqa: F401
+    transient,  # noqa: F401
+)
 from .base import BaseMeasurement, Measurement, MeasurementResult
 from .registry import MeasurementRegistry, measure, measurement
-
-# Import all measurement modules to register them
-from . import ac  # noqa: F401
-from . import digital  # noqa: F401
-from . import power  # noqa: F401
-from . import spectrum  # noqa: F401
-from . import transient  # noqa: F401
 
 __all__ = [
     # Core classes

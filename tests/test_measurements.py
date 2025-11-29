@@ -15,7 +15,6 @@ from __future__ import annotations
 import numpy as np
 import pytest
 import xarray as xr
-
 from spicelab.measurements import (
     BaseMeasurement,
     MeasurementRegistry,
@@ -25,8 +24,9 @@ from spicelab.measurements import (
 )
 from spicelab.measurements.ac import (
     BandwidthMeasurement,
-    GainMeasurement,
+    CMRRMeasurement,
     GainMarginMeasurement,
+    GainMeasurement,
     PhaseMarginMeasurement,
 )
 from spicelab.measurements.digital import (
@@ -40,6 +40,7 @@ from spicelab.measurements.power import (
     LoadTransientMeasurement,
     PDNImpedanceMeasurement,
     RippleMeasurement,
+    VoltageDroopMeasurement,
 )
 from spicelab.measurements.spectrum import (
     ENOBMeasurement,
@@ -47,6 +48,7 @@ from spicelab.measurements.spectrum import (
     SINADMeasurement,
     SNRMeasurement,
     THDMeasurement,
+    THDNMeasurement,
 )
 from spicelab.measurements.transient import (
     FallTimeMeasurement,
@@ -56,7 +58,6 @@ from spicelab.measurements.transient import (
     SettlingTimeMeasurement,
     SlewRateMeasurement,
 )
-
 
 # =============================================================================
 # Test fixtures
@@ -103,9 +104,11 @@ def tran_dataset() -> xr.Dataset:
     v = np.zeros_like(t)
     mask = t >= step_time
     t_step = t[mask] - step_time
-    v[mask] = v_final * (1 - np.exp(-zeta * omega_n * t_step) *
-                         (np.cos(omega_d * t_step) +
-                          zeta / np.sqrt(1 - zeta**2) * np.sin(omega_d * t_step)))
+    v[mask] = v_final * (
+        1
+        - np.exp(-zeta * omega_n * t_step)
+        * (np.cos(omega_d * t_step) + zeta / np.sqrt(1 - zeta**2) * np.sin(omega_d * t_step))
+    )
 
     ds = xr.Dataset(
         {"V(out)": (["time"], v)},
@@ -119,7 +122,7 @@ def sine_dataset() -> xr.Dataset:
     """Create a transient dataset with a sine wave (for THD, SNR tests)."""
     fs = 100e3  # 100 kHz sample rate
     duration = 10e-3  # 10 ms
-    t = np.arange(0, duration, 1/fs)
+    t = np.arange(0, duration, 1 / fs)
 
     # 1 kHz sine with harmonics
     f0 = 1000  # 1 kHz fundamental
@@ -143,7 +146,7 @@ def clock_dataset() -> xr.Dataset:
     """Create a clock signal for jitter and duty cycle tests."""
     fs = 1e9  # 1 GHz sample rate
     duration = 100e-6  # 100 µs
-    t = np.arange(0, duration, 1/fs)
+    t = np.arange(0, duration, 1 / fs)
 
     # 10 MHz clock with slight jitter
     f_clk = 10e6
@@ -357,6 +360,47 @@ class TestACMeasurements:
         # First-order system has infinite gain margin (never reaches -180°)
         # Our implementation returns inf or a large value
 
+    def test_cmrr_precomputed(self) -> None:
+        """Test CMRR measurement with pre-computed gains."""
+        # Create dummy dataset (not actually used in pre-computed mode)
+        ds = xr.Dataset()
+
+        cmrr = CMRRMeasurement(diff_gain=1000, cm_gain=0.01)
+        result = cmrr.measure(ds)
+
+        assert result.unit == "dB"
+        # CMRR = 20*log10(1000/0.01) = 100 dB
+        assert 99 < result.value < 101
+        assert result.metadata["mode"] == "pre_computed"
+
+    def test_cmrr_from_dataset(self) -> None:
+        """Test CMRR measurement from dataset with diff/cm outputs."""
+        freq = np.logspace(1, 6, 100)
+
+        # Simulate op-amp: high diff gain, low common-mode gain
+        diff_gain = 1000  # V/V
+        cm_gain = 0.01  # V/V
+
+        ds = xr.Dataset(
+            {
+                "V(diff_out)": (["frequency"], diff_gain * np.ones_like(freq, dtype=complex)),
+                "V(cm_out)": (["frequency"], cm_gain * np.ones_like(freq, dtype=complex)),
+            },
+            coords={"frequency": freq},
+        )
+
+        cmrr = CMRRMeasurement(
+            diff_output_node="V(diff_out)",
+            cm_output_node="V(cm_out)",
+            frequency=1000,
+        )
+        result = cmrr.measure(ds)
+
+        assert result.unit == "dB"
+        # CMRR = 20*log10(1000/0.01) = 100 dB
+        assert 99 < result.value < 101
+        assert result.metadata["mode"] == "dataset"
+
 
 # =============================================================================
 # Test Transient Measurements
@@ -495,6 +539,31 @@ class TestSpectrumMeasurements:
         assert result.value > 0
         assert "sinad_db" in result.metadata
 
+    def test_thd_n(self, sine_dataset: xr.Dataset) -> None:
+        """Test THD+N measurement."""
+        thd_n = THDNMeasurement(node="V(out)", fundamental_freq=1000)
+        result = thd_n.measure(sine_dataset)
+
+        assert result.unit == "%"
+        # THD+N should be >= THD since it includes noise
+        assert result.value > 0
+        assert "thd_only_pct" in result.metadata
+        assert "noise_only_pct" in result.metadata
+        assert "bandwidth" in result.metadata
+
+    def test_thd_n_with_bandwidth(self, sine_dataset: xr.Dataset) -> None:
+        """Test THD+N measurement with custom bandwidth."""
+        thd_n = THDNMeasurement(
+            node="V(out)",
+            fundamental_freq=1000,
+            bandwidth=(100, 20000),  # Audio band
+        )
+        result = thd_n.measure(sine_dataset)
+
+        assert result.unit == "%"
+        assert result.value > 0
+        assert result.metadata["bandwidth"] == (100, 20000)
+
 
 # =============================================================================
 # Test Digital Measurements
@@ -532,7 +601,7 @@ class TestDigitalMeasurements:
         fs = 100e9  # 100 GHz sample rate
         n_bits = 100
 
-        t = np.arange(0, n_bits * bit_period, 1/fs)
+        t = np.arange(0, n_bits * bit_period, 1 / fs)
         np.random.seed(42)
         bits = np.random.randint(0, 2, n_bits)
 
@@ -558,7 +627,7 @@ class TestDigitalMeasurements:
         fs = 10e9
         n_bits = 50
 
-        t = np.arange(0, n_bits * bit_period, 1/fs)
+        t = np.arange(0, n_bits * bit_period, 1 / fs)
         np.random.seed(42)
         bits = np.random.randint(0, 2, n_bits)
 
@@ -630,9 +699,7 @@ class TestPowerMeasurements:
         )
 
         pdn = PDNImpedanceMeasurement(
-            voltage_node="V(vdd)",
-            current_node="I(iac)",
-            target_impedance=0.1
+            voltage_node="V(vdd)", current_node="I(iac)", target_impedance=0.1
         )
         result = pdn.measure(ds)
 
@@ -704,6 +771,84 @@ class TestPowerMeasurements:
         assert 88 < result.value < 92
         assert "p_out" in result.metadata
         assert "p_in" in result.metadata
+
+    def test_voltage_droop(self) -> None:
+        """Test voltage droop measurement."""
+        dt = 1e-6
+        t = np.arange(0, 1e-3, dt)
+
+        # 3.3V supply with transient droop
+        v_nominal = 3.3
+        droop_depth = 0.15  # 150 mV droop
+        droop_start = 100e-6
+        droop_tau = 50e-6
+
+        v = np.full_like(t, v_nominal)
+        mask = t >= droop_start
+        v[mask] = v_nominal - droop_depth * np.exp(-(t[mask] - droop_start) / droop_tau)
+
+        ds = xr.Dataset({"V(vdd)": (["time"], v)}, coords={"time": t})
+
+        droop = VoltageDroopMeasurement(node="V(vdd)", nominal_voltage=v_nominal)
+        result = droop.measure(ds)
+
+        assert result.unit == "V"
+        # Should measure the droop
+        assert 0.12 < result.value < 0.18
+        assert "droop_pct" in result.metadata
+        assert "v_min" in result.metadata
+        assert result.metadata["nominal_voltage"] == v_nominal
+
+    def test_voltage_droop_with_window(self) -> None:
+        """Test voltage droop measurement with time window."""
+        dt = 1e-6
+        t = np.arange(0, 1e-3, dt)
+
+        # Startup with initial droop, then stable
+        v_nominal = 3.3
+        startup_droop = 0.5  # 500 mV initial droop
+        startup_tau = 20e-6
+
+        v = v_nominal - startup_droop * np.exp(-t / startup_tau)
+
+        ds = xr.Dataset({"V(vdd)": (["time"], v)}, coords={"time": t})
+
+        # Measure only after startup (skip first 100µs)
+        droop = VoltageDroopMeasurement(
+            node="V(vdd)",
+            nominal_voltage=v_nominal,
+            start_time=100e-6,
+        )
+        result = droop.measure(ds)
+
+        assert result.unit == "V"
+        # After 100µs, droop should be much smaller
+        assert result.value < 0.1  # Less than 100mV droop after startup
+        assert result.metadata["window"][0] == 100e-6
+
+    def test_voltage_droop_auto_nominal(self) -> None:
+        """Test voltage droop with auto-detected nominal voltage."""
+        dt = 1e-6
+        t = np.arange(0, 1e-3, dt)
+
+        # Start at 5V, then droop
+        v_nominal = 5.0
+        droop_depth = 0.3
+        droop_start = 200e-6
+
+        v = np.full_like(t, v_nominal)
+        mask = t >= droop_start
+        v[mask] = v_nominal - droop_depth
+
+        ds = xr.Dataset({"V(vdd)": (["time"], v)}, coords={"time": t})
+
+        droop = VoltageDroopMeasurement(node="V(vdd)")  # No nominal specified
+        result = droop.measure(ds)
+
+        assert result.unit == "V"
+        assert 0.25 < result.value < 0.35  # ~300mV droop
+        # Auto-detected nominal should be close to 5V
+        assert 4.9 < result.metadata["nominal_voltage"] < 5.1
 
 
 # =============================================================================

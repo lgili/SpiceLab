@@ -179,8 +179,7 @@ class GainMeasurement(BaseMeasurement):
                         return key
 
         raise KeyError(
-            f"Signal '{node}' not found in dataset. "
-            f"Available: {list(dataset.data_vars)}"
+            f"Signal '{node}' not found in dataset. " f"Available: {list(dataset.data_vars)}"
         )
 
 
@@ -620,6 +619,154 @@ class InputImpedanceMeasurement(BaseMeasurement):
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
+@measurement("cmrr")
+class CMRRMeasurement(BaseMeasurement):
+    """Common-Mode Rejection Ratio measurement.
+
+    CMRR = 20*log10(Adiff / Acm) in dB.
+    Higher CMRR indicates better common-mode noise rejection.
+
+    Requires either:
+    1. Two separate AC analyses (differential and common-mode), or
+    2. A single analysis with pre-computed differential and common-mode gains.
+
+    Note: This measurement supports multiple input modes:
+    - Two separate datasets (diff_gain, cm_gain as metadata)
+    - Single dataset with differential and common-mode output nodes
+    - Pre-computed gains passed as parameters
+
+    Example:
+        >>> # From differential and common-mode output nodes
+        >>> cmrr = CMRRMeasurement(
+        ...     diff_output_node="vout_diff",
+        ...     cm_output_node="vout_cm",
+        ...     frequency=1000
+        ... )
+        >>> result = cmrr.measure(dataset)
+        >>> print(f"CMRR at 1kHz: {result.value:.1f} dB")
+
+        >>> # From pre-computed gains
+        >>> cmrr = CMRRMeasurement(
+        ...     diff_gain=1000,  # V/V
+        ...     cm_gain=0.01,    # V/V
+        ... )
+        >>> result = cmrr.measure(dataset)  # dataset ignored
+    """
+
+    name = "cmrr"
+    description = "Common-mode rejection ratio"
+    required_analyses = ["ac"]
+
+    def __init__(
+        self,
+        diff_output_node: str | None = None,
+        cm_output_node: str | None = None,
+        input_node: str | None = None,
+        frequency: float | None = None,
+        diff_gain: float | None = None,
+        cm_gain: float | None = None,
+    ):
+        """Initialize CMRR measurement.
+
+        Args:
+            diff_output_node: Differential output node (for dataset-based measurement)
+            cm_output_node: Common-mode output node (for dataset-based measurement)
+            input_node: Input node (optional, for ratio calculation)
+            frequency: Measurement frequency in Hz (None = DC/lowest)
+            diff_gain: Pre-computed differential gain in V/V (optional)
+            cm_gain: Pre-computed common-mode gain in V/V (optional)
+        """
+        self.diff_output_node = diff_output_node
+        self.cm_output_node = cm_output_node
+        self.input_node = input_node
+        self.frequency = frequency
+        self.diff_gain = diff_gain
+        self.cm_gain = cm_gain
+
+    def measure(self, dataset: xr.Dataset) -> MeasurementResult[float]:
+        """Calculate CMRR."""
+        # Mode 1: Pre-computed gains
+        if self.diff_gain is not None and self.cm_gain is not None:
+            adiff = self.diff_gain
+            acm = self.cm_gain
+
+            if acm == 0:
+                cmrr_db = float("inf")
+            else:
+                cmrr_db = 20.0 * np.log10(abs(adiff) / abs(acm))
+
+            return MeasurementResult(
+                value=float(cmrr_db),
+                unit="dB",
+                metadata={
+                    "diff_gain": adiff,
+                    "cm_gain": acm,
+                    "mode": "pre_computed",
+                },
+            )
+
+        # Mode 2: Extract from dataset
+        if self.diff_output_node is None or self.cm_output_node is None:
+            raise ValueError(
+                "Must provide either (diff_gain, cm_gain) or " "(diff_output_node, cm_output_node)"
+            )
+
+        # Get frequency axis
+        freq = dataset.coords.get("frequency", dataset.coords.get("freq"))
+        if freq is None:
+            raise ValueError("Dataset must have 'frequency' coordinate")
+        freq_values = np.asarray(freq.values)
+
+        # Determine target frequency
+        if self.frequency is None or self.frequency == 0:
+            freq_idx = 0
+            target_freq = float(freq_values[0])
+        else:
+            freq_idx = int(np.argmin(np.abs(freq_values - self.frequency)))
+            target_freq = float(freq_values[freq_idx])
+
+        # Get differential and common-mode outputs
+        diff_key = self._find_signal_key(dataset, self.diff_output_node)
+        cm_key = self._find_signal_key(dataset, self.cm_output_node)
+
+        diff_mag = float(np.abs(dataset[diff_key].values[freq_idx]))
+        cm_mag = float(np.abs(dataset[cm_key].values[freq_idx]))
+
+        # If input node specified, compute actual gains
+        if self.input_node:
+            in_key = self._find_signal_key(dataset, self.input_node)
+            in_mag = float(np.abs(dataset[in_key].values[freq_idx]))
+            if in_mag > 0:
+                diff_mag = diff_mag / in_mag
+                cm_mag = cm_mag / in_mag
+
+        # Calculate CMRR
+        if cm_mag == 0:
+            cmrr_db = float("inf")
+        else:
+            cmrr_db = 20.0 * np.log10(diff_mag / cm_mag)
+
+        return MeasurementResult(
+            value=float(cmrr_db),
+            unit="dB",
+            metadata={
+                "frequency": target_freq,
+                "diff_gain": diff_mag,
+                "cm_gain": cm_mag,
+                "mode": "dataset",
+            },
+        )
+
+    def _find_signal_key(self, dataset: xr.Dataset, node: str) -> str:
+        if node in dataset.data_vars:
+            return node
+        node_lower = node.lower()
+        for key in dataset.data_vars:
+            if key.lower() == node_lower:
+                return key
+        raise KeyError(f"Signal '{node}' not found in dataset")
+
+
 __all__ = [
     "GainMeasurement",
     "BandwidthMeasurement",
@@ -627,4 +774,5 @@ __all__ = [
     "GainMarginMeasurement",
     "PSRRMeasurement",
     "InputImpedanceMeasurement",
+    "CMRRMeasurement",
 ]

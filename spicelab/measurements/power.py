@@ -80,7 +80,6 @@ class RippleMeasurement(BaseMeasurement):
         if self.ripple_freq is not None:
             # FFT-based measurement at specific frequency
             dt = np.mean(np.diff(time_values))
-            fs = 1.0 / dt
 
             # Remove DC component
             voltage_ac = voltage - np.mean(voltage)
@@ -287,7 +286,7 @@ class LoadTransientMeasurement(BaseMeasurement):
         # Nominal voltage (pre-step average)
         if self.nominal_voltage is None:
             pre_step_samples = max(10, step_idx // 10)
-            nominal = float(np.mean(voltage[max(0, step_idx - pre_step_samples):step_idx]))
+            nominal = float(np.mean(voltage[max(0, step_idx - pre_step_samples) : step_idx]))
         else:
             nominal = self.nominal_voltage
 
@@ -408,18 +407,10 @@ class EfficiencyMeasurement(BaseMeasurement):
         time_values = np.asarray(time.values)
 
         # Get signals
-        v_out = np.asarray(
-            dataset[self._find_signal_key(dataset, self.output_voltage)].values
-        )
-        i_out = np.asarray(
-            dataset[self._find_signal_key(dataset, self.output_current)].values
-        )
-        v_in = np.asarray(
-            dataset[self._find_signal_key(dataset, self.input_voltage)].values
-        )
-        i_in = np.asarray(
-            dataset[self._find_signal_key(dataset, self.input_current)].values
-        )
+        v_out = np.asarray(dataset[self._find_signal_key(dataset, self.output_voltage)].values)
+        i_out = np.asarray(dataset[self._find_signal_key(dataset, self.output_current)].values)
+        v_in = np.asarray(dataset[self._find_signal_key(dataset, self.input_voltage)].values)
+        i_in = np.asarray(dataset[self._find_signal_key(dataset, self.input_current)].values)
 
         # Apply steady-state filter
         if self.steady_state_start is not None:
@@ -467,9 +458,134 @@ class EfficiencyMeasurement(BaseMeasurement):
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
+@measurement("voltage_droop")
+class VoltageDroopMeasurement(BaseMeasurement):
+    """Voltage droop measurement for power supply analysis.
+
+    Measures the maximum voltage drop from a nominal/initial value,
+    typically during load step or startup transients.
+
+    Unlike LoadTransientMeasurement which requires knowledge of step time,
+    this measurement finds the maximum droop over the entire waveform
+    or a specified time window.
+
+    Example:
+        >>> droop = VoltageDroopMeasurement(
+        ...     node="vout",
+        ...     nominal_voltage=3.3,
+        ...     start_time=1e-6  # Skip startup
+        ... )
+        >>> result = droop.measure(dataset)
+        >>> print(f"Max droop: {result.value*1e3:.1f} mV ({result.metadata['droop_pct']:.2f}%)")
+    """
+
+    name = "voltage_droop"
+    description = "Maximum voltage droop from nominal"
+    required_analyses = ["tran"]
+
+    def __init__(
+        self,
+        node: str,
+        nominal_voltage: float | None = None,
+        start_time: float | None = None,
+        end_time: float | None = None,
+    ):
+        """Initialize voltage droop measurement.
+
+        Args:
+            node: Voltage node to measure
+            nominal_voltage: Expected voltage (None = auto from initial value)
+            start_time: Start of measurement window (None = beginning)
+            end_time: End of measurement window (None = end)
+        """
+        self.node = node
+        self.nominal_voltage = nominal_voltage
+        self.start_time = start_time
+        self.end_time = end_time
+
+    def measure(self, dataset: xr.Dataset) -> MeasurementResult[float]:
+        """Calculate maximum voltage droop."""
+        time = dataset.coords.get("time")
+        if time is None:
+            raise ValueError("Dataset must have 'time' coordinate")
+        time_values = np.asarray(time.values)
+
+        sig_key = self._find_signal_key(dataset, self.node)
+        voltage = np.asarray(dataset[sig_key].values)
+
+        # Apply time window
+        mask = np.ones(len(time_values), dtype=bool)
+        if self.start_time is not None:
+            mask &= time_values >= self.start_time
+        if self.end_time is not None:
+            mask &= time_values <= self.end_time
+
+        time_window = time_values[mask]
+        voltage_window = voltage[mask]
+
+        if len(voltage_window) < 2:
+            return MeasurementResult(
+                value=float("nan"),
+                unit="V",
+                metadata={"error": "Not enough data points in window"},
+            )
+
+        # Determine nominal voltage
+        if self.nominal_voltage is not None:
+            nominal = self.nominal_voltage
+        else:
+            # Use first few samples to estimate nominal
+            n_samples = min(10, len(voltage_window) // 10)
+            if n_samples < 1:
+                n_samples = 1
+            nominal = float(np.mean(voltage_window[:n_samples]))
+
+        # Find maximum droop (below nominal)
+        v_min = float(np.min(voltage_window))
+        v_max = float(np.max(voltage_window))
+
+        droop = nominal - v_min
+        overshoot = v_max - nominal
+
+        # Report droop as positive value (how far below nominal)
+        droop_pct = (droop / nominal) * 100.0 if nominal != 0 else 0.0
+
+        # Find time of minimum
+        min_idx = int(np.argmin(voltage_window))
+        time_at_min = float(time_window[min_idx])
+
+        return MeasurementResult(
+            value=droop,
+            unit="V",
+            metadata={
+                "droop_pct": droop_pct,
+                "nominal_voltage": nominal,
+                "v_min": v_min,
+                "v_max": v_max,
+                "overshoot": overshoot,
+                "overshoot_pct": (overshoot / nominal) * 100.0 if nominal != 0 else 0.0,
+                "time_at_min": time_at_min,
+                "window": (
+                    self.start_time or float(time_values[0]),
+                    self.end_time or float(time_values[-1]),
+                ),
+            },
+        )
+
+    def _find_signal_key(self, dataset: xr.Dataset, node: str) -> str:
+        if node in dataset.data_vars:
+            return node
+        node_lower = node.lower()
+        for key in dataset.data_vars:
+            if key.lower() == node_lower:
+                return key
+        raise KeyError(f"Signal '{node}' not found in dataset")
+
+
 __all__ = [
     "RippleMeasurement",
     "PDNImpedanceMeasurement",
     "LoadTransientMeasurement",
     "EfficiencyMeasurement",
+    "VoltageDroopMeasurement",
 ]

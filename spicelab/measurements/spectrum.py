@@ -34,11 +34,7 @@ def _get_window(n: int, window_type: WindowType) -> np.ndarray:
     if window_type == "hamming":
         return 0.54 - 0.46 * np.cos(2 * np.pi * k / (n - 1))
     if window_type == "blackman":
-        return (
-            0.42
-            - 0.5 * np.cos(2 * np.pi * k / (n - 1))
-            + 0.08 * np.cos(4 * np.pi * k / (n - 1))
-        )
+        return 0.42 - 0.5 * np.cos(2 * np.pi * k / (n - 1)) + 0.08 * np.cos(4 * np.pi * k / (n - 1))
     if window_type == "flattop":
         return (
             0.21557895
@@ -163,9 +159,7 @@ class THDMeasurement(BaseMeasurement):
         frequencies, magnitudes = _compute_fft(voltage, fs, self.window)
 
         # Find fundamental
-        fund_idx, fund_freq = _find_fundamental(
-            frequencies, magnitudes, self.fundamental_freq
-        )
+        fund_idx, fund_freq = _find_fundamental(frequencies, magnitudes, self.fundamental_freq)
         fund_mag = magnitudes[fund_idx]
 
         if fund_mag == 0:
@@ -285,9 +279,7 @@ class SNRMeasurement(BaseMeasurement):
 
         # Apply noise band filter if specified
         if self.noise_band:
-            band_mask = (frequencies >= self.noise_band[0]) & (
-                frequencies <= self.noise_band[1]
-            )
+            band_mask = (frequencies >= self.noise_band[0]) & (frequencies <= self.noise_band[1])
             noise_mask &= band_mask
 
         noise_magnitudes = magnitudes[noise_mask]
@@ -451,9 +443,7 @@ class SFDRMeasurement(BaseMeasurement):
         frequencies, magnitudes = _compute_fft(voltage, fs, self.window)
 
         # Find fundamental
-        fund_idx, fund_freq = _find_fundamental(
-            frequencies, magnitudes, self.fundamental_freq
-        )
+        fund_idx, fund_freq = _find_fundamental(frequencies, magnitudes, self.fundamental_freq)
         fund_mag = magnitudes[fund_idx]
 
         # Find largest spur (excluding fundamental and DC)
@@ -555,10 +545,143 @@ class ENOBMeasurement(BaseMeasurement):
         )
 
 
+@measurement("thd_n")
+class THDNMeasurement(BaseMeasurement):
+    """Total Harmonic Distortion plus Noise measurement.
+
+    THD+N = sqrt(harmonic_power + noise_power) / signal_power
+    Expressed as a percentage or dB.
+
+    Unlike THD which only measures harmonics, THD+N includes all noise
+    in the measurement bandwidth.
+
+    Example:
+        >>> thd_n = THDNMeasurement(node="vout", fundamental_freq=1000)
+        >>> result = thd_n.measure(dataset)
+        >>> print(f"THD+N: {result.value:.3f}%")
+    """
+
+    name = "thd_n"
+    description = "Total harmonic distortion plus noise"
+    required_analyses = ["tran"]
+
+    def __init__(
+        self,
+        node: str,
+        fundamental_freq: float | None = None,
+        bandwidth: tuple[float, float] | None = None,
+        window: WindowType = "hann",
+    ):
+        """Initialize THD+N measurement.
+
+        Args:
+            node: Signal node name
+            fundamental_freq: Fundamental frequency (None = auto-detect)
+            bandwidth: (fmin, fmax) for noise measurement (None = 20Hz to Nyquist/2)
+            window: Window function type
+        """
+        self.node = node
+        self.fundamental_freq = fundamental_freq
+        self.bandwidth = bandwidth
+        self.window = window
+
+    def measure(self, dataset: xr.Dataset) -> MeasurementResult[float]:
+        """Calculate THD+N from transient data."""
+        time = dataset.coords.get("time")
+        if time is None:
+            raise ValueError("Dataset must have 'time' coordinate")
+        time_values = np.asarray(time.values)
+
+        sig_key = self._find_signal_key(dataset, self.node)
+        voltage = np.asarray(dataset[sig_key].values)
+
+        # Calculate sample rate
+        dt = np.mean(np.diff(time_values))
+        fs = 1.0 / dt
+
+        # Compute FFT
+        frequencies, magnitudes = _compute_fft(voltage, fs, self.window)
+
+        # Find fundamental
+        fund_idx, fund_freq = _find_fundamental(frequencies, magnitudes, self.fundamental_freq)
+        fund_mag = magnitudes[fund_idx]
+
+        if fund_mag == 0:
+            return MeasurementResult(
+                value=float("inf"),
+                unit="%",
+                metadata={"error": "Zero fundamental magnitude"},
+            )
+
+        # Determine measurement bandwidth
+        if self.bandwidth:
+            f_low, f_high = self.bandwidth
+        else:
+            f_low = 20.0  # Standard audio lower bound
+            f_high = frequencies[-1]  # Up to Nyquist
+
+        # Create mask for noise+distortion (everything except fundamental, within bandwidth)
+        nad_mask = np.ones(len(magnitudes), dtype=bool)
+        nad_mask[0] = False  # Exclude DC
+        nad_mask[fund_idx] = False  # Exclude fundamental
+
+        # Apply bandwidth filter
+        band_mask = (frequencies >= f_low) & (frequencies <= f_high)
+        nad_mask &= band_mask
+
+        # Sum all noise and distortion power
+        nad_magnitudes = magnitudes[nad_mask]
+        nad_power = float(np.sum(nad_magnitudes**2))
+
+        # THD+N = sqrt(nad_power) / fundamental
+        thd_n = np.sqrt(nad_power) / fund_mag
+        thd_n_pct = thd_n * 100.0
+        thd_n_db = 20.0 * np.log10(thd_n) if thd_n > 0 else float("-inf")
+
+        # Also compute pure THD for comparison
+        harmonic_power = 0.0
+        for n in range(2, 11):  # Harmonics 2-10
+            harm_freq = n * fund_freq
+            if harm_freq > frequencies[-1]:
+                break
+            harm_idx = _find_bin(frequencies, harm_freq)
+            harmonic_power += magnitudes[harm_idx] ** 2
+
+        thd_only = np.sqrt(harmonic_power) / fund_mag * 100.0
+
+        # Noise is the remainder
+        noise_power = nad_power - harmonic_power
+        noise_pct = np.sqrt(max(0, noise_power)) / fund_mag * 100.0
+
+        return MeasurementResult(
+            value=float(thd_n_pct),
+            unit="%",
+            metadata={
+                "thd_n_db": thd_n_db,
+                "fundamental_freq": fund_freq,
+                "fundamental_magnitude": float(fund_mag),
+                "thd_only_pct": thd_only,
+                "noise_only_pct": noise_pct,
+                "bandwidth": (f_low, f_high),
+                "window": self.window,
+            },
+        )
+
+    def _find_signal_key(self, dataset: xr.Dataset, node: str) -> str:
+        if node in dataset.data_vars:
+            return node
+        node_lower = node.lower()
+        for key in dataset.data_vars:
+            if key.lower() == node_lower:
+                return key
+        raise KeyError(f"Signal '{node}' not found in dataset")
+
+
 __all__ = [
     "THDMeasurement",
     "SNRMeasurement",
     "SINADMeasurement",
     "SFDRMeasurement",
     "ENOBMeasurement",
+    "THDNMeasurement",
 ]

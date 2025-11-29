@@ -66,16 +66,16 @@
   - [x] Calculate from AC simulation
   - [x] Support multiple frequencies
   - [x] dB conversion
-- [ ] Implement CMRR measurement (requires dual sweep setup)
-  - [ ] Differential gain measurement
-  - [ ] Common-mode gain measurement
-  - [ ] CMRR = Adiff / Acm
-  - [ ] Document required simulation setup
+- [x] Implement CMRR measurement
+  - [x] Support pre-computed gains
+  - [x] Support dataset-based measurement
+  - [x] CMRR = 20*log10(Adiff / Acm)
+  - [x] Document required simulation setup
 - [x] Write tests for AC measurements
   - [x] Unit tests with synthetic data
   - [x] Edge case testing
 
-**Completed:** 2025-11-29 (6/7 measurements)
+**Completed:** 2025-11-29 (7/7 measurements)
 
 ---
 
@@ -123,9 +123,10 @@
   - [x] Configurable number of harmonics
   - [x] THD% and THD dB in metadata
   - [x] Fundamental frequency auto-detection
-- [ ] Add THD+N measurement (pending)
-  - [ ] Total harmonic distortion + noise
-  - [ ] Noise floor calculation
+- [x] Add THD+N measurement
+  - [x] Total harmonic distortion + noise
+  - [x] Noise floor calculation
+  - [x] Configurable bandwidth
 - [x] Implement SNR measurement
   - [x] Signal-to-noise ratio
   - [x] FFT-based
@@ -144,7 +145,7 @@
   - [x] Synthetic sine waves with harmonics
   - [x] Window function validation
 
-**Completed:** 2025-11-29 (5/6 measurements)
+**Completed:** 2025-11-29 (6/6 measurements)
 
 ---
 
@@ -204,15 +205,17 @@
   - [x] Pout / Pin percentage
   - [x] Power loss calculation
   - [x] Steady-state filter
-- [ ] Implement voltage droop measurement (separate from load transient - pending)
-  - [ ] Maximum droop detection
-  - [ ] Droop percentage
+- [x] Implement voltage droop measurement
+  - [x] Maximum droop detection
+  - [x] Droop percentage
+  - [x] Time window support
+  - [x] Auto nominal voltage detection
 - [x] Write tests for power measurements
   - [x] Synthetic PDN impedance data
   - [x] Load step responses
   - [x] Known efficiency circuits
 
-**Completed:** 2025-11-29 (4/5 measurements)
+**Completed:** 2025-11-29 (5/5 measurements)
 
 ---
 
@@ -334,7 +337,7 @@ Before marking M7 as complete:
 | | gain_margin | ✅ Complete |
 | | psrr | ✅ Complete |
 | | input_impedance | ✅ Complete |
-| | cmrr | ⏳ Pending |
+| | cmrr | ✅ Complete |
 | **Transient** | slew_rate | ✅ Complete |
 | | settling_time | ✅ Complete |
 | | rise_time | ✅ Complete |
@@ -346,7 +349,7 @@ Before marking M7 as complete:
 | | sinad | ✅ Complete |
 | | sfdr | ✅ Complete |
 | | enob | ✅ Complete |
-| | thd_n | ⏳ Pending |
+| | thd_n | ✅ Complete |
 | **Digital** | eye_opening | ✅ Complete |
 | | jitter | ✅ Complete |
 | | duty_cycle | ✅ Complete |
@@ -356,9 +359,9 @@ Before marking M7 as complete:
 | | pdn_impedance | ✅ Complete |
 | | load_transient | ✅ Complete |
 | | efficiency | ✅ Complete |
-| | voltage_droop | ⏳ Pending |
+| | voltage_droop | ✅ Complete |
 
-**Total:** 24 complete, 6 pending
+**Total:** 27 complete, 3 pending (BER, setup/hold timing)
 
 ## Files Created
 
