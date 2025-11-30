@@ -10,8 +10,7 @@ from __future__ import annotations
 
 import os
 import struct
-import tempfile
-from typing import Generator
+from collections.abc import Generator
 
 import pytest
 
@@ -226,3 +225,90 @@ def test_benchmark_to_dataframe(benchmark, binary_raw_100x1000: str) -> None:
 
     result = benchmark(trace_set.to_dataframe)
     assert result.shape == (1000, 100)
+
+
+# ==============================================================================
+# Streaming RAW Reader Benchmarks
+# ==============================================================================
+
+
+@pytest.fixture
+def large_ascii_raw(tmp_path: str) -> Generator[str, None, None]:
+    """Create a large ASCII RAW file for streaming tests."""
+    path = os.path.join(tmp_path, "test_large.raw")
+    _create_ascii_raw(path, 50, 10000)
+    yield path
+
+
+@pytest.fixture
+def large_binary_raw(tmp_path: str) -> Generator[str, None, None]:
+    """Create a large binary RAW file for streaming tests."""
+    path = os.path.join(tmp_path, "test_large_bin.raw")
+    _create_binary_raw(path, 50, 10000)
+    yield path
+
+
+@pytest.mark.benchmark
+def test_benchmark_streaming_read_ascii(benchmark, large_ascii_raw: str) -> None:
+    """Benchmark streaming ASCII RAW reading."""
+    from spicelab.io.raw_streaming import StreamingRAWReader
+
+    def read_streaming():
+        total = 0
+        with StreamingRAWReader(large_ascii_raw, chunk_size=1000) as reader:
+            for chunk in reader.iter_variable("time"):
+                total += len(chunk)
+        return total
+
+    result = benchmark(read_streaming)
+    assert result == 10000
+
+
+@pytest.mark.benchmark
+def test_benchmark_streaming_read_binary(benchmark, large_binary_raw: str) -> None:
+    """Benchmark streaming binary RAW reading."""
+    from spicelab.io.raw_streaming import StreamingRAWReader
+
+    def read_streaming():
+        total = 0
+        with StreamingRAWReader(large_binary_raw, chunk_size=1000) as reader:
+            for chunk in reader.iter_variable("time"):
+                total += len(chunk)
+        return total
+
+    result = benchmark(read_streaming)
+    assert result == 10000
+
+
+@pytest.mark.benchmark
+def test_benchmark_streaming_vs_full_ascii(benchmark, large_ascii_raw: str) -> None:
+    """Benchmark streaming vs full-load for ASCII files."""
+    from spicelab.io.raw_reader import parse_ngspice_ascii_raw
+
+    result = benchmark(parse_ngspice_ascii_raw, large_ascii_raw)
+    assert len(result.x.values) == 10000
+
+
+@pytest.mark.benchmark
+def test_benchmark_streaming_vs_full_binary(benchmark, large_binary_raw: str) -> None:
+    """Benchmark streaming vs full-load for binary files."""
+    from spicelab.io.raw_reader import parse_ngspice_raw
+
+    result = benchmark(parse_ngspice_raw, large_binary_raw)
+    assert len(result.x.values) == 10000
+
+
+@pytest.mark.benchmark
+def test_benchmark_streaming_all_variables(benchmark, large_binary_raw: str) -> None:
+    """Benchmark streaming all variables at once."""
+    from spicelab.io.raw_streaming import StreamingRAWReader
+
+    def read_all_streaming():
+        n_chunks = 0
+        with StreamingRAWReader(large_binary_raw, chunk_size=1000) as reader:
+            for _chunk_dict in reader.iter_all_variables():
+                n_chunks += 1
+        return n_chunks
+
+    result = benchmark(read_all_streaming)
+    assert result == 10  # 10000 points / 1000 chunk_size
