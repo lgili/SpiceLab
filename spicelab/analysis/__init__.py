@@ -24,6 +24,16 @@ from .montecarlo import (
     UniformPct,
     monte_carlo,
 )
+from .optimized import (
+    OptimizationConfig,
+    OptimizationStats,
+    OptimizedMonteCarlo,
+    OptimizedWCA,
+    create_monte_carlo_runner,
+    create_wca_runner,
+    quick_monte_carlo,
+    quick_wca,
+)
 from .pipeline import measure_job_result, run_and_measure
 from .result import AnalysisResult
 from .signal import FFTResult, amplitude_spectrum, power_spectral_density, rfft_coherent, window
@@ -97,4 +107,13 @@ __all__ = [
     "extract_from_analysis",
     "mc_summary",
     "create_metric_extractor",
+    # Optimized runners
+    "OptimizationConfig",
+    "OptimizationStats",
+    "OptimizedMonteCarlo",
+    "OptimizedWCA",
+    "quick_monte_carlo",
+    "quick_wca",
+    "create_monte_carlo_runner",
+    "create_wca_runner",
 ]
