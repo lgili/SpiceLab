@@ -32,11 +32,21 @@ from .compressed import (
     generate_cache_key,
     hash_circuit,
 )
+from .distributed import (
+    DistributedCache,
+    DistributedCacheStats,
+    MockDistributedCache,
+    is_redis_available,
+)
 
 __all__ = [
     "CacheEntry",
     "CacheStats",
     "CompressedCache",
+    "DistributedCache",
+    "DistributedCacheStats",
+    "MockDistributedCache",
     "generate_cache_key",
     "hash_circuit",
+    "is_redis_available",
 ]
