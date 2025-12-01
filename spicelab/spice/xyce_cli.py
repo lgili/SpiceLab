@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 from collections.abc import Sequence
 from pathlib import Path
@@ -128,7 +129,23 @@ def run_directives(
     deck = _write_deck(workdir, title=title, netlist=netlist, directives=directives)
 
     cmd = [exe, str(deck)]
-    proc = subprocess.run(cmd, cwd=str(workdir), capture_output=True, text=True)
+
+    # Hide console window on Windows
+    kwargs: dict[str, object] = {
+        "cwd": str(workdir),
+        "capture_output": True,
+        "text": True,
+    }
+    if sys.platform == "win32":
+        kwargs["creationflags"] = (
+            subprocess.CREATE_NO_WINDOW | subprocess.DETACHED_PROCESS
+        )
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE
+        kwargs["startupinfo"] = startupinfo
+
+    proc = subprocess.run(cmd, **kwargs)  # type: ignore[arg-type]
 
     # synthesize a log file from stdout/stderr
     log = workdir / "xyce.log"
