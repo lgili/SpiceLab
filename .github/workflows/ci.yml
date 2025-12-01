@@ -168,12 +168,28 @@ jobs:
       - name: Sync dependencies
         run: uv sync --frozen --group dev --extra viz --extra data
       - name: Pytest (benchmarks)
-        run: uv run pytest -m benchmark --benchmark-only --benchmark-json=benchmark.json
+        run: |
+          uv run pytest -m benchmark --benchmark-only \
+            --benchmark-json=benchmark.json \
+            --benchmark-warmup=on \
+            --benchmark-min-rounds=5
       - name: Upload benchmark results
         uses: actions/upload-artifact@v4
         with:
           name: benchmark-results
           path: benchmark.json
+      - name: Store benchmark result (main branch only)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'pytest'
+          output-file-path: benchmark.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          alert-threshold: '150%'
+          comment-on-alert: true
+          fail-on-alert: false
+          benchmark-data-dir-path: 'dev/bench'
 
   generate-demo-assets:
     runs-on: ubuntu-latest

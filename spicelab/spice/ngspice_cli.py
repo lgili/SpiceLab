@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 from collections.abc import Sequence
 from pathlib import Path
@@ -102,7 +103,13 @@ def run_directives(
 
     raw_out = workdir / "sim.raw"
     cmd = [exe, "-b", "-o", str(log), "-r", str(raw_out), str(deck)]
-    proc = subprocess.run(cmd, capture_output=True, text=True)
+
+    # Hide console window on Windows
+    creation_flags = 0
+    if sys.platform == "win32":
+        creation_flags = subprocess.CREATE_NO_WINDOW
+
+    proc = subprocess.run(cmd, capture_output=True, text=True, creationflags=creation_flags)
 
     raw_path: str | None = str(raw_out) if raw_out.exists() else None
 

@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ..core.circuit import Circuit
@@ -77,6 +77,7 @@ def validate_circuit(circuit: Circuit, strict: bool = False) -> ValidationResult
     - No floating nodes (connected to only one component)
     - No unusual component values
     - No voltage source shorts (parallel voltage sources)
+    - No current source open circuits (series current sources)
 
     Args:
         circuit: Circuit to validate
@@ -114,7 +115,11 @@ def validate_circuit(circuit: Circuit, strict: bool = False) -> ValidationResult
     vsource_warnings = _check_voltage_source_loops(circuit)
     errors.extend(vsource_warnings)
 
-    # Check 4: Unusual component values
+    # Check 4: Current source loops (series current sources)
+    isource_warnings = _check_current_source_loops(circuit)
+    errors.extend(isource_warnings)
+
+    # Check 5: Unusual component values
     value_warnings = _check_component_values(circuit)
     warnings.extend(value_warnings)
 
@@ -166,7 +171,7 @@ def _check_floating_nodes(circuit: Circuit) -> list[ValidationWarning]:
     warnings: list[ValidationWarning] = []
 
     # Build map of canonical net -> list of (component, port)
-    net_connections: dict[object, list[tuple[str, str]]] = defaultdict(list)
+    net_connections: dict[Any, list[tuple[str, str]]] = defaultdict(list)
 
     for comp in circuit._components:
         for port in comp.ports:
@@ -192,7 +197,9 @@ def _check_floating_nodes(circuit: Circuit) -> list[ValidationWarning]:
             warnings.append(
                 ValidationWarning(
                     severity="error",
-                    message=f"Floating node: {net_label} (only connected to {comp_ref}.{port_name})",
+                    message=(
+                        f"Floating node: {net_label} " f"(only connected to {comp_ref}.{port_name})"
+                    ),
                     component_ref=comp_ref,
                     suggestion="Connect this node to another component or to ground",
                 )
@@ -214,7 +221,7 @@ def _check_voltage_source_loops(circuit: Circuit) -> list[ValidationWarning]:
     warnings: list[ValidationWarning] = []
 
     # Find all voltage sources
-    voltage_sources: list[tuple[str, object, object]] = []  # (ref, net+, net-)
+    voltage_sources: list[tuple[str, Any, Any]] = []  # (ref, net+, net-)
 
     for comp in circuit._components:
         comp_type = type(comp).__name__
@@ -236,7 +243,7 @@ def _check_voltage_source_loops(circuit: Circuit) -> list[ValidationWarning]:
                     voltage_sources.append((comp.ref, canon_p, canon_n))
 
     # Check for parallel voltage sources (same nodes)
-    seen_pairs: dict[tuple[object, object], str] = {}
+    seen_pairs: dict[tuple[Any, Any], str] = {}
     for ref, net_p, net_n in voltage_sources:
         # Normalize pair (smaller id first)
         pair = (net_p, net_n) if id(net_p) < id(net_n) else (net_n, net_p)
@@ -257,6 +264,85 @@ def _check_voltage_source_loops(circuit: Circuit) -> list[ValidationWarning]:
     return warnings
 
 
+def _check_current_source_loops(circuit: Circuit) -> list[ValidationWarning]:
+    """Check for current source loops (series current sources at a node).
+
+    Two current sources connected in series at a node where only they
+    connect creates a conflict - the node has no path for current to flow
+    except through those sources, violating KCL if currents differ.
+
+    More specifically, if a node has exactly 2 connections and both are
+    current source terminals, it's likely a series connection that will fail.
+
+    Returns:
+        List of ValidationWarning for each problematic configuration found
+    """
+    from ..core.net import GND
+
+    warnings: list[ValidationWarning] = []
+
+    # Build map of canonical net -> list of (component, port, is_current_source)
+    net_connections: dict[Any, list[tuple[str, str, bool]]] = defaultdict(list)
+
+    current_source_types = (
+        "Idc",
+        "Iac",
+        "Ipulse",
+        "Isin",
+        "IsinT",
+        "Ipwl",
+        "IpwlT",
+        "CCCS",  # Current-controlled current source
+        "BCurrent",  # Behavioral current source
+    )
+
+    for comp in circuit._components:
+        comp_type = type(comp).__name__
+        is_isrc = comp_type in current_source_types or comp_type.startswith("I")
+
+        for port in comp.ports:
+            net = circuit._port_to_net.get(port)
+            if net is not None:
+                canonical = circuit._get_canonical_net(net)
+                net_connections[canonical].append((comp.ref, port.name, is_isrc))
+
+    # Check for nodes with only current source connections
+    for net, connections in net_connections.items():
+        # Skip ground
+        if net is GND:
+            continue
+        net_name = getattr(net, "name", None)
+        if net_name in ("0", "GND", "gnd"):
+            continue
+
+        # Check if all connections at this node are current sources
+        isrc_connections = [c for c in connections if c[2]]
+        non_isrc_connections = [c for c in connections if not c[2]]
+
+        # If a node has 2+ current source connections and NO other connections,
+        # it's a series current source situation (problematic)
+        if len(isrc_connections) >= 2 and len(non_isrc_connections) == 0:
+            refs = [c[0] for c in isrc_connections]
+            net_label = net_name if net_name else "internal node"
+
+            warnings.append(
+                ValidationWarning(
+                    severity="error",
+                    message=(
+                        f"Current source loop at {net_label}: "
+                        f"{', '.join(refs)} are in series with no load path"
+                    ),
+                    component_ref=refs[0],
+                    suggestion=(
+                        "Add a parallel resistance or other load at this node, "
+                        "or remove one current source"
+                    ),
+                )
+            )
+
+    return warnings
+
+
 def _check_component_values(circuit: Circuit) -> list[ValidationWarning]:
     """Check for unusual component values that might be typos."""
     warnings: list[ValidationWarning] = []
@@ -266,7 +352,7 @@ def _check_component_values(circuit: Circuit) -> list[ValidationWarning]:
         comp_type = type(comp).__name__
 
         if comp_type == "Resistor" and hasattr(comp, "resistance"):
-            R = comp.resistance
+            R = getattr(comp, "resistance")
             if isinstance(R, int | float):
                 if R < 0.001:  # < 1mΩ
                     warnings.append(
@@ -288,7 +374,7 @@ def _check_component_values(circuit: Circuit) -> list[ValidationWarning]:
                     )
 
         elif comp_type == "Capacitor" and hasattr(comp, "capacitance"):
-            C = comp.capacitance
+            C = getattr(comp, "capacitance")
             if isinstance(C, int | float):
                 if C < 1e-15:  # < 1fF
                     warnings.append(

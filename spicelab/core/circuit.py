@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import cast
 
 from ..utils.log import get_logger
+from ..validators.circuit_validation import ValidationResult
 from .components import (
     CCCS,
     CCVS,
@@ -210,6 +211,124 @@ class Circuit:
             lines.append(".end")
 
         return "\n".join(lines) + "\n"
+
+    def preview_netlist(
+        self,
+        engine: str = "ngspice",
+        *,
+        syntax_highlight: bool = True,
+        line_numbers: bool = True,
+        show_stats: bool = True,
+    ) -> str:
+        """Preview the SPICE netlist with optional formatting.
+
+        Generates the netlist and formats it for easy reading with optional
+        syntax highlighting, line numbers, and circuit statistics.
+
+        Args:
+            engine: Target SPICE engine ("ngspice", "ltspice", "xyce").
+                    Currently affects header comment only.
+            syntax_highlight: Add ANSI colors for terminal display (default True)
+            line_numbers: Add line numbers (default True)
+            show_stats: Show circuit statistics header (default True)
+
+        Returns:
+            Formatted netlist string
+
+        Example:
+            >>> print(circuit.preview_netlist())
+            ═══ Circuit: my_amp ═══
+            Components: 5 | Nets: 4 | Directives: 1
+            ───────────────────────
+               1 │ * my_amp
+               2 │ R1 vin vout 10k
+               3 │ C1 vout 0 100n
+               4 │ .end
+
+            >>> # Without formatting
+            >>> print(circuit.preview_netlist(syntax_highlight=False, line_numbers=False))
+        """
+        netlist = self.build_netlist()
+        lines = netlist.rstrip().split("\n")
+
+        # ANSI color codes
+        RESET = "\033[0m"
+        COMMENT = "\033[90m"  # Gray
+        DIRECTIVE = "\033[33m"  # Yellow
+        COMPONENT = "\033[36m"  # Cyan
+        VALUE = "\033[32m"  # Green
+        HEADER = "\033[1;34m"  # Bold blue
+
+        def colorize_line(line: str) -> str:
+            """Apply syntax highlighting to a netlist line."""
+            if not syntax_highlight:
+                return line
+
+            stripped = line.strip()
+            if not stripped:
+                return line
+
+            # Comments
+            if stripped.startswith("*"):
+                return f"{COMMENT}{line}{RESET}"
+
+            # Directives (.model, .param, .end, etc.)
+            if stripped.startswith("."):
+                return f"{DIRECTIVE}{line}{RESET}"
+
+            # Component lines (R1, C1, V1, etc.)
+            parts = stripped.split()
+            if parts and parts[0] and parts[0][0].upper() in "RCLVIDEQMJKXBSGWFH":
+                # Highlight component ref and value
+                if len(parts) >= 1:
+                    ref = parts[0]
+                    rest = " ".join(parts[1:])
+                    # Try to highlight the last part as value
+                    if len(parts) > 2:
+                        nodes = " ".join(parts[1:-1])
+                        value = parts[-1]
+                        return f"{COMPONENT}{ref}{RESET} {nodes} {VALUE}{value}{RESET}"
+                    return f"{COMPONENT}{ref}{RESET} {rest}"
+
+            return line
+
+        output_lines: list[str] = []
+
+        # Statistics header
+        if show_stats:
+            self._assign_node_ids()
+            n_components = len(self._components)
+            n_nets = len(set(self._net_ids.values()))
+            n_directives = len(self._directives)
+
+            if syntax_highlight:
+                output_lines.append(f"{HEADER}═══ Circuit: {self.name} ({engine}) ═══{RESET}")
+                output_lines.append(
+                    f"Components: {n_components} │ Nets: {n_nets} │ Directives: {n_directives}"
+                )
+                output_lines.append("─" * 50)
+            else:
+                output_lines.append(f"=== Circuit: {self.name} ({engine}) ===")
+                output_lines.append(
+                    f"Components: {n_components} | Nets: {n_nets} | Directives: {n_directives}"
+                )
+                output_lines.append("-" * 50)
+
+        # Netlist with optional line numbers
+        max_line_num = len(lines)
+        num_width = len(str(max_line_num))
+
+        for i, line in enumerate(lines, start=1):
+            colored = colorize_line(line)
+            if line_numbers:
+                if syntax_highlight:
+                    output_lines.append(f"{COMMENT}{i:>{num_width}} │{RESET} {colored}")
+                else:
+                    output_lines.append(f"{i:>{num_width}} | {colored}")
+            else:
+                output_lines.append(colored)
+
+        return "\n".join(output_lines)
 
     def save_netlist(self, path: str | Path) -> Path:
         """Persist the netlist to ``path`` and return the resolved ``Path``."""

@@ -1,77 +1,79 @@
 # M5: Documentation & Examples - Tasks
 
-**Status:** In Progress
+**Status:** In Progress (Tutorials Complete)
 **Start Date:** 2025-01-24
-**Target Completion:** TBD (6-8 weeks)
+**Target Completion:** TBD (remaining: video, API docs, migration guides)
 **Dependencies:** M3 (component library), M4 (templates)
 
 ## Task Breakdown
 
-### Phase 1-2: Tutorial Chapters 1-5 (Weeks 1-2)
-- [ ] Chapter 1: Getting Started
-  - [ ] Installation guide (pip, engines)
-  - [ ] First circuit (RC filter)
-  - [ ] Running simulation
-  - [ ] Understanding results
-  - [ ] 3 exercises with solutions
-- [ ] Chapter 2: Basic Components
-  - [ ] Passive components (R, L, C)
-  - [ ] Sources (DC, AC, pulse)
-  - [ ] Ground and nets
-  - [ ] Component values/units
-  - [ ] 5 exercises
-- [ ] Chapter 3: Building Circuits
-  - [ ] Programmatic building
-  - [ ] DSL syntax
-  - [ ] Connecting components
-  - [ ] Subcircuits
-  - [ ] 4 exercises
-- [ ] Chapter 4: Analysis Types
-  - [ ] DC operating point
-  - [ ] Transient analysis
-  - [ ] AC analysis
-  - [ ] DC sweep
-  - [ ] 6 exercises
-- [ ] Chapter 5: Working with Results
-  - [ ] xarray datasets
-  - [ ] Plotting
-  - [ ] Exporting data
-  - [ ] Custom measurements
-  - [ ] 4 exercises
+### Phase 1-2: Tutorial Chapters 1-5 (Weeks 1-2) ✅ COMPLETE
+- [x] Chapter 1: Getting Started
+  - [x] Installation guide (pip, engines)
+  - [x] First circuit (voltage divider)
+  - [x] Running validation
+  - [x] Understanding circuits, nets, components
+  - [x] 3 exercises with solutions
+- [x] Chapter 2: Basic Components
+  - [x] Passive components (R, L, C)
+  - [x] Sources (DC, AC, pulse, sine)
+  - [x] Ground and nets
+  - [x] Component values/units
+  - [x] 5 exercises
+- [x] Chapter 3: Building Circuits
+  - [x] Programmatic building
+  - [x] Factory functions
+  - [x] Using templates
+  - [x] Adding directives
+  - [x] 5 exercises
+- [x] Chapter 4: Analysis Types
+  - [x] DC operating point
+  - [x] Transient analysis
+  - [x] AC analysis
+  - [x] DC sweep
+  - [x] 5 exercises
+- [x] Chapter 5: Working with Results
+  - [x] xarray datasets
+  - [x] Measurements (rise time, bandwidth)
+  - [x] Plotting with matplotlib
+  - [x] Exporting data
+  - [x] 5 exercises
 
-**Estimated Time:** 2 weeks
+**Completed:** 2025-11-28
 
 ---
 
-### Phase 3-4: Tutorial Chapters 6-10 + Examples (Weeks 3-4)
-- [ ] Chapter 6: Monte Carlo & Statistics
-  - [ ] Tolerance distributions
-  - [ ] Running Monte Carlo
-  - [ ] Statistical analysis
-  - [ ] Yield estimation
-  - [ ] 5 exercises
-- [ ] Chapter 7: Advanced Components
-  - [ ] Vendor models
-  - [ ] Custom subcircuits
-  - [ ] Behavioral models
-  - [ ] 4 exercises
-- [ ] Chapter 8: Performance Optimization
-  - [ ] Large circuit strategies
-  - [ ] Parallel execution
-  - [ ] Caching
-  - [ ] 3 exercises
-- [ ] Chapter 9: Integration & Automation
-  - [ ] CI/CD pipelines
-  - [ ] Batch processing
-  - [ ] Command-line usage
-  - [ ] Jupyter notebooks
-  - [ ] 4 exercises
-- [ ] Chapter 10: Troubleshooting
-  - [ ] Convergence issues
-  - [ ] Debugging
-  - [ ] Validation
-  - [ ] Best practices
-  - [ ] 5 exercises
+### Phase 3-4: Tutorial Chapters 6-10 + Examples (Weeks 3-4) ✅ COMPLETE
+- [x] Chapter 6: Monte Carlo & Statistics
+  - [x] Tolerance distributions (NormalPct, UniformPct)
+  - [x] Running Monte Carlo
+  - [x] Yield analysis and sensitivity
+  - [x] Histogram visualization
+  - [x] 5 exercises
+- [x] Chapter 7: Advanced Components
+  - [x] Vendor models (diodes, transistors, op-amps)
+  - [x] Custom subcircuits
+  - [x] Behavioral models
+  - [x] E-series selection
+  - [x] 5 exercises
+- [x] Chapter 8: Performance Optimization
+  - [x] Parallel execution
+  - [x] Result caching
+  - [x] Memory management
+  - [x] Profiling
+  - [x] 5 exercises
+- [x] Chapter 9: Integration & Automation
+  - [x] CI/CD (GitHub Actions, GitLab CI)
+  - [x] Batch processing
+  - [x] Jupyter notebooks
+  - [x] Report generation
+  - [x] 5 exercises
+- [x] Chapter 10: Troubleshooting
+  - [x] Convergence issues
+  - [x] Diagnostic tools
+  - [x] Validation workflow
+  - [x] Best practices
+  - [x] 5 exercises
 - [x] Create 50+ practical examples
   - [x] 10 basic tutorial examples (examples/tutorials/)
   - [x] 10 analog examples (examples/analog/)

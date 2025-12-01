@@ -47,6 +47,14 @@ from .raw_reader import (
     parse_ngspice_ascii_raw_multi,
     parse_ngspice_raw,
 )
+from .raw_streaming import (
+    RAWHeader,
+    StreamingRAWReader,
+    VariableInfo,
+    get_raw_info,
+    open_raw_streaming,
+    stream_raw_to_hdf5,
+)
 from .readers import (
     dataset_to_long_polars,
     list_signals,
@@ -111,6 +119,13 @@ __all__ = [
     "parse_ngspice_raw",
     "parse_ngspice_ascii_raw",
     "parse_ngspice_ascii_raw_multi",
+    # Streaming RAW reader
+    "StreamingRAWReader",
+    "RAWHeader",
+    "VariableInfo",
+    "open_raw_streaming",
+    "stream_raw_to_hdf5",
+    "get_raw_info",
     # Readers
     "read_ltspice_raw",
     "read",

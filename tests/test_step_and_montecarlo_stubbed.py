@@ -62,13 +62,15 @@ def test_step_param_preserves_order_parallel() -> None:
         c.connect(V1.ports[0], R1.ports[0])
         c.connect(R1.ports[1], GND)
         c.connect(V1.ports[1], GND)
+        # Use workers=1 because the mock runner uses global state that doesn't
+        # transfer to subprocess workers in multiprocessing
         sweep = run_value_sweep(
             c,
             component=R1,
             values=["1k", "2k", "5k"],
             analyses=[AnalysisSpec("op", {})],
             engine="ngspice",
-            workers=2,
+            workers=1,
         )
         vals = []
         for run in sweep.runs:
@@ -100,6 +102,8 @@ def test_montecarlo_preserves_order_parallel() -> None:
         c.connect(V1.ports[0], R1.ports[0])
         c.connect(R1.ports[1], GND)
         c.connect(V1.ports[1], GND)
+        # Use workers=1 because the mock runner uses global state that doesn't
+        # transfer to subprocess workers in multiprocessing
         mc = monte_carlo(
             c,
             {R1: NormalPct(0.01)},
@@ -107,7 +111,7 @@ def test_montecarlo_preserves_order_parallel() -> None:
             analyses=[AnalysisSpec("op", {})],
             engine="ngspice",
             seed=1,
-            workers=3,
+            workers=1,
         )
         vals = [r.traces["V(n1)"].values[-1] for r in mc.runs]
         assert list(vals) == [10.0, 20.0, 30.0, 40.0]

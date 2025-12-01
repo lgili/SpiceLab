@@ -157,7 +157,7 @@ def nearest_value(
     if custom_values is not None:
         arr = np.array(sorted(custom_values))
     else:
-        arr = get_series_array(series, -6, 9)  # type: ignore[arg-type]
+        arr = get_series_array(series, -6, 9)
 
     idx = np.abs(arr - target).argmin()
     return float(arr[idx])
@@ -218,7 +218,7 @@ def find_parallel_combination(
     if custom_values is not None:
         arr = np.array(sorted(custom_values))
     else:
-        arr = get_series_array(series, -6, 9)  # type: ignore[arg-type]
+        arr = get_series_array(series, -6, 9)
 
     # Filter to reasonable range
     arr = arr[(arr >= target * 0.5) & (arr <= target * 10)]
@@ -271,7 +271,7 @@ def find_series_combination(
     if custom_values is not None:
         arr = np.array(sorted(custom_values))
     else:
-        arr = get_series_array(series, -6, 9)  # type: ignore[arg-type]
+        arr = get_series_array(series, -6, 9)
 
     # Filter to reasonable range
     arr = arr[(arr > 0) & (arr <= target)]
