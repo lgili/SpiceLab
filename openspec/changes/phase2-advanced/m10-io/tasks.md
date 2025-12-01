@@ -104,14 +104,21 @@ Files created:
 
 ---
 
-### Phase 6: Incremental Simulation (Week 10-11)
-- [ ] Implement circuit hashing
-- [ ] Create IncrementalSimulation class
-- [ ] Add dirty checking logic
-- [ ] Integrate with cache
-- [ ] Handle subcircuit changes
-- [ ] Write incremental tests
+### Phase 6: Incremental Simulation (Week 10-11) ✅ COMPLETE
+- [x] Implement circuit hashing
+- [x] Create IncrementalSimulation class
+- [x] Add dirty checking logic
+- [x] Integrate with cache
+- [x] Handle subcircuit changes
+- [x] Write incremental tests
 - [ ] Document workflow
+
+**Completed:** 2025-11-30
+
+Files created:
+- `spicelab/incremental/__init__.py` - Package exports
+- `spicelab/incremental/simulator.py` - IncrementalSimulator with caching, change detection
+- `tests/test_incremental.py` - 52 tests
 
 **Estimated Time:** 2 weeks
 
