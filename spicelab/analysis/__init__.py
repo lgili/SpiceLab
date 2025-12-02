@@ -61,6 +61,21 @@ from .wca import (
     tolerance_to_normal,
     tolerance_to_uniform,
 )
+from .sensitivity_extended import (
+    ComponentTolerance,
+    DesignMargin,
+    DesignMarginResult,
+    SensitivityReport,
+    SensitivityReportSection,
+    TemperaturePoint,
+    TemperatureSensitivityResult,
+    ToleranceImpact,
+    ToleranceSensitivityResult,
+    analyze_design_margins,
+    create_sensitivity_report,
+    temperature_sensitivity,
+    tolerance_sensitivity,
+)
 
 __all__ = [
     "AnalysisResult",
@@ -118,4 +133,18 @@ __all__ = [
     "quick_wca",
     "create_monte_carlo_runner",
     "create_wca_runner",
+    # Extended sensitivity analysis (M16)
+    "temperature_sensitivity",
+    "tolerance_sensitivity",
+    "TemperaturePoint",
+    "TemperatureSensitivityResult",
+    "ComponentTolerance",
+    "ToleranceImpact",
+    "ToleranceSensitivityResult",
+    "SensitivityReport",
+    "SensitivityReportSection",
+    "create_sensitivity_report",
+    "DesignMargin",
+    "DesignMarginResult",
+    "analyze_design_margins",
 ]

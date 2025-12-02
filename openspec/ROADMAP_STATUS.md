@@ -164,12 +164,13 @@ Funcionalidades:
 - [x] Application notes circuits - 3 circuitos
 - [x] Validation test circuits - 2 circuitos (DC e AC)
 
-### M16: Sensitivity Analysis ⚠️ Parcialmente Completo
-**Pendente:**
-- [ ] Component sensitivity
-- [ ] Temperature sensitivity
-- [ ] Tolerance sensitivity
-- [ ] Sensitivity reports
+### M16: Sensitivity Analysis ✅
+**Completo (Sprint 8):**
+- [x] Component sensitivity - `tolerance_sensitivity()` com per-component impact
+- [x] Temperature sensitivity - `temperature_sensitivity()` com tempco calculation
+- [x] Tolerance sensitivity - `ToleranceSensitivityResult` com RSS e worst-case
+- [x] Sensitivity reports - `create_sensitivity_report()` com export HTML/text
+- [x] Design margin analysis - `analyze_design_margins()` com spec verification
 
 ### M17: Design Automation 🟢 Baixa Prioridade
 **Pendente:**
@@ -208,7 +209,7 @@ Funcionalidades:
 | Interactive plots | M13 | ✅ Completo |
 | Reference circuits | M15 | ✅ Completo |
 | Advanced DRC | M11 | ✅ Completo |
-| Sensitivity analysis | M16 | Pendente |
+| Sensitivity analysis | M16 | ✅ Completo |
 
 ### Baixa Prioridade (Nice-to-have)
 
@@ -222,11 +223,11 @@ Funcionalidades:
 
 ## Estatísticas
 
-- **Total de tarefas pendentes:** 3
-- **Completas (Sprint 1-7):** 24
+- **Total de tarefas pendentes:** 0 (apenas baixa prioridade restante)
+- **Completas (Sprint 1-8):** 28
 - **Alta prioridade:** 0
 - **Média prioridade:** 0
-- **Baixa prioridade:** 5
+- **Baixa prioridade:** 5 (M4, M17, M18)
 
 ---
 
@@ -239,4 +240,6 @@ Funcionalidades:
 5. ~~**Sprint 5:** Visualização interativa M13~~ ✅
 6. ~~**Sprint 6:** THD e outras medições M7~~ ✅
 7. ~~**Sprint 7:** Hierarchical subcircuits M8~~ ✅
-8. **Sprint 8:** Sensitivity Analysis M16 (próxima)
+8. ~~**Sprint 8:** Sensitivity Analysis M16~~ ✅
+
+**Roadmap completo!** Apenas tarefas de baixa prioridade restantes (M4, M17, M18).
