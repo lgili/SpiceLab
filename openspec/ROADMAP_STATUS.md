@@ -106,11 +106,11 @@ Funcionalidades:
 - [x] **Slew rate measurement** - SlewRateSpec com edge detection e unit conversion
 - [x] **Settling time measurement** - SettlingTimeSpec com threshold customizável
 
-### M8: Subcircuits ⚠️ Parcialmente Completo
-**Pendente:**
-- [ ] Hierarchical subcircuit support
-- [ ] Parameter passing to subcircuits
-- [ ] Subcircuit library management
+### M8: Subcircuits ✅
+**Completo (Sprint 7):**
+- [x] Hierarchical subcircuit support - `SubcircuitDefinition` com nested dependencies
+- [x] Parameter passing to subcircuits - `SubcircuitParameter` com validação
+- [x] Subcircuit library management - `SubcircuitLibrary` com file loading e caching
 
 ### M9: Model Library ✅
 **Status:** Completo (Sprint 4)
@@ -202,13 +202,13 @@ Funcionalidades:
 
 ### Média Prioridade (Melhoria de Experiência)
 
-| Tarefa | Milestone | Justificativa |
-|--------|-----------|---------------|
-| Hierarchical subcircuits | M8 | Organização de projetos complexos |
-| Interactive plots | M13 | Melhor análise de resultados |
-| Reference circuits | M15 | Acelera aprendizado e prototipagem |
-| Advanced DRC | M11 | Previne erros de design |
-| Sensitivity analysis | M16 | Design robusto |
+| Tarefa | Milestone | Status |
+|--------|-----------|--------|
+| Hierarchical subcircuits | M8 | ✅ Completo |
+| Interactive plots | M13 | ✅ Completo |
+| Reference circuits | M15 | ✅ Completo |
+| Advanced DRC | M11 | ✅ Completo |
+| Sensitivity analysis | M16 | Pendente |
 
 ### Baixa Prioridade (Nice-to-have)
 
@@ -222,10 +222,10 @@ Funcionalidades:
 
 ## Estatísticas
 
-- **Total de tarefas pendentes:** 6
-- **Completas (Sprint 1-6):** 21
+- **Total de tarefas pendentes:** 3
+- **Completas (Sprint 1-7):** 24
 - **Alta prioridade:** 0
-- **Média prioridade:** 3
+- **Média prioridade:** 0
 - **Baixa prioridade:** 5
 
 ---
@@ -238,4 +238,5 @@ Funcionalidades:
 4. ~~**Sprint 4:** Completar modelos de componentes M9~~ ✅
 5. ~~**Sprint 5:** Visualização interativa M13~~ ✅
 6. ~~**Sprint 6:** THD e outras medições M7~~ ✅
-7. **Sprint 7:** Hierarchical subcircuits M8
+7. ~~**Sprint 7:** Hierarchical subcircuits M8~~ ✅
+8. **Sprint 8:** Sensitivity Analysis M16 (próxima)
