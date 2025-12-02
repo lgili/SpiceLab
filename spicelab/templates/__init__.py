@@ -88,6 +88,21 @@ from .circuits import (
     voltage_divider,
     voltage_follower,
 )
+from .reference_circuits import (
+    ReferenceCircuit,
+    ReferenceLibrary,
+    ac_test_circuit,
+    dc_test_circuit,
+    decoupling_network,
+    led_driver,
+    library,
+    ohms_law_demo,
+    rc_lowpass_filter,
+    rc_time_constant_demo,
+    rl_time_constant_demo,
+    rlc_resonance_demo,
+    voltage_divider_demo,
+)
 
 __all__ = [
     # 1st order filters
@@ -125,4 +140,18 @@ __all__ = [
     "BiasResult",
     "CompensationResult",
     "ConverterResult",
+    # Reference circuits
+    "ReferenceCircuit",
+    "ReferenceLibrary",
+    "library",
+    "ohms_law_demo",
+    "voltage_divider_demo",
+    "rc_time_constant_demo",
+    "rl_time_constant_demo",
+    "rlc_resonance_demo",
+    "led_driver",
+    "rc_lowpass_filter",
+    "decoupling_network",
+    "dc_test_circuit",
+    "ac_test_circuit",
 ]

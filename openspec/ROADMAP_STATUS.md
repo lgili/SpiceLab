@@ -35,10 +35,20 @@ Funcionalidades:
 - Templates: low_power, high_power, precision_analog, rf_design, digital_logic, automotive
 - Export: JSON e HTML com estatísticas e visualização
 
-### Sprint 3: Circuitos de Referência (M15)
-- [ ] Pre-built reference circuits
-- [ ] Educational examples
-- [ ] Application notes integration
+### Sprint 3 (COMPLETA): Circuitos de Referência (M15) ✅
+- [x] Pre-built reference circuits - `ReferenceCircuit`, `ReferenceLibrary`
+- [x] Educational examples - 5 circuitos (Ohm's Law, Voltage Divider, RC/RL Time Constant, RLC Resonance)
+- [x] Application notes integration - 3 circuitos (LED Driver, RC Lowpass Filter, Decoupling Network)
+
+Arquivos criados:
+- `spicelab/templates/reference_circuits.py` - 10 circuitos de referência com metadata educacional
+- `tests/test_reference_circuits.py` - 33 testes (100% passando)
+
+Funcionalidades:
+- 3 categorias: educational, appnote, test
+- Cada circuito inclui: learning_objectives, expected_results, suggested_analyses
+- ReferenceLibrary para navegação e acesso fácil
+- 2 circuitos de teste para validação de simulações (DC e AC)
 
 ---
 
@@ -67,11 +77,13 @@ Funcionalidades:
 - DC operating point
 - DC sweep
 
-### M7: Measurements 🔴 Prioridade Alta
+### M7: Measurements ⚠️ Parcialmente Completo
+**Completo (Sprint 1):**
+- [x] **PSRR** - Power Supply Rejection Ratio
+- [x] **CMRR** - Common Mode Rejection Ratio
+- [x] **Noise analysis** - Spot noise, integrated noise
+
 **Pendente:**
-- [ ] **PSRR** - Power Supply Rejection Ratio
-- [ ] **CMRR** - Common Mode Rejection Ratio
-- [ ] **Noise analysis** - Spot noise, integrated noise
 - [ ] THD (Total Harmonic Distortion)
 - [ ] Slew rate measurement
 - [ ] Settling time measurement
@@ -98,13 +110,13 @@ Funcionalidades:
 - ASC file parser
 - Windows console fix
 
-### M11: Validation 🟡 Prioridade Média
-**Pendente:**
-- [ ] Advanced DRC rules
-- [ ] Power budget validation
-- [ ] Signal integrity checks
-- [ ] Constraint templates
-- [ ] Validation report export
+### M11: Validation ✅
+**Status:** Completo (Sprint 2)
+- [x] Advanced DRC rules - 6 regras built-in
+- [x] Power budget validation - power_dissipation rule
+- [x] Signal integrity checks - fanout_limit, impedance_matching
+- [x] Constraint templates - 6 presets
+- [x] Validation report export - JSON e HTML
 
 ### M12: Plugin System ✅
 **Status:** Completo
@@ -127,12 +139,12 @@ Funcionalidades:
 - Tolerance modeling
 - Statistical output
 
-### M15: Reference Circuits 🟡 Prioridade Média
-**Pendente:**
-- [ ] Pre-built reference circuits
-- [ ] Educational examples
-- [ ] Application notes circuits
-- [ ] Validation test circuits
+### M15: Reference Circuits ✅
+**Status:** Completo (Sprint 3)
+- [x] Pre-built reference circuits - ReferenceCircuit, ReferenceLibrary
+- [x] Educational examples - 5 circuitos
+- [x] Application notes circuits - 3 circuitos
+- [x] Validation test circuits - 2 circuitos (DC e AC)
 
 ### M16: Sensitivity Analysis ⚠️ Parcialmente Completo
 **Pendente:**
@@ -190,17 +202,19 @@ Funcionalidades:
 
 ## Estatísticas
 
-- **Total de tarefas pendentes:** 27
-- **Alta prioridade:** 5
-- **Média prioridade:** 12
-- **Baixa prioridade:** 10
+- **Total de tarefas pendentes:** 18
+- **Completas (Sprint 1-3):** 9
+- **Alta prioridade:** 2 (THD, Op-amp models)
+- **Média prioridade:** 9
+- **Baixa prioridade:** 7
 
 ---
 
 ## Próximos Passos
 
-1. **Sprint 1:** Implementar medições M7 (PSRR, CMRR, Noise)
-2. **Sprint 2:** Melhorar validação M11
-3. **Sprint 3:** Adicionar circuitos de referência M15
-4. **Sprint 4:** Completar modelos de componentes M9
+1. ~~**Sprint 1:** Implementar medições M7 (PSRR, CMRR, Noise)~~ ✅
+2. ~~**Sprint 2:** Melhorar validação M11~~ ✅
+3. ~~**Sprint 3:** Adicionar circuitos de referência M15~~ ✅
+4. **Sprint 4:** Completar modelos de componentes M9 (Op-amps, Transistors)
 5. **Sprint 5:** Visualização interativa M13
+6. **Sprint 6:** THD e outras medições M7
