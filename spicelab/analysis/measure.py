@@ -134,6 +134,35 @@ class ENOBSpec:
     f0: float | None = None
 
 
+@dataclass(frozen=True)
+class SlewRateSpec:
+    """Slew rate measurement for amplifier characterization.
+
+    Measures the maximum rate of change (dV/dt) of a signal during
+    rising and/or falling transitions. Used to characterize op-amp
+    and amplifier large-signal performance.
+
+    Args:
+        name: Measurement name.
+        signal: Signal to measure.
+        edge: Which edge(s) to measure - "rising", "falling", or "both".
+        threshold_low: Lower threshold as fraction (0-1) of full swing.
+        threshold_high: Upper threshold as fraction (0-1) of full swing.
+        units: Output units - "V/us" (default), "V/ns", or "V/s".
+
+    Returns:
+        Slew rate in specified units. For "both", returns the minimum
+        of rising and falling slew rates (worst case).
+    """
+
+    name: str
+    signal: str
+    edge: Literal["rising", "falling", "both"] = "both"
+    threshold_low: float = 0.1
+    threshold_high: float = 0.9
+    units: Literal["V/us", "V/ns", "V/s"] = "V/us"
+
+
 Spec = (
     GainSpec
     | OvershootSpec
@@ -144,6 +173,7 @@ Spec = (
     | RiseTimeSpec
     | THDSpec
     | ENOBSpec
+    | SlewRateSpec
 )
 
 
@@ -290,6 +320,8 @@ def _apply_spec(extractor: _SignalExtractor, spec: Spec) -> dict[str, float | st
         return _measure_thd(extractor, spec)
     if isinstance(spec, ENOBSpec):
         return _measure_enob(extractor, spec)
+    if isinstance(spec, SlewRateSpec):
+        return _measure_slew_rate(extractor, spec)
     raise TypeError(f"Unsupported spec: {spec!r}")
 
 
@@ -746,6 +778,96 @@ def _measure_enob(extractor: _SignalExtractor, spec: ENOBSpec) -> dict[str, floa
     }
 
 
+def _measure_slew_rate(
+    extractor: _SignalExtractor, spec: SlewRateSpec
+) -> dict[str, float | str]:
+    """Measure slew rate from a step response or large-signal transition.
+
+    Slew rate is calculated as the maximum dV/dt during the transition
+    between threshold crossings.
+    """
+    sig = extractor.get(spec.signal)
+    t = np.asarray(sig.axis, dtype=float)
+    y = np.asarray(sig.values, dtype=float)
+
+    if t.size < 2:
+        raise ValueError("Signal too short for slew rate measurement")
+
+    # Determine signal swing
+    y_min, y_max = float(y.min()), float(y.max())
+    swing = y_max - y_min
+
+    if swing <= 0:
+        return {
+            "measure": spec.name,
+            "type": "slew_rate",
+            "value": 0.0,
+            "units": spec.units,
+            "signal": spec.signal,
+            "edge": spec.edge,
+            "rising_sr": 0.0,
+            "falling_sr": 0.0,
+        }
+
+    # Threshold levels
+    low_level = y_min + spec.threshold_low * swing
+    high_level = y_min + spec.threshold_high * swing
+
+    # Calculate derivative (dV/dt)
+    dt = np.diff(t)
+    dy = np.diff(y)
+    # Avoid division by zero
+    dt = np.where(dt == 0, 1e-15, dt)
+    dvdt = dy / dt
+
+    # Time points for derivative (midpoints)
+    t_mid = (t[:-1] + t[1:]) / 2
+    y_mid = (y[:-1] + y[1:]) / 2
+
+    # Unit conversion factor
+    unit_factors = {"V/s": 1.0, "V/us": 1e-6, "V/ns": 1e-9}
+    unit_factor = unit_factors.get(spec.units, 1e-6)
+
+    rising_sr = 0.0
+    falling_sr = 0.0
+
+    # Find rising slew rate (positive dV/dt in transition region)
+    if spec.edge in ("rising", "both"):
+        # Mask for points within the transition region during rising edge
+        rising_mask = (y_mid >= low_level) & (y_mid <= high_level) & (dvdt > 0)
+        if np.any(rising_mask):
+            rising_sr = float(np.max(dvdt[rising_mask])) * unit_factor
+
+    # Find falling slew rate (negative dV/dt in transition region)
+    if spec.edge in ("falling", "both"):
+        # For falling, we look at magnitude of negative slopes
+        falling_mask = (y_mid >= low_level) & (y_mid <= high_level) & (dvdt < 0)
+        if np.any(falling_mask):
+            falling_sr = float(np.abs(np.min(dvdt[falling_mask]))) * unit_factor
+
+    # Determine the result value based on edge setting
+    if spec.edge == "rising":
+        result_value = rising_sr
+    elif spec.edge == "falling":
+        result_value = falling_sr
+    else:  # "both" - return minimum (worst case)
+        if rising_sr > 0 and falling_sr > 0:
+            result_value = min(rising_sr, falling_sr)
+        else:
+            result_value = max(rising_sr, falling_sr)
+
+    return {
+        "measure": spec.name,
+        "type": "slew_rate",
+        "value": result_value,
+        "units": spec.units,
+        "signal": spec.signal,
+        "edge": spec.edge,
+        "rising_sr": rising_sr,
+        "falling_sr": falling_sr,
+    }
+
+
 __all__ = [
     "measure",
     "GainSpec",
@@ -757,4 +879,5 @@ __all__ = [
     "RiseTimeSpec",
     "THDSpec",
     "ENOBSpec",
+    "SlewRateSpec",
 ]

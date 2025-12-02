@@ -97,16 +97,14 @@ Funcionalidades:
 - DC operating point
 - DC sweep
 
-### M7: Measurements ⚠️ Parcialmente Completo
-**Completo (Sprint 1):**
+### M7: Measurements ✅
+**Completo (Sprint 1 + Sprint 6):**
 - [x] **PSRR** - Power Supply Rejection Ratio
 - [x] **CMRR** - Common Mode Rejection Ratio
 - [x] **Noise analysis** - Spot noise, integrated noise
-
-**Pendente:**
-- [ ] THD (Total Harmonic Distortion)
-- [ ] Slew rate measurement
-- [ ] Settling time measurement
+- [x] **THD** - Total Harmonic Distortion (via measure.py THDSpec)
+- [x] **Slew rate measurement** - SlewRateSpec com edge detection e unit conversion
+- [x] **Settling time measurement** - SettlingTimeSpec com threshold customizável
 
 ### M8: Subcircuits ⚠️ Parcialmente Completo
 **Pendente:**
@@ -192,13 +190,15 @@ Funcionalidades:
 
 ### Alta Prioridade (Impacto Direto no Usuário)
 
-| Tarefa | Milestone | Justificativa |
-|--------|-----------|---------------|
-| PSRR measurement | M7 | Fundamental para análise de circuitos analógicos |
-| CMRR measurement | M7 | Essencial para amplificadores diferenciais |
-| Noise analysis | M7 | Crítico para design de baixo ruído |
-| Op-amp models | M9 | Usuários precisam de modelos prontos |
-| THD measurement | M7 | Importante para circuitos de áudio |
+| Tarefa | Milestone | Status |
+|--------|-----------|--------|
+| PSRR measurement | M7 | ✅ Completo |
+| CMRR measurement | M7 | ✅ Completo |
+| Noise analysis | M7 | ✅ Completo |
+| Op-amp models | M9 | ✅ Completo |
+| THD measurement | M7 | ✅ Completo |
+| Slew rate measurement | M7 | ✅ Completo |
+| Settling time measurement | M7 | ✅ Completo |
 
 ### Média Prioridade (Melhoria de Experiência)
 
@@ -222,9 +222,9 @@ Funcionalidades:
 
 ## Estatísticas
 
-- **Total de tarefas pendentes:** 9
-- **Completas (Sprint 1-5):** 18
-- **Alta prioridade:** 1 (THD)
+- **Total de tarefas pendentes:** 6
+- **Completas (Sprint 1-6):** 21
+- **Alta prioridade:** 0
 - **Média prioridade:** 3
 - **Baixa prioridade:** 5
 
@@ -237,5 +237,5 @@ Funcionalidades:
 3. ~~**Sprint 3:** Adicionar circuitos de referência M15~~ ✅
 4. ~~**Sprint 4:** Completar modelos de componentes M9~~ ✅
 5. ~~**Sprint 5:** Visualização interativa M13~~ ✅
-6. **Sprint 6:** THD e outras medições M7
+6. ~~**Sprint 6:** THD e outras medições M7~~ ✅
 7. **Sprint 7:** Hierarchical subcircuits M8

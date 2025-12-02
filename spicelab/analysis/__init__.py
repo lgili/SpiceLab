@@ -11,6 +11,7 @@ from .measure import (
     PhaseMarginSpec,
     RiseTimeSpec,
     SettlingTimeSpec,
+    SlewRateSpec,
     THDSpec,
     measure,
 )
@@ -73,6 +74,7 @@ __all__ = [
     "SettlingTimeSpec",
     "THDSpec",
     "ENOBSpec",
+    "SlewRateSpec",
     "Dist",
     "NormalPct",
     "UniformPct",
