@@ -105,11 +105,23 @@ def run_directives(
     cmd = [exe, "-b", "-o", str(log), "-r", str(raw_out), str(deck)]
 
     # Hide console window on Windows
-    creation_flags = 0
+    kwargs: dict[str, object] = {
+        "capture_output": True,
+        "text": True,
+    }
     if sys.platform == "win32":
-        creation_flags = subprocess.CREATE_NO_WINDOW
+        # CREATE_NO_WINDOW prevents console window popup
+        # DETACHED_PROCESS ensures no parent console attachment
+        kwargs["creationflags"] = (
+            subprocess.CREATE_NO_WINDOW | subprocess.DETACHED_PROCESS
+        )
+        # Also hide via startupinfo
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE
+        kwargs["startupinfo"] = startupinfo
 
-    proc = subprocess.run(cmd, capture_output=True, text=True, creationflags=creation_flags)
+    proc = subprocess.run(cmd, **kwargs)  # type: ignore[arg-type]
 
     raw_path: str | None = str(raw_out) if raw_out.exists() else None
 

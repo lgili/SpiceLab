@@ -1,0 +1,13 @@
+* OPA2134 Dual audio operational amplifier macro-model
+* FET-input, low distortion, high slew rate
+.subckt OPA2134 1 2 6 7 4
+* pins: non-inv inv out v+ v-
+* Very high impedance FET input
+RIN+ 1 4 1e13
+RIN- 2 4 1e13
+* Very high open-loop gain
+EGAIN 3 0 1 2 1000000
+* Low impedance output with high bandwidth
+ROUT 3 6 25
+COUT 6 4 2p
+.ENDS OPA2134

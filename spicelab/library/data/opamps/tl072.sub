@@ -1,0 +1,12 @@
+* TL072 JFET-input dual operational amplifier macro-model
+* Low noise, high slew rate
+.subckt TL072 1 2 6 7 4
+* pins: non-inv inv out v+ v-
+* Input stage with JFET characteristics
+RIN+ 1 4 1e12
+RIN- 2 4 1e12
+EGAIN 3 0 1 2 200000
+* Output stage with slew limiting
+ROUT 3 6 75
+COUT 6 4 6p
+.ENDS TL072

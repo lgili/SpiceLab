@@ -11,6 +11,7 @@ from .measure import (
     PhaseMarginSpec,
     RiseTimeSpec,
     SettlingTimeSpec,
+    SlewRateSpec,
     THDSpec,
     measure,
 )
@@ -23,6 +24,16 @@ from .montecarlo import (
     UniformAbs,
     UniformPct,
     monte_carlo,
+)
+from .optimized import (
+    OptimizationConfig,
+    OptimizationStats,
+    OptimizedMonteCarlo,
+    OptimizedWCA,
+    create_monte_carlo_runner,
+    create_wca_runner,
+    quick_monte_carlo,
+    quick_wca,
 )
 from .pipeline import measure_job_result, run_and_measure
 from .result import AnalysisResult
@@ -50,6 +61,21 @@ from .wca import (
     tolerance_to_normal,
     tolerance_to_uniform,
 )
+from .sensitivity_extended import (
+    ComponentTolerance,
+    DesignMargin,
+    DesignMarginResult,
+    SensitivityReport,
+    SensitivityReportSection,
+    TemperaturePoint,
+    TemperatureSensitivityResult,
+    ToleranceImpact,
+    ToleranceSensitivityResult,
+    analyze_design_margins,
+    create_sensitivity_report,
+    temperature_sensitivity,
+    tolerance_sensitivity,
+)
 
 __all__ = [
     "AnalysisResult",
@@ -63,6 +89,7 @@ __all__ = [
     "SettlingTimeSpec",
     "THDSpec",
     "ENOBSpec",
+    "SlewRateSpec",
     "Dist",
     "NormalPct",
     "UniformPct",
@@ -97,4 +124,27 @@ __all__ = [
     "extract_from_analysis",
     "mc_summary",
     "create_metric_extractor",
+    # Optimized runners
+    "OptimizationConfig",
+    "OptimizationStats",
+    "OptimizedMonteCarlo",
+    "OptimizedWCA",
+    "quick_monte_carlo",
+    "quick_wca",
+    "create_monte_carlo_runner",
+    "create_wca_runner",
+    # Extended sensitivity analysis (M16)
+    "temperature_sensitivity",
+    "tolerance_sensitivity",
+    "TemperaturePoint",
+    "TemperatureSensitivityResult",
+    "ComponentTolerance",
+    "ToleranceImpact",
+    "ToleranceSensitivityResult",
+    "SensitivityReport",
+    "SensitivityReportSection",
+    "create_sensitivity_report",
+    "DesignMargin",
+    "DesignMarginResult",
+    "analyze_design_margins",
 ]

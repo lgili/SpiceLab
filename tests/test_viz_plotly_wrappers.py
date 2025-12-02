@@ -46,6 +46,22 @@ class FakeFigure:
     def update_yaxes(self, **kwargs: Any) -> None:
         self.y_updates.append(kwargs)
 
+    def add_hline(self, y: float = 0, **kwargs: Any) -> None:
+        """Add horizontal line (mock)."""
+        pass
+
+    def add_vline(self, x: float = 0, **kwargs: Any) -> None:
+        """Add vertical line (mock)."""
+        pass
+
+    def add_annotation(self, **kwargs: Any) -> None:
+        """Add annotation (mock)."""
+        pass
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dict (mock)."""
+        return {"data": self.data, "layout": {}}
+
     def to_html(self, full_html: bool = True, include_plotlyjs: str = "cdn") -> str:
         return "<html></html>"
 

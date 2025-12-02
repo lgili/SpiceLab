@@ -1,0 +1,13 @@
+* LM386 Low voltage audio power amplifier macro-model
+* Power amplifier with internal gain
+.subckt LM386 1 2 6 7 4
+* pins: non-inv inv out v+ v-
+* Input stage
+RIN+ 1 4 50k
+RIN- 2 4 50k
+* Voltage gain (20 default, up to 200)
+EGAIN 3 0 1 2 20
+* Power output stage
+ROUT 3 6 5
+COUT 6 4 100p
+.ENDS LM386

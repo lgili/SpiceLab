@@ -1,0 +1,13 @@
+* INA128 Precision instrumentation amplifier macro-model
+* Low offset voltage, high CMRR
+.subckt INA128 1 2 6 7 4
+* pins: non-inv inv out v+ v-
+* High impedance inputs
+RIN+ 1 4 10e9
+RIN- 2 4 10e9
+* Programmable gain (1 + 50k/RG)
+EGAIN 3 0 1 2 1
+* Low output impedance
+ROUT 3 6 25
+COUT 6 4 3p
+.ENDS INA128

@@ -1,0 +1,13 @@
+* NE5532 Low-noise dual operational amplifier macro-model
+* Audio-grade, high slew rate
+.subckt NE5532 1 2 6 7 4
+* pins: non-inv inv out v+ v-
+* High impedance input stage
+RIN+ 1 4 300k
+RIN- 2 4 300k
+* High gain stage
+EGAIN 3 0 1 2 300000
+* Low impedance output
+ROUT 3 6 50
+COUT 6 4 3p
+.ENDS NE5532

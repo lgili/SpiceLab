@@ -1,0 +1,13 @@
+* LM358 Dual operational amplifier macro-model
+* Low power, single supply capable
+.subckt LM358 1 2 6 7 4
+* pins: non-inv inv out v+ v-
+* Input stage
+RIN+ 1 4 2MEG
+RIN- 2 4 2MEG
+* Gain stage
+EGAIN 3 0 1 2 100000
+* Output stage
+ROUT 3 6 100
+COUT 6 4 10p
+.ENDS LM358

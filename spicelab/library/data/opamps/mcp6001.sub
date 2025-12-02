@@ -1,0 +1,13 @@
+* MCP6001 Low-power operational amplifier macro-model
+* Rail-to-rail input/output, 1.8V to 6V operation
+.subckt MCP6001 1 2 6 7 4
+* pins: non-inv inv out v+ v-
+* Rail-to-rail input
+RIN+ 1 4 10MEG
+RIN- 2 4 10MEG
+* Gain stage
+EGAIN 3 0 1 2 100000
+* Rail-to-rail output
+ROUT 3 6 150
+COUT 6 4 8p
+.ENDS MCP6001

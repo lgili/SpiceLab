@@ -1,0 +1,13 @@
+* AD8221 Precision instrumentation amplifier macro-model
+* High CMRR, low noise
+.subckt AD8221 1 2 6 7 4
+* pins: non-inv inv out v+ v-
+* High impedance inputs
+RIN+ 1 4 100e9
+RIN- 2 4 100e9
+* Very high gain (adjustable via RG)
+EGAIN 3 0 1 2 1
+* Low impedance output
+ROUT 3 6 10
+COUT 6 4 5p
+.ENDS AD8221

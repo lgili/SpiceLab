@@ -29,6 +29,15 @@ from .components import (
     ZenerDiode,
 )
 from .net import GND, Net
+from .subcircuit import (
+    SubcircuitDefinition,
+    SubcircuitLibrary,
+    SubcircuitParameter,
+    SubcircuitPort,
+    get_subcircuit,
+    get_subcircuit_library,
+    register_subcircuit,
+)
 
 __all__ = [
     "BCurrent",
@@ -57,4 +66,12 @@ __all__ = [
     "Vpulse",
     "Vpwl",
     "ZenerDiode",
+    # Subcircuit support (M8)
+    "SubcircuitDefinition",
+    "SubcircuitLibrary",
+    "SubcircuitParameter",
+    "SubcircuitPort",
+    "get_subcircuit",
+    "get_subcircuit_library",
+    "register_subcircuit",
 ]

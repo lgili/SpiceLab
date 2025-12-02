@@ -38,6 +38,18 @@ from .registry import (
     search_components,
     unregister_component,
 )
+from .model_validation import (
+    ModelType,
+    ParameterSpec,
+    ValidationIssue,
+    ValidationResult,
+    get_parameter_info,
+    list_parameters,
+    parse_model_card,
+    parse_spice_value,
+    validate_component_params,
+    validate_model_card,
+)
 from .utils import apply_metadata_to_circuit
 
 __all__ = [
@@ -63,4 +75,15 @@ __all__ = [
     "create_component",
     "list_components",
     "search_components",
+    # Model validation
+    "ModelType",
+    "ParameterSpec",
+    "ValidationIssue",
+    "ValidationResult",
+    "parse_spice_value",
+    "parse_model_card",
+    "validate_model_card",
+    "validate_component_params",
+    "get_parameter_info",
+    "list_parameters",
 ]
