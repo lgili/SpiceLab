@@ -50,6 +50,26 @@ Funcionalidades:
 - ReferenceLibrary para navegação e acesso fácil
 - 2 circuitos de teste para validação de simulações (DC e AC)
 
+### Sprint 4 (COMPLETA): Biblioteca de Modelos (M9) ✅
+- [x] Op-amp models - 12 modelos (LM741, TL072, LM358, LM324, NE5532, OPA2134, LM386, OP07, MCP6001, AD8221, INA128)
+- [x] Transistor models - 14 BJTs já existentes (2N2222, 2N3904, 2N3906, etc.)
+- [x] MOSFET models - 11 MOSFETs já existentes (2N7000, IRF540N, etc.)
+- [x] Diode models - 17 diodos já existentes (1N4148, 1N4001, Schottky, Zener, LEDs)
+- [x] Model parameter validation - `validate_model_card()`, `validate_component_params()`
+
+Arquivos criados/modificados:
+- `spicelab/library/opamps.py` - Expandido de 3 para 12 op-amps
+- `spicelab/library/model_validation.py` - Novo módulo de validação
+- `spicelab/library/data/opamps/*.sub` - 9 novos subcircuitos de op-amps
+- `tests/test_model_library.py` - 35 testes (100% passando)
+
+Funcionalidades:
+- Validação de model cards SPICE (.model)
+- Parsing de valores com sufixos SPICE (k, M, n, p, etc.)
+- Verificação de parâmetros dentro de ranges típicos
+- Documentação de parâmetros (ParameterSpec) para diodos, BJTs, MOSFETs
+- Metadados expandidos para op-amps (GBW, slew rate, input type, etc.)
+
 ---
 
 ## Análise Detalhada por Milestone
@@ -94,13 +114,13 @@ Funcionalidades:
 - [ ] Parameter passing to subcircuits
 - [ ] Subcircuit library management
 
-### M9: Model Library ⚠️ Parcialmente Completo
-**Pendente:**
-- [ ] Op-amp models (TL072, LM358, etc.)
-- [ ] Transistor models (2N2222, 2N3904)
-- [ ] MOSFET models (IRF540, etc.)
-- [ ] Diode models (1N4148, 1N4001)
-- [ ] Model parameter validation
+### M9: Model Library ✅
+**Status:** Completo (Sprint 4)
+- [x] Op-amp models - 12 modelos com metadados
+- [x] Transistor models - 14 BJTs (NPN/PNP)
+- [x] MOSFET models - 11 MOSFETs (N/P channel)
+- [x] Diode models - 17 diodos (signal, rectifier, Schottky, Zener, LED)
+- [x] Model parameter validation - `validate_model_card()`, specs para D/NPN/PNP/NMOS/PMOS
 
 ### M10: Performance & I/O ✅
 **Status:** Completo
@@ -202,11 +222,11 @@ Funcionalidades:
 
 ## Estatísticas
 
-- **Total de tarefas pendentes:** 18
-- **Completas (Sprint 1-3):** 9
-- **Alta prioridade:** 2 (THD, Op-amp models)
-- **Média prioridade:** 9
-- **Baixa prioridade:** 7
+- **Total de tarefas pendentes:** 13
+- **Completas (Sprint 1-4):** 14
+- **Alta prioridade:** 1 (THD)
+- **Média prioridade:** 7
+- **Baixa prioridade:** 5
 
 ---
 
@@ -215,6 +235,7 @@ Funcionalidades:
 1. ~~**Sprint 1:** Implementar medições M7 (PSRR, CMRR, Noise)~~ ✅
 2. ~~**Sprint 2:** Melhorar validação M11~~ ✅
 3. ~~**Sprint 3:** Adicionar circuitos de referência M15~~ ✅
-4. **Sprint 4:** Completar modelos de componentes M9 (Op-amps, Transistors)
+4. ~~**Sprint 4:** Completar modelos de componentes M9~~ ✅
 5. **Sprint 5:** Visualização interativa M13
 6. **Sprint 6:** THD e outras medições M7
+7. **Sprint 7:** Hierarchical subcircuits M8

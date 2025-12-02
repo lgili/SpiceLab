@@ -1,0 +1,13 @@
+* OP07 Ultra-low offset voltage operational amplifier
+* Precision applications
+.subckt OP07 1 2 6 7 4
+* pins: non-inv inv out v+ v-
+* High impedance input
+RIN+ 1 4 50MEG
+RIN- 2 4 50MEG
+* High gain
+EGAIN 3 0 1 2 1200000
+* Output stage
+ROUT 3 6 60
+COUT 6 4 4p
+.ENDS OP07
