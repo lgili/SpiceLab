@@ -144,6 +144,106 @@ class VizFigure:
             ) from exc
         return out
 
+    def to_csv(self, path: str | Path, *, include_metadata: bool = False) -> Path:
+        """Export trace data to CSV format.
+
+        Args:
+            path: Output file path.
+            include_metadata: If True, include metadata as comments at the top.
+
+        Returns:
+            Path to the written file.
+        """
+        import csv
+        import json
+
+        out = Path(path)
+
+        # Extract data from figure traces
+        traces_data: list[dict[str, Any]] = []
+        for trace in self.figure.data:
+            trace_dict: dict[str, Any] = {"name": getattr(trace, "name", "unnamed")}
+            if hasattr(trace, "x") and trace.x is not None:
+                trace_dict["x"] = list(trace.x)
+            if hasattr(trace, "y") and trace.y is not None:
+                trace_dict["y"] = list(trace.y)
+            traces_data.append(trace_dict)
+
+        with out.open("w", newline="", encoding="utf-8") as f:
+            if include_metadata and self.metadata:
+                f.write(f"# Metadata: {json.dumps(dict(self.metadata))}\n")
+
+            # Write each trace as x,y columns
+            if traces_data:
+                writer = csv.writer(f)
+                # Header row
+                headers = []
+                for trace in traces_data:
+                    name = trace.get("name", "trace")
+                    if "x" in trace:
+                        headers.append(f"{name}_x")
+                    if "y" in trace:
+                        headers.append(f"{name}_y")
+                writer.writerow(headers)
+
+                # Data rows - find max length
+                max_len = (
+                    max(len(trace.get("x", [])) for trace in traces_data) if traces_data else 0
+                )
+                max_len = max(
+                    max_len,
+                    max(len(trace.get("y", [])) for trace in traces_data) if traces_data else 0,
+                )
+
+                for i in range(max_len):
+                    row = []
+                    for trace in traces_data:
+                        if "x" in trace:
+                            row.append(trace["x"][i] if i < len(trace["x"]) else "")
+                        if "y" in trace:
+                            row.append(trace["y"][i] if i < len(trace["y"]) else "")
+                    writer.writerow(row)
+
+        return out
+
+    def to_json(self, path: str | Path, *, include_figure: bool = True) -> Path:
+        """Export figure data to JSON format.
+
+        Args:
+            path: Output file path.
+            include_figure: If True, include full Plotly figure JSON.
+
+        Returns:
+            Path to the written file.
+        """
+        import json
+
+        out = Path(path)
+
+        data: dict[str, Any] = {}
+
+        # Add metadata
+        if self.metadata:
+            data["metadata"] = dict(self.metadata)
+
+        # Add trace data in a simplified format
+        traces_data = []
+        for trace in self.figure.data:
+            trace_dict: dict[str, Any] = {"name": getattr(trace, "name", "unnamed")}
+            if hasattr(trace, "x") and trace.x is not None:
+                trace_dict["x"] = [float(v) if isinstance(v, int | float) else v for v in trace.x]
+            if hasattr(trace, "y") and trace.y is not None:
+                trace_dict["y"] = [float(v) if isinstance(v, int | float) else v for v in trace.y]
+            traces_data.append(trace_dict)
+        data["traces"] = traces_data
+
+        # Optionally include full Plotly figure
+        if include_figure:
+            data["plotly_figure"] = self.figure.to_dict()
+
+        out.write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
+        return out
+
     def show(self, **kwargs: Any) -> None:
         try:
             self.figure.show(**kwargs)
@@ -1019,3 +1119,496 @@ def monte_carlo_cumulative(
     fig.update_yaxes(showgrid=True, gridcolor="rgba(150,150,150,0.2)")
 
     return VizFigure(fig, metadata={"kind": "mc_cdf", "median": median})
+
+
+def compare_traces(
+    traces: Sequence[tuple[TraceSet, str, str]],
+    x: str | None = None,
+    *,
+    title: str | None = None,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+    template: str | None = "plotly_white",
+    normalize: bool = False,
+    show_difference: bool = False,
+    legend: bool = True,
+) -> VizFigure:
+    """Compare multiple waveforms from different simulations.
+
+    This is useful for comparing simulation results before/after a change,
+    or comparing different circuit configurations.
+
+    Args:
+        traces: Sequence of (TraceSet, trace_name, label) tuples.
+                Each tuple contains the data source, which trace to extract,
+                and a label for the legend.
+        x: Name of x-axis variable (auto-detected if None).
+        title: Plot title.
+        xlabel: X-axis label.
+        ylabel: Y-axis label.
+        template: Plotly template.
+        normalize: If True, normalize all traces to [0, 1] range.
+        show_difference: If True and exactly 2 traces, show difference plot.
+        legend: Show legend.
+
+    Returns:
+        VizFigure with the comparison plot.
+
+    Example:
+        >>> compare_traces([
+        ...     (ts_before, "V(out)", "Before"),
+        ...     (ts_after, "V(out)", "After"),
+        ... ], title="Output voltage comparison")
+    """
+    go, make_subplots, _ = _ensure_plotly()
+
+    if not traces:
+        raise ValueError("At least one trace must be provided for comparison")
+
+    # Determine number of subplot rows
+    n_rows = 2 if show_difference and len(traces) == 2 else 1
+    fig = make_subplots(
+        rows=n_rows,
+        cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.1,
+        row_heights=[0.7, 0.3] if n_rows == 2 else [1.0],
+    )
+
+    colors = [
+        "#3498DB",
+        "#E74C3C",
+        "#27AE60",
+        "#9B59B6",
+        "#F39C12",
+        "#1ABC9C",
+        "#E91E63",
+        "#00BCD4",
+    ]
+
+    extracted_data: list[tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]], str]] = []
+    xname = None
+
+    for i, (ts, trace_name, label) in enumerate(traces):
+        # Get x values
+        if x is not None:
+            try:
+                x_name = _resolve_trace_name(ts, x)
+                x_vals = _numeric(ts[x_name].values)
+                xname = x_name
+            except Exception:
+                x_vals, xname = _pick_x(ts)
+        else:
+            x_vals, xname = _pick_x(ts)
+
+        # Get y values
+        y_name = _resolve_trace_name(ts, trace_name)
+        y_vals = _numeric(ts[y_name].values)
+
+        # Handle complex values (take magnitude)
+        if np.iscomplexobj(y_vals):
+            y_vals = np.abs(y_vals)
+
+        # Normalize if requested
+        if normalize:
+            y_min, y_max = float(y_vals.min()), float(y_vals.max())
+            if y_max > y_min:
+                y_vals = (y_vals - y_min) / (y_max - y_min)
+
+        extracted_data.append((x_vals, y_vals, label))
+
+        color = colors[i % len(colors)]
+        fig.add_trace(
+            go.Scatter(
+                x=x_vals,
+                y=y_vals,
+                mode="lines",
+                name=label,
+                line=dict(color=color, width=2),
+            ),
+            row=1,
+            col=1,
+        )
+
+    # Add difference plot if requested
+    diff_data = None
+    if show_difference and len(traces) == 2:
+        x1, y1, label1 = extracted_data[0]
+        x2, y2, label2 = extracted_data[1]
+
+        # Interpolate to common x-axis if needed
+        if len(x1) == len(x2) and np.allclose(x1, x2):
+            diff = y2 - y1
+            x_common = x1
+        else:
+            # Use the denser x-axis
+            if len(x1) >= len(x2):
+                x_common = x1
+                y2_interp = np.interp(x1, x2, y2)
+                diff = y2_interp - y1
+            else:
+                x_common = x2
+                y1_interp = np.interp(x2, x1, y1)
+                diff = y2 - y1_interp
+
+        diff_data = {
+            "max_abs_diff": float(np.max(np.abs(diff))),
+            "mean_diff": float(np.mean(diff)),
+            "rms_diff": float(np.sqrt(np.mean(diff**2))),
+        }
+
+        fig.add_trace(
+            go.Scatter(
+                x=x_common,
+                y=diff,
+                mode="lines",
+                name=f"Δ ({label2} - {label1})",
+                line=dict(color="#7F8C8D", width=1.5),
+                fill="tozeroy",
+                fillcolor="rgba(127, 140, 141, 0.3)",
+            ),
+            row=2,
+            col=1,
+        )
+        fig.add_hline(y=0, row=2, col=1, line=dict(color="gray", width=1, dash="dash"))
+        fig.update_yaxes(title_text="Difference", row=2, col=1, showgrid=True)
+
+    fig.update_layout(
+        title=title or "Waveform Comparison",
+        template=template,
+        showlegend=legend,
+        legend=dict(orientation="h", yanchor="bottom", y=1.02),
+    )
+    fig.update_xaxes(title_text=xlabel or xname, row=n_rows, col=1, showgrid=True)
+    fig.update_yaxes(title_text=ylabel, row=1, col=1, showgrid=True)
+
+    metadata: dict[str, Any] = {
+        "kind": "compare_traces",
+        "n_traces": len(traces),
+        "labels": [label for _, _, label in traces],
+        "normalized": normalize,
+    }
+    if diff_data is not None:
+        metadata["difference"] = diff_data
+
+    return VizFigure(fig, metadata=metadata)
+
+
+def bode_with_margins(
+    ts: TraceSet,
+    y: str,
+    x: str | None = None,
+    *,
+    unwrap_phase: bool = True,
+    title: str | None = None,
+    xlabel: str | None = None,
+    template: str | None = "plotly_white",
+    unity_gain_level: float = 0.0,
+    phase_margin_target: float = -180.0,
+) -> VizFigure:
+    """Plot Bode diagram with gain margin and phase margin annotations.
+
+    Args:
+        ts: TraceSet containing frequency-domain data.
+        y: Name of the complex-valued trace (e.g., loop gain).
+        x: Name of x-axis variable (auto-detected if None).
+        unwrap_phase: Unwrap phase to avoid discontinuities.
+        title: Plot title.
+        xlabel: X-axis label.
+        template: Plotly template.
+        unity_gain_level: Reference level for gain margin (default 0 dB).
+        phase_margin_target: Phase level for phase margin (default -180 deg).
+
+    Returns:
+        VizFigure with Bode plot and margin annotations.
+    """
+    go, make_subplots, _ = _ensure_plotly()
+
+    if x is not None:
+        try:
+            x_name = _resolve_trace_name(ts, x)
+            x_vals = _numeric(ts[x_name].values)
+            xname = x_name
+        except Exception:
+            x_vals, xname = _pick_x(ts)
+    else:
+        x_vals, xname = _pick_x(ts)
+
+    y_name = _resolve_trace_name(ts, y)
+    z = np.asarray(ts[y_name].values)
+    if not np.iscomplexobj(z):
+        raise ValueError(f"Trace '{y}' is not complex; AC analysis is required for Bode plots.")
+
+    mag_db = 20.0 * np.log10(np.abs(z))
+    phase = np.angle(z, deg=True)
+    if unwrap_phase:
+        phase = np.rad2deg(np.unwrap(np.deg2rad(phase)))
+
+    # Find gain crossover frequency (where magnitude crosses unity_gain_level)
+    gain_crossover_freq = None
+    phase_at_crossover = None
+    phase_margin = None
+
+    crossings = np.where(np.diff(np.sign(mag_db - unity_gain_level)))[0]
+    if len(crossings) > 0:
+        # Use first crossing
+        idx = crossings[0]
+        # Linear interpolation for more accurate frequency
+        x0, x1 = x_vals[idx], x_vals[idx + 1]
+        y0, y1 = mag_db[idx], mag_db[idx + 1]
+        if y1 != y0:
+            ratio = (unity_gain_level - y0) / (y1 - y0)
+            gain_crossover_freq = x0 + ratio * (x1 - x0)
+            # Interpolate phase at crossover
+            p0, p1 = phase[idx], phase[idx + 1]
+            phase_at_crossover = p0 + ratio * (p1 - p0)
+            phase_margin = phase_at_crossover - phase_margin_target
+
+    # Find phase crossover frequency (where phase crosses phase_margin_target)
+    phase_crossover_freq = None
+    gain_at_phase_crossover = None
+    gain_margin = None
+
+    phase_crossings = np.where(np.diff(np.sign(phase - phase_margin_target)))[0]
+    if len(phase_crossings) > 0:
+        idx = phase_crossings[0]
+        x0, x1 = x_vals[idx], x_vals[idx + 1]
+        p0, p1 = phase[idx], phase[idx + 1]
+        if p1 != p0:
+            ratio = (phase_margin_target - p0) / (p1 - p0)
+            phase_crossover_freq = x0 + ratio * (x1 - x0)
+            # Interpolate magnitude at phase crossover
+            g0, g1 = mag_db[idx], mag_db[idx + 1]
+            gain_at_phase_crossover = g0 + ratio * (g1 - g0)
+            gain_margin = unity_gain_level - gain_at_phase_crossover
+
+    # Create figure
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.08)
+
+    # Magnitude plot
+    fig.add_trace(
+        go.Scatter(x=x_vals, y=mag_db, mode="lines", name="Magnitude [dB]"),
+        row=1,
+        col=1,
+    )
+
+    # Unity gain reference line
+    fig.add_hline(
+        y=unity_gain_level,
+        row=1,
+        col=1,
+        line=dict(color="gray", width=1, dash="dot"),
+    )
+
+    # Phase plot
+    fig.add_trace(
+        go.Scatter(
+            x=x_vals, y=phase, mode="lines", name="Phase [deg]", line=dict(color="indianred")
+        ),
+        row=2,
+        col=1,
+    )
+
+    # Phase margin target line
+    fig.add_hline(
+        y=phase_margin_target,
+        row=2,
+        col=1,
+        line=dict(color="gray", width=1, dash="dot"),
+    )
+
+    # Annotate gain crossover and phase margin
+    if gain_crossover_freq is not None and phase_at_crossover is not None:
+        # Vertical line at gain crossover
+        fig.add_vline(
+            x=gain_crossover_freq,
+            line=dict(color="#27AE60", width=1.5, dash="dash"),
+        )
+        # Phase margin annotation
+        if phase_margin is not None:
+            fig.add_annotation(
+                x=gain_crossover_freq,
+                y=phase_at_crossover,
+                text=f"PM = {phase_margin:.1f}°",
+                showarrow=True,
+                arrowhead=2,
+                arrowcolor="#27AE60",
+                font=dict(color="#27AE60"),
+                row=2,
+                col=1,
+            )
+
+    # Annotate phase crossover and gain margin
+    if phase_crossover_freq is not None and gain_at_phase_crossover is not None:
+        # Vertical line at phase crossover
+        fig.add_vline(
+            x=phase_crossover_freq,
+            line=dict(color="#E74C3C", width=1.5, dash="dash"),
+        )
+        # Gain margin annotation
+        if gain_margin is not None:
+            fig.add_annotation(
+                x=phase_crossover_freq,
+                y=gain_at_phase_crossover,
+                text=f"GM = {gain_margin:.1f} dB",
+                showarrow=True,
+                arrowhead=2,
+                arrowcolor="#E74C3C",
+                font=dict(color="#E74C3C"),
+                row=1,
+                col=1,
+            )
+
+    fig.update_yaxes(title_text="Magnitude [dB]", row=1, col=1, showgrid=True)
+    fig.update_yaxes(title_text="Phase [deg]", row=2, col=1, showgrid=True)
+    fig.update_xaxes(title_text=xlabel or xname, row=2, col=1, showgrid=True, type="log")
+    fig.update_layout(
+        title=title or f"Bode plot with margins for {y}",
+        template=template,
+        legend=dict(orientation="h"),
+    )
+
+    return VizFigure(
+        fig,
+        metadata={
+            "kind": "bode_margins",
+            "trace": y,
+            "gain_crossover_freq": gain_crossover_freq,
+            "phase_margin": phase_margin,
+            "phase_crossover_freq": phase_crossover_freq,
+            "gain_margin": gain_margin,
+        },
+    )
+
+
+def multi_axis_plot(
+    ts: TraceSet,
+    traces: Sequence[tuple[str, str | None]],
+    x: str | None = None,
+    *,
+    title: str | None = None,
+    xlabel: str | None = None,
+    template: str | None = "plotly_white",
+    legend: bool = True,
+) -> VizFigure:
+    """Plot multiple traces with separate Y-axes.
+
+    Useful for plotting signals with different units or scales on the same time axis.
+
+    Args:
+        ts: TraceSet containing the data.
+        traces: Sequence of (trace_name, y_axis_label) tuples.
+                y_axis_label can be None to use trace name.
+        x: Name of x-axis variable (auto-detected if None).
+        title: Plot title.
+        xlabel: X-axis label.
+        template: Plotly template.
+        legend: Show legend.
+
+    Returns:
+        VizFigure with multi-axis plot.
+
+    Example:
+        >>> multi_axis_plot(ts, [
+        ...     ("V(out)", "Voltage [V]"),
+        ...     ("I(R1)", "Current [A]"),
+        ... ])
+    """
+    go, _, _ = _ensure_plotly()
+
+    if not traces:
+        raise ValueError("At least one trace must be provided")
+
+    if x is not None:
+        try:
+            x_name = _resolve_trace_name(ts, x)
+            x_vals = _numeric(ts[x_name].values)
+            xname = x_name
+        except Exception:
+            x_vals, xname = _pick_x(ts)
+    else:
+        x_vals, xname = _pick_x(ts)
+
+    colors = [
+        "#3498DB",
+        "#E74C3C",
+        "#27AE60",
+        "#9B59B6",
+        "#F39C12",
+        "#1ABC9C",
+    ]
+
+    fig = go.Figure()
+
+    for i, (trace_name, _ylabel) in enumerate(traces):
+        y_name = _resolve_trace_name(ts, trace_name)
+        y_vals = ts[y_name].values
+
+        # Handle complex values
+        if np.iscomplexobj(y_vals):
+            y_vals = np.abs(y_vals)
+        else:
+            y_vals = _numeric(y_vals)
+
+        color = colors[i % len(colors)]
+
+        if i == 0:
+            # First trace uses primary y-axis
+            fig.add_trace(
+                go.Scatter(
+                    x=x_vals,
+                    y=y_vals,
+                    mode="lines",
+                    name=trace_name,
+                    line=dict(color=color, width=2),
+                )
+            )
+        else:
+            # Subsequent traces use secondary y-axes
+            yaxis_name = f"y{i + 1}"
+            fig.add_trace(
+                go.Scatter(
+                    x=x_vals,
+                    y=y_vals,
+                    mode="lines",
+                    name=trace_name,
+                    line=dict(color=color, width=2),
+                    yaxis=yaxis_name,
+                )
+            )
+
+    # Configure layout with multiple y-axes
+    layout_updates: dict[str, Any] = {
+        "title": title or "Multi-axis Plot",
+        "template": template,
+        "showlegend": legend,
+        "xaxis": {"title": xlabel or xname, "showgrid": True},
+        "yaxis": {
+            "title": {"text": traces[0][1] or traces[0][0], "font": {"color": colors[0]}},
+            "tickfont": {"color": colors[0]},
+            "showgrid": True,
+        },
+    }
+
+    # Add secondary y-axes
+    for i in range(1, len(traces)):
+        color = colors[i % len(colors)]
+        axis_key = f"yaxis{i + 1}"
+        layout_updates[axis_key] = {
+            "title": {"text": traces[i][1] or traces[i][0], "font": {"color": color}},
+            "tickfont": {"color": color},
+            "overlaying": "y",
+            "side": "right" if i % 2 == 1 else "left",
+            "position": 1.0 - (i // 2) * 0.1 if i % 2 == 1 else (i // 2) * 0.1,
+            "showgrid": False,
+        }
+
+    fig.update_layout(**layout_updates)
+
+    return VizFigure(
+        fig,
+        metadata={
+            "kind": "multi_axis",
+            "traces": [name for name, _ in traces],
+        },
+    )

@@ -145,12 +145,12 @@ Funcionalidades:
 - 5 example plugins
 - PluginManager
 
-### M13: Visualization ⚠️ Parcialmente Completo
-**Pendente:**
-- [ ] Interactive plots (plotly integration)
-- [ ] Bode plot improvements
-- [ ] Waveform comparison tool
-- [ ] Export to various formats
+### M13: Visualization ✅
+**Status:** Completo (Sprint 5)
+- [x] Interactive plots (plotly integration) - VizFigure, time_series_view, bode_view
+- [x] Bode plot improvements - bode_with_margins com gain/phase margin
+- [x] Waveform comparison tool - compare_traces, multi_axis_plot
+- [x] Export to various formats - to_csv, to_json, to_html, to_image
 
 ### M14: Monte Carlo & WCA ✅
 **Status:** Completo
@@ -222,10 +222,10 @@ Funcionalidades:
 
 ## Estatísticas
 
-- **Total de tarefas pendentes:** 13
-- **Completas (Sprint 1-4):** 14
+- **Total de tarefas pendentes:** 9
+- **Completas (Sprint 1-5):** 18
 - **Alta prioridade:** 1 (THD)
-- **Média prioridade:** 7
+- **Média prioridade:** 3
 - **Baixa prioridade:** 5
 
 ---
@@ -236,6 +236,6 @@ Funcionalidades:
 2. ~~**Sprint 2:** Melhorar validação M11~~ ✅
 3. ~~**Sprint 3:** Adicionar circuitos de referência M15~~ ✅
 4. ~~**Sprint 4:** Completar modelos de componentes M9~~ ✅
-5. **Sprint 5:** Visualização interativa M13
+5. ~~**Sprint 5:** Visualização interativa M13~~ ✅
 6. **Sprint 6:** THD e outras medições M7
 7. **Sprint 7:** Hierarchical subcircuits M8
