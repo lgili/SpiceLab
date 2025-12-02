@@ -21,10 +21,19 @@ Arquivos criados:
 - `tests/test_analog_measurements.py` - 29 testes (100% passando)
 - `examples/analog_measurements_demo.py` - Exemplos de uso
 
-### Sprint 2: Validação e Qualidade (M11)
-- [ ] DRC avançado (power budget, signal integrity)
-- [ ] Constraint templates
-- [ ] Validation report export
+### Sprint 2 (COMPLETA): Validação e Qualidade (M11) ✅
+- [x] DRC avançado (power budget, signal integrity) - `AdvancedDRC`
+- [x] Constraint templates - `ConstraintTemplate` com 6 presets
+- [x] Validation report export - JSON e HTML
+
+Arquivos criados:
+- `spicelab/validators/advanced_drc.py` - DRC avançado com 6 regras built-in
+- `tests/test_advanced_drc.py` - 31 testes (100% passando)
+
+Funcionalidades:
+- Regras: min_resistance, power_dissipation, voltage_ratings, fanout_limit, impedance_matching, decoupling_caps
+- Templates: low_power, high_power, precision_analog, rf_design, digital_logic, automotive
+- Export: JSON e HTML com estatísticas e visualização
 
 ### Sprint 3: Circuitos de Referência (M15)
 - [ ] Pre-built reference circuits
