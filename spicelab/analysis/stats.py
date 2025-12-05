@@ -390,6 +390,186 @@ def create_metric_extractor(
     return extractor
 
 
+# ---------- Simplified Result Extraction ----------
+
+
+def get_voltage(
+    traces: TraceSet,
+    node: str,
+    *,
+    index: int = -1,
+    at_time: float | None = None,
+) -> float:
+    """Extract voltage at a node from simulation traces.
+
+    Simplified interface that handles the V(...) naming convention.
+
+    Args:
+        traces: TraceSet from simulation result.
+        node: Node name (e.g., 'vout', 'in', 'n1'). Case-insensitive.
+        index: Index to extract (-1 for final value).
+        at_time: If specified, interpolate at this time.
+
+    Returns:
+        Voltage value in volts.
+
+    Raises:
+        KeyError: If node not found. Lists available nodes in error message.
+
+    Example:
+        # Get final Vout
+        vout = get_voltage(result.traces, 'vout')
+
+        # Get voltage at specific time
+        vout_1ms = get_voltage(result.traces, 'vout', at_time=1e-3)
+    """
+    # Try common SPICE naming patterns
+    patterns = [
+        f"V({node})",
+        f"v({node})",
+        f"V({node.lower()})",
+        f"V({node.upper()})",
+        node,  # Sometimes node voltage is stored directly
+    ]
+
+    for pattern in patterns:
+        try:
+            return extract_trace_value(traces, pattern, index=index, at_time=at_time)
+        except KeyError:
+            continue
+
+    # If all patterns fail, raise helpful error
+    available = traces.names
+    voltage_traces = [n for n in available if n.lower().startswith("v(")]
+    raise KeyError(
+        f"Voltage for node '{node}' not found. "
+        f"Available voltage traces: {voltage_traces or available}"
+    )
+
+
+def get_current(
+    traces: TraceSet,
+    component: str,
+    *,
+    index: int = -1,
+    at_time: float | None = None,
+) -> float:
+    """Extract current through a component from simulation traces.
+
+    Simplified interface that handles the I(...) naming convention.
+
+    Args:
+        traces: TraceSet from simulation result.
+        component: Component reference (e.g., 'R1', 'V1', 'M1'). Case-insensitive.
+        index: Index to extract (-1 for final value).
+        at_time: If specified, interpolate at this time.
+
+    Returns:
+        Current value in amperes.
+
+    Raises:
+        KeyError: If current not found. Lists available currents in error message.
+
+    Example:
+        # Get current through R1
+        i_r1 = get_current(result.traces, 'R1')
+
+        # Get supply current
+        i_vcc = get_current(result.traces, 'Vcc')
+    """
+    # Try common SPICE naming patterns
+    patterns = [
+        f"I({component})",
+        f"i({component})",
+        f"I({component.lower()})",
+        f"I({component.upper()})",
+        f"I(V{component})" if not component.lower().startswith("v") else None,
+        component,
+    ]
+
+    for pattern in patterns:
+        if pattern is None:
+            continue
+        try:
+            return extract_trace_value(traces, pattern, index=index, at_time=at_time)
+        except KeyError:
+            continue
+
+    # If all patterns fail, raise helpful error
+    available = traces.names
+    current_traces = [n for n in available if n.lower().startswith("i(")]
+    raise KeyError(
+        f"Current for component '{component}' not found. "
+        f"Available current traces: {current_traces or available}"
+    )
+
+
+def get_power(
+    traces: TraceSet,
+    component: str,
+    *,
+    index: int = -1,
+    at_time: float | None = None,
+) -> float:
+    """Extract power dissipated by a component from simulation traces.
+
+    Tries to find power directly (P(...)) or calculates from V*I if available.
+
+    Args:
+        traces: TraceSet from simulation result.
+        component: Component reference (e.g., 'R1', 'M1'). Case-insensitive.
+        index: Index to extract (-1 for final value).
+        at_time: If specified, interpolate at this time.
+
+    Returns:
+        Power value in watts.
+
+    Raises:
+        KeyError: If power cannot be determined.
+
+    Example:
+        # Get power dissipated in R1
+        p_r1 = get_power(result.traces, 'R1')
+    """
+    # Try direct power trace first
+    patterns = [
+        f"P({component})",
+        f"p({component})",
+        f"P({component.lower()})",
+    ]
+
+    for pattern in patterns:
+        try:
+            return extract_trace_value(traces, pattern, index=index, at_time=at_time)
+        except KeyError:
+            continue
+
+    # Power trace not found, try to calculate from V*I
+    # This is more complex and requires knowing the component terminals
+    raise KeyError(
+        f"Power for component '{component}' not found. "
+        f"Direct power traces (P(...)) not available in this simulation."
+    )
+
+
+def sigma_level(cpk: float) -> float:
+    """Convert Cpk to equivalent sigma level.
+
+    Args:
+        cpk: Process capability index.
+
+    Returns:
+        Equivalent sigma level (e.g., 2.0 for 6-sigma if Cpk=2.0).
+
+    Example:
+        >>> sigma_level(1.33)  # Common industrial target
+        3.99
+        >>> sigma_level(2.0)   # 6-sigma target
+        6.0
+    """
+    return cpk * 3.0
+
+
 __all__ = [
     "Statistics",
     "compute_stats",
@@ -397,4 +577,8 @@ __all__ = [
     "extract_from_analysis",
     "mc_summary",
     "create_metric_extractor",
+    "get_voltage",
+    "get_current",
+    "get_power",
+    "sigma_level",
 ]

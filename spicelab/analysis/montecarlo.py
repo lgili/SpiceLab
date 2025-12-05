@@ -19,6 +19,7 @@ from ..orchestrator import Job, JobResult, run_job
 from ..spice.base import RunArtifacts, RunResult
 from ..utils.units import to_float
 from .result import AnalysisResult
+from .stats import Statistics
 
 
 class _RunsAnalysis(Protocol):
@@ -91,6 +92,86 @@ class TriangularPct(Dist):
         lo = nominal * (1.0 - self.pct)
         hi = nominal * (1.0 + self.pct)
         return float(rnd.triangular(lo, hi, nominal))
+
+
+class NormalAbs(Dist):
+    """Normal distribution with absolute sigma (not percentage).
+
+    Use for parameters like op-amp offset voltage where tolerance is
+    specified as an absolute value (e.g., ±2mV) rather than percentage.
+
+    Args:
+        sigma: Absolute sigma value (e.g., 0.002 for 2mV at 3-sigma)
+    """
+
+    def __init__(self, sigma: float) -> None:
+        if sigma < 0:
+            raise ValueError("sigma must be >= 0")
+        self.sigma = sigma
+
+    def sample(self, nominal: float, rnd: _random.Random) -> float:
+        return float(rnd.gauss(nominal, self.sigma))
+
+    def __repr__(self) -> str:
+        return f"NormalAbs({self.sigma})"
+
+
+class TriangularAbs(Dist):
+    """Triangular distribution with absolute half-range (not percentage).
+
+    Args:
+        delta: Absolute half-range (e.g., 0.005 for ±5mV range)
+    """
+
+    def __init__(self, delta: float) -> None:
+        if delta < 0:
+            raise ValueError("delta must be >= 0")
+        self.delta = delta
+
+    def sample(self, nominal: float, rnd: _random.Random) -> float:
+        return float(rnd.triangular(nominal - self.delta, nominal + self.delta, nominal))
+
+    def __repr__(self) -> str:
+        return f"TriangularAbs({self.delta})"
+
+
+# ---------- Correlated Groups ----------
+
+
+class CorrelatedGroup:
+    """Group of components that vary together (same-lot correlation).
+
+    Components in a CorrelatedGroup share the same random factor in each
+    Monte Carlo iteration, modeling the behavior of components from the
+    same manufacturing batch.
+
+    Args:
+        components: List of Component objects that vary together
+        dist: Distribution to apply (the same random draw is used for all)
+
+    Example:
+        >>> # Resistors from same batch vary together
+        >>> monte_carlo(circuit, {
+        ...     CorrelatedGroup([R1, R2, R3], NormalPct(0.001)): None,
+        ...     Voff1: NormalAbs(0.002),  # Independent
+        ... }, n=1000, ...)
+    """
+
+    def __init__(self, components: Sequence[Component], dist: Dist) -> None:
+        if not components:
+            raise ValueError("CorrelatedGroup must have at least one component")
+        self.components = list(components)
+        self.dist = dist
+
+    def __repr__(self) -> str:
+        refs = [getattr(c, "ref", str(c)) for c in self.components]
+        return f"CorrelatedGroup({refs}, {self.dist!r})"
+
+    def __hash__(self) -> int:
+        return id(self)
+
+    def __eq__(self, other: object) -> bool:
+        return self is other
 
 
 # ---------- Execução ----------
@@ -300,6 +381,223 @@ class MonteCarloResult:
         df = pd.DataFrame(self.mapping_manifest, columns=["label", "nominal", "dist"])
         df.to_csv(path, index=index, **to_csv_kwargs)
 
+    def extract_values(
+        self,
+        metric: Callable[[AnalysisResult], float],
+    ) -> list[float]:
+        """Extract a metric value from each Monte Carlo run.
+
+        Args:
+            metric: Function that extracts a scalar from an AnalysisResult.
+
+        Returns:
+            List of extracted values, one per run.
+
+        Example:
+            >>> values = mc_result.extract_values(
+            ...     lambda r: r.traces['V(vout)'].values[-1]
+            ... )
+        """
+        return [metric(run) for run in self.runs]
+
+    def statistics(
+        self,
+        metric: Callable[[AnalysisResult], float],
+    ) -> Statistics:
+        """Compute statistics for a metric across all Monte Carlo runs.
+
+        Args:
+            metric: Function that extracts a scalar from an AnalysisResult.
+
+        Returns:
+            Statistics object with mean, std, percentiles, etc.
+
+        Example:
+            >>> stats = mc_result.statistics(
+            ...     lambda r: r.traces['V(vout)'].values[-1]
+            ... )
+            >>> print(f"Mean: {stats.mean}, Std: {stats.std}")
+        """
+        from .stats import compute_stats
+
+        values = self.extract_values(metric)
+        return compute_stats(values)
+
+    def cpk(
+        self,
+        metric: Callable[[AnalysisResult], float],
+        lsl: float,
+        usl: float,
+    ) -> float:
+        """Calculate process capability index Cpk for a metric.
+
+        Cpk measures how well a process fits within specification limits.
+        Higher Cpk indicates better process capability:
+        - Cpk >= 1.33: Acceptable for most applications
+        - Cpk >= 1.67: Good capability
+        - Cpk >= 2.00: Excellent (6-sigma quality)
+
+        Args:
+            metric: Function that extracts a scalar from an AnalysisResult.
+            lsl: Lower specification limit.
+            usl: Upper specification limit.
+
+        Returns:
+            Cpk value.
+
+        Example:
+            >>> cpk = mc_result.cpk(
+            ...     lambda r: r.traces['V(vout)'].values[-1],
+            ...     lsl=2.4, usl=2.6,
+            ... )
+            >>> print(f"Cpk: {cpk:.2f}")
+        """
+        stats = self.statistics(metric)
+        return stats.cpk(lsl, usl)
+
+    def yield_estimate(
+        self,
+        metric: Callable[[AnalysisResult], float],
+        lsl: float,
+        usl: float,
+    ) -> float:
+        """Estimate yield (fraction within spec limits).
+
+        Uses normal distribution assumption based on computed statistics.
+
+        Args:
+            metric: Function that extracts a scalar from an AnalysisResult.
+            lsl: Lower specification limit.
+            usl: Upper specification limit.
+
+        Returns:
+            Estimated yield as fraction (0.0 to 1.0).
+
+        Example:
+            >>> yield_pct = mc_result.yield_estimate(
+            ...     lambda r: r.traces['V(vout)'].values[-1],
+            ...     lsl=2.4, usl=2.6,
+            ... ) * 100
+            >>> print(f"Estimated yield: {yield_pct:.2f}%")
+        """
+        stats = self.statistics(metric)
+        return stats.yield_estimate(lsl, usl)
+
+    def actual_yield(
+        self,
+        metric: Callable[[AnalysisResult], float],
+        lsl: float,
+        usl: float,
+    ) -> float:
+        """Calculate actual yield from Monte Carlo samples.
+
+        This counts how many samples fall within spec limits, which may
+        differ from the normal distribution estimate if the distribution
+        is non-normal.
+
+        Args:
+            metric: Function that extracts a scalar from an AnalysisResult.
+            lsl: Lower specification limit.
+            usl: Upper specification limit.
+
+        Returns:
+            Actual yield as fraction (0.0 to 1.0).
+
+        Example:
+            >>> actual = mc_result.actual_yield(
+            ...     lambda r: r.traces['V(vout)'].values[-1],
+            ...     lsl=2.4, usl=2.6,
+            ... )
+            >>> print(f"Actual yield: {actual * 100:.2f}%")
+        """
+        values = self.extract_values(metric)
+        in_spec = sum(1 for v in values if lsl <= v <= usl)
+        return in_spec / len(values) if values else 0.0
+
+    def sigma_level(
+        self,
+        metric: Callable[[AnalysisResult], float],
+        lsl: float,
+        usl: float,
+    ) -> float:
+        """Convert Cpk to equivalent sigma level.
+
+        Args:
+            metric: Function that extracts a scalar from an AnalysisResult.
+            lsl: Lower specification limit.
+            usl: Upper specification limit.
+
+        Returns:
+            Equivalent sigma level (e.g., 6.0 for 6-sigma).
+
+        Example:
+            >>> sigma = mc_result.sigma_level(
+            ...     lambda r: r.traces['V(vout)'].values[-1],
+            ...     lsl=2.4, usl=2.6,
+            ... )
+            >>> print(f"Sigma level: {sigma:.1f}")
+        """
+        return self.cpk(metric, lsl, usl) * 3.0
+
+    def process_summary(
+        self,
+        metric: Callable[[AnalysisResult], float],
+        lsl: float,
+        usl: float,
+        *,
+        metric_name: str = "metric",
+    ) -> dict[str, Any]:
+        """Generate a comprehensive process capability summary.
+
+        Args:
+            metric: Function that extracts a scalar from an AnalysisResult.
+            lsl: Lower specification limit.
+            usl: Upper specification limit.
+            metric_name: Name of the metric for display.
+
+        Returns:
+            Dictionary with all process capability metrics.
+
+        Example:
+            >>> summary = mc_result.process_summary(
+            ...     lambda r: r.traces['V(vout)'].values[-1],
+            ...     lsl=2.4, usl=2.6,
+            ...     metric_name="Vout",
+            ... )
+            >>> print(f"Cpk: {summary['cpk']:.2f}")
+            >>> print(f"Yield: {summary['yield_pct']:.1f}%")
+        """
+        stats = self.statistics(metric)
+        values = self.extract_values(metric)
+
+        # Count actual failures
+        failures = sum(1 for v in values if v < lsl or v > usl)
+
+        return {
+            "metric_name": metric_name,
+            "n": len(values),
+            "mean": stats.mean,
+            "std": stats.std,
+            "min": stats.min,
+            "max": stats.max,
+            "median": stats.median,
+            "p1": stats.p1,
+            "p5": stats.p5,
+            "p95": stats.p95,
+            "p99": stats.p99,
+            "sigma3_low": stats.sigma3_low,
+            "sigma3_high": stats.sigma3_high,
+            "lsl": lsl,
+            "usl": usl,
+            "cpk": stats.cpk(lsl, usl),
+            "sigma_level": stats.cpk(lsl, usl) * 3.0,
+            "yield_estimate": stats.yield_estimate(lsl, usl),
+            "yield_pct": stats.yield_estimate(lsl, usl) * 100,
+            "actual_yield": (len(values) - failures) / len(values) if values else 0.0,
+            "actual_yield_pct": (len(values) - failures) / len(values) * 100 if values else 0.0,
+            "failures": failures,
+        }
+
 
 def _as_float(value: str | float) -> float:
     return to_float(value)
@@ -337,7 +635,7 @@ def _dataset_to_traceset(dataset: Any) -> TraceSet:
 
 def monte_carlo(
     circuit: Circuit,
-    mapping: Mapping[Component, Dist],
+    mapping: Mapping[Component | CorrelatedGroup, Dist | None],
     n: int,
     seed: int | None = None,
     label_fn: Callable[[Component], str] | None = None,
@@ -351,6 +649,17 @@ def monte_carlo(
 ) -> MonteCarloResult:
     """
     Executa Monte Carlo variando valores dos componentes conforme distribuições.
+
+    Supports both independent components and correlated groups:
+        - Component -> Dist: Each component varies independently
+        - CorrelatedGroup -> None: Components in group share same random factor
+
+    Example:
+        >>> monte_carlo(circuit, {
+        ...     CorrelatedGroup([R1, R2, R3], NormalPct(0.001)): None,  # Same batch
+        ...     Voff1: NormalAbs(0.002),  # Independent offset
+        ...     Voff2: NormalAbs(0.002),  # Independent offset
+        ... }, n=1000, analyses=[...])
     """
     if analyses is None:
         raise ValueError("Provide 'analyses' when running monte_carlo")
@@ -362,37 +671,94 @@ def monte_carlo(
             return label_fn(c)
         return f"{type(c).__name__}.{c.ref}"
 
-    comps: list[Component] = list(mapping.keys())
-    nominals: list[float] = [_as_float(c.value) for c in comps]
-    dists: list[Dist] = [mapping[c] for c in comps]
+    # Separate correlated groups from individual components
+    correlated_groups: list[CorrelatedGroup] = []
+    individual_comps: list[Component] = []
+    individual_dists: list[Dist] = []
+
+    for key, dist in mapping.items():
+        if isinstance(key, CorrelatedGroup):
+            correlated_groups.append(key)
+        else:
+            individual_comps.append(key)
+            if dist is None:
+                raise ValueError(f"Individual component {key} must have a distribution, not None")
+            individual_dists.append(dist)
+
+    # Build complete component list for ref lookup
+    all_comps: list[Component] = list(individual_comps)
+    for group in correlated_groups:
+        all_comps.extend(group.components)
 
     ref_lookup: dict[Component, str] = {}
-    for comp in comps:
+    for comp in all_comps:
         ref = getattr(comp, "ref", None)
         if ref is None:
             raise ValueError("All components in mapping must have .ref for Monte Carlo jobs")
         ref_lookup[comp] = str(ref)
+
+    # Precompute nominals
+    individual_nominals: list[float] = [_as_float(c.value) for c in individual_comps]
+    group_nominals: list[list[float]] = [
+        [_as_float(c.value) for c in g.components] for g in correlated_groups
+    ]
 
     samples: list[dict[str, float]] = []
     combos: list[dict[str, float]] = []
     for _ in range(n):
         s: dict[str, float] = {}
         combo: dict[str, float] = {}
-        for comp, nominal, dist in zip(comps, nominals, dists, strict=False):
+
+        # Sample individual components (independent)
+        for comp, nominal, dist in zip(
+            individual_comps, individual_nominals, individual_dists, strict=False
+        ):
             sampled = dist.sample(nominal, rnd)
             s[_label(comp)] = sampled
             combo[ref_lookup[comp]] = sampled
+
+        # Sample correlated groups (shared random factor per group)
+        for group, nominals in zip(correlated_groups, group_nominals, strict=False):
+            # Generate ONE random factor for the entire group
+            # We sample at nominal=1.0 to get a multiplier, then apply to each component
+            if isinstance(group.dist, NormalPct | LogNormalPct | UniformPct | TriangularPct):
+                # Percentage-based: sample multiplier at nominal=1.0
+                multiplier = group.dist.sample(1.0, rnd)
+                for comp, nominal in zip(group.components, nominals, strict=False):
+                    sampled = nominal * multiplier
+                    s[_label(comp)] = sampled
+                    combo[ref_lookup[comp]] = sampled
+            else:
+                # Absolute-based: sample offset once, apply to all
+                # For absolute distributions, we get an offset from nominal=0
+                offset = group.dist.sample(0.0, rnd)
+                for comp, nominal in zip(group.components, nominals, strict=False):
+                    sampled = nominal + offset
+                    s[_label(comp)] = sampled
+                    combo[ref_lookup[comp]] = sampled
+
         samples.append(s)
         combos.append(combo)
 
-    # build optional manifest: list of (label, nominal, dist_repr)
+    # Build manifest: list of (label, nominal, dist_repr)
     manifest: list[tuple[str, float, str]] = []
-    for c, nom, d in zip(comps, nominals, dists, strict=False):
+
+    # Individual components
+    for c, nom, d in zip(individual_comps, individual_nominals, individual_dists, strict=False):
         try:
             d_repr = repr(d)
         except Exception:
             d_repr = type(d).__name__
         manifest.append((_label(c), nom, d_repr))
+
+    # Correlated groups
+    for group, nominals in zip(correlated_groups, group_nominals, strict=False):
+        try:
+            d_repr = f"Correlated({repr(group.dist)})"
+        except Exception:
+            d_repr = f"Correlated({type(group.dist).__name__})"
+        for c, nom in zip(group.components, nominals, strict=False):
+            manifest.append((_label(c), nom, d_repr))
 
     if n <= 0:
         return MonteCarloResult(

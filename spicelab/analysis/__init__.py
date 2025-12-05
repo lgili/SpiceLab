@@ -16,10 +16,13 @@ from .measure import (
     measure,
 )
 from .montecarlo import (
+    CorrelatedGroup,
     Dist,
     LogNormalPct,
     MonteCarloResult,
+    NormalAbs,
     NormalPct,
+    TriangularAbs,
     TriangularPct,
     UniformAbs,
     UniformPct,
@@ -36,31 +39,14 @@ from .optimized import (
     quick_wca,
 )
 from .pipeline import measure_job_result, run_and_measure
+from .report import (
+    ReportConfig,
+    ReportSection,
+    generate_monte_carlo_report,
+    generate_report,
+    generate_wca_report,
+)
 from .result import AnalysisResult
-from .signal import FFTResult, amplitude_spectrum, power_spectral_density, rfft_coherent, window
-from .stats import (
-    Statistics,
-    compute_stats,
-    create_metric_extractor,
-    extract_from_analysis,
-    extract_trace_value,
-    mc_summary,
-)
-from .sweep_grid import (
-    GridResult,
-    GridRun,
-    SweepResult,
-    SweepRun,
-    run_param_grid,
-    run_value_sweep,
-)
-from .wca import (
-    WcaCorner,
-    WcaResult,
-    run_wca,
-    tolerance_to_normal,
-    tolerance_to_uniform,
-)
 from .sensitivity_extended import (
     ComponentTolerance,
     DesignMargin,
@@ -76,6 +62,44 @@ from .sensitivity_extended import (
     temperature_sensitivity,
     tolerance_sensitivity,
 )
+from .signal import FFTResult, amplitude_spectrum, power_spectral_density, rfft_coherent, window
+from .stats import (
+    Statistics,
+    compute_stats,
+    create_metric_extractor,
+    extract_from_analysis,
+    extract_trace_value,
+    get_current,
+    get_power,
+    get_voltage,
+    mc_summary,
+    sigma_level,
+)
+from .sweep import (
+    ConditionResult,
+    MonteCarloConditionResult,
+    MonteCarloSweepResult,
+    WcaConditionResult,
+    WcaSweepResult,
+    monte_carlo_sweep,
+    wca_sweep,
+)
+from .sweep_grid import (
+    GridResult,
+    GridRun,
+    SweepResult,
+    SweepRun,
+    run_param_grid,
+    run_value_sweep,
+)
+from .wca import (
+    ToleranceSpec,
+    WcaCorner,
+    WcaResult,
+    run_wca,
+    tolerance_to_normal,
+    tolerance_to_uniform,
+)
 
 __all__ = [
     "AnalysisResult",
@@ -90,12 +114,15 @@ __all__ = [
     "THDSpec",
     "ENOBSpec",
     "SlewRateSpec",
+    "CorrelatedGroup",
     "Dist",
+    "NormalAbs",
     "NormalPct",
-    "UniformPct",
-    "UniformAbs",
-    "LogNormalPct",
+    "TriangularAbs",
     "TriangularPct",
+    "UniformAbs",
+    "UniformPct",
+    "LogNormalPct",
     "MonteCarloResult",
     "monte_carlo",
     "SweepRun",
@@ -112,6 +139,7 @@ __all__ = [
     "measure_job_result",
     "run_and_measure",
     # WCA
+    "ToleranceSpec",
     "WcaCorner",
     "WcaResult",
     "run_wca",
@@ -124,6 +152,10 @@ __all__ = [
     "extract_from_analysis",
     "mc_summary",
     "create_metric_extractor",
+    "get_voltage",
+    "get_current",
+    "get_power",
+    "sigma_level",
     # Optimized runners
     "OptimizationConfig",
     "OptimizationStats",
@@ -147,4 +179,18 @@ __all__ = [
     "DesignMargin",
     "DesignMarginResult",
     "analyze_design_margins",
+    # Condition sweep
+    "ConditionResult",
+    "MonteCarloConditionResult",
+    "MonteCarloSweepResult",
+    "WcaConditionResult",
+    "WcaSweepResult",
+    "monte_carlo_sweep",
+    "wca_sweep",
+    # Report generation
+    "ReportConfig",
+    "ReportSection",
+    "generate_monte_carlo_report",
+    "generate_report",
+    "generate_wca_report",
 ]

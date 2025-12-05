@@ -257,9 +257,13 @@ def _handle_to_analysis_result(handle: ResultHandle) -> AnalysisResult:
     return AnalysisResult(run=run_result, traces=traces)
 
 
+ToleranceSpec = float | tuple[float, Literal["abs", "rel"]]
+"""Tolerance specification: either a float (relative) or tuple (value, 'abs'|'rel')."""
+
+
 def run_wca(
     circuit: Circuit,
-    tolerances: Mapping[Component, float],
+    tolerances: Mapping[Component, ToleranceSpec],
     analyses: Sequence[AnalysisSpec],
     *,
     engine: EngineName = "ngspice",
@@ -277,7 +281,10 @@ def run_wca(
 
     Args:
         circuit: The circuit to analyze.
-        tolerances: Mapping from Component -> tolerance as fraction (e.g., 0.01 for 1%).
+        tolerances: Mapping from Component -> tolerance specification.
+            - float: Relative tolerance as fraction (e.g., 0.01 for 1%)
+            - (float, 'abs'): Absolute tolerance (e.g., (0.002, 'abs') for ±2mV)
+            - (float, 'rel'): Explicit relative tolerance
         analyses: List of analyses to run (e.g., [AnalysisSpec(mode='op')]).
         engine: Simulation engine to use.
         include_nominal: If True, also run the nominal case.
@@ -291,9 +298,11 @@ def run_wca(
         WcaResult containing all corner simulations.
 
     Example:
+        # Mixed relative and absolute tolerances
         tolerances = {
-            resistor1: 0.01,  # 1%
-            resistor2: 0.05,  # 5%
+            resistor1: 0.01,              # 1% relative
+            resistor2: 0.05,              # 5% relative
+            voffset: (0.002, 'abs'),      # ±2mV absolute
         }
 
         result = run_wca(
@@ -317,11 +326,26 @@ def run_wca(
             return label_fn(c)
         return f"{type(c).__name__}.{c.ref}"
 
+    def _parse_tolerance(spec: ToleranceSpec) -> tuple[float, bool]:
+        """Parse tolerance spec into (value, is_absolute)."""
+        if isinstance(spec, tuple):
+            value, mode = spec
+            return (value, mode == "abs")
+        return (spec, False)
+
     # Extract component info
     components = list(tolerances.keys())
     refs = [str(c.ref) for c in components]
     nominals = {str(c.ref): to_float(c.value) for c in components}
-    tols = {str(c.ref): tolerances[c] for c in components}
+
+    # Parse tolerances into values and modes
+    tol_values: dict[str, float] = {}
+    tol_is_abs: dict[str, bool] = {}
+    for c in components:
+        val, is_abs = _parse_tolerance(tolerances[c])
+        tol_values[str(c.ref)] = val
+        tol_is_abs[str(c.ref)] = is_abs
+
     labels = {str(c.ref): _label(c) for c in components}
 
     # Generate all corner combinations: each component at +tol or -tol
@@ -338,8 +362,16 @@ def run_wca(
 
         for ref, sign in zip(refs, signs, strict=False):
             nom = nominals[ref]
-            tol = tols[ref]
-            value = nom * (1 + sign * tol)
+            tol = tol_values[ref]
+            is_abs = tol_is_abs[ref]
+
+            if is_abs:
+                # Absolute tolerance: nom ± tol
+                value = nom + sign * tol
+            else:
+                # Relative tolerance: nom * (1 ± tol)
+                value = nom * (1 + sign * tol)
+
             combo[ref] = value
             corner_signs[ref] = sign  # type: ignore[assignment]
             sign_str = "+" if sign > 0 else "-"
@@ -402,7 +434,7 @@ def run_wca(
     return WcaResult(
         corners=corners,
         nominal_combo=dict(nominals),
-        tolerances=dict(tols),
+        tolerances=dict(tol_values),
         nominal_run=nominal_result,
         component_labels=labels,
     )
@@ -462,6 +494,7 @@ def tolerance_to_uniform(tolerance: float) -> float:
 
 
 __all__ = [
+    "ToleranceSpec",
     "WcaCorner",
     "WcaResult",
     "run_wca",

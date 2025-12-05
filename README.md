@@ -97,20 +97,44 @@ for run in value_sweep.runs:
     print(run.value, list(ds.data_vars))
 ```
 
-### Monte Carlo with typed metrics
+### Monte Carlo with Process Capability
 ```python
-from spicelab.analysis import NormalPct, monte_carlo
+from spicelab.analysis import NormalPct, NormalAbs, CorrelatedGroup, monte_carlo
+
+# Components from same batch vary together
+same_lot = CorrelatedGroup([R1, R2], NormalPct(0.01))
 
 mc = monte_carlo(
     circuit=c,
-    mapping={R1: NormalPct(0.05)},
-    n=64,
+    mapping={
+        same_lot: None,             # Correlated resistors
+        Vos: NormalAbs(0.002 / 3),  # Op-amp offset ±2mV
+    },
+    n=10000,
     analyses=[AnalysisSpec("op", {})],
     engine="ngspice",
     seed=42,
 )
 
-print(mc.to_dataframe(metric=None, param_prefix="param_").head())
+# Process capability metrics
+def get_vout(run):
+    return run.traces['V(vout)'].values[-1]
+
+summary = mc.process_summary(get_vout, lsl=2.4, usl=2.6)
+print(f"Cpk: {summary['cpk']:.2f}, Yield: {summary['yield_pct']:.1f}%")
+```
+
+### HTML Report Generation
+```python
+from spicelab.analysis import generate_report
+
+generate_report(
+    mc,
+    metric=get_vout,
+    lsl=2.4, usl=2.6,
+    output_path="tolerance_report.html",
+    title="Vout Tolerance Analysis",
+)
 ```
 
 ## Notebook workflows
@@ -141,6 +165,7 @@ Full documentation lives at **https://lgili.github.io/CircuitToolkit/**:
 - [Engines & caching](https://lgili.github.io/CircuitToolkit/engines/)
 - [Sweeps](https://lgili.github.io/CircuitToolkit/sweeps-step/)
 - [Monte Carlo](https://lgili.github.io/CircuitToolkit/monte-carlo/)
+- [**Tolerance Analysis**](https://lgili.github.io/CircuitToolkit/tolerance-analysis/) - Process capability, Cpk, yield estimation
 - [Unified I/O](https://lgili.github.io/CircuitToolkit/unified-io/)
 - [Cookbook snippets](https://lgili.github.io/CircuitToolkit/cookbook/)
 

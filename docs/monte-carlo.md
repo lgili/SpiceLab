@@ -4,6 +4,10 @@ spicelab runs Monte Carlo jobs by mapping components to distributions and
 supplying per-trial analyses. The orchestrator handles caching,
 multithreading, and xarray/polars exports.
 
+> **New in M16**: Enhanced tolerance analysis with correlated groups, absolute
+> distributions, process capability metrics (Cpk), and HTML report generation.
+> See [Tolerance Analysis](tolerance-analysis.md) for the complete guide.
+
 ![Monte Carlo histogram](assets/examples/mc_hist.png)
 
 ```python
@@ -76,3 +80,91 @@ mc = monte_carlo(
     progress=cb,
 )
 ```
+
+### Correlated Groups (Same-Lot Components)
+
+Components from the same manufacturing batch vary together:
+
+```python
+from spicelab.analysis import CorrelatedGroup, NormalPct
+
+# Resistors from same reel share the same variation
+same_lot = CorrelatedGroup([R1, R2, R3, R4], NormalPct(0.001))
+
+mc = monte_carlo(
+    c,
+    mapping={
+        same_lot: None,  # Group with its own distribution
+        C1: UniformPct(0.10),  # Independent capacitor
+    },
+    n=10000,
+    analyses=[AnalysisSpec("op", {})],
+)
+```
+
+### Absolute Tolerance Distributions
+
+For parameters specified in absolute units (op-amp offsets, reference voltages):
+
+```python
+from spicelab.analysis import NormalAbs, UniformAbs
+
+mc = monte_carlo(
+    c,
+    mapping={
+        R1: NormalPct(0.01),        # 1% relative
+        Vos: NormalAbs(0.002 / 3),  # ±2mV, 3-sigma
+        Vref: UniformAbs(0.005),    # ±5mV uniform
+    },
+    n=10000,
+    analyses=[AnalysisSpec("op", {})],
+)
+```
+
+### Process Capability Metrics
+
+Calculate Cpk, yield, and sigma level:
+
+```python
+def get_vout(run):
+    return run.traces['V(vout)'].values[-1]
+
+# Cpk (process capability index)
+cpk = mc.cpk(get_vout, lsl=2.4, usl=2.6)
+print(f"Cpk: {cpk:.2f}")  # >= 1.33 is acceptable
+
+# Yield estimates
+yield_est = mc.yield_estimate(get_vout, lsl=2.4, usl=2.6)
+actual_yield = mc.actual_yield(get_vout, lsl=2.4, usl=2.6)
+
+# Full process summary
+summary = mc.process_summary(get_vout, lsl=2.4, usl=2.6)
+print(f"Cpk: {summary['cpk']:.2f}")
+print(f"Yield: {summary['yield_pct']:.1f}%")
+print(f"Sigma: {summary['sigma_level']:.1f}σ")
+```
+
+### HTML Report Generation
+
+Generate professional reports with histograms and process metrics:
+
+```python
+from spicelab.analysis import generate_report
+
+html = generate_report(
+    mc,
+    metric=get_vout,
+    lsl=2.4,
+    usl=2.6,
+    output_path="mc_report.html",
+    title="Output Voltage Tolerance Analysis",
+    metric_name="Vout (V)",
+)
+```
+
+The report includes:
+- Summary cards (n, mean, std, Cpk, yield)
+- Distribution histogram with spec limits
+- Statistical summary table
+- Process capability analysis
+- Varied parameters table
