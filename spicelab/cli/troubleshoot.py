@@ -70,7 +70,7 @@ def load_circuit_from_file(filepath: Path) -> Circuit | None:
     return None
 
 
-def format_result_json(diagnostics) -> dict[str, Any]:
+def format_result_json(diagnostics: Any) -> dict[str, Any]:
     """Format diagnostic result as JSON-serializable dict."""
     return {
         "circuit_name": diagnostics.circuit_name,

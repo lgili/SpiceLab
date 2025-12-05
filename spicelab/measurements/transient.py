@@ -183,8 +183,9 @@ class SlewRateMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -271,8 +272,9 @@ class SettlingTimeMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -373,8 +375,9 @@ class RiseTimeMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -477,8 +480,9 @@ class FallTimeMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -566,8 +570,9 @@ class OvershootMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -668,8 +673,9 @@ class PropagationDelayMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 

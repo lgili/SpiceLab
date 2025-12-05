@@ -39,8 +39,8 @@ try:
 
     _CUPY_AVAILABLE = True
 except ImportError:
-    cp = None  # type: ignore
-    cp_fft = None  # type: ignore
+    cp = None  # type: ignore[import-not-found,assignment]
+    cp_fft = None  # type: ignore[import-not-found,assignment]
 
 
 @dataclass
@@ -118,7 +118,7 @@ def is_gpu_available() -> bool:
     try:
         # Try to get device count
         device_count = cp.cuda.runtime.getDeviceCount()
-        return device_count > 0
+        return bool(device_count > 0)
     except Exception:
         return False
 
@@ -187,7 +187,8 @@ def _to_cpu(arr: Any) -> NDArray[Any]:
 
     """
     if cp is not None and isinstance(arr, cp.ndarray):
-        return cp.asnumpy(arr)
+        result: np.ndarray = cp.asnumpy(arr)
+        return result
     return np.asarray(arr)
 
 
@@ -716,7 +717,7 @@ def benchmark_fft(
                 _ = cp_fft.fft(data_gpu)
                 cp.cuda.Stream.null.synchronize()
                 gpu_times.append((time.perf_counter() - start) * 1000)
-            gpu_time_ms = np.median(gpu_times)
+            gpu_time_ms = float(np.median(gpu_times))
             gpu_used = True
         except Exception:
             pass
@@ -724,8 +725,8 @@ def benchmark_fft(
     return BenchmarkResult(
         operation="fft",
         input_shape=(size,),
-        gpu_time_ms=gpu_time_ms,
-        cpu_time_ms=cpu_time_ms,
+        gpu_time_ms=float(gpu_time_ms),
+        cpu_time_ms=float(cpu_time_ms),
         gpu_used=gpu_used,
     )
 
@@ -779,7 +780,7 @@ def benchmark_batch_fft(
                     _ = cp_fft.fft(data_gpu[i])
                 cp.cuda.Stream.null.synchronize()
                 gpu_times.append((time.perf_counter() - start) * 1000)
-            gpu_time_ms = np.median(gpu_times)
+            gpu_time_ms = float(np.median(gpu_times))
             gpu_used = True
         except Exception:
             pass
@@ -787,8 +788,8 @@ def benchmark_batch_fft(
     return BenchmarkResult(
         operation="batch_fft",
         input_shape=(num_signals, signal_length),
-        gpu_time_ms=gpu_time_ms,
-        cpu_time_ms=cpu_time_ms,
+        gpu_time_ms=float(gpu_time_ms),
+        cpu_time_ms=float(cpu_time_ms),
         gpu_used=gpu_used,
     )
 
@@ -829,7 +830,7 @@ class GPUMemoryManager:
             return 0.0
         try:
             mem_info = cp.cuda.runtime.memGetInfo()
-            return (mem_info[0] / (1024 * 1024)) - self.reserve_mb
+            return float(mem_info[0] / (1024 * 1024)) - self.reserve_mb
         except Exception:
             return 0.0
 
@@ -840,7 +841,7 @@ class GPUMemoryManager:
             return 0.0
         try:
             mem_info = cp.cuda.runtime.memGetInfo()
-            return mem_info[1] / (1024 * 1024)
+            return float(mem_info[1] / (1024 * 1024))
         except Exception:
             return 0.0
 

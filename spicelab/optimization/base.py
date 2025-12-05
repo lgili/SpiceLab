@@ -55,8 +55,9 @@ class ParameterBounds:
     def normalize(self, value: float) -> float:
         """Normalize value to [0, 1] range."""
         if self.scale == "log":
-            return (np.log10(value) - np.log10(self.lower)) / (
-                np.log10(self.upper) - np.log10(self.lower)
+            return float(
+                (np.log10(value) - np.log10(self.lower))
+                / (np.log10(self.upper) - np.log10(self.lower))
             )
         return (value - self.lower) / (self.upper - self.lower)
 
@@ -189,7 +190,7 @@ class Optimizer(ABC):
         bounds: list[ParameterBounds],
         constraints: list[Constraint] | None = None,
         config: OptimizationConfig | None = None,
-    ) -> OptimizationResult:
+    ) -> OptimizationResult[Any]:
         """Run optimization.
 
         Args:
@@ -289,18 +290,18 @@ class CircuitObjective:
     def _update_circuit(self, parameters: dict[str, float]) -> Circuit:
         """Create a copy of the circuit with updated parameters."""
         # Create a shallow copy - we'll modify parameter values
-        circuit_copy = self.circuit.copy()
+        circuit_copy: Circuit = self.circuit.copy()  # type: ignore[attr-defined]
 
         for name, value in parameters.items():
             # Handle nested parameter references (e.g., "R1.value")
             if "." in name:
                 component_name, param_name = name.split(".", 1)
-                component = circuit_copy.get_component(component_name)
+                component = circuit_copy.get_component(component_name)  # type: ignore[attr-defined]
                 if component is not None:
                     setattr(component, param_name, value)
             else:
                 # Direct component value update
-                component = circuit_copy.get_component(name)
+                component = circuit_copy.get_component(name)  # type: ignore[attr-defined]
                 if component is not None:
                     component.value = value
 
@@ -394,7 +395,7 @@ class CircuitOptimizer:
         objective: Callable[[dict[str, float], xr.Dataset], float],
         method: str = "nelder-mead",
         config: OptimizationConfig | None = None,
-    ) -> OptimizationResult:
+    ) -> OptimizationResult[Any]:
         """Run optimization.
 
         Args:

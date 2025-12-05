@@ -190,8 +190,9 @@ class EyeDiagram:
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -379,9 +380,9 @@ class JitterMeasurement(BaseMeasurement):
                     t_cross = t0
                 crossing_times.append(t_cross)
 
-        crossing_times = np.array(crossing_times)
+        crossing_arr = np.array(crossing_times)
 
-        if len(crossing_times) < 3:
+        if len(crossing_arr) < 3:
             return MeasurementResult(
                 value=float("nan"),
                 unit="s",
@@ -389,7 +390,7 @@ class JitterMeasurement(BaseMeasurement):
             )
 
         # Calculate periods
-        periods = np.diff(crossing_times)
+        periods = np.diff(crossing_arr)
 
         if len(periods) < 2:
             return MeasurementResult(
@@ -434,8 +435,9 @@ class JitterMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -509,17 +511,17 @@ class DutyCycleMeasurement(BaseMeasurement):
 
         # Calculate duty cycles for each complete period
         duty_cycles = []
-        rising_times = np.array(rising_times)
-        falling_times = np.array(falling_times)
+        rising_arr = np.array(rising_times)
+        falling_arr = np.array(falling_times)
 
-        for i in range(len(rising_times) - 1):
-            t_rise = rising_times[i]
-            t_rise_next = rising_times[i + 1]
+        for i in range(len(rising_arr) - 1):
+            t_rise = rising_arr[i]
+            t_rise_next = rising_arr[i + 1]
 
             # Find falling edge between these two rising edges
-            fall_idx = np.searchsorted(falling_times, t_rise)
-            if fall_idx < len(falling_times) and falling_times[fall_idx] < t_rise_next:
-                t_fall = falling_times[fall_idx]
+            fall_idx = np.searchsorted(falling_arr, t_rise)
+            if fall_idx < len(falling_arr) and falling_arr[fall_idx] < t_rise_next:
+                t_fall = falling_arr[fall_idx]
                 period = t_rise_next - t_rise
                 high_time = t_fall - t_rise
                 duty_cycles.append(high_time / period * 100)
@@ -548,8 +550,9 @@ class DutyCycleMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 

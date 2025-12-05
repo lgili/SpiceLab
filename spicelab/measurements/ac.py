@@ -26,7 +26,8 @@ if TYPE_CHECKING:
 def _safe_log10(x: np.ndarray) -> np.ndarray:
     """Compute log10 safely, avoiding log(0)."""
     eps = np.finfo(float).tiny
-    return np.log10(np.clip(x, eps, None))
+    result: np.ndarray = np.log10(np.clip(x, eps, None))
+    return result
 
 
 def _interp_crossing(
@@ -165,8 +166,9 @@ class GainMeasurement(BaseMeasurement):
         # Try case-insensitive match
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
 
         # Try with common prefixes
         for prefix in ["V(", "v(", "I(", "i("]:
@@ -175,8 +177,9 @@ class GainMeasurement(BaseMeasurement):
                 if test_key in dataset.data_vars:
                     return test_key
                 for key in dataset.data_vars:
-                    if key.lower() == test_key.lower():
-                        return key
+                    key_str = str(key)
+                    if key_str.lower() == test_key.lower():
+                        return key_str
 
         raise KeyError(
             f"Signal '{node}' not found in dataset. " f"Available: {list(dataset.data_vars)}"
@@ -265,8 +268,9 @@ class BandwidthMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -361,8 +365,9 @@ class PhaseMarginMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -462,8 +467,9 @@ class GainMarginMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -539,8 +545,9 @@ class PSRRMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -614,8 +621,9 @@ class InputImpedanceMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -762,8 +770,9 @@ class CMRRMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 

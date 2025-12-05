@@ -506,7 +506,7 @@ class CornerAnalysis:
                     corner=corner,
                     value=float("nan"),
                     success=False,
-                    metrics={"error": str(e)},
+                    metrics={"error_value": 0.0},  # Use float for type consistency
                 )
 
             self._results.append(result)
@@ -681,24 +681,25 @@ class PVTSweep:
         Returns:
             List of all PVT conditions
         """
-        voltages = self._voltage if self._voltage else [None]
+        voltages: list[float] = self._voltage if self._voltage else []
         conditions = []
 
         for p in self._process:
-            for v in voltages:
-                for t in self._temperature:
-                    if v is not None:
+            if voltages:
+                for v in voltages:
+                    for t in self._temperature:
                         conditions.append(PVTCondition(p, v, t))
-                    else:
-                        # No voltage specified - use dummy
-                        conditions.append(
-                            PVTCondition(
-                                p,
-                                0.0,
-                                t,
-                                name=f"{p}_{t}C",
-                            )
+            else:
+                # No voltage specified - use dummy
+                for t in self._temperature:
+                    conditions.append(
+                        PVTCondition(
+                            p,
+                            0.0,
+                            t,
+                            name=f"{p}_{t}C",
                         )
+                    )
 
         return conditions
 
@@ -724,18 +725,19 @@ class PVTSweep:
             else self._temperature
         )
 
-        voltages = voltage_ext if voltage_ext else [None]
+        voltages_list: list[float] = voltage_ext if voltage_ext else []
         conditions = []
 
         for p in process_ext:
-            for v in voltages:
-                for t in temp_ext:
-                    if v is not None:
+            if voltages_list:
+                for v in voltages_list:
+                    for t in temp_ext:
                         conditions.append(PVTCondition(p, v, t))
-                    else:
-                        conditions.append(
-                            PVTCondition(p, 0.0, t, name=f"{p}_{t}C")
-                        )
+            else:
+                for t in temp_ext:
+                    conditions.append(
+                        PVTCondition(p, 0.0, t, name=f"{p}_{t}C")
+                    )
 
         return conditions
 

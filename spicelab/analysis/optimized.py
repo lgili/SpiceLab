@@ -341,7 +341,7 @@ class OptimizedMonteCarlo:
         # Run the standard monte_carlo with our settings
         result = monte_carlo(
             circuit=circuit,
-            mapping=mapping,
+            mapping=mapping,  # type: ignore[arg-type]
             n=n,
             seed=seed,
             label_fn=label_fn,

@@ -9,7 +9,7 @@ This module provides evolutionary optimization algorithms:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 import numpy as np
 
@@ -99,7 +99,7 @@ class ParetoFront:
 
         return self.solutions[knee_idx]
 
-    def to_dict(self) -> dict[str, list]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "solutions": self.solutions,
@@ -213,7 +213,7 @@ class GeneticOptimizer(Optimizer):
         bounds: list[ParameterBounds],
         constraints: list[Constraint] | None = None,
         config: OptimizationConfig | None = None,
-    ) -> OptimizationResult:
+    ) -> OptimizationResult[Any]:
         """Run genetic algorithm optimization.
 
         Args:
@@ -500,12 +500,12 @@ class NSGA2Optimizer:
                 offspring.extend([c1, c2])
                 offspring_fitness.extend([evaluate(c1), evaluate(c2)])
 
-            offspring = np.array(offspring)
-            offspring_fitness = np.array(offspring_fitness)
+            offspring_arr = np.array(offspring)
+            offspring_fitness_arr = np.array(offspring_fitness)
 
             # Combine parent and offspring
-            combined_pop = np.vstack([population, offspring])
-            combined_fitness = np.vstack([fitness, offspring_fitness])
+            combined_pop = np.vstack([population, offspring_arr])
+            combined_fitness = np.vstack([fitness, offspring_fitness_arr])
 
             # Non-dominated sorting and selection
             population, fitness = self._select_next_generation(
@@ -690,7 +690,7 @@ class NSGA2Optimizer:
 # =============================================================================
 
 
-def get_genetic_optimizer(method: str = "ga", **kwargs) -> GeneticOptimizer | NSGA2Optimizer:
+def get_genetic_optimizer(method: str = "ga", **kwargs: Any) -> GeneticOptimizer | NSGA2Optimizer:
     """Get a genetic algorithm optimizer by name.
 
     Args:

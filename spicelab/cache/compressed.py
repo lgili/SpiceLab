@@ -51,7 +51,7 @@ try:
 
     ZSTD_AVAILABLE = True
 except ImportError:
-    zstd = None  # type: ignore[assignment]
+    zstd = None  # type: ignore[import-not-found,assignment]
     ZSTD_AVAILABLE = False
 
 

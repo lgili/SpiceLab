@@ -205,7 +205,7 @@ def _check_convergence_risks(circuit: Circuit, result: DiagnosticResult) -> None
     for comp in circuit._components:
         if isinstance(comp, Resistor):
             r = comp.resistance
-            if r is not None:
+            if r is not None and isinstance(r, (int, float)):
                 if r < 0.001:  # < 1mΩ
                     result.add(
                         Finding(
@@ -216,7 +216,7 @@ def _check_convergence_risks(circuit: Circuit, result: DiagnosticResult) -> None
                             details="Very small resistances can cause matrix singularity",
                         )
                     )
-                elif r > 1e12:  # > 1TΩ
+                if r > 1e12:  # > 1TΩ
                     result.add(
                         Finding(
                             category="convergence",
@@ -229,7 +229,7 @@ def _check_convergence_risks(circuit: Circuit, result: DiagnosticResult) -> None
 
         elif isinstance(comp, Capacitor):
             c = comp.capacitance
-            if c is not None:
+            if c is not None and isinstance(c, (int, float)):
                 if c < 1e-15:  # < 1fF
                     result.add(
                         Finding(
@@ -243,7 +243,7 @@ def _check_convergence_risks(circuit: Circuit, result: DiagnosticResult) -> None
 
         elif isinstance(comp, Inductor):
             l_val = comp.inductance
-            if l_val is not None:
+            if l_val is not None and isinstance(l_val, (int, float)):
                 if l_val < 1e-12:  # < 1pH
                     result.add(
                         Finding(

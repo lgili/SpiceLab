@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -127,17 +127,31 @@ def make_bound_constraint(
     constraints: list[Constraint] = []
 
     if lower is not None:
+        lb_val: float = lower
+
+        def lower_constraint(
+            p: dict[str, float], lb: float = lb_val, pn: str = param_name
+        ) -> float:
+            return p[pn] - lb
+
         constraints.append(
             make_inequality_constraint(
-                lambda p, lb=lower, pn=param_name: p[pn] - lb,
+                lower_constraint,
                 f"{param_name} >= {lower}",
             )
         )
 
     if upper is not None:
+        ub_val: float = upper
+
+        def upper_constraint(
+            p: dict[str, float], ub: float = ub_val, pn: str = param_name
+        ) -> float:
+            return ub - p[pn]
+
         constraints.append(
             make_inequality_constraint(
-                lambda p, ub=upper, pn=param_name: ub - p[pn],
+                upper_constraint,
                 f"{param_name} <= {upper}",
             )
         )
@@ -335,8 +349,8 @@ class MultiStartResult:
         n_successful: Number of successful optimizations
     """
 
-    best_result: OptimizationResult
-    all_results: list[OptimizationResult]
+    best_result: OptimizationResult[Any]
+    all_results: list[OptimizationResult[Any]]
     start_points: list[dict[str, float]]
     n_successful: int
 
@@ -350,7 +364,7 @@ class MultiStartResult:
         """Fraction of successful optimizations."""
         return self.n_successful / self.n_starts if self.n_starts > 0 else 0.0
 
-    def get_unique_optima(self, tolerance: float = 0.01) -> list[OptimizationResult]:
+    def get_unique_optima(self, tolerance: float = 0.01) -> list[OptimizationResult[Any]]:
         """Get unique optima (different by more than tolerance).
 
         Args:
@@ -362,7 +376,7 @@ class MultiStartResult:
         if not self.all_results:
             return []
 
-        unique: list[OptimizationResult] = []
+        unique: list[OptimizationResult[Any]] = []
         for result in sorted(self.all_results, key=lambda r: r.value):
             is_unique = True
             for u in unique:
@@ -527,8 +541,8 @@ class MultiStartOptimizer:
         start_points = self._generate_start_points(bounds, self.n_starts)
 
         # Run optimization from each start
-        all_results: list[OptimizationResult] = []
-        best_result: OptimizationResult | None = None
+        all_results: list[OptimizationResult[Any]] = []
+        best_result: OptimizationResult[Any] | None = None
         n_successful = 0
 
         for i, start in enumerate(start_points):
@@ -593,7 +607,7 @@ class MultiStartOptimizer:
 
 
 def analyze_sensitivity(
-    result: OptimizationResult,
+    result: OptimizationResult[Any],
     objective: ObjectiveFunction,
     bounds: list[ParameterBounds],
     perturbation: float = 0.01,
@@ -641,7 +655,7 @@ def analyze_sensitivity(
 
 
 def compute_hessian_diagonal(
-    result: OptimizationResult,
+    result: OptimizationResult[Any],
     objective: ObjectiveFunction,
     bounds: list[ParameterBounds],
     perturbation: float = 0.01,

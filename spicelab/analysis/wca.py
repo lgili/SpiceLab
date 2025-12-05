@@ -398,7 +398,7 @@ def run_wca(
         circuit=circuit,
         analyses=list(analyses),
         engine=engine,
-        combos=tuple(combos),
+        combos=tuple(combos),  # type: ignore[arg-type]
     )
 
     job_result = run_job(

@@ -205,8 +205,9 @@ class THDMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -305,8 +306,9 @@ class SNRMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -389,8 +391,9 @@ class SINADMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -488,8 +491,9 @@ class SFDRMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 
@@ -672,8 +676,9 @@ class THDNMeasurement(BaseMeasurement):
             return node
         node_lower = node.lower()
         for key in dataset.data_vars:
-            if key.lower() == node_lower:
-                return key
+            key_str = str(key)
+            if key_str.lower() == node_lower:
+                return key_str
         raise KeyError(f"Signal '{node}' not found in dataset")
 
 

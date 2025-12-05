@@ -263,7 +263,7 @@ def run_job(
             # ThreadPoolExecutor for shared-lib engines
             from concurrent.futures import ThreadPoolExecutor
 
-            with ThreadPoolExecutor(max_workers=workers) as executor:
+            with ThreadPoolExecutor(max_workers=workers) as executor:  # type: ignore[assignment]
                 future_map = {
                     executor.submit(
                         _run_single,

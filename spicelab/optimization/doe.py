@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from itertools import product
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Any, Callable, Iterator
 
 import numpy as np
 
@@ -50,7 +50,7 @@ class ExperimentalDesign:
     def __len__(self) -> int:
         return self.n_runs
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[dict[str, float]]:
         return iter(self.points)
 
     def to_array(self) -> np.ndarray:
@@ -99,13 +99,15 @@ class DoEResult:
             idx = int(np.argmax(self.responses))
         return self.design.points[idx], float(self.responses[idx])
 
-    def to_dataframe(self):
+    def to_dataframe(self) -> Any:
         """Convert to pandas DataFrame if available."""
         try:
             import pandas as pd
 
-            data = {b.name: [p[b.name] for p in self.design.points] for b in self.design.bounds}
-            data[self.response_name] = self.responses
+            data: dict[str, Any] = {
+                b.name: [p[b.name] for p in self.design.points] for b in self.design.bounds
+            }
+            data[self.response_name] = list(self.responses)
             return pd.DataFrame(data)
         except ImportError:
             raise ImportError("pandas is required for to_dataframe()")
@@ -421,7 +423,8 @@ def _sobol_sample(n_dims: int, n_samples: int, seed: int | None = None) -> np.nd
         from scipy.stats import qmc
 
         sampler = qmc.Sobol(d=n_dims, scramble=seed is not None, seed=seed)
-        return sampler.random(n_samples)
+        result: np.ndarray = sampler.random(n_samples)
+        return result
     except ImportError:
         pass
 

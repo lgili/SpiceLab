@@ -345,12 +345,12 @@ class AdvancedDRC:
         ...     report.save("drc_report.html", format="html")
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize DRC with default rules."""
         self._rules: list[DRCRule] = []
         self._register_default_rules()
 
-    def _register_default_rules(self):
+    def _register_default_rules(self) -> None:
         """Register built-in DRC rules."""
         self.add_rule(
             DRCRule(
@@ -407,15 +407,15 @@ class AdvancedDRC:
             )
         )
 
-    def add_rule(self, rule: DRCRule):
+    def add_rule(self, rule: DRCRule) -> None:
         """Add a custom DRC rule."""
         self._rules.append(rule)
 
-    def remove_rule(self, name: str):
+    def remove_rule(self, name: str) -> None:
         """Remove a rule by name."""
         self._rules = [r for r in self._rules if r.name != name]
 
-    def enable_rule(self, name: str, enabled: bool = True):
+    def enable_rule(self, name: str, enabled: bool = True) -> None:
         """Enable or disable a rule."""
         for rule in self._rules:
             if rule.name == name:
@@ -534,7 +534,7 @@ class AdvancedDRC:
         Note: This is a rough estimate based on voltage sources in circuit.
         Actual power requires simulation results.
         """
-        warnings = []
+        warnings: list[ValidationWarning] = []
 
         # Find max voltage in circuit from voltage sources
         max_v = 0.0

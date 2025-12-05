@@ -11,7 +11,7 @@ This module wraps scipy.optimize functions for circuit optimization:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -79,7 +79,7 @@ class ScipyOptimizer(Optimizer):
         bounds: list[ParameterBounds],
         constraints: list[Constraint] | None = None,
         config: OptimizationConfig | None = None,
-    ) -> OptimizationResult:
+    ) -> OptimizationResult[Any]:
         """Run scipy optimization."""
         from scipy import optimize
 
@@ -235,7 +235,7 @@ class DifferentialEvolutionOptimizer(Optimizer):
         bounds: list[ParameterBounds],
         constraints: list[Constraint] | None = None,
         config: OptimizationConfig | None = None,
-    ) -> OptimizationResult:
+    ) -> OptimizationResult[Any]:
         """Run differential evolution optimization."""
         from scipy import optimize
 
@@ -332,7 +332,7 @@ class DualAnnealingOptimizer(Optimizer):
         bounds: list[ParameterBounds],
         constraints: list[Constraint] | None = None,
         config: OptimizationConfig | None = None,
-    ) -> OptimizationResult:
+    ) -> OptimizationResult[Any]:
         """Run dual annealing optimization."""
         from scipy import optimize
 

@@ -203,19 +203,23 @@ def place(component: Component, *nodes: _NodeLike) -> Component:
 
 
 def R(ref: str, a: _NodeLike, b: _NodeLike, value: str | float | int | bool) -> Resistor:
-    return place(Resistor(ref=ref, value=normalize_expression(value)), a, b)
+    result: Resistor = place(Resistor(ref=ref, value=normalize_expression(value)), a, b)  # type: ignore[assignment]
+    return result
 
 
 def C(ref: str, a: _NodeLike, b: _NodeLike, value: str | float | int | bool) -> Capacitor:
-    return place(Capacitor(ref=ref, value=normalize_expression(value)), a, b)
+    result: Capacitor = place(Capacitor(ref=ref, value=normalize_expression(value)), a, b)  # type: ignore[assignment]
+    return result
 
 
 def L(ref: str, a: _NodeLike, b: _NodeLike, value: str | float | int | bool) -> Inductor:
-    return place(Inductor(ref=ref, value=normalize_expression(value)), a, b)
+    result: Inductor = place(Inductor(ref=ref, value=normalize_expression(value)), a, b)  # type: ignore[assignment]
+    return result
 
 
 def V(ref: str, positive: _NodeLike, negative: _NodeLike, value: str | float | int | bool) -> Vdc:
-    return place(Vdc(ref=ref, value=normalize_expression(value)), positive, negative)
+    result: Vdc = place(Vdc(ref=ref, value=normalize_expression(value)), positive, negative)  # type: ignore[assignment]
+    return result
 
 
 __all__ = [

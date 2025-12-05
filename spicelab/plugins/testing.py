@@ -398,7 +398,7 @@ class MockPluginFactory:
                 )
 
             def get_components(self) -> dict[str, type[Any]]:
-                return self._components
+                return self._components or {}
 
             def activate(self) -> None:
                 pass
@@ -440,7 +440,7 @@ class MockPluginFactory:
                 )
 
             def get_measurements(self) -> dict[str, Callable[..., Any]]:
-                return self._measurements
+                return self._measurements or {}
 
             def activate(self) -> None:
                 pass
