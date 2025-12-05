@@ -12,6 +12,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum, auto
+from collections.abc import Iterator
 from typing import Any
 
 
@@ -326,5 +327,5 @@ class PluginRegistry:
     def __len__(self) -> int:
         return len(self._plugins)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Plugin]:
         return iter(self._plugins.values())

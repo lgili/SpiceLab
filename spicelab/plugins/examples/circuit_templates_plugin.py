@@ -240,8 +240,8 @@ class CircuitTemplatesPlugin(Plugin):
 
         circuit = Circuit(name)
         v_in = Vdc("Vin", vin)
-        r1 = Resistor("R1", r_value)
-        c1 = Capacitor("C1", c_value)
+        r1 = Resistor("R1", r_value or "")
+        c1 = Capacitor("C1", c_value or "")
 
         circuit.add(v_in, r1, c1)
         circuit.connect(v_in.ports[0], Net("in"))
@@ -282,8 +282,8 @@ class CircuitTemplatesPlugin(Plugin):
 
         circuit = Circuit(name)
         v_in = Vdc("Vin", vin)
-        c1 = Capacitor("C1", c_value)
-        r1 = Resistor("R1", r_value)
+        c1 = Capacitor("C1", c_value or "")
+        r1 = Resistor("R1", r_value or "")
 
         circuit.add(v_in, c1, r1)
         circuit.connect(v_in.ports[0], Net("in"))
@@ -311,7 +311,7 @@ class CircuitTemplatesPlugin(Plugin):
         omega = 2 * math.pi * center_freq
 
         if r_value is None:
-            r_val = 1000  # Default 1k
+            r_val: float = 1000.0  # Default 1k
             r_value = "1k"
         else:
             r_val = self._parse_value(r_value)

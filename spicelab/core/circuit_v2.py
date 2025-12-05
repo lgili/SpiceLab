@@ -12,7 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, replace
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from ..utils.log import get_logger
 from .components import Component
@@ -61,7 +61,7 @@ class ImmutableCircuit:
 
     # Metadata from netlist import
     subckt_defs: Mapping[str, str] = field(default_factory=dict)
-    subckt_instances: tuple[dict, ...] = field(default_factory=tuple)
+    subckt_instances: tuple[dict[str, Any], ...] = field(default_factory=tuple)
     port_labels: Mapping[Port, str] = field(default_factory=dict)
 
     # ----------------------------------------------------------------------------------
@@ -349,7 +349,7 @@ class ImmutableCircuit:
     # Notebook helpers
     # ----------------------------------------------------------------------------------
 
-    def connectivity_dataframe(self, *, sort: bool = True, include_type: bool = True):
+    def connectivity_dataframe(self, *, sort: bool = True, include_type: bool = True) -> Any:
         """Return pandas DataFrame with connectivity info."""
         try:
             import pandas as pd

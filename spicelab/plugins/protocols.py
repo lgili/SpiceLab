@@ -82,7 +82,7 @@ class ComponentPlugin(Plugin):
 
         This adds the components to the global component registry.
         """
-        from spicelab.library.registry import ComponentRegistry
+        from spicelab.library.registry import ComponentRegistry  # type: ignore[attr-defined]
 
         components = self.get_components()
         for name, component_class in components.items():
@@ -91,7 +91,7 @@ class ComponentPlugin(Plugin):
 
     def unregister_components(self) -> None:
         """Unregister all components from SpiceLab."""
-        from spicelab.library.registry import ComponentRegistry
+        from spicelab.library.registry import ComponentRegistry  # type: ignore[attr-defined]
 
         for name in self._registered_components:
             try:
@@ -147,7 +147,7 @@ class EnginePlugin(Plugin):
 
     def register_engines(self) -> None:
         """Register all engines with SpiceLab."""
-        from spicelab.spice.registry import EngineRegistry
+        from spicelab.spice.registry import EngineRegistry  # type: ignore[attr-defined]
 
         engines = self.get_engines()
         for name, engine_class in engines.items():
@@ -156,7 +156,7 @@ class EnginePlugin(Plugin):
 
     def unregister_engines(self) -> None:
         """Unregister all engines from SpiceLab."""
-        from spicelab.spice.registry import EngineRegistry
+        from spicelab.spice.registry import EngineRegistry  # type: ignore[attr-defined]
 
         for name in self._registered_engines:
             try:
@@ -219,7 +219,7 @@ class MeasurementPlugin(Plugin):
 
         measurements = self.get_measurements()
         for name, func in measurements.items():
-            MeasurementRegistry.register(name, func)
+            MeasurementRegistry.register(name, func)  # type: ignore[call-arg]
             self._registered_measurements[name] = func
 
     def unregister_measurements(self) -> None:
@@ -228,7 +228,7 @@ class MeasurementPlugin(Plugin):
 
         for name in self._registered_measurements:
             try:
-                MeasurementRegistry.unregister(name)
+                MeasurementRegistry.unregister(name)  # type: ignore[attr-defined]
             except Exception:
                 pass
         self._registered_measurements.clear()

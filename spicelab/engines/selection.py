@@ -59,7 +59,7 @@ def discover_engines() -> dict[str, bool]:
 
     # Check ngspice-shared (requires libngspice.so/.dll/.dylib)
     try:
-        from ..spice.ngspice_shared_backend import NgSpiceShared
+        from ..spice.ngspice_shared_backend import NgSpiceShared  # type: ignore[attr-defined]
 
         NgSpiceShared()  # Try to load
         available["ngspice-shared"] = True

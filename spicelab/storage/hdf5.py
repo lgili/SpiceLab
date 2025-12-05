@@ -50,7 +50,7 @@ try:
 
     _H5PY_AVAILABLE = True
 except ImportError:
-    h5py = None  # type: ignore
+    h5py = None
 
 
 def is_hdf5_available() -> bool:
@@ -219,7 +219,8 @@ class HDF5ResultStorage:
         """Get the HDF5 file object, opening if necessary."""
         if self._file is None:
             self.open()
-        return self._file  # type: ignore
+        assert self._file is not None  # open() sets _file
+        return self._file
 
     def save_result(
         self,

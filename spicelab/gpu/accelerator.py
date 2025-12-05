@@ -39,8 +39,8 @@ try:
 
     _CUPY_AVAILABLE = True
 except ImportError:
-    cp = None  # type: ignore[import-not-found,assignment]
-    cp_fft = None  # type: ignore[import-not-found,assignment]
+    cp = None
+    cp_fft = None
 
 
 @dataclass
@@ -697,10 +697,10 @@ def benchmark_fft(
         start = time.perf_counter()
         _ = np.fft.fft(data)
         cpu_times.append((time.perf_counter() - start) * 1000)
-    cpu_time_ms = np.median(cpu_times)
+    cpu_time_ms: float = float(np.median(cpu_times))
 
     # GPU benchmark
-    gpu_time_ms = cpu_time_ms  # Default if GPU not available
+    gpu_time_ms: float = cpu_time_ms  # Default if GPU not available
     gpu_used = False
 
     if is_gpu_available():
@@ -758,10 +758,10 @@ def benchmark_batch_fft(
         for i in range(num_signals):
             _ = np.fft.fft(data[i])
         cpu_times.append((time.perf_counter() - start) * 1000)
-    cpu_time_ms = np.median(cpu_times)
+    cpu_time_ms: float = float(np.median(cpu_times))
 
     # GPU benchmark
-    gpu_time_ms = cpu_time_ms
+    gpu_time_ms: float = cpu_time_ms
     gpu_used = False
 
     if is_gpu_available():

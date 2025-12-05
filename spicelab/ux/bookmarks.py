@@ -9,6 +9,7 @@ import json
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from builtins import list as List  # Avoid shadowing by method name
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -335,7 +336,7 @@ class BookmarkManager:
 
         return sorted(bookmarks, key=lambda b: b.name)
 
-    def search(self, query: str) -> list[Bookmark]:
+    def search(self, query: str) -> List[Bookmark]:
         """Search bookmarks by name or description.
 
         Args:
@@ -351,7 +352,7 @@ class BookmarkManager:
             if query in b.name.lower() or query in b.description.lower()
         ]
 
-    def tags(self) -> list[str]:
+    def tags(self) -> List[str]:
         """Get all unique tags.
 
         Returns:

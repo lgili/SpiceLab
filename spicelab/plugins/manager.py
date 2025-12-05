@@ -480,7 +480,7 @@ class PluginManager:
         return [
             name
             for name in self.registry.list_names()
-            if self.registry.get(name).state == PluginState.ACTIVE
+            if (plugin := self.registry.get(name)) and plugin.state == PluginState.ACTIVE
         ]
 
     def list_loaded(self) -> list[str]:
@@ -492,7 +492,7 @@ class PluginManager:
         return [
             name
             for name in self.registry.list_names()
-            if self.registry.get(name).state in (PluginState.LOADED, PluginState.ACTIVE)
+            if (plugin := self.registry.get(name)) and plugin.state in (PluginState.LOADED, PluginState.ACTIVE)
         ]
 
     def list_discovered(self) -> list[str]:

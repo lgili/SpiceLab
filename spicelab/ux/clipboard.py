@@ -362,9 +362,10 @@ class CircuitClipboard:
             port_name = conn["port"]
             net_name = conn["net"]
 
-            comp = comp_map.get(owner_ref)
-            if comp is None:
+            comp_or_none = comp_map.get(owner_ref)
+            if comp_or_none is None:
                 continue
+            comp = comp_or_none
 
             port = None
             for p in comp.ports:
@@ -433,7 +434,8 @@ class CircuitClipboard:
             raise ValueError(f"Unknown component type: {comp_type}")
 
         attrs = data.get("attrs", {})
-        return comp_class(**attrs)
+        result: Component = comp_class(**attrs)
+        return result
 
     def _add_item(self, item: ClipboardItem) -> None:
         """Add an item to the clipboard."""

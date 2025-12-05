@@ -38,7 +38,7 @@ try:
 
     _REDIS_AVAILABLE = True
 except ImportError:
-    redis = None  # type: ignore[import-not-found,assignment]
+    redis = None
 
 
 def is_redis_available() -> bool:

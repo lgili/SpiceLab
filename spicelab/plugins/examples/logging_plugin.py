@@ -56,7 +56,7 @@ class LoggingPlugin(Plugin):
     def __init__(self) -> None:
         self._logger: logging.Logger | None = None
         self._file_handler: logging.FileHandler | None = None
-        self._console_handler: logging.StreamHandler | None = None
+        self._console_handler: logging.StreamHandler[Any] | None = None
         self._simulation_start: datetime | None = None
         self._config: dict[str, Any] = {
             "log_level": "INFO",

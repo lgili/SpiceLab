@@ -138,7 +138,7 @@ class PluginLoader:
             except TypeError:
                 # Python 3.9 compatibility
                 all_eps = entry_points()
-                eps = all_eps.get(group, [])
+                eps = all_eps.get(group, [])  # type: ignore[arg-type]
 
             for ep in eps:
                 entry = PluginEntry(
@@ -228,7 +228,8 @@ class PluginLoader:
         try:
             module = importlib.import_module(entry.module_path)
             if entry.class_name:
-                return getattr(module, entry.class_name)
+                plugin_class: type[Plugin] = getattr(module, entry.class_name)
+                return plugin_class
             else:
                 # If no class specified, look for a Plugin subclass
                 for attr_name in dir(module):

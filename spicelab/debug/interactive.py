@@ -330,7 +330,8 @@ def prompt_choice(
         context=context or {},
     )
 
-    return _prompt_user(prompt, config)
+    result: T = _prompt_user(prompt, config)
+    return result
 
 
 def prompt_confirm(

@@ -382,7 +382,7 @@ class DesignRulesPlugin(Plugin):
 
     def _check_power_limits(self, circuit: Any) -> list[RuleViolation]:
         """Check estimated power dissipation limits."""
-        violations = []
+        violations: list[RuleViolation] = []
         rules = self._config["rules"]
         power_config = rules.get("power_limits", {})
 

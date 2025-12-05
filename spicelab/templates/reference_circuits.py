@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
+from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
 from ..core.circuit import Circuit
@@ -752,7 +753,7 @@ class ReferenceLibrary:
         >>> print(ohms.summary())
     """
 
-    _circuits: dict[str, callable] = {
+    _circuits: dict[str, Callable[..., ReferenceCircuit]] = {
         # Educational
         "ohms_law_demo": ohms_law_demo,
         "voltage_divider_demo": voltage_divider_demo,
@@ -797,7 +798,7 @@ class ReferenceLibrary:
         """List available categories."""
         return list(self._categories.keys())
 
-    def get(self, name: str, **kwargs) -> ReferenceCircuit:
+    def get(self, name: str, **kwargs: Any) -> ReferenceCircuit:
         """Get a reference circuit by name.
 
         Args:
