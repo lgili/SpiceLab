@@ -161,7 +161,7 @@ class LogNormalTolerance(Tolerance):
         sigma_log = np.log1p(self.sigma_pct / 100.0)
         mu_log = np.log(nominal) - 0.5 * sigma_log**2  # Adjust mean
 
-        return np.exp(rng.normal(loc=mu_log, scale=sigma_log))
+        return float(np.exp(rng.normal(loc=mu_log, scale=sigma_log)))
 
     def bounds(self, nominal: float) -> tuple[float, float]:
         """Return approximate ±3σ bounds (asymmetric)."""

@@ -272,12 +272,12 @@ def _prompt_user(prompt: InteractivePrompt, config: InteractiveConfig) -> Any:
 
 def prompt_choice(
     question: str,
-    choices: Sequence[tuple[Any, str] | tuple[Any, str, str]],
+    choices: Sequence[tuple[T, str] | tuple[T, str, str]],
     *,
-    default: Any | None = None,
+    default: T | None = None,
     category: str = "general",
     context: dict[str, Any] | None = None,
-) -> Any:
+) -> T:
     """Prompt user to select from choices.
 
     Convenience function for creating and executing a prompt.

@@ -145,7 +145,7 @@ def run_directives(
         startupinfo.wShowWindow = subprocess.SW_HIDE
         kwargs["startupinfo"] = startupinfo
 
-    proc = subprocess.run(cmd, **kwargs)  # type: ignore[arg-type]
+    proc = subprocess.run(cmd, **kwargs)  # type: ignore[call-overload]
 
     # synthesize a log file from stdout/stderr
     log = workdir / "xyce.log"

@@ -17,10 +17,14 @@ from __future__ import annotations
 
 import ast
 import math
-from typing import TYPE_CHECKING
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, Union
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
+
+# Type for values in the safe functions dict (can be functions or constants)
+SafeValue = Union[Callable[..., float], float]
 
 __all__ = ["safe_eval_expression", "validate_expression_dependencies", "ExpressionError"]
 
@@ -32,7 +36,7 @@ class ExpressionError(ValueError):
 
 
 # Safe math functions allowed in expressions
-_SAFE_FUNCTIONS = {
+_SAFE_FUNCTIONS: dict[str, SafeValue] = {
     # Basic math
     "abs": abs,
     "min": min,
@@ -117,15 +121,25 @@ def _eval_node(node: ast.expr, context: Mapping[str, float]) -> float:
     """
     # Literals
     if isinstance(node, ast.Constant):
-        return float(node.value)
+        val = node.value
+        if isinstance(val, (int, float)):
+            return float(val)
+        raise ExpressionError(f"Unsupported constant type: {type(val).__name__}")
 
     if isinstance(node, ast.Num):  # Python 3.7 compat
-        return float(node.n)
+        n = node.n
+        if isinstance(n, (int, float)):
+            return float(n)
+        raise ExpressionError(f"Unsupported number type: {type(n).__name__}")
 
     # Variable lookup (parameter reference)
     if isinstance(node, ast.Name):
         if node.id in _SAFE_FUNCTIONS:
-            return _SAFE_FUNCTIONS[node.id]
+            safe_val = _SAFE_FUNCTIONS[node.id]
+            # Constants like pi and e are floats
+            if isinstance(safe_val, float):
+                return safe_val
+            raise ExpressionError(f"'{node.id}' is a function, not a value")
         if node.id in context:
             return float(context[node.id])
         raise KeyError(node.id)
@@ -144,7 +158,7 @@ def _eval_node(node: ast.expr, context: Mapping[str, float]) -> float:
         if isinstance(node.op, ast.Div):
             return left / right
         if isinstance(node.op, ast.Pow):
-            return left**right
+            return float(left**right)
         if isinstance(node.op, ast.Mod):
             return left % right
         if isinstance(node.op, ast.FloorDiv):
@@ -196,20 +210,18 @@ def _eval_node(node: ast.expr, context: Mapping[str, float]) -> float:
     # Boolean operations
     if isinstance(node, ast.BoolOp):
         if isinstance(node.op, ast.And):
-            result = 1.0
             for value in node.values:
-                result = result and _eval_node(value, context)
-                if not result:
+                val = _eval_node(value, context)
+                if not val:
                     return 0.0
-            return result
+            return 1.0
 
         if isinstance(node.op, ast.Or):
-            result = 0.0
             for value in node.values:
-                result = result or _eval_node(value, context)
-                if result:
-                    return result
-            return result
+                val = _eval_node(value, context)
+                if val:
+                    return val
+            return 0.0
 
         raise ExpressionError(f"Unsupported boolean operator: {node.op.__class__.__name__}")
 
@@ -224,11 +236,14 @@ def _eval_node(node: ast.expr, context: Mapping[str, float]) -> float:
         if func_name not in _SAFE_FUNCTIONS:
             raise ExpressionError(f"Function '{func_name}' not allowed")
 
-        func = _SAFE_FUNCTIONS[func_name]
+        func_or_const = _SAFE_FUNCTIONS[func_name]
+        if isinstance(func_or_const, float):
+            raise ExpressionError(f"'{func_name}' is a constant, not a function")
+
         args = [_eval_node(arg, context) for arg in node.args]
 
         try:
-            return float(func(*args))
+            return float(func_or_const(*args))
         except Exception as exc:
             raise ExpressionError(f"Error calling {func_name}: {exc}") from exc
 

@@ -38,7 +38,7 @@ try:
 
     _REDIS_AVAILABLE = True
 except ImportError:
-    redis = None  # type: ignore
+    redis = None  # type: ignore[assignment]
 
 
 def is_redis_available() -> bool:
@@ -237,7 +237,7 @@ class DistributedCache:
 
         """
         try:
-            return self._client.ping()
+            return bool(self._client.ping())
         except Exception:
             return False
 
@@ -327,7 +327,7 @@ class DistributedCache:
             # Also delete metadata
             self._client.delete(f"{full_key}:meta")
             self.stats.deletes += 1
-            return result > 0
+            return bool(result > 0)
         except Exception:
             self.stats.errors += 1
             return False
@@ -362,7 +362,8 @@ class DistributedCache:
         try:
             data = self._client.get(meta_key)
             if data:
-                return json.loads(data.decode())
+                result = json.loads(data.decode())
+                return dict(result) if isinstance(result, dict) else None
             return None
         except Exception:
             return None
@@ -379,7 +380,7 @@ class DistributedCache:
         """
         full_key = self._make_key(key)
         try:
-            return self._client.ttl(full_key)
+            return int(self._client.ttl(full_key))
         except Exception:
             return -2
 
@@ -432,7 +433,7 @@ class DistributedCache:
         try:
             keys = self._client.keys(full_pattern)
             if keys:
-                return self._client.delete(*keys)
+                return int(self._client.delete(*keys))
             return 0
         except Exception:
             return 0

@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import difflib
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import Any, Literal
 
 from rich.console import Console
 from rich.panel import Panel
@@ -276,8 +276,8 @@ class NetlistDiff:
 
 
 def diff_circuits(
-    circuit1,
-    circuit2,
+    circuit1: Any,
+    circuit2: Any,
     name1: str = "original",
     name2: str = "modified",
     mode: Literal["unified", "side_by_side", "summary"] = "unified",

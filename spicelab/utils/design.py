@@ -286,7 +286,7 @@ def ntc_resistance(temp_c: float, r25: float = 10e3, beta: float = 3950.0) -> fl
     """
     t_kelvin = temp_c + 273.15
     t25_kelvin = 298.15  # 25°C
-    return r25 * np.exp(beta * (1.0 / t_kelvin - 1.0 / t25_kelvin))
+    return float(r25 * np.exp(beta * (1.0 / t_kelvin - 1.0 / t25_kelvin)))
 
 
 def ntc_temperature(resistance: float, r25: float = 10e3, beta: float = 3950.0) -> float:
@@ -302,7 +302,7 @@ def ntc_temperature(resistance: float, r25: float = 10e3, beta: float = 3950.0) 
     """
     t25_kelvin = 298.15
     t_kelvin = 1.0 / (1.0 / t25_kelvin + (1.0 / beta) * np.log(resistance / r25))
-    return t_kelvin - 273.15
+    return float(t_kelvin - 273.15)
 
 
 # -----------------------------------------------------------------------------
@@ -327,7 +327,7 @@ def resistor_current(voltage: float, resistance: float) -> float:
 
 def max_resistor_voltage(power_rating: float, resistance: float) -> float:
     """Calculate maximum voltage for resistor given power rating V = sqrt(P*R)."""
-    return np.sqrt(power_rating * resistance)
+    return float(np.sqrt(power_rating * resistance))
 
 
 # -----------------------------------------------------------------------------
@@ -342,7 +342,7 @@ def db_to_linear(db: float) -> float:
 
 def linear_to_db(ratio: float) -> float:
     """Convert linear ratio to decibels."""
-    return 20.0 * np.log10(ratio)
+    return float(20.0 * np.log10(ratio))
 
 
 def db_power_to_linear(db: float) -> float:
@@ -352,4 +352,4 @@ def db_power_to_linear(db: float) -> float:
 
 def linear_to_db_power(ratio: float) -> float:
     """Convert linear power ratio to decibels."""
-    return 10.0 * np.log10(ratio)
+    return float(10.0 * np.log10(ratio))

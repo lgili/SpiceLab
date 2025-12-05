@@ -227,42 +227,42 @@ _TRANSFORMERS = [
 def _register_defaults() -> None:
     """Register all behavioral models."""
     # Ideal diodes
-    for entry in _IDEAL_DIODES:
+    for diode_entry in _IDEAL_DIODES:
         register_component(
-            f"behavioral.diode.{entry.slug}",
-            _make_ideal_diode_factory(entry),
+            f"behavioral.diode.{diode_entry.slug}",
+            _make_ideal_diode_factory(diode_entry),
             category="behavioral",
-            metadata=entry.metadata(),
+            metadata=diode_entry.metadata(),
             overwrite=False,
         )
 
     # Ideal switches
-    for entry in _IDEAL_SWITCHES:
+    for switch_entry in _IDEAL_SWITCHES:
         register_component(
-            f"behavioral.switch.{entry.slug}",
-            _make_ideal_switch_factory(entry),
+            f"behavioral.switch.{switch_entry.slug}",
+            _make_ideal_switch_factory(switch_entry),
             category="behavioral",
-            metadata=entry.metadata(),
+            metadata=switch_entry.metadata(),
             overwrite=False,
         )
 
     # Limiters (informational only - no factory)
-    for entry in _LIMITERS:
+    for lim_entry in _LIMITERS:
         register_component(
-            f"behavioral.limiter.{entry.slug}",
-            lambda ref, _e=entry: None,  # Placeholder - requires manual setup
+            f"behavioral.limiter.{lim_entry.slug}",
+            lambda ref, _e=lim_entry: None,  # type: ignore[return-value,arg-type]
             category="behavioral",
-            metadata=entry.metadata(),
+            metadata=lim_entry.metadata(),
             overwrite=False,
         )
 
     # Transformers (informational only - requires L + K setup)
-    for entry in _TRANSFORMERS:
+    for trans_entry in _TRANSFORMERS:
         register_component(
-            f"behavioral.transformer.{entry.slug}",
-            lambda ref, _e=entry: None,  # Placeholder - use Circuit.add_coupling()
+            f"behavioral.transformer.{trans_entry.slug}",
+            lambda ref, _e=trans_entry: None,  # type: ignore[return-value,arg-type]
             category="behavioral",
-            metadata=entry.metadata(),
+            metadata=trans_entry.metadata(),
             overwrite=False,
         )
 

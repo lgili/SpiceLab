@@ -25,7 +25,7 @@ Usage:
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -97,7 +97,7 @@ class MonteCarloSweepResult:
     def __getitem__(self, idx: int) -> MonteCarloConditionResult:
         return self.condition_results[idx]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[MonteCarloConditionResult]:
         return iter(self.condition_results)
 
     def get_by_condition(self, **kwargs: Any) -> MonteCarloConditionResult | None:
@@ -242,7 +242,7 @@ class WcaSweepResult:
     def __getitem__(self, idx: int) -> WcaConditionResult:
         return self.condition_results[idx]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[WcaConditionResult]:
         return iter(self.condition_results)
 
     def get_by_condition(self, **kwargs: Any) -> WcaConditionResult | None:

@@ -112,7 +112,7 @@ def run_directives(
         startupinfo.wShowWindow = subprocess.SW_HIDE
         kwargs["startupinfo"] = startupinfo
 
-    proc = subprocess.run(cmd, **kwargs)  # type: ignore[arg-type]
+    proc = subprocess.run(cmd, **kwargs)  # type: ignore[call-overload]
 
     # Some LTspice builds write logs to stdout/stderr only
     with log.open("w", encoding="utf-8") as lf:
